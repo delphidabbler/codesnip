@@ -6,6 +6,21 @@ Releases are listed in reverse version number order.
 
 > Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some v3 releases have later release dates than early v4 releases.
 
+## Release v4.24.0 of 23 October 2024
+
+* Compilers with which a snippet has not been tested are now omitted from snippet information that is copied to the clipboard and included in print outs [issue #143].
+* Reversed order of compilers in the snippets editor's _Compile Results_ tab so that later compilers are display first. This change was accidentally left out of release v4.22.0 when similar changes were made in other parts of the UI [issue #135].
+* Release version number is now displayed in the program title bar [issue #122].
+* Fixed incorrect copyright date displayed in About Box [issue #129].
+* Fixed bug when checking for correct preamble bytes (BOMs) in UTF-8 and UTF-16 format text files [issue #139].
+* Portable and Standard edition now use the same program names. Portable edition was previously declaring itself as _DelphiDabbler CodeSnip-p_ instead of _DelphiDabbler CodeSnip_ [issue #130].
+* Updated operating system detection code [issues #126 and #144].
+* Added `Deploy.bat` script to create and package both the CodeSnip standard and portable releases [issue #128].
+* Documentation changes:
+  * CodeSnip standard and portable releases now each have their own release read-me files instead of both releases being shipped with the same read-me [issue #127]. Updated `Build.html` and `README.md` re this change.
+  * Updated and corrected REML documentation and REML help topic. Those documents and others that discuss REML were also changed to link to authoritative REML definitions in the `delphidabbler/reml` repository. [issues #131, #133 & #134].
+  * Updated `Build.html` with alternative, more secure, download link for `zip.exe` program that is required to package releases [issue #137].
+
 ## Release v4.23.0 of 02 April 2024
 
 * Removed marketing names (e.g. "Athens" or "Rio") from Delphi compiler names to save space when the compiler names are displayed in the UI [issue #125].

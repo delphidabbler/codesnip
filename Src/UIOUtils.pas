@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides a container for assisting with common file operations.
 }
@@ -206,6 +206,8 @@ begin
   Assert(Assigned(Stream), 'TFileIO.CheckBOM: Stream is nil');
   Assert(Assigned(Encoding), 'TFileIO.CheckBOM: Encoding is nil');
   Preamble := Encoding.GetPreamble;
+  if Length(Preamble) = 0 then
+    Exit(False);
   if Stream.Size < Length(Preamble) then
     Exit(False);
   OldPos := Stream.Position;

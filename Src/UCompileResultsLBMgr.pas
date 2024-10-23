@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines classes that manages display and interaction with a list box that
  * displays compiler results.
@@ -600,13 +600,18 @@ procedure TCompileResultsLBMgr.PopulateListBox;
   'unknown'.
   }
 var
-  Compiler: ICompiler;  // each supported compiler
+  Compiler: ICompiler;
+  CompilerId: TCompilerID;
 begin
-  for Compiler in fCompilers do
+  // Populate list box in reverse order of compiler ID
+  for CompilerId := High(TCompilerID) downto Low(TCompilerID) do
+  begin
+    Compiler := fCompilers[CompilerId];
     fLB.Items.AddObject(
       Compiler.GetName,
       TCompilerInfo.Create(Compiler.GetID, crQuery)
     );
+  end;
 end;
 
 procedure TCompileResultsLBMgr.SetCompileResult(const Index: Integer;

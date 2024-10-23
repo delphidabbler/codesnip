@@ -15,20 +15,6 @@
       About REML
     </title>
     <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
-    <style type="text/css">
-      dl {
-        margin: 6px 0 0 0;
-      }
-      dl dt {
-        margin: 3px 0 0 0;
-      }
-      dl dd {
-        margin-left: 24px;
-      }
-      .hilite {
-        background-color: #ff9;
-      }
-    </style>
   </head>
   <body>
     <object
@@ -41,337 +27,62 @@
       <a name="reml"></a>About the REML markup language
     </h1>
     <p>
-      <em>REML</em> is <em>CodeSnip</em>'s own little markup language that can
-      be used to style the text of a snippet's description and / or extra
-      information. The latest version is v6, which is backwards compatible with
-	    all other versions.
+      REML is a little markup language that can be used to style text. It is a SGML language similar to HTML, albeit much smaller. A small number of tags and character entities are supported.
     </p>
-    <h2>
-      Language Details
-    </h2>
     <p>
-      The <em>REML</em> language is a SGML language similar to a greatly
-      simplified XHTML. The are a small number of tags you can use. Firstly
-      there are two block-level tags that render text in paragraphs, while the
-      other tags format text inline or embed hyplerlinks.
+      CodeSnip currently supports REML v6. See the <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/delphidabbler/reml/main/docs/reml-v6.html">REML v6 language definition</a> for full details.
     </p>
-    <h3>
-      Block level tags
-    </h3>
-    <dl>
-      <dt><code class="reml">&lt;p&gt;...&lt/p&gt;</code></dt>
-      <dd>
-        Renders the enclosed markup as a simple paragraph.
-      </dd>
-      <dt><code class="reml">&lt;heading&gt;...&lt;/heading&gt;</code></dt>
-      <dd>
-        Renders the enclosed markup as a heading.
-      </dd>
-      <dt><code class="reml">&lt;ol&gt;...&lt;/ol&gt;</code></dt>
-      <dd>
-        Renders the enclosed HTML as an ordered list. Must contain
-        <code class="value">&lt;li&gt;...&lt;/li&gt</code> blocks and nothing
-        else.
-      </dd>
-      <dt><code class="reml">&lt;ul&gt;...&lt;/ul&gt;</code></dt>
-      <dd>
-        Renders the enclosed HTML as an unordered list. Must contain
-        <code class="value">&lt;li&gt;...&lt;/li&gt</code> blocks and nothing
-        else.
-      </dd>
-      <dt><code class="reml">&lt;l1&gt;...&lt;/li&gt;</code></dt>
-      <dd>
-        Renders the enclosed HTML as a list item. May only be used within
-        <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and
-        <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks.
-      </dd>
-    </dl>
     <p>
-      The following rules apply to the use of block level tags:
-    </p>
-    <ol>
-      <li>
-        Must be matched, e.g.
-        <code class="value">&lt;p&gt;</code> must have a matching
-        <code class="value">&lt;/p&gt;</code>.
-      </li>
-      <li>
-        <code class="value">&lt;p&gt;...&lt;/p&gt;</code> and
-        <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> blocks
-        must not contain other block level tags.
-      </li>
-      <li>
-        <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and
-        <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks must only
-        contain one or more
-        <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks.
-      </li>
-      <li>
-        <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks may contain
-        <code class="value">&lt;p&gt;...&lt;/p&gt;</code> and
-        <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> blocks,
-        but it is permitted to include text and inline tags directly without
-        enclosing them one of the permitted blocks. Nested lists are permitted
-        by including further <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code>
-        and <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> blocks.
-      </li>
-      <li>
-        All text should be embedded within
-        <code class="value">&lt;p&gt;...&lt;/p&gt;</code>,
-        <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> or
-        <code class="value">&lt;li&gt;...&lt;/li&gt;</code> block level tags,
-        e.g. <code class="value"
-        >&lt;heading&gt;heading&lt;/heading&gt;&lt;p&gt;text&lt;/p&gt;</code>
-        or simply <code class="value">&lt;p&gt;text&lt;/p&gt;</code>.
-      </li>
-      <li>
-        White space between blocks must be ignored.
-      </li>
-    </ol>
-    <p>
-      Here is a valid example:
-    </p>
-    <pre class="sample">&lt;heading&gt;Hello&lt;/heading&gt;
-&lt;p&gt;Hello World&lt;/p&gt;
+      The following whimsical example demonstrates every supported REML tag along with a couple of character entities:
+<pre class="reml">&lt;heading&gt;
+  Wombat converter
+&lt;/heading&gt;
+&lt;p&gt;
+ Transforms &lt;strong&gt;wombats&lt;/strong&gt; into &lt;em&gt;dongles&lt;/em&gt;.
+ &lt;warning&gt;&lt;em&gt;W&lt;/em&gt;arning:&lt;/warning&gt; The &lt;var&gt;Foo&lt;/var&gt;
+ variable stores &amp;lt;=&lt;mono&gt;12&lt;/mono&gt; accumulated &lt;mono&gt;dongles&lt;/mono&gt;.
+&lt;/p&gt;
+&lt;p&gt;
+ All 3 species of wombat are supported:
+&lt;/p&gt;
 &lt;ol&gt;
-  &lt;li&gt;one&lt;/li&gt;
-  &lt;li&gt;&lt;p&gt;two&lt;/p&gt;&lt;/li&gt;
-  &lt;ul&gt;
-    &lt;li&gt;two A&lt;/li&gt;
-    &lt;li&gt;two B&lt;/li&gt;
-  &lt;ul&gt;
-  &lt;li&gt;three&lt;/li&gt;
-&lt;/ol&gt;</pre>
-          <p>
-      Srictly speaking, the following example is invalid code &ndash; the
-      highlighted sections are in error, because they are not contained within
-      block tags.
-    </p>
-    <pre class="reml indent"><span class="hilite">blah</span>&lt;heading&gt;blah&lt;/heading&gt;<span class="hilite">blah</span>&lt;p&gt;blah&lt;/p&gt;<span class="hilite">blah</span></pre>
-    <p>
-      However, <em>CodeSnip</em> is quite permissive and, in many cases,
-      automatically adds block level tags for text that is not enclosed in block
-      level tags. The above code is interpreted similar ro:
-    </p>
-    <pre class="reml indent">&lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;
-&lt;heading&gt;blah&lt;/heading&gt;
-&lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;
-&lt;p&gt;blah&lt;/p&gt;
-&lt;p&gt;<span class="hilite">blah</span>&lt;/p&gt;</pre>
-    <h3>
-      Inline tags
-    </h3>
-    <p>
-      Here are the available inline tags:
-    </p>
-    <dl>
-      <dt><code class="reml">&lt;strong&gt;...&lt/strong&gt;</code></dt>
-      <dd>
-        Renders the enclosed markup with strong emphasis.<br>
-        <em>Example:</em> <code class="reml">&lt;p&gt;Make stuff
-        &lt;strong&gt;stand out&lt;/strong&gt;.&lt;/p&gt;</code>
-      </dd>
-      <dt><code class="reml">&lt;em&gt;...&lt;/em&gt;</code></dt>
-      <dd>
-        Emphasises the enclosed markup.<br>
-        <em>Example:</em> <code class="reml">&lt;p&gt;Draw
-        &lt;em&gt;attention&lt;/em&gt; to something.&lt;/p&gt;</code>
-      </dd>
-      <dt><code class="reml">&lt;var&gt;...&lt;/var&gt;</code></dt>
-      <dd>
-        Used to indicate the enclosed markup is a variable.<br>
-        <em>Example:</em> <code class="reml">&lt;p&gt;Refer to a function
-        &lt;var&gt;parameter&lt;/var&gt;.&lt;/p&gt;</code>
-      </dd>
-      <dt><code class="reml">&lt;warning&gt;...&lt;/warning&gt;</code></dt>
-      <dd>
-        Used for warning text.<br>
-        <em>Example:</em>
-        <code class="reml">&lt;p&gt;&lt;warning&gt;Warning:&lt;/warning&gt;
-        Don't do it!&lt;/p&gt;</code>
-      </dd>
-      <dt><code class="reml">&lt;mono&gt;...&lt;/mono&gt;</code></dt>
-      <dd>
-        Renders markup in a mono-spaced font.<br>
-        <em>Example:</em> <code class="reml">&lt;p&gt;Use the:
-        &lt;mono&gt;Windows&lt;/mono&gt; unit.&lt;/p&gt;</code>
-      </dd>
-      <dt><code class="reml">&lt;a href=&quot;url&quot;&gt;...&lt;/a&gt;</code></dt>
-      <dd>
-        Creates a hyperlink. The <code class="reml">href</code> attribute must
-        specify the required URL, which must use one of the <em>http:</em>,
-        <em>https:</em> or <em>file:</em> protocols; others are not permitted.
-        If you use the <em>file:</em> protocol it must reference a valid local
-        or network file. Be aware that if you export a snippet
-        containing a hyperlink that uses the <em>file:</em> protocol it will
-        only work on the recipient's system if the specified file exists in the
-        same location.<br>
-        <em>Example:</em> <code class="reml">&lt;p&gt;&lt;a
-        href=&quot;https://example.com&quot;&gt;Visit
-        example.com&lt;/a&gt;&lt/p&gt;.</code>.
-      </dd>
-    </dl>
-    <h3 id="entities">
-      Character Entities
-    </h3>
-    <p>
-      The &quot;&lt;&quot; and &quot;&amp;&quot; characters are special within
-      the markup and must not be used directly, even when you are just entering
-      plain text. You must use the <code class="reml">&amp;lt;</code> character
-      entity in place of &quot;&lt;&quot; and
-      <code class="reml">&amp;amp;</code> instead of &quot;&amp;&quot;.
+ &lt;li&gt;
+   &lt;p&gt;
+     &lt;a href="https://en.wikipedia.org/wiki/Common_wombat"&gt;Common
+     wombat&lt;/a&gt;. The following sub-species are supported:
+   &lt;/p&gt;
+   &lt;ul&gt;
+     &lt;li&gt;
+       Bass Strait wombat
+     &lt;/li&gt;
+     &lt;li&gt;
+       Hirsute wombat
+     &lt;/li&gt;
+     &lt;li&gt;
+       Tasmanian wombat
+     &lt;/li&gt;
+   &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;
+   Northen hairy-nosed wombat
+ &lt;/li&gt;
+ &lt;li&gt;
+   Southern hairy-nosed wombat
+ &lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;
+ Copyright &amp;copy; wombaterama, 2024.
+&lt;/p&gt;</pre>
     </p>
     <p>
-      A few other character entities are supported for convenience. Here is the
-      complete list:
-    </p>
-    <table class="bordered" cellspacing="1" cellpadding="0">
-      <thead>
-        <tr>
-          <th>Character Entity</th>
-          <th>Actual Character</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>&amp;amp;</code></td>
-          <td class="centre">&amp;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;quot;</code></td>
-          <td class="centre">&quot;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;gt;</code></td>
-          <td class="centre">&gt;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;lt;</code></td>
-          <td class="centre">&lt;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;copy;</code></td>
-          <td class="centre">&copy;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;times;</code></td>
-          <td class="centre">&times;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;divide;</code> or <code>&amp;div;</code></td>
-          <td class="centre">&divide;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;plusmn;</code></td>
-          <td class="centre">&plusmn;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;ne;</code> or <code>&amp;neq;</code></td>
-          <td class="centre">&ne;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;sum;</code></td>
-          <td class="centre">&sum;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;infin;</code></td>
-          <td class="centre">&infin;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;pound;</code></td>
-          <td class="centre">&pound;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;curren;</code></td>
-          <td class="centre">&curren;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;yen;</code></td>
-          <td class="centre">&yen;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;euro;</code></td>
-          <td class="centre">&euro;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;cent;</code></td>
-          <td class="centre">&cent;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;dagger;</code></td>
-          <td class="centre">&dagger;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;ddagger;</code> or <code>&amp;Dagger;</code></td>
-          <td class="centre">&ddagger;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;hellip;</code></td>
-          <td class="centre">&hellip;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;para;</code></td>
-          <td class="centre">&para;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;sect;</code></td>
-          <td class="centre">&sect;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;reg;</code></td>
-          <td class="centre">&reg;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;frac14;</code></td>
-          <td class="centre">&frac14;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;frac12;</code> or <code>&amp;half;</code></td>
-          <td class="centre">&frac12;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;frac34;</code></td>
-          <td class="centre">&frac34;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;micro;</code></td>
-          <td class="centre">&micro;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;deg;</code></td>
-          <td class="centre">&deg;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;laquo;</code></td>
-          <td class="centre">&laquo;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;raquo;</code></td>
-          <td class="centre">&raquo;</td>
-        </tr>
-        <tr>
-          <td><code>&amp;iquest;</code></td>
-          <td class="centre">&iquest;</td>
-        </tr>
-      </tbody>
-    </table>
-    <p>
-      By way of an example, if you want to display <code>x &ne; y</code>, use:
-    </p>
-    <p class="indent">
-      <code class="reml">x &amp;ne; y</code>
+      All this silliness renders something like this:
     </p>
     <p>
-      No other symbolic character entities are supported.
-      However, numeric character entities can be used to insert other characters
-      by specifying its code. For example <code class="reml">&amp;#64;</code> is
-      equivalent to &quot;&#64;&quot;.
-    </p>
-    <p>
-      Numeric entities should be used with caution. Using a code that is
-      specific to an ANSI character set may cause unexpected results because
-      <em>CodeSnip</em> uses Unicode internally and the specified character code
-      may not represent the same character in ANSI and Unicode.
+      <img
+        src="..\Images\REMLExample.png"
+        width="379"
+        height="198"
+      >
     </p>
   </body>
 </html>

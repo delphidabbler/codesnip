@@ -2,7 +2,7 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at https://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2006-2022, Peter Johnson (gravatar.com/delphidabbler).
+; Copyright (C) 2006-2024, Peter Johnson (gravatar.com/delphidabbler).
 ;
 ; Install file generation script for use with Inno Setup.
 
@@ -29,6 +29,7 @@
 #define SrcDocsPath SourcePath + "..\..\Docs\"
 #define SrcAssetsPath SourcePath + "\Assets\"
 #define SrcExePath SourcePath + "..\..\_build\exe\"
+#define TmpPath SourcePath + "..\..\_build\release\~tmp~\"
 #define ProgDataSubDir AppName + ".4"
 #define ExeProg SrcExePath + ExeFile
 #define AppVersion DeleteToVerStart(GetFileProductVersion(ExeProg))
@@ -89,7 +90,7 @@ Name: {commonappdata}\{#AppPublisher}\{#ProgDataSubDir}\Database; permissions: e
 Source: {#SrcExePath}{#ExeFile}; DestDir: {app}
 Source: {#SrcExePath}{#HelpFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#LicenseTextFile}; DestDir: {app}; Flags: ignoreversion
-Source: {#SrcDocsPath}{#ReadMeFile}; DestDir: {app}; Flags: ignoreversion
+Source: {#TmpPath}{#ReadMeFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcAssetsPath}UpdatingPreview.rtf; Flags: dontcopy
 
 [Icons]

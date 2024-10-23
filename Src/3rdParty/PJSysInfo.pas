@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2001-2023, Peter Johnson (https://gravatar.com/delphidabbler).
+ * Copyright (C) 2001-2024, Peter Johnson (https://gravatar.com/delphidabbler).
  *
  * This unit contains various static classes, constants, type definitions and
  * global variables for use in providing information about the host computer and
@@ -21,8 +21,12 @@
  *  3: When run on operating systems up to and including Windows 8 running the
  *     host program in compatibility mode causes some variables and TPJOSInfo
  *     methods to be "spoofed" into returning information about the emulated
- *     OS. When run on Windows 8.1 and later details of the actual host
- *     operating system are always returned and the emulated OS is ignored.
+ *     OS. When run on Windows 8.1 details of the actual host operating system
+ *     are always returned and the emulated OS is ignored.
+ *
+ *  4: On Windows 10 and later the correct operating system will only be
+ *     reported if the application declares the operating systems it supports
+ *     in its manifest.
  *
  * ACKNOWLEDGEMENTS
  *
@@ -55,6 +59,7 @@ unit PJSysInfo;
 {$UNDEF RTLNAMESPACES}        // No support for RTL namespaces in unit names
 {$UNDEF HASUNIT64}            // UInt64 type not defined
 {$UNDEF INLINEMETHODS}        // No support for inline methods
+{$UNDEF HASTBYTES}            // TBytes not defined
 
 // Undefine facilities not available in earlier compilers
 // Note: Delphi 1 to 3 is not included since the code will not compile on these
@@ -75,6 +80,9 @@ unit PJSysInfo;
 {$IFDEF CONDITIONALEXPRESSIONS}
   {$IF CompilerVersion >= 24.0} // Delphi XE3 and later
     {$LEGACYIFEND ON}  // NOTE: this must come before all $IFEND directives
+  {$IFEND}
+  {$IF CompilerVersion >= 18.5} // Delphi 2007 Win32 and later
+    {$DEFINE HASTBYTES}
   {$IFEND}
   {$IF CompilerVersion >= 23.0} // Delphi XE2 and later
     {$DEFINE RTLNAMESPACES}
@@ -111,6 +119,11 @@ uses
   System.SysUtils, System.Classes, Winapi.Windows;
   {$ENDIF}
 
+{$IFNDEF HASTBYTES}
+// Compiler doesn't have TBytes: define it
+type
+  TBytes = array of Byte;
+{$ENDIF}
 
 type
   // Windows types not defined in all supported Delphi VCLs
@@ -230,107 +243,190 @@ const
 
   // These Windows-defined constants are required for use with the
   // GetProductInfo API call used with Windows Vista and later
+  // NOTE: PRODUCT_xxx constants marked with an asterisk comment have no
+  //       associated description hard wired into this unit.
   // ** Thanks to Laurent Pierre for providing these definitions originally.
   // ** Subsequent additions were obtained from https://tinyurl.com/3rhhbs2z
-  PRODUCT_BUSINESS                            = $00000006;
-  PRODUCT_BUSINESS_N                          = $00000010;
-  PRODUCT_CLUSTER_SERVER                      = $00000012;
-  PRODUCT_CLUSTER_SERVER_V                    = $00000040;
-  PRODUCT_CORE                                = $00000065;
-  PRODUCT_CORE_COUNTRYSPECIFIC                = $00000063;
-  PRODUCT_CORE_N                              = $00000062;
-  PRODUCT_CORE_SINGLELANGUAGE                 = $00000064;
-  PRODUCT_DATACENTER_EVALUATION_SERVER        = $00000050;
-  PRODUCT_DATACENTER_A_SERVER_CORE            = $00000091;
-  PRODUCT_STANDARD_A_SERVER_CORE              = $00000092;
-  PRODUCT_DATACENTER_SERVER                   = $00000008;
-  PRODUCT_DATACENTER_SERVER_CORE              = $0000000C;
-  PRODUCT_DATACENTER_SERVER_CORE_V            = $00000027;
-  PRODUCT_DATACENTER_SERVER_V                 = $00000025;
-  PRODUCT_EDUCATION                           = $00000079;
-  PRODUCT_EDUCATION_N                         = $0000007A;
-  PRODUCT_ENTERPRISE                          = $00000004;
-  PRODUCT_ENTERPRISE_E                        = $00000046;
-  PRODUCT_ENTERPRISE_EVALUATION               = $00000048;
-  PRODUCT_ENTERPRISE_N                        = $0000001B;
-  PRODUCT_ENTERPRISE_N_EVALUATION             = $00000054;
-  PRODUCT_ENTERPRISE_S                        = $0000007D;
-  PRODUCT_ENTERPRISE_S_EVALUATION             = $00000081;
-  PRODUCT_ENTERPRISE_S_N                      = $0000007E;
-  PRODUCT_ENTERPRISE_S_N_EVALUATION           = $00000082;
-  PRODUCT_ENTERPRISE_SERVER                   = $0000000A;
-  PRODUCT_ENTERPRISE_SERVER_CORE              = $0000000E;
-  PRODUCT_ENTERPRISE_SERVER_CORE_V            = $00000029;
-  PRODUCT_ENTERPRISE_SERVER_IA64              = $0000000F;
-  PRODUCT_ENTERPRISE_SERVER_V                 = $00000026;
-  PRODUCT_ESSENTIALBUSINESS_SERVER_ADDL       = $0000003C;
-  PRODUCT_ESSENTIALBUSINESS_SERVER_ADDLSVC    = $0000003E;
-  PRODUCT_ESSENTIALBUSINESS_SERVER_MGMT       = $0000003B;
-  PRODUCT_ESSENTIALBUSINESS_SERVER_MGMTSVC    = $0000003D;
-  PRODUCT_HOME_BASIC                          = $00000002;
-  PRODUCT_HOME_BASIC_E                        = $00000043;
-  PRODUCT_HOME_BASIC_N                        = $00000005;
-  PRODUCT_HOME_PREMIUM                        = $00000003;
-  PRODUCT_HOME_PREMIUM_E                      = $00000044;
-  PRODUCT_HOME_PREMIUM_N                      = $0000001A;
-  PRODUCT_HOME_PREMIUM_SERVER                 = $00000022;
-  PRODUCT_HOME_SERVER                         = $00000013;
-  PRODUCT_HYPERV                              = $0000002A;
-  PRODUCT_IOTENTERPRISE                       = $000000BC;
-  PRODUCT_IOTENTERPRISE_S                     = $000000BF;
-  PRODUCT_IOTUAP                              = $0000007B;
-  PRODUCT_IOTUAPCOMMERCIAL                    = $00000083;
-  PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT    = $0000001E;
-  PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING     = $00000020;
-  PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY      = $0000001F;
-  PRODUCT_MOBILE_CORE                         = $00000068;
-  PRODUCT_MOBILE_ENTERPRISE                   = $00000085;
-  PRODUCT_MULTIPOINT_PREMIUM_SERVER           = $0000004D;
-  PRODUCT_MULTIPOINT_STANDARD_SERVER          = $0000004C;
-  PRODUCT_PRO_WORKSTATION                     = $000000A1;
-  PRODUCT_PRO_WORKSTATION_N                   = $000000A2;
-  PRODUCT_PROFESSIONAL                        = $00000030;
-  PRODUCT_PROFESSIONAL_E                      = $00000045;
-  PRODUCT_PROFESSIONAL_N                      = $00000031;
-  PRODUCT_PROFESSIONAL_WMC                    = $00000067;
-  PRODUCT_SB_SOLUTION_SERVER                  = $00000032;
-  PRODUCT_SB_SOLUTION_SERVER_EM               = $00000036;
-  PRODUCT_SERVER_FOR_SB_SOLUTIONS             = $00000033;
-  PRODUCT_SERVER_FOR_SB_SOLUTIONS_EM          = $00000037;
-  PRODUCT_SERVER_FOR_SMALLBUSINESS            = $00000018;
-  PRODUCT_SERVER_FOR_SMALLBUSINESS_V          = $00000023;
-  PRODUCT_SERVER_FOUNDATION                   = $00000021;
-  PRODUCT_SMALLBUSINESS_SERVER                = $00000009;
-  PRODUCT_SMALLBUSINESS_SERVER_PREMIUM        = $00000019;
-  PRODUCT_SMALLBUSINESS_SERVER_PREMIUM_CORE   = $0000003F;
-  PRODUCT_SOLUTION_EMBEDDEDSERVER             = $00000038;
-  PRODUCT_STANDARD_EVALUATION_SERVER          = $0000004F;
-  PRODUCT_STANDARD_SERVER                     = $00000007;
-  PRODUCT_STANDARD_SERVER_CORE                = $0000000D;
-  PRODUCT_STANDARD_SERVER_CORE_V              = $00000028;
-  PRODUCT_STANDARD_SERVER_V                   = $00000024;
-  PRODUCT_STANDARD_SERVER_SOLUTIONS           = $00000034;
-  PRODUCT_STANDARD_SERVER_SOLUTIONS_CORE      = $00000035;
-  PRODUCT_STARTER                             = $0000000B;
-  PRODUCT_STARTER_E                           = $00000042;
-  PRODUCT_STARTER_N                           = $0000002F;
-  PRODUCT_STORAGE_ENTERPRISE_SERVER           = $00000017;
-  PRODUCT_STORAGE_ENTERPRISE_SERVER_CORE      = $0000002E;
-  PRODUCT_STORAGE_EXPRESS_SERVER              = $00000014;
-  PRODUCT_STORAGE_EXPRESS_SERVER_CORE         = $0000002B;
-  PRODUCT_STORAGE_STANDARD_EVALUATION_SERVER  = $00000060;
-  PRODUCT_STORAGE_STANDARD_SERVER             = $00000015;
-  PRODUCT_STORAGE_STANDARD_SERVER_CORE        = $0000002C;
-  PRODUCT_STORAGE_WORKGROUP_EVALUATION_SERVER = $0000005F;
-  PRODUCT_STORAGE_WORKGROUP_SERVER            = $00000016;
-  PRODUCT_STORAGE_WORKGROUP_SERVER_CORE       = $0000002D;
-  PRODUCT_ULTIMATE                            = $00000001;
-  PRODUCT_ULTIMATE_E                          = $00000047;
-  PRODUCT_ULTIMATE_N                          = $0000001C;
-  PRODUCT_UNDEFINED                           = $00000000;
-  PRODUCT_WEB_SERVER                          = $00000011;
-  PRODUCT_WEB_SERVER_CORE                     = $0000001D;
-  PRODUCT_UNLICENSED                          = $ABCDABCD;
+  // ** and the Windows 11 24H2 SDK
+  PRODUCT_UNDEFINED                             = $00000000;
+  PRODUCT_ULTIMATE                              = $00000001;
+  PRODUCT_HOME_BASIC                            = $00000002;
+  PRODUCT_HOME_PREMIUM                          = $00000003;
+  PRODUCT_ENTERPRISE                            = $00000004;
+  PRODUCT_HOME_BASIC_N                          = $00000005;
+  PRODUCT_BUSINESS                              = $00000006;
+  PRODUCT_STANDARD_SERVER                       = $00000007;
+  PRODUCT_DATACENTER_SERVER                     = $00000008;
+  PRODUCT_SMALLBUSINESS_SERVER                  = $00000009;
+  PRODUCT_ENTERPRISE_SERVER                     = $0000000A;
+  PRODUCT_STARTER                               = $0000000B;
+  PRODUCT_DATACENTER_SERVER_CORE                = $0000000C;
+  PRODUCT_STANDARD_SERVER_CORE                  = $0000000D;
+  PRODUCT_ENTERPRISE_SERVER_CORE                = $0000000E;
+  PRODUCT_ENTERPRISE_SERVER_IA64                = $0000000F;
+  PRODUCT_BUSINESS_N                            = $00000010;
+  PRODUCT_WEB_SERVER                            = $00000011;
+  PRODUCT_CLUSTER_SERVER                        = $00000012;
+  PRODUCT_HOME_SERVER                           = $00000013;
+  PRODUCT_STORAGE_EXPRESS_SERVER                = $00000014;
+  PRODUCT_STORAGE_STANDARD_SERVER               = $00000015;
+  PRODUCT_STORAGE_WORKGROUP_SERVER              = $00000016;
+  PRODUCT_STORAGE_ENTERPRISE_SERVER             = $00000017;
+  PRODUCT_SERVER_FOR_SMALLBUSINESS              = $00000018;
+  PRODUCT_SMALLBUSINESS_SERVER_PREMIUM          = $00000019;
+  PRODUCT_HOME_PREMIUM_N                        = $0000001A;
+  PRODUCT_ENTERPRISE_N                          = $0000001B;
+  PRODUCT_ULTIMATE_N                            = $0000001C;
+  PRODUCT_WEB_SERVER_CORE                       = $0000001D;
+  PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT      = $0000001E;
+  PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY        = $0000001F;
+  PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING       = $00000020;
+  PRODUCT_SERVER_FOUNDATION                     = $00000021;
+  PRODUCT_HOME_PREMIUM_SERVER                   = $00000022;
+  PRODUCT_SERVER_FOR_SMALLBUSINESS_V            = $00000023;
+  PRODUCT_STANDARD_SERVER_V                     = $00000024;
+  PRODUCT_DATACENTER_SERVER_V                   = $00000025;
+  PRODUCT_ENTERPRISE_SERVER_V                   = $00000026;
+  PRODUCT_DATACENTER_SERVER_CORE_V              = $00000027;
+  PRODUCT_STANDARD_SERVER_CORE_V                = $00000028;
+  PRODUCT_ENTERPRISE_SERVER_CORE_V              = $00000029;
+  PRODUCT_HYPERV                                = $0000002A;
+  PRODUCT_STORAGE_EXPRESS_SERVER_CORE           = $0000002B;
+  PRODUCT_STORAGE_STANDARD_SERVER_CORE          = $0000002C;
+  PRODUCT_STORAGE_WORKGROUP_SERVER_CORE         = $0000002D;
+  PRODUCT_STORAGE_ENTERPRISE_SERVER_CORE        = $0000002E;
+  PRODUCT_STARTER_N                             = $0000002F;
+  PRODUCT_PROFESSIONAL                          = $00000030;
+  PRODUCT_PROFESSIONAL_N                        = $00000031;
+  PRODUCT_SB_SOLUTION_SERVER                    = $00000032;
+  PRODUCT_SERVER_FOR_SB_SOLUTIONS               = $00000033;
+  PRODUCT_STANDARD_SERVER_SOLUTIONS             = $00000034;
+  PRODUCT_STANDARD_SERVER_SOLUTIONS_CORE        = $00000035;
+  PRODUCT_SB_SOLUTION_SERVER_EM                 = $00000036;
+  PRODUCT_SERVER_FOR_SB_SOLUTIONS_EM            = $00000037;
+  PRODUCT_SOLUTION_EMBEDDEDSERVER               = $00000038;
+  PRODUCT_SOLUTION_EMBEDDEDSERVER_CORE          = $00000039; // *
+  PRODUCT_PROFESSIONAL_EMBEDDED                 = $0000003A; // *
+  PRODUCT_ESSENTIALBUSINESS_SERVER_MGMT         = $0000003B;
+  PRODUCT_ESSENTIALBUSINESS_SERVER_ADDL         = $0000003C;
+  PRODUCT_ESSENTIALBUSINESS_SERVER_MGMTSVC      = $0000003D;
+  PRODUCT_ESSENTIALBUSINESS_SERVER_ADDLSVC      = $0000003E;
+  PRODUCT_SMALLBUSINESS_SERVER_PREMIUM_CORE     = $0000003F;
+  PRODUCT_CLUSTER_SERVER_V                      = $00000040;
+  PRODUCT_EMBEDDED                              = $00000041; // *
+  PRODUCT_STARTER_E                             = $00000042;
+  PRODUCT_HOME_BASIC_E                          = $00000043;
+  PRODUCT_HOME_PREMIUM_E                        = $00000044;
+  PRODUCT_PROFESSIONAL_E                        = $00000045;
+  PRODUCT_ENTERPRISE_E                          = $00000046;
+  PRODUCT_ULTIMATE_E                            = $00000047;
+  PRODUCT_ENTERPRISE_EVALUATION                 = $00000048;
+  PRODUCT_MULTIPOINT_STANDARD_SERVER            = $0000004C;
+  PRODUCT_MULTIPOINT_PREMIUM_SERVER             = $0000004D;
+  PRODUCT_STANDARD_EVALUATION_SERVER            = $0000004F;
+  PRODUCT_DATACENTER_EVALUATION_SERVER          = $00000050;
+  PRODUCT_ENTERPRISE_N_EVALUATION               = $00000054;
+  PRODUCT_EMBEDDED_AUTOMOTIVE                   = $00000055; // *
+  PRODUCT_EMBEDDED_INDUSTRY_A                   = $00000056; // *
+  PRODUCT_THINPC                                = $00000057; // *
+  PRODUCT_EMBEDDED_A                            = $00000058; // *
+  PRODUCT_EMBEDDED_INDUSTRY                     = $00000059; // *
+  PRODUCT_EMBEDDED_E                            = $0000005A; // *
+  PRODUCT_EMBEDDED_INDUSTRY_E                   = $0000005B; // *
+  PRODUCT_EMBEDDED_INDUSTRY_A_E                 = $0000005C; // *
+  PRODUCT_STORAGE_WORKGROUP_EVALUATION_SERVER   = $0000005F;
+  PRODUCT_STORAGE_STANDARD_EVALUATION_SERVER    = $00000060;
+  PRODUCT_CORE_ARM                              = $00000061;
+  PRODUCT_CORE_N                                = $00000062;
+  PRODUCT_CORE_COUNTRYSPECIFIC                  = $00000063;
+  PRODUCT_CORE_SINGLELANGUAGE                   = $00000064;
+  PRODUCT_CORE                                  = $00000065;
+  PRODUCT_PROFESSIONAL_WMC                      = $00000067;
+  PRODUCT_MOBILE_CORE                           = $00000068;
+  PRODUCT_EMBEDDED_INDUSTRY_EVAL                = $00000069; // *
+  PRODUCT_EMBEDDED_INDUSTRY_E_EVAL              = $0000006A; // *
+  PRODUCT_EMBEDDED_EVAL                         = $0000006B; // *
+  PRODUCT_EMBEDDED_E_EVAL                       = $0000006C; // *
+  PRODUCT_NANO_SERVER                           = $0000006D; // *
+  PRODUCT_CLOUD_STORAGE_SERVER                  = $0000006E; // *
+  PRODUCT_CORE_CONNECTED                        = $0000006F; // *
+  PRODUCT_PROFESSIONAL_STUDENT                  = $00000070; // *
+  PRODUCT_CORE_CONNECTED_N                      = $00000071; // *
+  PRODUCT_PROFESSIONAL_STUDENT_N                = $00000072; // *
+  PRODUCT_CORE_CONNECTED_SINGLELANGUAGE         = $00000073; // *
+  PRODUCT_CORE_CONNECTED_COUNTRYSPECIFIC        = $00000074; // *
+  PRODUCT_CONNECTED_CAR                         = $00000075; // *
+  PRODUCT_INDUSTRY_HANDHELD                     = $00000076; // *
+  PRODUCT_PPI_PRO                               = $00000077; // *
+  PRODUCT_ARM64_SERVER                          = $00000078; // *
+  PRODUCT_EDUCATION                             = $00000079;
+  PRODUCT_EDUCATION_N                           = $0000007A;
+  PRODUCT_IOTUAP                                = $0000007B;
+  PRODUCT_CLOUD_HOST_INFRASTRUCTURE_SERVER      = $0000007C; // *
+  PRODUCT_ENTERPRISE_S                          = $0000007D;
+  PRODUCT_ENTERPRISE_S_N                        = $0000007E;
+  PRODUCT_PROFESSIONAL_S                        = $0000007F; // *
+  PRODUCT_PROFESSIONAL_S_N                      = $00000080; // *
+  PRODUCT_ENTERPRISE_S_EVALUATION               = $00000081;
+  PRODUCT_ENTERPRISE_S_N_EVALUATION             = $00000082;
+  PRODUCT_IOTUAPCOMMERCIAL                      = $00000083;
+  PRODUCT_MOBILE_ENTERPRISE                     = $00000085;
+  PRODUCT_HOLOGRAPHIC                           = $00000087; // *
+  PRODUCT_HOLOGRAPHIC_BUSINESS                  = $00000088; // *
+  PRODUCT_PRO_SINGLE_LANGUAGE                   = $0000008A; // *
+  PRODUCT_PRO_CHINA                             = $0000008B; // *
+  PRODUCT_ENTERPRISE_SUBSCRIPTION               = $0000008C; // *
+  PRODUCT_ENTERPRISE_SUBSCRIPTION_N             = $0000008D; // *
+  PRODUCT_DATACENTER_NANO_SERVER                = $0000008F;
+  PRODUCT_STANDARD_NANO_SERVER                  = $00000090;
+  PRODUCT_DATACENTER_A_SERVER_CORE              = $00000091;
+  PRODUCT_STANDARD_A_SERVER_CORE                = $00000092;
+  PRODUCT_DATACENTER_WS_SERVER_CORE             = $00000093;
+  PRODUCT_STANDARD_WS_SERVER_CORE               = $00000094;
+  PRODUCT_UTILITY_VM                            = $00000095; // *
+  PRODUCT_DATACENTER_EVALUATION_SERVER_CORE     = $0000009F; // *
+  PRODUCT_STANDARD_EVALUATION_SERVER_CORE       = $000000A0; // *
+  PRODUCT_PRO_WORKSTATION                       = $000000A1;
+  PRODUCT_PRO_WORKSTATION_N                     = $000000A2;
+  PRODUCT_PRO_FOR_EDUCATION                     = $000000A4;
+  PRODUCT_PRO_FOR_EDUCATION_N                   = $000000A5; // *
+  PRODUCT_AZURE_SERVER_CORE                     = $000000A8; // *
+  PRODUCT_AZURE_NANO_SERVER                     = $000000A9; // *
+  PRODUCT_ENTERPRISEG                           = $000000AB; // *
+  PRODUCT_ENTERPRISEGN                          = $000000AC; // *
+  PRODUCT_SERVERRDSH                            = $000000AF;
+  PRODUCT_CLOUD                                 = $000000B2; // *
+  PRODUCT_CLOUDN                                = $000000B3; // *
+  PRODUCT_HUBOS                                 = $000000B4; // *
+  PRODUCT_ONECOREUPDATEOS                       = $000000B6; // *
+  PRODUCT_CLOUDE                                = $000000B7; // *
+  PRODUCT_IOTOS                                 = $000000B9; // *
+  PRODUCT_CLOUDEN                               = $000000BA; // *
+  PRODUCT_IOTEDGEOS                             = $000000BB; // *
+  PRODUCT_IOTENTERPRISE                         = $000000BC;
+  PRODUCT_LITE                                  = $000000BD; // *
+  PRODUCT_IOTENTERPRISE_S                       = $000000BF;
+  PRODUCT_XBOX_SYSTEMOS                         = $000000C0; // *
+  PRODUCT_XBOX_GAMEOS                           = $000000C2; // *
+  PRODUCT_XBOX_ERAOS                            = $000000C3; // *
+  PRODUCT_XBOX_DURANGOHOSTOS                    = $000000C4; // *
+  PRODUCT_XBOX_SCARLETTHOSTOS                   = $000000C5; // *
+  PRODUCT_XBOX_KEYSTONE                         = $000000C6; // *
+  PRODUCT_AZURE_SERVER_CLOUDHOST                = $000000C7; // *
+  PRODUCT_AZURE_SERVER_CLOUDMOS                 = $000000C8; // *
+  PRODUCT_CLOUDEDITIONN                         = $000000CA; // *
+  PRODUCT_CLOUDEDITION                          = $000000CB; // *
+  PRODUCT_VALIDATION                            = $000000CC; // *
+  PRODUCT_IOTENTERPRISESK                       = $000000CD; // *
+  PRODUCT_IOTENTERPRISEK                        = $000000CE; // *
+  PRODUCT_IOTENTERPRISESEVAL                    = $000000CF; // *
+  PRODUCT_AZURE_SERVER_AGENTBRIDGE              = $000000D0; // *
+  PRODUCT_AZURE_SERVER_NANOHOST                 = $000000D1; // *
+  PRODUCT_WNC                                   = $000000D2; // *
+  PRODUCT_AZURESTACKHCI_SERVER_CORE             = $00000196; // *
+  PRODUCT_DATACENTER_SERVER_AZURE_EDITION       = $00000197;
+  PRODUCT_DATACENTER_SERVER_CORE_AZURE_EDITION  = $00000198; // *
+  PRODUCT_UNLICENSED                            = $ABCDABCD;
 
   // These constants are required for use with GetSystemMetrics to detect
   // certain editions. GetSystemMetrics returns non-zero when passed these flags
@@ -451,6 +547,17 @@ type
   );
 
 type
+  // Various Windows 10 & 11 release versions
+  TPJWin10PlusVersion = (
+    win10plusNA,
+    win10plusUnknown,
+    win10v1507, win10v1511, win10v1607, win10v1703, win10v1709, win10v1803,
+    win10v1809, win10v1903, win10v1909, win10v2004, win10v20H2, win10v21H1,
+    win10v21H2, win10v22H2,
+    win11v21H2, win11v22H2, win11v23H2, win11v24H2
+  );
+
+type
   ///  <summary>Class of exception raised by code in this unit.</summary>
   EPJSysInfo = class(Exception);
 
@@ -469,10 +576,13 @@ type
     ///  <returns>True if suite is installed, False if not installed or not an
     ///  NT platform OS.</returns>
     class function CheckSuite(const Suite: Integer): Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
-    ///  <summary>Gets product edition from registry.</summary>
-    ///  <remarks>Needed to get edition for NT4 pre SP6.</remarks>
-    class function EditionFromReg: string;
+    ///  <summary>Gets product edition from registry for NT4 pre SP6.</remarks>
+    class function NTEditionFromReg: string;
+
+    ///  <summary>Gets edition ID from registry.</summary>
+    class function EditionIDFromReg: string;
 
     ///  <summary>Checks registry to see if NT4 Service Pack 6a is installed.
     ///  </summary>
@@ -493,6 +603,18 @@ type
     ///  </remarks>
     class function IsReallyWindowsVersionOrGreater(MajorVersion, MinorVersion,
       ServicePackMajor: Word): Boolean;
+
+    ///  <summary>Checks if the operating system is Windows 10 or later, with a
+    ///  version identifier the same or later than the given version identifier.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>WARNING: Windows 11 versions are always considered to be later
+    ///  Windows 10 versions, even if the Windows 10 version was released after
+    ///  the Windows 11 version.</para>
+    ///  <para><c>AVersion</c> must not be one of <c>win10plusNA</c> or
+    ///  <c>win10plusUnknown</c>.</para>
+    class function IsWindows10PlusVersionOrLater(
+      const AVersion: TPJWin10PlusVersion): Boolean;
 
   public
 
@@ -530,17 +652,21 @@ type
 
     ///  <summary>Checks if Windows Media Center is installed.</summary>
     class function IsMediaCenter: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks if the program is running on a tablet PC OS.</summary>
     class function IsTabletPC: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks if the program is running under Windows Terminal Server
     ///  as a client session.</summary>
     class function IsRemoteSession: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks of the host operating system has pen extensions
     ///  installed.</summary>
     class function HasPenExtensions: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Returns the host OS platform identifier.</summary>
     class function Platform: TPJOSPlatform;
@@ -600,6 +726,9 @@ type
 
     ///  <summary>Returns the Windows product ID of the host OS.</summary>
     class function ProductID: string;
+
+    ///  <summary>Returns the digital product ID of the host OS.</summary>
+    class function DigitalProductID: TBytes;
 
     ///  <summary>Organisation to which Windows is registered, if any.</summary>
     class function RegisteredOrganisation: string;
@@ -736,6 +865,46 @@ type
     class function IsReallyWindows10OrGreater: Boolean;
       {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
+    ///  <summary>Returns an identifier representing a Windows 10 or 11
+    ///  version.</summary>
+    ///  <remarks>If the OS is earlier than Windows 10 then <c>win10plusNA</c>
+    ///  is returned. If the OS is Windows 10 or later but is a dev, beta etc.
+    ///  build whose version can't be detected then <c>win10plusUnknown</c> is
+    ///  returned.</remarks>
+    class function Windows10PlusVersion: TPJWin10PlusVersion;
+
+    ///  <summary>Returns the version name of a the current operating system, if
+    ///  it is Windows 10 or later.</summary>
+    ///  <remarks>
+    ///  <para>NOTE: some Windows 10 and 11 versions have the same string.
+    ///  </para>
+    ///  <para>If the OS is earlier than Windows 10 then an empty string is
+    ///  returned. If the OS is Windows 10 or later but is a dev, beta etc.
+    ///  build whose version can't be detected then 'Unknown' is returned.
+    ///  </para>
+    ///  </remarks>
+    class function Windows10PlusVersionName: string;
+
+    ///  <summary>Checks if the operating system is Windows 10 or later, with a
+    ///  version identifier the same or later than <c>AVersion</c>.
+    ///  </summary>
+    ///  <remarks><c>AVersion</c> must be a valid Windows 10 version
+    ///  identifier, with a name that begins with <c>win10v</c>.</remarks>
+    ///  <exception><c>EPJSysInfo</c> raised if <c>AVersion</c> is not a valid
+    ///  Windows 10 version identifier.</exception>
+    class function IsWindows10VersionOrLater(
+      const AVersion: TPJWin10PlusVersion): Boolean;
+
+    ///  <summary>Checks if the operating system is Windows 11 or later, with a
+    ///  version identifier the same or later than <c>AVersion</c>.
+    ///  </summary>
+    ///  <remarks><c>AVersion</c> must be a valid Windows 11 version
+    ///  identifier, with a name that begins with <c>win11v</c>.</remarks>
+    ///  <exception><c>EPJSysInfo</c> raised if <c>AVersion</c> is not a valid
+    ///  Windows 11 version identifier.</exception>
+    class function IsWindows11VersionOrLater(
+      const AVersion: TPJWin10PlusVersion): Boolean;
+
     ///  <summary>Checks if the OS is a server version.</summary>
     ///  <remarks>
     ///  <para>For Windows 2000 and later the result always relates to the
@@ -754,6 +923,12 @@ type
     ///  that this value could be spoofed.</para>
     ///  </remarks>
     class function RevisionNumber: Integer;
+
+    ///  <summary>Returns the repository branch from which the OS release was]
+    ///  built.</summary>
+    ///  <remarks>Returns the empty string if no build branch information is
+    ///  available.</remarks>
+    class function BuildBranch: string;
   end;
 
 type
@@ -806,6 +981,7 @@ type
 
     ///  <summary>Checks if a network is present on host computer.</summary>
     class function IsNetworkPresent: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Returns the OS mode used when host computer was last booted.
     ///  </summary>
@@ -980,6 +1156,7 @@ resourcestring
   sUnknownProduct = 'Unrecognised operating system product';
   sBadRegType =  'Unsupported registry type';
   sBadRegIntType = 'Integer value expected in registry';
+  sBadRegBinType = 'Binary value expected in registry';
   sBadProcHandle = 'Bad process handle';
 
 
@@ -990,13 +1167,14 @@ type
   UInt64 = Int64;
 {$ENDIF}
 
-
 const
   // Map of product codes per GetProductInfo API to product names
+  // Names are not available for all PRODUCT_xxx values.
   // ** Laurent Pierre supplied original code on which this map is based
   //    It has been modified and extended using MSDN documentation at
-  //    https://msdn.microsoft.com/en-us/library/ms724358
-  cProductMap: array[1..99] of record
+  //    https://msdn.microsoft.com/en-us/library/ms724358 and
+  //    https://tinyurl.com/5684558v (learn.microsoft.com)
+  cProductMap: array[1..107] of record
     Id: Cardinal; // product ID
     Name: string; // product name
   end = (
@@ -1196,6 +1374,22 @@ const
       Name: 'Web Server (full installation)';),
     (Id: PRODUCT_WEB_SERVER_CORE;
       Name: 'Web Server (core installation)';),
+    (Id: PRODUCT_CORE_ARM;
+      Name: 'Windows RT';),
+    (Id: PRODUCT_DATACENTER_NANO_SERVER;
+      Name: 'Windows Server Datacenter Edition (Nano Server installation)';),
+    (Id: PRODUCT_STANDARD_NANO_SERVER;
+      Name: 'Windows Server Standard Edition (Nano Server installation)';),
+    (Id: PRODUCT_DATACENTER_WS_SERVER_CORE;
+      Name: 'Windows Server Datacenter Edition (Server Core installation)';),
+    (Id: PRODUCT_STANDARD_WS_SERVER_CORE;
+      Name: 'Windows Server Standard Edition (Server Core installation)';),
+    (Id: PRODUCT_PRO_FOR_EDUCATION;
+      Name: 'Windows 10 Pro Education';),
+    (Id: PRODUCT_SERVERRDSH;
+      Name: 'Windows 10 Enterprise for Virtual Desktops';),
+    (Id: PRODUCT_DATACENTER_SERVER_AZURE_EDITION;
+      Name: 'Windows Server Datacenter: Azure Edition';),
     (Id: Cardinal(PRODUCT_UNLICENSED);
       Name: 'Unlicensed product';)
   );
@@ -1216,7 +1410,10 @@ type
     LoRev: Integer;
     HiRev: Integer;
     Name: string;
+    Version: Word;
   end;
+
+  TWin10PlusVersionSet = set of TPJWin10PlusVersion;
 
 const
   {
@@ -1226,11 +1423,12 @@ const
       https://en.wikipedia.org/wiki/Windows_NT
       https://en.wikipedia.org/wiki/Windows_10_version_history
       https://en.wikipedia.org/wiki/Windows_11_version_history
+      https://blogs.windows.com/windows-insider/tag/windows-insider-program/
       https://en.wikipedia.org/wiki/Windows_Server
       https://en.wikipedia.org/wiki/Windows_Server_2019
       https://en.wikipedia.org/wiki/Windows_Server_2016
+      https://en.wikipedia.org/wiki/Windows_Server_2022
       https://tinyurl.com/y8tfadm2 (MS Windows Server release information)
-      https://tinyurl.com/usupsz4a (Win 11 Version Numbers & Build Versions)
       https://docs.microsoft.com/en-us/lifecycle/products/windows-server-2022
       https://tinyurl.com/yj5e72jt (MS Win 10 release info)
       https://tinyurl.com/kd3weeu7 (MS Server release info)
@@ -1239,6 +1437,10 @@ const
       For Vista and Win 7 we have to add service pack number to these values to
       get actual build number. For Win 8 onwards we just use the build numbers
       as is.
+
+    References:
+      [^1] MS community blog post https://tinyurl.com/3c8e3hsc
+      [^2] https://en.wikipedia.org/wiki/Windows_11_version_history
   }
 
   {
@@ -1256,35 +1458,41 @@ const
 
 
   // Windows Vista -------------------------------------------------------------
-  WinVistaBaseBuild = 6000;
+  WinVista_Base_Build = 6000;
 
   // Windows 7 -----------------------------------------------------------------
-  Win7BaseBuild = 7600;
+  Win7_Base_Build = 7600;
 
   // Windows 8 -----------------------------------------------------------------
-  Win8Build = 9200;             // Build number used for all Win 8/Svr 2012
-  Win8Point1Build = 9600;       // Build number used for all Win 8.1/Svr 2012 R2
+  Win8_Build = 9200;        // Build number used for all Win 8/Svr 2012
+  Win8Point1_Build = 9600;  // Build number used for all Win 8.1/Svr 2012 R2
 
   // Windows 10 ----------------------------------------------------------------
 
-  // Version 1507 previews
-  // Preview builds with major/minor version number 6.4
-  Win10_6point4Builds: array[0..2] of Integer = (9841, 9860, 9879);
-  // Preview builds with major/minor version number 10.0
-  Win10_1507_Preview_Builds: array[0..10] of Integer = (
-    9926, 10041, 10049, 10061, 10074, 10122, 10130, 10158, 10159, 10162, 10166
-  );
+  // Version 1507 preview builds
+  //   Preview builds with major/minor version number 6.4
+  //     Expired by 2015-04-30 [^1]:
+  //       9841, 9860, 9879
+  //   Preview builds with major/minor version number 10.0
+  //     Expired by 2015-10-15 [^1]:
+  //       9926, 10041, 10049, 10061, 10074, 10122, 10130, 10158, 10159, 10162,
+  //       10166
 
-  // Version 1511 previews
-  Win10_1511_Preview_Builds: array[0..4] of Integer = (
-    10525, 10532, 10547, 10565, 10576
-  );
+  // Version 1511 preview builds
+  //   Expired by 2016-07-30 [^1]:
+  //     10525, 10532, 10547, 10565, 10576
 
   // Version 1607 previews
-  Win10_1607_Preview_Builds: array[0..24] of Integer = (
-    11082, 11099, 11102, 14251, 14257, 14271, 14279, 14291, 14295, 14316,
-    14328, 14332, 14342, 14352, 14361, 14366, 14367, 14371, 14372, 14376,
-    14379, 14383, 14385, 14388, 14390
+  Win10_1607_Preview_Builds: array[0..5] of Integer = (
+    // Expired 2016-07-30 [^1]:
+    //   11082, 11099
+    // Expired 2016-08-01 [^1]:
+    //   11102, 14251, 14257, 14267, 14271, 14279, 14291, 14295, 14316, 14328,
+    //   14332, 14342, 14352, 14361
+    // Expired 2016-10-15 [^1]:
+    //   14366, 14367, 14371, 14372,
+    14376, 14379, 14383, 14385, // unknown expiry date [^1]
+    14388, 14390                // permanently activated [^1]
   );
 
   // Version 1703 previews
@@ -1349,7 +1557,7 @@ const
   );
 
   {
-    End of support information for Windows 10 versions (as of 2022-12-31).
+    End of support information for Windows 10 versions (as of 2024-10-01).
       GAC = General Availablity Channel.
       LTSC = Long Term Support Channel.
 
@@ -1365,53 +1573,65 @@ const
     1903    | ended      | N/a
     1909    | ended      | N/a
     2004    | ended      | N/a
-    20H2    | 2023-09-05 | N/a
+    20H2    | ended      | N/a
     21H1    | ended      | N/a
-    21H2    | 2024-06-11 | 2032-01-13
-    22H2    | 2025-05-13 | N/a
+    21H2    | ended      | 2032-01-13
+    22H2    | 2025-10-14 | N/a
   }
 
+  // Win 10 release build numbers
+  Win10_1507_Build = 10240;
+  Win10_1511_Build = 10586;
+  Win10_1607_Build = 14393;
+  Win10_1703_Build = 15063;
+  Win10_1709_Build = 16299;
+  Win10_1803_Build = 17134;
+  Win10_1809_Build = 17763;
+  Win10_1903_Build = Win10_19XX_Shared_Build;
+  Win10_1909_Build = 18363;
+  Win10_2004_Build = 19041;
+  Win10_20H2_Build = 19042;
+  Win10_21H1_Build = 19043; // See **REF3** End of service @ rev 2364
+  Win10_21H2_Build = 19044; // See **REF4**
+  Win10_22H2_Build = 19045; // See **REF5**
+
   // Map of Win 10 builds from 1st release (version 1507) to version 20H2
+  // Later Win 10 releases have special handling and aren't in the build map
   //
   // NOTE: The following versions that are still being maintained per the above
   // table have HiRev = MaxInt while the unsupported versions have HiRev set to
   // the final build number.
-  Win10BuildMap: array[0..10] of TBuildNameMap = (
-    (Build: 10240; LoRev: 16484; HiRev: MaxInt;
-      Name: 'Version 1507'),
-    (Build: 10586; LoRev: 0; HiRev: 1540;
-      Name: 'Version 1511: November Update'),
-    (Build: 14393; LoRev: 0; HiRev: MaxInt;
-      Name: 'Version 1607: Anniversary Update'),
-    (Build: 15063; LoRev: 0; HiRev: 2679;
-      Name: 'Version 1703: Creators Update'),
-    (Build: 16299; LoRev: 15; HiRev: 2166;
-      Name: 'Version 1709: Fall Creators Update'),
-    (Build: 17134; LoRev: 1; HiRev: 2208;
-      Name: 'Version 1803: April 2018 Update'),
-    (Build: 17763; LoRev: 1; HiRev: MaxInt;
-      Name: 'Version 1809: October 2018 Update'),
-    (Build: Win10_19XX_Shared_Build; LoRev: 116; HiRev: 1256;
-      Name: 'Version 1903: May 2019 Update'),
-    (Build: 18363; LoRev: 327; HiRev: 2274;
-      Name: 'Version 1909: November 2019 Update'),
-    (Build: 19041; LoRev: 264; HiRev: 1415;
-      Name: 'Version 2004: May 2020 Update'),
-    (Build: 19042; LoRev: 572; HiRev: MaxInt;
-      Name: 'Version 20H2: October 2020 Update')
+  Win10_BuildMap: array[0..10] of TBuildNameMap = (
+    (Build: Win10_1507_Build; LoRev: 16484; HiRev: MaxInt;
+      Name: 'Version 1507'; Version: Ord(win10v1507)),
+    (Build: Win10_1511_Build; LoRev: 0; HiRev: 1540;
+      Name: 'Version 1511: November Update'; Version: Ord(win10v1511)),
+    (Build: Win10_1607_Build; LoRev: 0; HiRev: MaxInt;
+      Name: 'Version 1607: Anniversary Update'; Version: Ord(win10v1607)),
+    (Build: Win10_1703_Build; LoRev: 0; HiRev: 2679;
+      Name: 'Version 1703: Creators Update'; Version: Ord(win10v1703)),
+    (Build: Win10_1709_Build; LoRev: 15; HiRev: 2166;
+      Name: 'Version 1709: Fall Creators Update'; Version: Ord(win10v1709)),
+    (Build: Win10_1803_Build; LoRev: 1; HiRev: 2208;
+      Name: 'Version 1803: April 2018 Update'; Version: Ord(win10v1803)),
+    (Build: Win10_1809_Build; LoRev: 1; HiRev: MaxInt;
+      Name: 'Version 1809: October 2018 Update'; Version: Ord(win10v1809)),
+    (Build: Win10_1903_Build; LoRev: 116; HiRev: 1256;
+      Name: 'Version 1903: May 2019 Update'; Version: Ord(win10v1903)),
+    (Build: Win10_1909_Build; LoRev: 327; HiRev: 2274;
+      Name: 'Version 1909: November 2019 Update'; Version: Ord(win10v1909)),
+    (Build: Win10_2004_Build; LoRev: 264; HiRev: 1415;
+      Name: 'Version 2004: May 2020 Update'; Version: Ord(win10v2004)),
+    (Build: Win10_20H2_Build; LoRev: 572; HiRev: 2965;
+      Name: 'Version 20H2: October 2020 Update'; Version: Ord(win10v20H2))
   );
 
-  // Additional information is available for Win 10 builds from version 21H1,
-  // as follows:
-
-  // Windows 10 version 21H1 - see **REF3** in implementation for details
-  Win1021H1Build = 19043; // ** End of service 2022-12-13, rev 2364
-
-  // Windows 10 version 21H2 - see **REF4** in implementation for details
-  Win1021H2Build = 19044;
-
-  // Windows 10 version 22H2 - see **REF5** in implementation for details
-  Win1022H2Build = 19045;
+  // Set of Windows 10 version identifiers
+  Win10_Versions: TWin10PlusVersionSet = [
+    win10v1507, win10v1511, win10v1607, win10v1703, win10v1709, win10v1803,
+    win10v1809, win10v1903, win10v1909, win10v2004, win10v20H2, win10v21H1,
+    win10v21H2, win10v22H2
+  ];
 
   // Windows 10 slow ring, fast ring and skip-ahead channels were all expired
   // well before 2022-12-31 and are not detected. (In fact there was never any
@@ -1422,74 +1642,125 @@ const
   // NOTE: All releases of Windows 11 report version 10.0
 
   {
-    End of support (EOS) information for Windows 11 versions (as of 2022-12-31).
+    End of support (EOS) information for Windows 11 versions (as of 2024-10-01).
 
     Version | Home, Pro  | Education,
             | etc EOS    | Enterprise
             |            | etc EOS
     --------|------------|------------
-    21H2    | 2023-10-10 | 2024-10-08
+    21H2    | ENDED      | 2024-10-08
     22H2    | 2024-10-08 | 2025-10-14
+    23H2    | 2025-11-11 | 2026-11-10
+    24H2    | 2026-10-13 | 2027-10-12
   }
 
   // 1st build released branded as Windows 11
   // Insider version, Dev channel, v10.0.21996.1
-  Win11DevBuild = 21996;
+  Win11_Dev_Build = 21996;
 
   // Windows 11 version 21H2  - see **REF6** in implementation for details
-  Win11v21H2Build = 22000;
+  Win11_21H2_Build = 22000;
 
   // Windows 11 version 22H2
   //
   // Build 22621 was the original beta build. Same build used for releases and
   // various other channels.
   // See **REF1** in implementation
-  Win11v22H2Build = 22621;
-  // Build 22632 was added as an alternative Beta channel build as of rev 290.
+  Win11_22H2_Build = 22621;
+
+  // Windows 11 version 22H3
+  // See **REF10** in implementation
+  Win11_23H2_Build = 22631;
+
+  // Windows 11 version 22H4
+  // See **REF11** in implementation
+  Win11_24H2_Build = 26100;
+
+  // "Preview Builds of October 2022 component update in Beta Channel"
   // See **REF2** in implementation
-  Win11v22H2BuildAlt = 22622;
+  Win11_Oct22Component_BetaChannel_Build = 22622;
 
-  // Windows 11 Dev channel releases (with version string "Dev").
-  // For details see https://en.wikipedia.org/wiki/Windows_11_version_history
-  Win11DevChannelDevBuilds: array[0..25] of Integer = (
-    // pre Win 11 release (expired 2021/10/31):
-    //   22449, 22454, 22458, 22463,
-    // pre Win 11 release (expired 2022/09/15):
-    //   22468,
-    // post Win 11 release, pre Win 11 22H2 beta release (expired 2022/09/15):
-    //   22471, 22478, 22483, 22489, 22494, 22499, 22504, 22509, 22518, 22523,
-    //   22526, 22533, 22538, 22543, 22557, 22563,
-    // post Win 11 22H2 beta release (expired 2022/09/15):
-    //   25115, 25120, 25126, 25131, 25136, 25140, 25145, 25151, 25158, 25163,
-    //   25169, 25174, 25179,
-    // post Win 11 22H2 beta release (expiring 2023/09/15):
-    25182, 25188, 25193, 25197, 25201, 25206, 25211,
-    // post Win 11 22H2 release (expiring 2023/09/15):
-    25217, 25227, 25231, 25236, 25247, 25252, 25262, 25267, 25272, 25276, 25281,
-    25284, 25290, 25295, 25300, 25309, 23403, 23419, 23424
-  );
+  // "Preview Builds of February 2023 component update in Beta Channel"
+  // See **REF7** in implementation
+  Win11_Feb23Component_BetaChannel_Build = 22623;
 
-  // Preview builds of Windows 11 in the Canary Channel
-  // For details see https://en.wikipedia.org/wiki/Windows_11_version_history
-  Win11CanaryPreviewBuilds: array[0..2] of Integer = (
-    // expiring 2023/09/15:
-    25314, 25324, 25330
-  );
+  // "Preview builds of May 2023 component update in Beta Channel"
+  // See **REF8** in implementation
+  Win11_May23Component_BetaChannel_Build = 22624;
 
-  // Windows 11 Dev channel builds with version string "22H2"
-  // expired 2022/09/15):
+  // "Preview builds of future component update in Beta Channel"
+  // See **REF9** in implementation
+  Win11_FutureComponent_BetaChannel_Build = 22635;
+
+  // "Preview builds of future component update in Dev Channel"
+  // See **REF12** in implementation
+  Win11_FutureComponent_DevChannel_Build = 26120;
+
+  // Windows 11 Dev channel releases with version string "Dev" [^2]
+  // pre Win 11 release (expired 2021/10/31):
+  //   22449, 22454, 22458, 22463,
+  // pre Win 11 release (expired 2022/09/15):
+  //   22468,
+  // post Win 11 release, pre Win 11 22H2 beta release (expired 2022/09/15):
+  //   22471, 22478, 22483, 22489, 22494, 22499, 22504, 22509, 22518, 22523,
+  //   22526, 22533, 22538, 22543, 22557, 22563,
+
+  // Windows 11 Dev channel releases with version string "22H2" [^2]
+  // pre Win 11 22H2 beta release (expired 2022/09/15):
   //   22567, 22572, 22579
+  // post Win 11 22H2 beta release (expired 2022/09/15):
+  //   25115, 25120, 25126, 25131, 25136, 25140, 25145, 25151, 25158, 25163,
+  //   25169, 25174, 25179,
+  // post Win 11 22H2 beta release (expired 2023/09/15):
+  //    25182, 25188, 25193, 25197, 25201, 25206, 25211,
+  // post Win 11 22H2 release, ni_release string (expired 2023/09/15):
+  //    25217, 25227, 25231, 25236, 25247, 25252, 25262, 25267, 25272, 25276,
+  //    25281, 25284, 25290, 25295, 25300, 25309,
+  // post Win 11 22H2 release, ni_prerelease string (expired 2023/09/15):
+  //    23403, 23419, 23424, 23430, 23435, 23440, 23451, 23466, 23471, 23475,
+  //    23481, 23486, 23493, 23506, 23511, 23516, 23521,
+  // post Win 11 22H2 release, ni_prerelease string (expired 2024-09-15):
+  //    23526, 23531, 23536, 23541, 23545, 23550, 23555, 23560, 23565, 23570,
+  //    23575, 23580, 23585, 23590, 23595, 23601, 23606, 23612, 23615, 23619,
+  //    23620
 
-  // Windows 11 Dev & Beta channel builds with version string "22H2"
-  Win11DevBetaChannels22H2Builds: array[0..1] of Integer = (
-    // expired 2022/09/15: 22581, 22593, 22598,
+  // Preview builds of Windows 11 in the Canary Channel with version string
+  // "22H2" [^2]
+  // expired 2023-09-15:
+  //    25314, 25324, 25330, 25336, 25346, 25352, 25357, 25370,
+
+  // Preview builds of Windows 11 in the Canary Channel with version string
+  // "23H2" [^2]
+  // Expired 2023-09-15:
+  //    25375, 25381, 25387, 25393, 25905, 25915, 25921, 25926,
+  // Expired 2024-09-15:
+  //    25931, 25936, 25941, 25947, 25951, 25967, 25977, 25982, 25987, 25992,
+  //    25997, 26002, 26010, 26016, 26020, 26040, 26063, 26200, 26212, 26217,
+  //    26227, 26231, 26236, 26241, 26244, 26252, 26257, 27686.
+
+  // Windows 11 Dev & Beta channel builds with version string "22H2" [^2]
+  Win11_22H2_DevAndBetaChannel_Builds: array[0..1] of Integer = (
+    // Expired 2022/09/15:
+    //   22581, 22593, 22598
+    // Unknown expiry date:
     22610, 22616
   );
 
-  Win11Feb23ComponentBetaChannelBuild = 22623;
-  Win11FutureComponentBetaChannelBuild = 22624;
+  // Windows 11 Preview, Dev & Canary channel builds with version "24H2" [^2]
+  Win11_24H2_DevAndCanaryChannel_Builds: array[0..1] of Integer = (
+    // Expired 2024-09-15:
+    //   26052, 26058, 26080, 26085,
+    // Unknown expiry date:
+    26090 {Dev revs:1,112; Canary revs: 1},
+    26100 {Dev revs:1,268; Canary revs: 1}
+  );
 
-  Win11FirstBuild = Win11DevBuild;  // First build number of Windows 11
+  Win11_24H2_CanaryChannel_Builds: array[0..0] of Integer = (
+    // expiring 2025-09-15:
+    27695
+  );
+
+  Win11_First_Build = Win11_Dev_Build;  // First build number of Windows 11
 
   // Windows server v10.0 version ----------------------------------------------
 
@@ -1497,9 +1768,14 @@ const
   // version 10.0. There's always an exception with Windows versioning!
 
   // Last build numbers of each "major" release before moving on to the next
-  Win2016LastBuild = 17134;
-  Win2019LastBuild = 18363;
-  WinServerLastBuild = 19042;
+  Win2016_Last_Build = 17134;
+  Win2019_Last_Build = 18363;
+  WinServer_Last_Build = 19042;
+
+  // Set of Windows 10 version identifiers
+  Win11_Versions: TWin10PlusVersionSet = [
+    win11v21H2, win11v22H2, win11v23H2, win11v24H2
+  ];
 
   {
     End of support information for all Windows Server versions.
@@ -1531,31 +1807,38 @@ const
   // Map of Windows server releases that are named straightforwardly
   WinServerSimpleBuildMap: array[0..12] of TBuildNameMap = (
     // Windows Server 2016
-    (Build: 10074; LoRev: 0; HiRev: MaxInt; Name: 'Technical Preview 2'),
-    (Build: 10514; LoRev: 0; HiRev: MaxInt; Name: 'Technical Preview 3'),
-    (Build: 10586; LoRev: 0; HiRev: MaxInt; Name: 'Technical Preview 4'),
-    (Build: 14300; LoRev: 0; HiRev: MaxInt; Name: 'Technical Preview 5'),
-    (Build: 14393; LoRev: 0; HiRev: MaxInt; Name: 'Version 1607'),
-    (Build: 16299; LoRev: 0; HiRev: MaxInt; Name: 'Version 1709'),
-    (Build: Win2016LastBuild; LoRev: 0; HiRev: MaxInt; Name: 'Version 1803'),
+    (Build: 10074; LoRev: 0; HiRev: MaxInt; Name: 'Technical Preview 2';
+      Version: 0),
+    (Build: 10514; LoRev: 0; HiRev: MaxInt; Name: 'Technical Preview 3';
+      Version: 0),
+    (Build: 10586; LoRev: 0; HiRev: MaxInt; Name: 'Technical Preview 4';
+      Version: 0),
+    (Build: 14300; LoRev: 0; HiRev: MaxInt; Name: 'Technical Preview 5';
+      Version: 0),
+    (Build: 14393; LoRev: 0; HiRev: MaxInt; Name: 'Version 1607'; Version: 0),
+    (Build: 16299; LoRev: 0; HiRev: MaxInt; Name: 'Version 1709'; Version: 0),
+    (Build: Win2016_Last_Build; LoRev: 0; HiRev: MaxInt; Name: 'Version 1803';
+      Version: 0),
     // Windows Server 2019
-    (Build: 17763; LoRev: 0; HiRev: MaxInt; Name: 'Version 1809'),
-    (Build: 18362; LoRev: 0; HiRev: MaxInt; Name: 'Version 1903'),
-    (Build: Win2019LastBuild; LoRev: 0; HiRev: MaxInt; Name: 'Version 1909'),
+    (Build: 17763; LoRev: 0; HiRev: MaxInt; Name: 'Version 1809'; Version: 0),
+    (Build: 18362; LoRev: 0; HiRev: MaxInt; Name: 'Version 1903'; Version: 0),
+    (Build: Win2019_Last_Build; LoRev: 0; HiRev: MaxInt; Name: 'Version 1909';
+      Version: 0),
     // Windows Server (no year number)
-    (Build: 19041; LoRev: 0; HiRev: MaxInt; Name: 'Version 2004'),
-    (Build: WinServerLastBuild; LoRev: 0; HiRev: MaxInt; Name: 'Version 20H2'),
+    (Build: 19041; LoRev: 0; HiRev: MaxInt; Name: 'Version 2004'; Version: 0),
+    (Build: WinServer_Last_Build; LoRev: 0; HiRev: MaxInt;
+      Name: 'Version 20H2'; Version: 0),
     // Windows Server 2022
-    (Build: 20348; LoRev: 0; HiRev: MaxInt; Name: 'Version 21H2')
+    (Build: 20348; LoRev: 0; HiRev: MaxInt; Name: 'Version 21H2'; Version: 0)
   );
 
   // Windows server releases needing special handling
 
   // Server 2016 Technical Preview 1: reports version 6.4 instead of 10.0!
-  Win2016TP1Build = 9841;
+  Win2016_TP1_Build = 9841;
 
   // Server 2019 Insider Preview builds: require format strings in names
-  Win2019IPBuilds: array[0..9] of Integer = (
+  Win2019_IP_Builds: array[0..9] of Integer = (
     17623, 17627, 17666, 17692, 17709, 17713, 17723, 17733, 17738, 17744
   );
 
@@ -1603,6 +1886,8 @@ var
   //    service pack, but is a significant update.
   // ** At present this variable is only used for Windows 10.
   InternalExtraUpdateInfo: string = '';
+
+  InternalWin1011Version: TPJWin10PlusVersion = win10plusNA;
 
 // Flag required when opening registry with specified access flags
 {$IFDEF REGACCESSFLAGS}
@@ -1722,7 +2007,8 @@ end;
 // parameters respectively. Otherwise False is returned, FoundBN is set to 0 and
 // FoundExtra is set to ''.
 function FindBuildNameAndExtraFrom(const Infos: array of TBuildNameMap;
-  var FoundBN: Integer; var FoundExtra: string): Boolean;
+  var FoundBN: Integer; var FoundExtra: string; var FoundVersion: Word):
+  Boolean;
 var
   I: Integer;
 begin
@@ -1736,6 +2022,7 @@ begin
     begin
       FoundBN := Infos[I].Build;
       FoundExtra := Infos[I].Name;
+      FoundVersion := Infos[I].Version;
       Result := True;
       Break;
     end;
@@ -1972,6 +2259,33 @@ begin
   end;
 end;
 
+function GetRegistryBytes(const RootKey: HKEY; const SubKey, Name: string):
+  TBytes;
+var
+  Reg: TRegistry;          // registry access object
+  ValueInfo: TRegDataInfo; // info about registry value
+begin
+  SetLength(Result, 0);
+  // Open registry at required root key
+  Reg := RegCreate;
+  try
+    Reg.RootKey := RootKey;
+    if RegOpenKeyReadOnly(Reg, SubKey) and Reg.ValueExists(Name) then
+    begin
+      // Check if registry value is integer
+      Reg.GetDataInfo(Name, ValueInfo);
+      if ValueInfo.RegData <> rdBinary then
+        raise EPJSysInfo.Create(sBadRegBinType);
+      SetLength(Result, ValueInfo.DataSize);
+      Reg.ReadBinaryData(Name, Result[0], Length(Result));
+    end;
+  finally
+    // Close registry
+    Reg.CloseKey;
+    Reg.Free;
+  end;
+end;
+
 // Gets string info for given value from Windows current version key in
 // registry.
 function GetCurrentVersionRegStr(ValName: string): string;
@@ -1997,6 +2311,7 @@ var
   GetVersionEx: TGetVersionEx;      // pointer to GetVersionEx API function
   GetProductInfo: TGetProductInfo;  // pointer to GetProductInfo API function
   SI: TSystemInfo;                  // structure from GetSystemInfo API call
+  VersionEx: Word;                  // gets extra version info (Win 10/11)
 
   // Get OS's revision number from registry.
   function GetOSRevisionNumber(const IsNT: Boolean): Integer;
@@ -2004,6 +2319,13 @@ var
     Result := GetRegistryInt(
       HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[IsNT], 'UBR'
     );
+  end;
+
+  // Append "Moment N" to InternalExtraUpdateInfo
+  procedure AppendMomentToInternalExtraUpdateInfo(N: Cardinal);
+  begin
+    InternalExtraUpdateInfo := InternalExtraUpdateInfo
+      + ' Moment ' + IntToStr(N);
   end;
 
 begin
@@ -2054,36 +2376,25 @@ begin
         case InternalMinorVersion of
           0:
             // Vista
-            InternalBuildNumber := WinVistaBaseBuild + Win32ServicePackMajor;
+            InternalBuildNumber := WinVista_Base_Build + Win32ServicePackMajor;
           1:
             // Windows 7
-            InternalBuildNumber := Win7BaseBuild + Win32ServicePackMajor;
+            InternalBuildNumber := Win7_Base_Build + Win32ServicePackMajor;
           2:
             // Windows 8 (no known SPs)
             if Win32ServicePackMajor = 0 then
-              InternalBuildNumber := Win8Build;
+              InternalBuildNumber := Win8_Build;
           3:
             // Windows 8.1 (no known SPs)
             if Win32ServicePackMajor = 0 then
-              InternalBuildNumber := Win8Point1Build;
+              InternalBuildNumber := Win8Point1_Build;
           4:
             if (Win32ProductType = VER_NT_DOMAIN_CONTROLLER)
               or (Win32ProductType = VER_NT_SERVER) then
             begin
               // Windows 2016 Server tech preview 1
-              InternalBuildNumber := Win2016TP1Build;
+              InternalBuildNumber := Win2016_TP1_Build;
               InternalExtraUpdateInfo := 'Technical Preview 6';
-            end
-            else
-            begin
-              if FindBuildNumberFrom(
-                Win10_6point4Builds, InternalBuildNumber
-              ) then
-                // Early Win 10 preview builds report v6.4, not v10.0
-                InternalExtraUpdateInfo := Format(
-                  'Version 1507 Preview v6.4.%d.%d',
-                  [InternalBuildNumber, InternalRevisionNumber]
-                )
             end;
         end;
         if Win32ServicePackMajor > 0 then
@@ -2107,15 +2418,18 @@ begin
             and (Win32ProductType <> VER_NT_SERVER) then
           begin
             if FindBuildNameAndExtraFrom(
-              Win10BuildMap, InternalBuildNumber, InternalExtraUpdateInfo
+              Win10_BuildMap, InternalBuildNumber, InternalExtraUpdateInfo,
+              VersionEx
             ) then
             begin
-              // Nothing to do: required internal variables set in function call
+              InternalWin1011Version :=
+              TPJWin10PlusVersion(VersionEx);
             end
-            else if IsBuildNumber(Win1021H1Build) then
+            else if IsBuildNumber(Win10_21H1_Build) then
             begin
               // **REF3**
-              InternalBuildNumber := Win1021H1Build;
+              InternalBuildNumber := Win10_21H1_Build;
+              InternalWin1011Version := win10v21H1;
               case InternalRevisionNumber of
                 985, 1023, 1052, 1055, 1081, 1082, 1083, 1110, 1151, 1165, 1202,
                 1237, 1266, 1288, 1320, 1348, 1387, 1415, 1466, 1469, 1503,
@@ -2140,21 +2454,24 @@ begin
                   );
               end;
             end
-            else if IsBuildNumber(Win1021H2Build) then
+            else if IsBuildNumber(Win10_21H2_Build) then
             begin
               // **REF4**
               // From 21H2 Windows 10 moves from a 6 monthly update cycle to a
               // yearly cycle
-              InternalBuildNumber := Win1021H2Build;
+              InternalBuildNumber := Win10_21H2_Build;
+              InternalWin1011Version := win10v21H2;
               case InternalRevisionNumber of
                 1288, 1348, 1387, 1415, 1466, 1469, 1503, 1526, 1566, 1586,
                 1620, 1645, 1682, 1706, 1708, 1741, 1766, 1767, 1806, 1826,
                 1865, 1889, 1949, 2006, 2075, 2130, 2132, 2193, 2194, 2251,
-                2311, 2364, 2486, 2546, 2604, 2673, 2728, 2788 .. MaxInt:
+                2311, 2364, 2486, 2546, 2604, 2673, 2728, 2788, 2846, 2965,
+                3086, 3208, 3324, 3448, 3570, 3693, 3803, 3930, 4046,
+                4170, 4291, 4412, 4529, 4651, 4780, 4894 .. MaxInt:
                   InternalExtraUpdateInfo := 'Version 21H2';
                 1147, 1149, 1151, 1165, 1200, 1202, 1237, 1263, 1266, 1319,
-                1320, 1379, 1381, 1499, 1618, 1679, 1737, 1739, 1862, 1947,
-                2192, 2545:
+                1320, 1379, 1381, 1499, 1618, 1679, 1737, 1739, 1862,
+                1947, 2192, 2545:
                   InternalExtraUpdateInfo := Format(
                     'Version 21H2 [Release Preview Channel v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
@@ -2166,37 +2483,50 @@ begin
                   );
               end;
             end
-            else if IsBuildNumber(Win1022H2Build) then
+            else if IsBuildNumber(Win10_22H2_Build) then
             begin
               // **REF5**
-              InternalBuildNumber := Win1022H2Build;
+              InternalBuildNumber := Win10_22H2_Build;
+              InternalWin1011Version := win10v22H2;
               case InternalBuildNumber of
                 2006, 2130, 2132, 2193, 2194, 2251, 2311, 2364, 2486, 2546,
-                2604, 2673, 2728, 2788 .. MaxInt:
+                2604, 2673, 2728, 2788, 2846, 2913, 2965, 3031, 3086, 3208,
+                3271, 3324, 3393, 3448, 3516, 3570, 3636, 3693, 3758, 3803,
+                3930, 3996, 4046, 4123, 4170, 4239, 4291, 4355, 4412, 4474,
+                4529, 4598, 4651, 4717, 4780, 4842, 4894, 4957 .. MaxInt:
                   InternalExtraUpdateInfo := 'Version 22H2';
-                1865, 1889, 1949, 2075, 2301, 2670, 2787:
+                1865, 1889, 1949, 2075, 2301, 2670, 2787, 2908, 3030, 3154,
+                3155, 3269, 3391, 3513, 3754, 3757, 3992, 4116, 4233, 4235,
+                4353, 4472:
                   InternalExtraUpdateInfo := Format(
                     'Version 22H2 [Release Preview Channel v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
+                4593, 4713, 4955:
+                  InternalExtraUpdateInfo := Format(
+                    'Version 22H2 '
+                    + '[Beta and Release Preview Channels v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
                 else
                   InternalExtraUpdateInfo := Format(
-                    'Version 22H1 [Unknown release v10.0.%d.%d]',
+                    'Version 22H2 [Unknown release v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
               end;
             end
             // Win 11 releases are reporting v10.0
             // Details taken from: https://tinyurl.com/usupsz4a
-            else if IsBuildNumber(Win11DevBuild) then
+            else if IsBuildNumber(Win11_Dev_Build) then
             begin
-              InternalBuildNumber := Win11DevBuild;
+              InternalBuildNumber := Win11_Dev_Build;
+              InternalWin1011Version := win10plusUnknown;
               InternalExtraUpdateInfo := Format(
                 'Dev [Insider v10.0.%d.%d]',
                 [InternalBuildNumber, InternalRevisionNumber]
               )
             end
-            else if IsBuildNumber(Win11v21H2Build) then
+            else if IsBuildNumber(Win11_21H2_Build) then
             begin
               // **REF6**
               // There are several Win 11 releases with this build number
@@ -2204,12 +2534,15 @@ begin
               // number.
               // *** Amazingly one of them, revision 194, is the 1st public
               //     release of Win 11 -- well hidden eh?!
-              InternalBuildNumber := Win11v21H2Build;
+              InternalBuildNumber := Win11_21H2_Build;
+              InternalWin1011Version := win11v21H2;
               case InternalRevisionNumber of
                 194, 258, 282, 348, 376, 434, 438, 469, 493, 527, 556, 593, 613,
                 652, 675, 708, 739, 740, 778, 795, 832, 856, 918, 978, 1042,
                 1098, 1100, 1165, 1219, 1281, 1335, 1455, 1516, 1574, 1641,
-                1696, 1761 .. MaxInt:
+                1696, 1761, 1817, 1880, 1936, 2003, 2057, 2124, 2176, 2245,
+                2295, 2360, 2416, 2482, 2538, 2600, 2652, 2713, 2777,
+                2836, 2899, 2960, 3019, 3079, 3147, 3197 .. MaxInt:
                   // Public releases of Windows 11
                   InternalExtraUpdateInfo := 'Version 21H2';
                 51, 65, 71:
@@ -2228,9 +2561,10 @@ begin
                       + '[Beta & Release Preview Channels v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
-                651, 706, 776, 829, 917, 1041, 1163, 1279, 1515, 1639, 1757:
+                651, 706, 776, 829, 917, 1041, 1163, 1279, 1515, 1639, 1757,
+                1879, 2001, 2121, 2243, 2359, 2479:
                   InternalExtraUpdateInfo := Format(
-                    'Version 21H1 Release Preview Channel v10.0.%d.%d]',
+                    'Version 21H2 Release Preview Channel v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
                 else
@@ -2240,27 +2574,45 @@ begin
                   );
               end;
             end
-            else if IsBuildNumber(Win11v22H2Build) then
+            else if IsBuildNumber(Win11_22H2_Build) then
             begin
               // **REF1**
-              InternalBuildNumber := Win11v22H2Build;
+              InternalBuildNumber := Win11_22H2_Build;
+              InternalWin1011Version := win11v22H2;
               case InternalRevisionNumber of
                 382, 521, 525, 608, 674, 675, 755, 819, 900, 963, 1105, 1194,
-                1265, 1344, 1413, 1485, {placeholder->}1538 .. MaxInt:
+                1265, 1344, 1413, 1485, 1555, 1635, 1702, 1778, 1848, 1926,
+                1928, 1992, 2070, 2134, 2215, 2283, 2361, 2428, 2506, 2715,
+                2792, 2861, 3007, 3085, 3155, 3235, 3296, 3374, 3447, 3527,
+                3593, 3672, 3737, 3810, 3880, 3958, 4037, 4112, 4169, 4249
+                .. MaxInt:
+                begin
                   InternalExtraUpdateInfo := 'Version 22H2';
+                  case InternalRevisionNumber of
+                    675:  AppendMomentToInternalExtraUpdateInfo(1);
+                    1344: AppendMomentToInternalExtraUpdateInfo(2);
+                    1778: AppendMomentToInternalExtraUpdateInfo(3);
+                    2361: AppendMomentToInternalExtraUpdateInfo(4);
+                    3235: AppendMomentToInternalExtraUpdateInfo(5);
+                  end;
+                end;
                 1:
                   InternalExtraUpdateInfo := Format(
                     'Version 22H2 [Beta & Release Preview v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
-                105, 169, 232, 317, 457, 607, 754, 898, 1192, 1343, 1483:
+                105, 169, 232, 317, 457, 607, 754, 898, 1192, 1343, 1483, 1631,
+                1776, 2066, 2213, 2359, 2500, 2787, 3078, 3227, 3371, 3520,
+                3668, 3807, 3951, 4108, 4247:
                   InternalExtraUpdateInfo := Format(
                     'Version 22H2 [Release Preview v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
                 160, 290, 436, 440, 450, 575, 586, 590, 598, 601, 730, 741, 746,
                 870, 875, 885, 891, 1020, 1028, 1037, 1095, 1180, 1245, 1250,
-                1255, 1325, 1391, 1465, 1470, 1537:
+                1255, 1325, 1391, 1465, 1470, 1537, 1546, 1616, 1680, 1690,
+                1755, 1825, 1830, 1835, 1900, 1906, 1972, 2048, 2050, 2115,
+                2129, 2191, 2199, 2262, 2265, 2271, 2338:
                   InternalExtraUpdateInfo := Format(
                     'Version 22H2 [Beta v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
@@ -2272,11 +2624,101 @@ begin
                   );
               end;
             end
-            else if IsBuildNumber(Win11v22H2BuildAlt) then
+            else if IsBuildNumber(Win11_23H2_Build) then
+            begin
+              // **REF10**
+              InternalBuildNumber := Win11_23H2_Build;
+              InternalWin1011Version := win11v23H2;
+              case InternalRevisionNumber of
+                2428, 2506, 2715, 2792, 2861, 3007, 3085, 3155, 3235 {Moment 5},
+                3296, 3374, 3447, 3527, 3593, 3672, 3737, 3810, 3880, 3958,
+                4037, 4112, 4169, 4249 .. MaxInt:
+                  InternalExtraUpdateInfo := 'Version 23H2';
+                1825, 1830, 1835, 1900, 1906, 1972:
+                begin
+                  // revisions 1825..1972 had version string "22H2"
+                  InternalWin1011Version := win11v22H2;
+                  InternalExtraUpdateInfo := Format(
+                    'Version 22H2 [Beta v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                end;
+                2048, 2050, 2115, 2129, 2191, 2199, 2262, 2265, 2271, 2338:
+                  InternalExtraUpdateInfo := Format(
+                    'Version 23H2 [Beta v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                2361, 2787, 3078, 3227, 3371, 3520, 3668, 3807, 3951, 4108,
+                4247:
+                  InternalExtraUpdateInfo := Format(
+                    'Version 23H2 [Release Preview v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                else
+                  InternalExtraUpdateInfo := Format(
+                    'Version 23H2 [Unknown release v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+              end;
+            end
+            else if IsBuildNumber(Win11_24H2_Build) then
+            begin
+              // **REF11**
+              InternalBuildNumber := Win11_24H2_Build;
+              InternalWin1011Version := win11v24H2;
+              case InternalRevisionNumber of
+                1742, 1882 .. MaxInt:
+                  InternalExtraUpdateInfo := 'Version 24H2';
+                560, 712, 863, 994, 1000, 1150, 1297, 1301, 1457, 1586, 1591:
+                  InternalExtraUpdateInfo := Format(
+                    'Version 24H2 [Release Preview v10.0.%d.%d',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                1:
+                  InternalExtraUpdateInfo := Format(
+                    'Version 24H2 [Dev & Canary Channel v10.0.%d.%d',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                268:
+                  InternalExtraUpdateInfo := Format(
+                    'Version 24H2 [Dev Channel v10.0.%d.%d',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                else
+                  InternalExtraUpdateInfo := Format(
+                    'Version 24H2 [Unknown release v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+              end;
+            end
+            else if FindBuildNumberFrom(
+              Win11_24H2_DevAndCanaryChannel_Builds, InternalBuildNumber
+            ) then
+            begin
+              // Win11 builds in Canary, Dev & Preview channels with version
+              // string "24H2"
+              InternalWin1011Version := win10plusUnknown;
+              InternalExtraUpdateInfo := Format(
+                'Dev or Canary Channel Version 24H2 v10.0.%d.%d',
+                [InternalBuildNumber, InternalRevisionNumber]
+              );
+            end
+            else if FindBuildNumberFrom(
+              Win11_24H2_CanaryChannel_Builds, InternalBuildNumber
+            ) then
+            begin
+              // Win11 builds in Canary channel with version string "24H2"
+              InternalWin1011Version := win10plusUnknown;
+              InternalExtraUpdateInfo := Format(
+                'Canary Channel Version 24H2 v10.0.%d.%d',
+                [InternalBuildNumber, InternalRevisionNumber]
+              );
+            end
+            else if IsBuildNumber(Win11_Oct22Component_BetaChannel_Build) then
             begin
               // **REF2**
-              InternalBuildNumber := Win11v22H2BuildAlt;
-              // Set fallback update info for unknown revisions
+              InternalBuildNumber := Win11_Oct22Component_BetaChannel_Build;
+              InternalWin1011Version := win10plusUnknown;
               case InternalRevisionNumber of
                 290, 436, 440, 450, 575, 586, 590, 598, 601:
                   InternalExtraUpdateInfo := Format(
@@ -2291,38 +2733,21 @@ begin
               end;
             end
             else if FindBuildNumberFrom(
-              Win11DevChannelDevBuilds, InternalBuildNumber
+              Win11_22H2_DevAndBetaChannel_Builds, InternalBuildNumber
             ) then
             begin
-              // Win11 Dev Channel builds with version string "Dev"
-              InternalExtraUpdateInfo := Format(
-                'Dev Channel v10.0.%d.%d (Dev)',
-                [InternalBuildNumber, InternalRevisionNumber]
-              );
-            end
-            else if FindBuildNumberFrom(
-              Win11CanaryPreviewBuilds, InternalBuildNumber
-            ) then
-            begin
-              // Win11 Canary Channel builds
-              InternalExtraUpdateInfo := Format(
-                'Canary Channel v10.0.%d.%d (Dev)',
-                [InternalBuildNumber, InternalRevisionNumber]
-              );
-            end
-            else if FindBuildNumberFrom(
-              Win11DevBetaChannels22H2Builds, InternalBuildNumber
-            ) then
-            begin
-              // Win 11 Dev & Beta channel builds with verison string "22H2"
+              // Win 11 Dev & Beta channel builds with version string "22H2"
+              InternalWin1011Version := win10plusUnknown;
               InternalExtraUpdateInfo := Format(
                 'Dev & Beta Channels v10.0.%d.%d (22H2)',
                 [InternalBuildNumber, InternalRevisionNumber]
               );
             end
-            else if IsBuildNumber(Win11Feb23ComponentBetaChannelBuild) then
+            else if IsBuildNumber(Win11_Feb23Component_BetaChannel_Build) then
             begin
-              InternalBuildNumber := Win11Feb23ComponentBetaChannelBuild;
+              // **REF7**
+              InternalBuildNumber := Win11_Feb23Component_BetaChannel_Build;
+              InternalWin1011Version := win10plusUnknown;
               case InternalRevisionNumber of
                 730, 741, 746, 870, 875, 885, 891, 1020, 1028, 1037, 1095,
                 1180, 1245, 1250, 1255, 1325 .. MaxInt:
@@ -2337,13 +2762,57 @@ begin
                   );
               end;
             end
-            else if IsBuildNumber(Win11FutureComponentBetaChannelBuild) then
+            else if IsBuildNumber(Win11_May23Component_BetaChannel_Build) then
             begin
-              InternalBuildNumber := Win11FutureComponentBetaChannelBuild;
+              // **REF8**
+              InternalBuildNumber := Win11_May23Component_BetaChannel_Build;
+              InternalWin1011Version := win10plusUnknown;
               case InternalRevisionNumber of
-                1391, 1465, 1470, 1537 .. MaxInt:
+                1391, 1465, 1470, 1537, 1546, 1610, 1616, 1680, 1690, 1755 ..
+                MaxInt:
+                  InternalExtraUpdateInfo := Format(
+                    'May 2023 Component Update Beta v10.0.%d.%d',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                else
+                  InternalExtraUpdateInfo := Format(
+                    'May 2023 Component Update [Unknown Beta v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+              end;
+            end
+            else if IsBuildNumber(Win11_FutureComponent_BetaChannel_Build) then
+            begin
+              // **REF9**
+              InternalBuildNumber := Win11_FutureComponent_BetaChannel_Build;
+              InternalWin1011Version := win10plusUnknown;
+              case InternalRevisionNumber of
+                2419, 2483, 2486, 2552, 2700, 2771, 2776, 2841, 2850, 2915,
+                2921, 3061, 3066, 3130, 3139, 3140, 3209, 3212, 3276, 3286,
+                3350, 3420, 3430, 3495, 3500, 3566, 3570, 3575, 3640, 3646,
+                3720, 3785, 3790, 3858, 3930, 3936, 4000, 4005, 4010, 4076,
+                4082, 4145, 4225, 4291 .. MaxInt:
                   InternalExtraUpdateInfo := Format(
                     'Future Component Update Beta v10.0.%d.%d',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                else
+                  InternalExtraUpdateInfo := Format(
+                    'Future Component Update [Unknown Beta v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+              end;
+            end
+            else if IsBuildNumber(Win11_FutureComponent_DevChannel_Build) then
+            begin
+              // **REF12**
+              InternalBuildNumber := Win11_FutureComponent_DevChannel_Build;
+              InternalWin1011Version := win10plusUnknown;
+              case InternalRevisionNumber of
+                 461, 470, 670, 751, 770, 961, 1252, 1330, 1340, 1350, 1542,
+                 1843, 1912  .. MaxInt:
+                  InternalExtraUpdateInfo := Format(
+                    'Future Component Update Dev Channel v10.0.%d.%d',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
                 else
@@ -2364,14 +2833,14 @@ begin
               InternalBuildNumber, InternalExtraUpdateInfo
             ) then
             begin
-              // Nothing to do: required internal variables set in function call
+              InternalWin1011Version := win10v20H2;
             end
             else if FindWin10PreviewBuildNameAndExtraFrom(
               Win10_2004_Preview_Builds, '2004',
               InternalBuildNumber, InternalExtraUpdateInfo
             ) then
             begin
-              // Nothing to do: required internal variables set in function call
+              InternalWin1011Version := win10v2004;
             end
             else if IsBuildNumber(Win10_19XX_Shared_Build) then
             begin
@@ -2379,71 +2848,63 @@ begin
               // preview of Version 1903 or 1909
               InternalBuildNumber := Win10_19XX_Shared_Build;
               if IsInRange(InternalRevisionNumber, 0, 113) then
+              begin
+                InternalWin1011Version := win10v1903;
                 InternalExtraUpdateInfo := Format(
                   'Version 1903 Preview Build %d.%d',
                   [InternalBuildNumber, InternalRevisionNumber]
                 )
+              end
               else if IsInRange(InternalRevisionNumber, 10000, 10024) then
+              begin
+                InternalWin1011Version := win10v1909;
                 InternalExtraUpdateInfo := Format(
                   'Version 1909 Preview Build %d.%d',
                   [InternalBuildNumber, InternalRevisionNumber]
                 );
+              end;
             end
             else if FindWin10PreviewBuildNameAndExtraFrom(
               Win10_1903_Preview_Builds, '1903',
               InternalBuildNumber, InternalExtraUpdateInfo
             ) then
             begin
-              // Nothing to do: required internal variables set in function call
+              InternalWin1011Version := win10v1903;
             end
             else if FindWin10PreviewBuildNameAndExtraFrom(
               Win10_1809_Preview_Builds, '1809',
               InternalBuildNumber, InternalExtraUpdateInfo
             ) then
             begin
-              // Nothing to do: required internal variables set in function call
+              InternalWin1011Version := win10v1809;
             end
             else if FindWin10PreviewBuildNameAndExtraFrom(
               Win10_1803_Preview_Builds, '1803',
               InternalBuildNumber, InternalExtraUpdateInfo
             ) then
             begin
-              // Nothing to do: required internal variables set in function call
+              InternalWin1011Version := win10v1803;
             end
             else if FindWin10PreviewBuildNameAndExtraFrom(
               Win10_1709_Preview_Builds, '1709',
               InternalBuildNumber, InternalExtraUpdateInfo
             ) then
             begin
-              // Nothing to do: required internal variables set in function call
+              InternalWin1011Version := win10v1709;
             end
             else if FindWin10PreviewBuildNameAndExtraFrom(
               Win10_1703_Preview_Builds, '1703',
               InternalBuildNumber, InternalExtraUpdateInfo
             ) then
             begin
-              // Nothing to do: required internal variables set in function call
+              InternalWin1011Version := win10v1703;
             end
             else if FindWin10PreviewBuildNameAndExtraFrom(
               Win10_1607_Preview_Builds, '1607',
               InternalBuildNumber, InternalExtraUpdateInfo
             ) then
             begin
-              // Nothing to do: required internal variables set in function call
-            end
-            else if FindWin10PreviewBuildNameAndExtraFrom(
-              Win10_1511_Preview_Builds, '1511',
-              InternalBuildNumber, InternalExtraUpdateInfo
-            ) then
-            begin
-              // Nothing to do: required internal variables set in function call
-            end
-            else if FindWin10PreviewBuildNameAndExtraFrom(
-              Win10_1507_Preview_Builds, '1507',
-              InternalBuildNumber, InternalExtraUpdateInfo
-            ) then
-            begin
-              // Nothing to do: required internal variables set in function call
+              InternalWin1011Version := win10v1607;
             end
           end
           else // Win32ProductType in [VER_NT_DOMAIN_CONTROLLER, VER_NT_SERVER]
@@ -2453,13 +2914,14 @@ begin
             if FindBuildNameAndExtraFrom(
               WinServerSimpleBuildMap,
               InternalBuildNumber,
-              InternalExtraUpdateInfo
+              InternalExtraUpdateInfo,
+              VersionEx // unused
             ) then
             begin
               // Nothing to do: required internal variables set in function call
             end
             else if FindBuildNumberFrom(
-              Win2019IPBuilds, InternalBuildNumber
+              Win2019_IP_Builds, InternalBuildNumber
             ) then
             begin
               // Windows 2019 Insider preview builds require build number in
@@ -2553,6 +3015,13 @@ end;
 
 { TPJOSInfo }
 
+class function TPJOSInfo.BuildBranch: string;
+begin
+  Result := GetRegistryString(
+    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[IsWinNT], 'BuildBranch'
+  );
+end;
+
 class function TPJOSInfo.BuildNumber: Integer;
 begin
   Result := InternalBuildNumber;
@@ -2618,6 +3087,13 @@ begin
   end;
 end;
 
+class function TPJOSInfo.DigitalProductID: TBytes;
+begin
+  Result := GetRegistryBytes(
+    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[IsWinNT], 'DigitalProductId'
+  );
+end;
+
 class function TPJOSInfo.Edition: string;
 begin
   // This method is based on sample C++ code from MSDN
@@ -2632,7 +3108,11 @@ begin
       // For v6.0 and later we ignore the suite mask and use the new
       // PRODUCT_ flags from the GetProductInfo() function to determine the
       // edition
+      // 1st try to find edition name from lookup table
       Result := EditionFromProductInfo;
+      if Result = '' then
+        // no matching entry in lookup: get from registry
+        Result := EditionIDFromReg;
       // append 64-bit if 64 bit system
       if InternalProcessorArchitecture = PROCESSOR_ARCHITECTURE_AMD64 then
         Result := Result + ' (64-bit)';
@@ -2736,7 +3216,7 @@ begin
       end
       else
         // NT before SP6: we read required info from registry
-        Result := EditionFromReg;
+        Result := NTEditionFromReg;
     end;
   end;
 end;
@@ -2756,19 +3236,10 @@ begin
   end;
 end;
 
-class function TPJOSInfo.EditionFromReg: string;
-var
-  EditionCode: string;  // OS product edition code stored in registry
+class function TPJOSInfo.EditionIDFromReg: string;
 begin
-  EditionCode := ProductTypeFromReg;
-  if CompareText(EditionCode, 'WINNT') = 0 then
-    Result := 'WorkStation'
-  else if CompareText(EditionCode, 'LANMANNT') = 0 then
-    Result := 'Server'
-  else if CompareText(EditionCode, 'SERVERNT') = 0 then
-    Result := 'Advanced Server';
-  Result := Result + Format(
-    ' %d.%d', [InternalMajorVersion, InternalMinorVersion]
+  Result := GetRegistryString(
+    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[IsWinNT], 'EditionID'
   );
 end;
 
@@ -2991,6 +3462,29 @@ begin
   Result := Platform = ospWin9x;
 end;
 
+class function TPJOSInfo.IsWindows10PlusVersionOrLater(
+  const AVersion: TPJWin10PlusVersion): Boolean;
+begin
+  Assert(not (AVersion in [win10plusNA, win10plusUnknown]));
+  Result := IsReallyWindows10OrGreater and (Windows10PlusVersion >= AVersion);
+end;
+
+class function TPJOSInfo.IsWindows10VersionOrLater(
+  const AVersion: TPJWin10PlusVersion): Boolean;
+begin
+  if not (AVersion in Win10_Versions) then
+    raise EPJSysInfo.Create('Invalid Windows 10 version: can''t compare');
+  Result := IsWindows10PlusVersionOrLater(AVersion);
+end;
+
+class function TPJOSInfo.IsWindows11VersionOrLater(
+  const AVersion: TPJWin10PlusVersion): Boolean;
+begin
+  if not (AVersion in Win11_Versions) then
+    raise EPJSysInfo.Create('Invalid Windows 11 version: can''t compare');
+  Result := IsWindows10PlusVersionOrLater(AVersion);
+end;
+
 class function TPJOSInfo.IsWindowsServer: Boolean;
 var
   OSVI: TOSVersionInfoEx;
@@ -3048,6 +3542,22 @@ begin
   Result := InternalMinorVersion;
 end;
 
+class function TPJOSInfo.NTEditionFromReg: string;
+var
+  EditionCode: string;  // OS product edition code stored in registry
+begin
+  EditionCode := ProductTypeFromReg;
+  if CompareText(EditionCode, 'WINNT') = 0 then
+    Result := 'WorkStation'
+  else if CompareText(EditionCode, 'LANMANNT') = 0 then
+    Result := 'Server'
+  else if CompareText(EditionCode, 'SERVERNT') = 0 then
+    Result := 'Advanced Server';
+  Result := Result + Format(
+    ' %d.%d', [InternalMajorVersion, InternalMinorVersion]
+  );
+end;
+
 class function TPJOSInfo.Platform: TPJOSPlatform;
 begin
   case InternalPlatform of
@@ -3059,8 +3569,6 @@ begin
 end;
 
 class function TPJOSInfo.Product: TPJOSProduct;
-var
-  DummyBN: Integer;   // dummy build number
 begin
   Result := osUnknown;
   case Platform of
@@ -3150,8 +3658,10 @@ begin
                 // application is "manifested" for the correct Windows version.
                 // See https://bit.ly/MJSO8Q.
                 Result := osWin10Svr
-              else if FindBuildNumberFrom(Win10_6point4Builds, DummyBN) then
-                Result := osWin10;
+                // Version 6.4 was also used for some early Windows 10 preview
+                // builds, but they have all expired so detection has been
+                // removed.
+                // See https://tinyurl.com/3c8e3hsc
             else
               // Higher minor version: must be an unknown later OS
               Result := osWinLater
@@ -3169,7 +3679,7 @@ begin
             0:
               if not IsServer then
               begin
-                if TestBuildNumber(VER_LESS, Win11FirstBuild) then
+                if TestBuildNumber(VER_LESS, Win11_First_Build) then
                   Result := osWin10
                 else
                   // ** As of 2021-10-05 Win 11 is reporting version 10.0!
@@ -3177,11 +3687,17 @@ begin
               end
               else
               begin
-                if TestBuildNumber(VER_LESS_EQUAL, Win2016LastBuild) then
+                if TestBuildNumber(
+                  VER_LESS_EQUAL, Win2016_Last_Build
+                ) then
                   Result := osWin10Svr
-                else if TestBuildNumber(VER_LESS_EQUAL, Win2019LastBuild) then
+                else if TestBuildNumber(
+                  VER_LESS_EQUAL, Win2019_Last_Build
+                ) then
                   Result := osWinSvr2019
-                else if TestBuildNumber(VER_LESS_EQUAL, WinServerLastBuild) then
+                else if TestBuildNumber(
+                  VER_LESS_EQUAL, WinServer_Last_Build
+                ) then
                   Result := osWinServer
                 else
                   Result := osWinSvr2022;
@@ -3321,6 +3837,29 @@ end;
 class function TPJOSInfo.ServicePackMinor: Integer;
 begin
   Result := Win32ServicePackMinor;
+end;
+
+class function TPJOSInfo.Windows10PlusVersion: TPJWin10PlusVersion;
+begin
+  Result := InternalWin1011Version;
+end;
+
+class function TPJOSInfo.Windows10PlusVersionName: string;
+const
+  cVersions: array[TPJWin10PlusVersion] of string = (
+    // Not windows 10+
+    '',
+    // Windows 10+ with unknown version string
+    'Unknown',
+    // Windows 10
+    '1507', '1511', '1607', '1703', '1709',
+    '1803', '1809', '1903', '1909', '2004',
+    '20H2', '21H1', '21H2', '22H2',
+    // Windows 11
+    '21H2', '22H2', '23H2', '24H2'
+  );
+begin
+  Result := cVersions[Windows10PlusVersion];
 end;
 
 { TPJComputerInfo }
@@ -3508,18 +4047,17 @@ begin
     if NetBiosSucceeded(Netbios(@Ncb)) then
     begin
       // we have a MAC address: return it
-      with Adapter.Adapt do
-        Result := Format(
-          '%.2x-%.2x-%.2x-%.2x-%.2x-%.2x',
-          [
-            Ord(adapter_address[0]),
-            Ord(adapter_address[1]),
-            Ord(adapter_address[2]),
-            Ord(adapter_address[3]),
-            Ord(adapter_address[4]),
-            Ord(adapter_address[5])
-          ]
-        );
+      Result := Format(
+        '%.2x-%.2x-%.2x-%.2x-%.2x-%.2x',
+        [
+          Ord(Adapter.Adapt.adapter_address[0]),
+          Ord(Adapter.Adapt.adapter_address[1]),
+          Ord(Adapter.Adapt.adapter_address[2]),
+          Ord(Adapter.Adapt.adapter_address[3]),
+          Ord(Adapter.Adapt.adapter_address[4]),
+          Ord(Adapter.Adapt.adapter_address[5])
+        ]
+      );
       Exit;
     end;
   end;
