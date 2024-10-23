@@ -39,7 +39,7 @@ type
 
 type
   ///  <summary>Array of textual compiler result information.</summary>
-  TCompileDocInfoArray = array of TCompileDocInfo;
+  TCompileDocInfoArray = TArray<TCompileDocInfo>;
 
 type
   ///  <summary>Abstract base class for classes that render documents that
@@ -76,10 +76,14 @@ type
     ///  title.</summary>
     procedure RenderTitledList(const Title: string; List: IStringList);
       virtual; abstract;
-    ///  <summary>Output given compiler info, preceeded by given heading.
+    ///  <summary>Output given compiler test info, preceded by given heading.
     ///  </summary>
     procedure RenderCompilerInfo(const Heading: string;
       const Info: TCompileDocInfoArray); virtual; abstract;
+    ///  <summary>Output message stating that there is no compiler test info,
+    ///  preceded by given heading.</summary>
+    procedure RenderNoCompilerInfo(const Heading, NoCompileTests: string);
+      virtual; abstract;
     ///  <summary>Output given extra information to document.</summary>
     ///  <remarks>Active text must be interpreted in a manner that makes sense
     ///  for document format.</remarks>
@@ -109,6 +113,7 @@ implementation
 uses
   // Delphi
   SysUtils,
+  Generics.Collections,
   // Project
   Compilers.UCompilers,
   DB.UMain,
@@ -136,17 +141,24 @@ function TSnippetDoc.CompilerInfo(const Snippet: TSnippet):
 var
   Compilers: ICompilers;  // provided info about compilers
   Compiler: ICompiler;    // each supported compiler
-  InfoIdx: Integer;       // index into output array
+  ResList: TList<TCompileDocInfo>;
 begin
   Compilers := TCompilersFactory.CreateAndLoadCompilers;
   SetLength(Result, Compilers.Count);
-  InfoIdx := 0;
-  for Compiler in Compilers do
-  begin
-    Result[InfoIdx] := TCompileDocInfo.Create(
-      Compiler.GetName, Snippet.Compatibility[Compiler.GetID]
-    );
-    Inc(InfoIdx);
+  ResList := TList<TCompileDocInfo>.Create;
+  try
+    for Compiler in Compilers do
+    begin
+      if Snippet.Compatibility[Compiler.GetID] <> crQuery then
+      ResList.Add(
+        TCompileDocInfo.Create(
+          Compiler.GetName, Snippet.Compatibility[Compiler.GetID]
+        )
+      );
+    end;
+    Result := ResList.ToArray;
+  finally
+    ResList.Free;
   end;
 end;
 
@@ -158,7 +170,10 @@ resourcestring
   sUnitListTitle = 'Required units:';
   sDependListTitle = 'Required snippets:';
   sXRefListTitle = 'See also:';
-  sCompilers = 'Supported compilers:';
+  sCompilers = 'Compiler test results:';
+  sNoCompilerTests = 'No compiler tests were carried out.';
+var
+  CompileResults: TCompileDocInfoArray;
 begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   // generate document
@@ -176,7 +191,13 @@ begin
   RenderTitledList(sDependListTitle, SnippetsToStrings(Snippet.Depends));
   RenderTitledList(sXRefListTitle, SnippetsToStrings(Snippet.XRef));
   if Snippet.Kind <> skFreeform then
-    RenderCompilerInfo(sCompilers, CompilerInfo(Snippet));
+  begin
+    CompileResults := CompilerInfo(Snippet);
+    if Length(CompileResults) > 0 then
+      RenderCompilerInfo(sCompilers, CompilerInfo(Snippet))
+    else
+      RenderNoCompilerInfo(sCompilers, sNoCompilerTests);
+  end;
   if Snippet.Extra.HasContent then
     RenderExtra(Snippet.Extra);
   if not Snippet.UserDefined then

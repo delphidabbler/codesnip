@@ -63,10 +63,14 @@ type
     ///  to document.</summary>
     procedure RenderTitledList(const Title: string; List: IStringList);
       override;
-    ///  <summary>Adds given compiler info, preceeded by given heading, to
+    ///  <summary>Adds given compiler info, preceded by given heading, to
     ///  document.</summary>
     procedure RenderCompilerInfo(const Heading: string;
       const Info: TCompileDocInfoArray); override;
+    ///  <summary>Output message stating that there is no compiler test info,
+    ///  preceded by given heading.</summary>
+    procedure RenderNoCompilerInfo(const Heading, NoCompileTests: string);
+      override;
     ///  <summary>Interprets and adds given extra information to document.
     ///  </summary>
     ///  <remarks>Active text is converted to word-wrapped plain text
@@ -164,6 +168,15 @@ procedure TTextSnippetDoc.RenderHeading(const Heading: string;
   const UserDefined: Boolean);
 begin
   fWriter.WriteLine(Heading);
+end;
+
+procedure TTextSnippetDoc.RenderNoCompilerInfo(const Heading,
+  NoCompileTests: string);
+begin
+  // Write out compilers with results
+  fWriter.WriteLine;
+  fWriter.WriteLine(Heading);
+  fWriter.WriteLine(NoCompileTests);
 end;
 
 procedure TTextSnippetDoc.RenderSourceCode(const SourceCode: string);

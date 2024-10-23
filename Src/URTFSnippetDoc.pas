@@ -93,10 +93,14 @@ type
     ///  to document.</summary>
     procedure RenderTitledList(const Title: string; List: IStringList);
       override;
-    ///  <summary>Adds given compiler info, preceeded by given heading, to
-    ///  document.</summary>
+    ///  <summary>Output given compiler test info, preceded by given heading.
+    ///  </summary>
     procedure RenderCompilerInfo(const Heading: string;
       const Info: TCompileDocInfoArray); override;
+    ///  <summary>Output message stating that there is no compiler test info,
+    ///  preceded by given heading.</summary>
+    procedure RenderNoCompilerInfo(const Heading, NoCompileTests: string);
+      override;
     ///  <summary>Interprets and adds given extra information to document.
     ///  </summary>
     ///  <remarks>Active text formatting is observed and styled to suit
@@ -341,7 +345,8 @@ var
   TabStop: SmallInt;              // tab stop where compile result displayed
 begin
   // Calculate tab stop where compile results are displayed
-  TabStop := (MaxCompilerNameLenInTwips div IndentDelta) * IndentDelta + IndentDelta;
+  TabStop := (MaxCompilerNameLenInTwips div IndentDelta) * IndentDelta
+    + 2 * IndentDelta;
   // Display heading
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.SetParaSpacing(
@@ -420,6 +425,23 @@ begin
     fBuilder.SetColour(Preferences.DBHeadingColours[UserDefined]);
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(0.0, ParaSpacing));
   fBuilder.AddText(Heading);
+  fBuilder.EndPara;
+end;
+
+procedure TRTFSnippetDoc.RenderNoCompilerInfo(const Heading,
+  NoCompileTests: string);
+begin
+  // Display heading
+  fBuilder.SetFontStyle([fsBold]);
+  fBuilder.SetParaSpacing(
+    TRTFParaSpacing.Create(ParaSpacing, ParaSpacing / 3)
+  );
+  fBuilder.AddText(Heading);
+  fBuilder.ResetCharStyle;
+  fBuilder.EndPara;
+  fBuilder.ClearParaFormatting;
+  fBuilder.SetFontSize(ParaFontSize);
+  fBuilder.AddText(NoCompileTests);
   fBuilder.EndPara;
 end;
 
