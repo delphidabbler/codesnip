@@ -206,6 +206,8 @@ begin
   Assert(Assigned(Stream), 'TFileIO.CheckBOM: Stream is nil');
   Assert(Assigned(Encoding), 'TFileIO.CheckBOM: Encoding is nil');
   Preamble := Encoding.GetPreamble;
+  if Length(Preamble) = 0 then
+    Exit(False);
   if Stream.Size < Length(Preamble) then
     Exit(False);
   OldPos := Stream.Position;
