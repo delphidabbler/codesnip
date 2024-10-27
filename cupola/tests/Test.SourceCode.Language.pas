@@ -1,4 +1,4 @@
-{
+ï»¿{
   This unit is dedicated to public domain under the CC0 license.
   See https://creativecommons.org/public-domain/cc0/
 }
@@ -32,7 +32,7 @@ type
     [TestCase('T4: All digits','4256')]
     [TestCase('T5: Contains dash','abc-42')]
     [TestCase('T6: C++','C++')]
-    [TestCase('T7: Lots of symbols & punct','A!"£$%^&*()_+=')]
+    [TestCase('T7: Lots of symbols & punct','A!"Â£$%^&*()_+=')]
     procedure IsValidIDString_returns_true_for_valid_ID_strings_(const AID: string);
     [Test]
     [TestCase('F1: Empty string','')]
@@ -54,7 +54,7 @@ type
     [TestCase('#4: All digits','4256')]
     [TestCase('#5: Contains dash','abc-42')]
     [TestCase('#6: C++','C++')]
-    [TestCase('#7: Lots of symbols & punct','A!"£$%^&*()_+=')]
+    [TestCase('#7: Lots of symbols & punct','A!"Â£$%^&*()_+=')]
     procedure ctor_succeeds_for_valid_IDs(const AID: string);
     [Test]
     procedure ctor_succeeds_for_empty_ID;
@@ -70,7 +70,7 @@ type
     [TestCase('#4: All digits','4256')]
     [TestCase('#5: Contains dash','abc-42')]
     [TestCase('#6: C++','C++')]
-    [TestCase('#7: Lots of symbols & punct','A!"£$%^&*()_+=')]
+    [TestCase('#7: Lots of symbols & punct','A!"Â£$%^&*()_+=')]
     procedure ToString_returns_correct_ID_string(const AID: string);
 
     [Test]

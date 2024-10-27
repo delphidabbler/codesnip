@@ -1,4 +1,4 @@
-unit CSLE.Consts;
+﻿unit CSLE.Consts;
 
 interface
 

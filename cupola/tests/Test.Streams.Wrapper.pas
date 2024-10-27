@@ -1,4 +1,4 @@
-{
+﻿{
   This unit is dedicated to public domain under the CC0 license.
   See https://creativecommons.org/public-domain/cc0/
 }

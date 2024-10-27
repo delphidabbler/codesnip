@@ -1,4 +1,4 @@
-program CodeSnip.Cupola.Tests;
+﻿program CodeSnip.Cupola.Tests;
 
 {$IFNDEF TESTINSIGHT}
 {$APPTYPE CONSOLE}
