@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * General utility routines.
 }
@@ -174,12 +174,22 @@ function IsEqualBytes(const BA1, BA2: TBytes): Boolean; overload;
 
 ///  <summary>Attempts to convert string S into a Word value.</summary>
 ///  <param name="S">string [in] String to be converted.</param>
-///  <param name="W">Cardinal [out] Value of converted string. Undefined if
+///  <param name="W">Word [out] Value of converted string. Undefined if
 ///  conversion fails.</param>
 ///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
 ///  <remarks>String must represent a non-negative integer that is representable
 ///  as a Word.</remarks>
 function TryStrToWord(const S: string; out W: Word): Boolean;
+
+///  <summary>Attempts to convert string S into a Byye value.</summary>
+///  <param name="S">string [in] String to be converted.</param>
+///  <param name="B">Byte [out] Value of converted string. Undefined if
+///  conversion fails.</param>
+///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
+///  <remarks>String must represent a non-negative integer that is representable
+///  as a Byte.</remarks>
+function TryStrToByte(const S: string; out B: Byte): Boolean;
+
 
 
 implementation
@@ -471,6 +481,18 @@ begin
   if (I < 0) or (I > High(Word)) then
     Exit(False);
   W := Word(I);
+end;
+
+function TryStrToByte(const S: string; out B: Byte): Boolean;
+var
+  I: Integer;
+begin
+  Result := TryStrToInt(S, I);
+  if not Result then
+    Exit;
+  if (I < Low(Byte)) or (I > High(Byte)) then
+    Exit(False);
+  B := Byte(I);
 end;
 
 end.
