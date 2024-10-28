@@ -47,8 +47,8 @@ type
       ///  <summary>Instance of class used to perform directory move.</summary>
       fDirCopier: TDirectoryCopier;
     ///  <summary>Validates source and destination directories.</summary>
-    ///  <exceptions>Raises EInOutError exception if either directory is not
-    ///  valid.</exceptions>
+    ///  <exception>Raises EInOutError exception if either directory is not
+    ///  valid.</exception>
     procedure ValidateDirectories;
     ///  <summary>Handles TDirectoryCopier.OnAfterCopyDir event to update user
     ///  database location.</summary>
