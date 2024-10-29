@@ -172,6 +172,11 @@ function IsEqualBytes(const BA1, BA2: TBytes; const Count: Cardinal):
 ///  <remarks>If both arrays are empty they are considered equal.</remarks>
 function IsEqualBytes(const BA1, BA2: TBytes): Boolean; overload;
 
+///  <summary>Converts a TGUID record into an array of bytes.</summary>
+///  <param name="AGUID">TGUID [in] GUID to be converted.</param>
+///  <returns>TBytes. Required byte array.</returns>
+function GUIDToBytes(const AGUID: TGUID): TBytes;
+
 ///  <summary>Attempts to convert string S into a Word value.</summary>
 ///  <param name="S">string [in] String to be converted.</param>
 ///  <param name="W">Word [out] Value of converted string. Undefined if
@@ -469,6 +474,19 @@ begin
     if BA1[I] <> BA2[I] then
       Exit(False);
   Result := True;
+end;
+
+function GUIDToBytes(const AGUID: TGUID): TBytes;
+type
+  TGUIDCracker = array[1..SizeOf(TGUID) div SizeOf(Byte)] of Byte;
+var
+  Idx: Integer;
+begin
+  Assert(SizeOf(TGUID) = SizeOf(TGUIDCracker),
+    'GUIDToBytes: Size of TGUID <> size of TGUIDCracker');
+  SetLength(Result, SizeOf(TGUIDCracker));
+  for Idx := Low(TGUIDCracker) to High(TGUIDCracker) do
+    Result[Idx - Low(TGUIDCracker)] := TGUIDCracker(AGUID)[Idx];
 end;
 
 function TryStrToWord(const S: string; out W: Word): Boolean;
