@@ -195,6 +195,27 @@ function TryStrToWord(const S: string; out W: Word): Boolean;
 ///  as a Byte.</remarks>
 function TryStrToByte(const S: string; out B: Byte): Boolean;
 
+///  <summary>Converts a byte array to a string that is a concatentation of the
+///  hex representation of the bytes of the array.</summary>
+///  <param name="BA">TBytes [in] Byte array to convert.</param>
+///  <returns>string. String of hex digits or empty string if BA is empty.
+///  </returns>
+///  <remarks>The returned string is twice the length of BA, since each byte
+///  occupies two hex digits.</remarks>
+function BytesToHexString(const BA: TBytes): string;
+
+///  <summary>Attempts to convert a string of hex digits to an array of bytes.
+///  </summary>
+///  <param name="AHexStr">string [in] String of hex digits. Alphabetic
+///  characters can be either upper or lower case.</param>
+///  <param name="ABytes">TBytes [out] Array of bytes converted from string.
+///  Undefined if conversion fails.</param>
+///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
+///  <remarks>String must be composed of valid hex digits, with two characters
+///  per byte. Therefore the string must have an even number of characters.
+///  </remarks>
+function TryHexStringToBytes(const AHexStr: string; out ABytes: TBytes):
+  Boolean;
 
 
 implementation
@@ -511,6 +532,42 @@ begin
   if (I < Low(Byte)) or (I > High(Byte)) then
     Exit(False);
   B := Byte(I);
+end;
+
+function BytesToHexString(const BA: TBytes): string;
+var
+  B: Byte;
+begin
+  Result := '';
+  for B in BA do
+    Result := Result + IntToHex(B, 2);
+end;
+
+function TryHexStringToBytes(const AHexStr: string; out ABytes: TBytes):
+  Boolean;
+const
+  HexByteStrLength = 2;
+var
+  HexByteStart: Integer;
+  HexByteStr: string;
+  ResIdx: Integer;
+  ConvertedByte: Byte;
+begin
+  Result := True;
+  if Length(AHexStr) mod HexByteStrLength <> 0 then
+    Exit(False);
+  SetLength(ABytes, Length(AHexStr) div HexByteStrLength);
+  ResIdx := 0;
+  HexByteStart := 1;
+  while HexByteStart < Length(AHexStr) do
+  begin
+    HexByteStr := Copy(AHexStr, HexByteStart, HexByteStrLength);
+    if not TryStrToByte('$' + HexByteStr, ConvertedByte) then
+      Exit(False);
+    ABytes[ResIdx] := ConvertedByte;
+    Inc(HexByteStart, HexByteStrLength);
+    Inc(ResIdx);
+  end;
 end;
 
 end.
