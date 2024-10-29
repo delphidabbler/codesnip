@@ -179,11 +179,14 @@ type
   ///  windows</para>
   ///  <para>-ssDatabase - database customisation info</para>
   ///  <para>-ssCompilers - info about all compilers</para>
+  ///  <para>-ssCollections - info about all snippet collections</para>
+  ///  <para>-ssCollection - info about a specific snippet collection</para>
   ///  </summary>
   TSettingsSectionId = (
     ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo,
     ssPreferences, ssUnits, ssDuplicateSnippet,
-    ssFavourites, ssWindowState, ssDatabase, ssCompilers
+    ssFavourites, ssWindowState, ssDatabase, ssCompilers, ssCollections,
+    ssCollection
   );
 
 type
@@ -577,7 +580,9 @@ const
     'Favourites',       // ssFavourites
     'WindowState',      // ssWindowState
     'Database',         // ssDatabase
-    'Compilers'         // ssCompilers
+    'Compilers',        // ssCompilers
+    'Collections',      // ssCollections
+    'Collection'        // ssCollection
   );
 begin
   Result := cSectionNames[Id];
