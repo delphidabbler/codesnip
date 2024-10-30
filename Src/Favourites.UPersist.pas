@@ -52,9 +52,18 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils, Classes,
+  SysUtils,
+  IOUtils,
+  Classes,
   /// Project
-  DB.UMain, UAppInfo, UConsts, UIOUtils, UIStringList, USnippetIDs, UStrUtils;
+  DB.UCollections,
+  DB.UMain,
+  UAppInfo,
+  UConsts,
+  UIOUtils,
+  UIStringList,
+  USnippetIDs,
+  UStrUtils;
 
 
 { TFavouritesPersist }
@@ -109,7 +118,8 @@ begin
       raise EFavouritesPersist.Create(sBadFormat);
     // only add to favourites if snippet in database
     if Database.Snippets.Find(SnippetName, UserDef) <> nil then
-      Favourites.Add(TSnippetID.Create(SnippetName, UserDef), LastAccess);
+//      Favourites.Add(TSnippetID.Create(SnippetName, UserDef), LastAccess);
+      Favourites.Add(TSnippetID.Create(SnippetName, TCollectionID.__TMP__DBCollectionID(UserDef)), LastAccess);
   end;
 end;
 
@@ -125,7 +135,8 @@ begin
     begin
       SB.Append(Fav.SnippetID.Name);
       SB.Append(TAB);
-      SB.Append(BoolToStr(Fav.SnippetID.UserDefined, True));
+//      SB.Append(BoolToStr(Fav.SnippetID.UserDefined, True));
+      SB.Append(BoolToStr(Fav.SnippetID.CollectionID <> TCollectionID.__TMP__MainDBCollectionID, True));
       SB.Append(TAB);
       SB.Append(DateTimeToStr(Fav.LastAccessed));
       SB.AppendLine;

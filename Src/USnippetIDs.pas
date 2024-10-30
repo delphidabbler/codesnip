@@ -38,8 +38,6 @@ type
 //      ///  <summary>Value of UserDefined property.</summary>
 //      fUserDefined: Boolean;
       fCollectionID: TCollectionID;
-//    function __TMP__GetUserDefined: Boolean;
-//    procedure __TMP__SetUserDefined(const Value: Boolean);
     procedure SetCollectionID(const AValue: TCollectionID);
   public
     ///  <summary>Name of snippet.</summary>
@@ -55,10 +53,13 @@ type
     property CollectionID: TCollectionID
       read fCollectionID write SetCollectionID;
 
+//    ///  <summary>Creates a record with given property values.</summary>
+//    constructor Create(const AName: string; const AUserDefined: Boolean);
+//      overload; {TODO -cCollections: remove constructor}
+
     ///  <summary>Creates a record with given property values.</summary>
     ///  <remarks><c>ACollectionID</c> must not be null.</remarks>
     constructor Create(const AName: string; const ACollectionID: TCollectionID);
-      overload; {TODO -cCollections: remove overload}
 
     ///  <summary>Creates copy of given snippet ID</summary>
     constructor Clone(const Src: TSnippetID);
@@ -200,7 +201,7 @@ end;
 //constructor TSnippetID.Create(const AName: string; const AUserDefined: Boolean);
 //begin
 //  fName := AName;
-//  __TMP__SetUserDefined(AUserDefined);
+//  fUserDefined := AUserDefined);
 //end;
 
 class operator TSnippetID.Equal(const SID1, SID2: TSnippetID): Boolean;
@@ -218,16 +219,6 @@ begin
   Assert(not AValue.IsNull, 'TSnippetID.SetCollectionID: Value is null');
   fCollectionID := AValue.Clone;
 end;
-
-//function TSnippetID.__TMP__GetUserDefined: Boolean;
-//begin
-//  Result := fCollectionID = TCollectionID.__TMP__UserDBCollectionID;
-//end;
-//
-//procedure TSnippetID.__TMP__SetUserDefined(const Value: Boolean);
-//begin
-//  fCollectionID := TCollectionID.__TMP__DBCollectionID(Value);
-//end;
 
 { TSnippetIDList }
 
