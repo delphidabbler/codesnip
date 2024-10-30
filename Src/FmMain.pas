@@ -585,7 +585,9 @@ uses
   // Project
   ClassHelpers.UControls,
   ClassHelpers.UGraphics,
-  DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
+  DB.UCategory,
+  DB.UCollections,
+  DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
   FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo,
   UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
   UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
@@ -940,7 +942,10 @@ end;
 
 procedure TMainForm.ActNonEmptyUserDBUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := not Database.Snippets.IsEmpty(True);
+//  (Sender as TAction).Enabled := not Database.Snippets.IsEmpty(True);
+  (Sender as TAction).Enabled := not Database.Snippets.IsEmpty(
+    TCollectionID.__TMP__UserDBCollectionID
+  );
 end;
 
 procedure TMainForm.ActOverviewTabExecute(Sender: TObject);

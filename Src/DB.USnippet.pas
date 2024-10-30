@@ -388,13 +388,13 @@ type
       {Checks if list is empty.
         @return True if list is empty, False otehrwise.
       }
-    function IsEmpty(const UserDefined: Boolean): Boolean; overload; {__TMP__ inline;}
-      {Checks if sub-set of list from either from or not from use defined
-      database is empty.
-        @param UserDefined [in] Flags whether to check for snippets in user
-          database (True) or in main database (False).
-        @return True if required subset is empty, False if not empty.
-      }
+//    function IsEmpty(const UserDefined: Boolean): Boolean; overload; {__TMP__ inline;}
+//      {Checks if sub-set of list from either from or not from use defined
+//      database is empty.
+//        @param UserDefined [in] Flags whether to check for snippets in user
+//          database (True) or in main database (False).
+//        @return True if required subset is empty, False if not empty.
+//      }
 
     ///  <summary>Checks if the sub-set of snippets in the list belonging to a
     ///  specified collection is empty.</summary>
@@ -890,11 +890,11 @@ begin
   Result := Count = 0;
 end;
 
-function TSnippetList.IsEmpty(const UserDefined: Boolean): Boolean;
-begin
-//  Result := Count(UserDefined) = 0;
-  Result := Count(TCollectionID.__TMP__DBCollectionID(UserDefined)) = 0;
-end;
+//function TSnippetList.IsEmpty(const UserDefined: Boolean): Boolean;
+//begin
+////  Result := Count(UserDefined) = 0;
+//  Result := Count(TCollectionID.__TMP__DBCollectionID(UserDefined)) = 0;
+//end;
 
 function TSnippetList.IsEmpty(const ACollectionID: TCollectionID): Boolean;
 begin
