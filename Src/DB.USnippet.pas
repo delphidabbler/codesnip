@@ -365,13 +365,13 @@ type
       {Gets an intialised snippet list enumerator.
         @return Required enumerator.
       }
-    function Count(const UserDefined: Boolean): Integer; overload;
-      {Counts number of snippets in list that are either from or not from user
-      defined database.
-        @param UserDefined [in] Flags whether to count snippets in user database
-          (True) or in main database (False).
-        @return Number of snippets in specified database.
-      }
+//    function Count(const UserDefined: Boolean): Integer; overload;
+//      {Counts number of snippets in list that are either from or not from user
+//      defined database.
+//        @param UserDefined [in] Flags whether to count snippets in user database
+//          (True) or in main database (False).
+//        @return Number of snippets in specified database.
+//      }
 
     ///  <summary>Counts number of snippets in list that belong to a specified
     ///  collection.</summary>
@@ -722,22 +722,22 @@ begin
     end;
 end;
 
-function TSnippetList.Count(const UserDefined: Boolean): Integer;
-  {Counts number of snippets in list that are either from or not from user
-  defined database.
-    @param UserDefined [in] Flags whether to count snippets in user database
-      (True) or in main database (False).
-    @return Number of snippets in specified database.
-  }
-//var
-//  Snippet: TSnippet;  // refers to all snippets in list
-begin
-  Result := Count(TCollectionID.__TMP__DBCollectionID(UserDefined));
-//  Result := 0;
-//  for Snippet in Self do
-//    if Snippet.UserDefined = UserDefined then
-//      Inc(Result);
-end;
+//function TSnippetList.Count(const UserDefined: Boolean): Integer;
+//  {Counts number of snippets in list that are either from or not from user
+//  defined database.
+//    @param UserDefined [in] Flags whether to count snippets in user database
+//      (True) or in main database (False).
+//    @return Number of snippets in specified database.
+//  }
+////var
+////  Snippet: TSnippet;  // refers to all snippets in list
+//begin
+//  Result := Count(TCollectionID.__TMP__DBCollectionID(UserDefined));
+////  Result := 0;
+////  for Snippet in Self do
+////    if Snippet.UserDefined = UserDefined then
+////      Inc(Result);
+//end;
 
 function TSnippetList.Count(const ACollectionID: TCollectionID): Integer;
 var

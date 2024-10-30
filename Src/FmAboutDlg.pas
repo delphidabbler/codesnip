@@ -179,6 +179,7 @@ uses
   ShellAPI,
   IOUtils,
   // Project
+  DB.UCollections,
   DB.UMain,
   FmEasterEgg,
   FmPreviewDlg,
@@ -442,7 +443,11 @@ procedure TAboutDlg.InitHTMLFrames;
 
       begin
         // Resolve conditionally displayed block placeholders
-        IsDBAvalable := Database.Snippets.Count(False) > 0;
+//        IsDBAvalable := Database.Snippets.Count(False) > 0;
+        // check if DelphiDabbler Code Snippets Collection is in use
+        IsDBAvalable := not Database.Snippets.IsEmpty(
+          TCollectionID.__TMP__MainDBCollectionID
+        );
         IsMetaDataAvailable := fMetaData.IsSupportedVersion
           and not fMetaData.IsCorrupt;
         IsLicenseInfoAvailable := IsMetaDataAvailable

@@ -62,7 +62,11 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, FmCodeExportDlg, FmCodeImportDlg, UCodeImportMgr;
+  DB.UCollections,
+  DB.UMain,
+  FmCodeExportDlg,
+  FmCodeImportDlg,
+  UCodeImportMgr;
 
 
 { TCodeShareMgr }
@@ -73,7 +77,10 @@ class function TCodeShareMgr.CanShare: Boolean;
     @return True if user defined snippets exist in database.
   }
 begin
-  Result := Database.Snippets.Count(True) > 0;
+//  Result := Database.Snippets.Count(True) > 0;
+  Result := not Database.Snippets.IsEmpty(
+    TCollectionID.__TMP__UserDBCollectionID
+  );
 end;
 
 class procedure TCodeShareMgr.ExportCode(ViewItem: IView);
@@ -117,4 +124,5 @@ begin
 end;
 
 end.
+
 

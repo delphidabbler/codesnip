@@ -66,10 +66,25 @@ uses
   // Delphi
   SysUtils, Generics.Defaults,
   // Project
-  Compilers.UGlobals, Compilers.UCompilers, DB.UMain, DB.USnippet, UConsts,
-  UContainers, UCSSUtils, UEncodings, UHTMLTemplate, UHTMLUtils,
-  UJavaScriptUtils, UPreferences, UQuery, UResourceUtils, USnippetHTML,
-  USnippetPageHTML, UStrUtils, USystemInfo;
+  Compilers.UGlobals,
+  Compilers.UCompilers,
+  DB.UCollections,
+  DB.UMain,
+  DB.USnippet,
+  UConsts,
+  UContainers,
+  UCSSUtils,
+  UEncodings,
+  UHTMLTemplate,
+  UHTMLUtils,
+  UJavaScriptUtils,
+  UPreferences,
+  UQuery,
+  UResourceUtils,
+  USnippetHTML,
+  USnippetPageHTML,
+  UStrUtils,
+  USystemInfo;
 
 
 type
@@ -418,7 +433,10 @@ begin
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
-  UserDBCount := Database.Snippets.Count(True);
+//  UserDBCount := Database.Snippets.Count(True);
+  UserDBCount := Database.Snippets.Count(
+    TCollectionID.__TMP__UserDBCollectionID
+  );
   Tplt.ResolvePlaceholderHTML(
     'HaveUserDB', TCSS.BlockDisplayProp(UserDBCount > 0)
   );
@@ -429,7 +447,10 @@ begin
     'UserDBCount', IntToStr(UserDBCount)
   );
 
-  MainDBCount := Database.Snippets.Count(False);
+//  MainDBCount := Database.Snippets.Count(False);
+  MainDBCount := Database.Snippets.Count(
+    TCollectionID.__TMP__MainDBCollectionID
+  );
   Tplt.ResolvePlaceholderHTML(
     'HaveMainDB', TCSS.BlockDisplayProp(MainDBCount > 0)
   );

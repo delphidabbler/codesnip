@@ -96,7 +96,10 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UCtrlArranger, UQuery;
+  DB.UCollections,
+  DB.UMain,
+  UCtrlArranger,
+  UQuery;
 
 
 {$R *.dfm}
@@ -225,7 +228,10 @@ procedure TSelectionSearchDlg.InitForm;
 begin
   inherited;
   frmSelect.CollapseTree;
-  btnUserDB.Enabled := Database.Snippets.Count(True) > 0;
+//  btnUserDB.Enabled := Database.Snippets.Count(True) > 0;
+  btnUserDB.Enabled := not Database.Snippets.IsEmpty(
+    TCollectionID.__TMP__UserDBCollectionID
+  );
 end;
 
 procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);

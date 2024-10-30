@@ -51,6 +51,10 @@ type
 implementation
 
 
+uses
+  DB.UCollections;
+
+
 {$R *.dfm}
 
 
@@ -62,7 +66,10 @@ function TSelectUserSnippetsFrame.CanAddCatNode(const Cat: TCategory): Boolean;
     @return True if category contains any user-defined snippets.
   }
 begin
-  Result := Cat.Snippets.Count(True) > 0;
+//  Result := Cat.Snippets.Count(True) > 0;
+  Result := not Cat.Snippets.IsEmpty(
+    TCollectionID.__TMP__UserDBCollectionID
+  );
 end;
 
 function TSelectUserSnippetsFrame.CanAddSnippetNode(
