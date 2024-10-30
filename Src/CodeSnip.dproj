@@ -581,6 +581,7 @@
 			</DCCReference>
 			<DCCReference Include="ClassHelpers.UGraphics.pas"/>
 			<DCCReference Include="ClassHelpers.UActions.pas"/>
+			<DCCReference Include="DB.UCollections.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
