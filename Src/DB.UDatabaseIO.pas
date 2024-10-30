@@ -101,6 +101,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  DB.UCollections,
   DBIO.UFileIOIntf, DBIO.UIniDataReader, DBIO.UNulDataReader, DBIO.UXMLDataIO,
   UAppInfo, UConsts, UIStringList, UReservedCategories, USnippetIDs;
 
@@ -153,15 +154,20 @@ type
           found.
       }
     function IsNativeSnippet(const Snippet: TSnippet): Boolean;
-      virtual; abstract;
+      virtual;
       {Checks if a snippet is native (belongs) to the database being read.
         @param Snippet [in] Snippet to test.
         @return True if snippet is native, False if not.
       }
-    function IsUserDatabase: Boolean; virtual; abstract;
+    function IsUserDatabase: Boolean; virtual;
       {Checks if the database is the user database.
         @return True if the database is the user database, False if not.
       }
+
+    ///  <summary>Returns the ID of the collection being loaded into the
+    ///  database.</summary>
+    function CollectionID: TCollectionID; virtual; abstract;
+
     function ErrorMessageHeading: string; virtual; abstract;
       {Returns heading to use in error messages. Should identify the database.
         @return Required heading.
@@ -211,15 +217,20 @@ type
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
-    function IsNativeSnippet(const Snippet: TSnippet): Boolean; override;
-      {Checks if a snippet is native (belongs) to the main database.
-        @param Snippet [in] Snippet to test.
-        @return True if snippet is native, False if not.
-      }
-    function IsUserDatabase: Boolean; override;
-      {Checks if the database is the user database.
-        @return False - this is not the user database.
-      }
+//    function IsNativeSnippet(const Snippet: TSnippet): Boolean; override;
+//      {Checks if a snippet is native (belongs) to the main database.
+//        @param Snippet [in] Snippet to test.
+//        @return True if snippet is native, False if not.
+//      }
+//    function IsUserDatabase: Boolean; override;
+//      {Checks if the database is the user database.
+//        @return False - this is not the user database.
+//      }
+
+    ///  <summary>Returns the ID of the collection being loaded into the
+    ///  database.</summary>
+    function CollectionID: TCollectionID; override;
+
     function ErrorMessageHeading: string; override;
       {Returns heading to use in error messages. Identifies main database.
         @return Required heading.
@@ -246,15 +257,20 @@ type
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
-    function IsNativeSnippet(const Snippet: TSnippet): Boolean; override;
-      {Checks if a snippet is native (belongs) to the user database.
-        @param Snippet [in] Snippet to test.
-        @return True if snippet is native, False if not.
-      }
-    function IsUserDatabase: Boolean; override;
-      {Checks if the database is the user database.
-        @return True - this is the user database.
-      }
+//    function IsNativeSnippet(const Snippet: TSnippet): Boolean; override;
+//      {Checks if a snippet is native (belongs) to the user database.
+//        @param Snippet [in] Snippet to test.
+//        @return True if snippet is native, False if not.
+//      }
+//    function IsUserDatabase: Boolean; override;
+//      {Checks if the database is the user database.
+//        @return True - this is the user database.
+//      }
+
+    ///  <summary>Returns the ID of the collection being loaded into the
+    ///  database.</summary>
+    function CollectionID: TCollectionID; override;
+
     function ErrorMessageHeading: string; override;
       {Returns heading to use in error messages. Identifies main database.
         @return Required heading.
@@ -352,6 +368,16 @@ begin
     raise EDatabaseLoader.Create(ErrorMessageHeading + EOL2 + E.Message)
   else
     raise E;
+end;
+
+function TDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
+begin
+  Result := Snippet.CollectionID = CollectionID;
+end;
+
+function TDatabaseLoader.IsUserDatabase: Boolean;
+begin
+  Result := CollectionID <> TCollectionID.__TMP__MainDBCollectionID;
 end;
 
 procedure TDatabaseLoader.Load(const SnipList: TSnippetList;
@@ -472,7 +498,8 @@ begin
   for SnippetName in SnippetNames do
   begin
     // Check if snippet exists in current database and add it to list if not
-    Snippet := fSnipList.Find(SnippetName, IsUserDatabase);
+//    Snippet := fSnipList.Find(SnippetName, IsUserDatabase);
+    Snippet := fSnipList.Find(SnippetName, CollectionID);
     if not Assigned(Snippet) then
     begin
       fReader.GetSnippetProps(SnippetName, SnippetProps);
@@ -488,6 +515,11 @@ begin
 end;
 
 { TMainDatabaseLoader }
+
+function TMainDatabaseLoader.CollectionID: TCollectionID;
+begin
+  Result := TCollectionID.__TMP__MainDBCollectionID;
+end;
 
 function TMainDatabaseLoader.CreateReader: IDataReader;
   {Creates reader object. If main database doesn't exist a nul reader is
@@ -519,27 +551,33 @@ function TMainDatabaseLoader.FindSnippet(const SnippetName: string;
   }
 begin
   // We only search main database
-  Result := SnipList.Find(SnippetName, False);
+//  Result := SnipList.Find(SnippetName, False);
+  Result := SnipList.Find(SnippetName, CollectionID);
 end;
 
-function TMainDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
-  {Checks if a snippet is native (belongs) to the main database.
-    @param Snippet [in] Snippet to test.
-    @return True if snippet is native, False if not.
-  }
-begin
-  Result := not Snippet.UserDefined;
-end;
+//function TMainDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
+//  {Checks if a snippet is native (belongs) to the main database.
+//    @param Snippet [in] Snippet to test.
+//    @return True if snippet is native, False if not.
+//  }
+//begin
+//  Result := not Snippet.UserDefined;
+//end;
 
-function TMainDatabaseLoader.IsUserDatabase: Boolean;
-  {Checks if the database is the user database.
-    @return False - this is not the user database.
-  }
-begin
-  Result := False;
-end;
+//function TMainDatabaseLoader.IsUserDatabase: Boolean;
+//  {Checks if the database is the user database.
+//    @return False - this is not the user database.
+//  }
+//begin
+//  Result := False;
+//end;
 
 { TUserDatabaseLoader }
+
+function TUserDatabaseLoader.CollectionID: TCollectionID;
+begin
+  Result := TCollectionID.__TMP__UserDBCollectionID;
+end;
 
 function TUserDatabaseLoader.CreateReader: IDataReader;
   {Creates reader object. If user database doesn't exist a nul reader is
@@ -572,28 +610,30 @@ function TUserDatabaseLoader.FindSnippet(const SnippetName: string;
   }
 begin
   // Search in user database
-  Result := SnipList.Find(SnippetName, True);
+//  Result := SnipList.Find(SnippetName, True);
+  Result := SnipList.Find(SnippetName, CollectionID);
   if not Assigned(Result) then
     // Not in user database: try main database
-    Result := SnipList.Find(SnippetName, False);
+//    Result := SnipList.Find(SnippetName, False);
+    Result := SnipList.Find(SnippetName, TCollectionID.__TMP__MainDBCollectionID);
 end;
 
-function TUserDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
-  {Checks if a snippet is native (belongs) to the user database.
-    @param Snippet [in] Snippet to test.
-    @return True if snippet is native, False if not.
-  }
-begin
-  Result := Snippet.UserDefined;
-end;
+//function TUserDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
+//  {Checks if a snippet is native (belongs) to the user database.
+//    @param Snippet [in] Snippet to test.
+//    @return True if snippet is native, False if not.
+//  }
+//begin
+//  Result := Snippet.UserDefined;
+//end;
 
-function TUserDatabaseLoader.IsUserDatabase: Boolean;
-  {Checks if the database is the user database.
-    @return True - this is the user database.
-  }
-begin
-  Result := True;
-end;
+//function TUserDatabaseLoader.IsUserDatabase: Boolean;
+//  {Checks if the database is the user database.
+//    @return True - this is the user database.
+//  }
+//begin
+//  Result := True;
+//end;
 
 procedure TUserDatabaseLoader.LoadCategories;
   {Loads all categories from storage and adds user and imports categories if not
@@ -690,7 +730,8 @@ begin
   for Snippet in fSnipList do
   begin
     // Only write user-defined snippets
-    if Snippet.UserDefined then
+//    if Snippet.UserDefined then
+    if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
     begin
       // Get and write a snippet's properties
       Props := fProvider.GetSnippetProps(Snippet);
