@@ -20,6 +20,7 @@ uses
   // Delphi
   Classes, ActiveX, Windows,
   // Project
+  DB.UCollections,
   UView;
 
 
@@ -40,7 +41,17 @@ type
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
     procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool);
+      UserDefined: WordBool; NewTab: WordBool); overload;
+
+    ///  <summary>Displays a snippet.</summary>
+    ///  <param name="SnippetName">WideString [in] Name of required snippet.
+    ///  </param>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
+    ///  collection.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
+    ///  detail pane tab.</param>
+    procedure DisplaySnippet(const SnippetName: WideString;
+      ACollectionID: TCollectionID; NewTab: WordBool); overload;
 
     ///  <summary>Displays a category.</summary>
     ///  <param name="CatId">WideString [in] ID of required category.</param>

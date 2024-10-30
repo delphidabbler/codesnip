@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Source for type library that defines the interface to extensions to the
  * browser control DOM's "external object".
@@ -12,7 +12,7 @@
 
 [
   uuid(DA95AEFB-3FB5-4A9E-9F9D-A53DD05CA7D4),
-  version(14.0),
+  version(15.0),
   helpstring("CodeSnip DOM External Object Extender Type Library"),
   custom(DE77BA64-517C-11D1-A2DA-0000F8773CE9, 117441012),
   custom(DE77BA63-517C-11D1-A2DA-0000F8773CE9, 1219706147)
@@ -24,19 +24,19 @@ library ExternalObj
   importlib("stdole2.tlb");
 
   /*
-   * V14 interface of extension to browser DOM's "external" object.
+   * V15 interface of extension to browser DOM's "external" object.
    */
-  interface IWBExternal14;
+  interface IWBExternal15;
 
 
   [
     uuid(BA971829-ED4D-4092-BCAE-4B5DB1A2D74A),
-    version(14.0),
+    version(15.0),
     helpstring("DOM external object extender"),
     dual,
     oleautomation
   ]
-  interface IWBExternal14: IDispatch
+  interface IWBExternal15: IDispatch
   {
     /*
      * Update database from internet.
@@ -44,14 +44,25 @@ library ExternalObj
     [id(0x00000065)]
     HRESULT _stdcall UpdateDbase(void);
 
-    /*
+    /* - TODO: Delete following commented out method
      * Display named snippet.
      *    @param SnippetName [in] Name of snippet to display.
      *    @param UserDefined [in] Whether snippet is user defined.
-     */
+     *
     [id(0x00000066)]
     HRESULT _stdcall DisplaySnippet([in] BSTR SnippetName,
         [in] VARIANT_BOOL UserDefined, [in] VARIANT_BOOL NewTab);
+    */
+
+    /*
+     * Display named snippet.
+     *    @param SnippetName [in] Name of snippet to display.
+     *    @param CollectionIDAsHex [in] Hex representation of snippet's 
+     *           collection ID.
+     */
+    [id(0x00000080)]
+    HRESULT _stdcall DisplaySnippet([in] BSTR SnippetName,
+        [in] BSTR CollectionIDAsHex, [in] VARIANT_BOOL NewTab);
 
     /*
      * Displays configure compilers dialog box.

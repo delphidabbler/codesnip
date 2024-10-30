@@ -36,10 +36,24 @@ function updateDbase() {
  *  @param string snippet [in] Name of snippet to be displayed.
  *  @param boolean userdefined [in] Whether snippet is user defined.
  *  @return False.
- */
+ *
 function displaySnippet(snippet, userdefined) {
   var e = window.event;
   external.DisplaySnippet(snippet, userdefined, e.ctrlKey);
+  return false;
+}
+*/
+
+/*
+ * Calls external object to get host application to display a named snippet.
+ *  @param string snippet [in] Name of snippet to be displayed.
+ *  @param boolean collectionId [in] Hex string representation of collection
+ *    to which the snippet belongs.
+ *  @return False.
+ */
+function displaySnippet(snippet, collectionId) {
+  var e = window.event;
+  external.DisplaySnippet(snippet, collectionId, e.ctrlKey);
   return false;
 }
 
