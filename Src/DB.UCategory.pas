@@ -20,6 +20,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
+  DB.UCollections,
   DB.USnippet;
 
 
@@ -51,7 +52,12 @@ type
     fSnippets: TSnippetList;  // List of snippet objects in category
     fID: string;              // Category id
     fDescription: string;     // Category description
-    fUserDefined: Boolean;    // Whether this is a user-defined snippet
+//    fUserDefined: Boolean;    // Whether this is a user-defined snippet
+    fCollectionID: TCollectionID;
+
+    function __TMP__GetUserDefined: Boolean;
+    procedure __TMP__SetUserDefined(const AValue: Boolean);
+    procedure SetCollectionID(const AValue: TCollectionID);
     function CompareIDTo(const Cat: TCategory): Integer;
       {Compares this category's ID to that of a given category. The check is not
       case sensitive.
@@ -60,8 +66,20 @@ type
           are equal or +1 if this category's ID is greater than Cat's.
       }
   public
-    constructor Create(const CatID: string; const UserDefined: Boolean;
+    ///  <summary>Object constructor. Sets up category object with given
+    ///  property values.</summary>
+    ///  <param name="CatID"><c>CatID</c> [in] Category ID.</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of collection
+    ///  that defines this category. ID must not be null.</param>
+    ///  <param name="Data"><c>TCategoryData</c> [in] category properties.
+    ///  </param>
+    constructor Create(const CatID: string; const ACollectionID: TCollectionID;
       const Data: TCategoryData);
+      overload; {TODO -cCollections: remove overload }
+
+    constructor Create(const CatID: string; const UserDefined: Boolean;
+      const Data: TCategoryData); overload;
+      {TODO -cCollections: remove this constructor}
       {Class contructor. Sets up category object with given property values.
         @param Data [in] Contains required property values.
       }
@@ -93,8 +111,14 @@ type
       {Description of category}
     property Snippets: TSnippetList read fSnippets;
       {List of snippets in this category}
-    property UserDefined: Boolean read fUserDefined;
+//    property UserDefined: Boolean read fUserDefined;
+    property UserDefined: Boolean
+      read __TMP__GetUserDefined write __TMP__SetUserDefined;
       {Flag that indicates if this is a user defined category}
+    ///  <summary>ID of collection that defines this category.</summary>
+    ///  <remarks>ID must not be null.</remarks>
+    property CollectionID: TCollectionID
+      read fCollectionID write SetCollectionID;
   end;
 
   {
@@ -194,7 +218,7 @@ function TCategory.CanDelete: Boolean;
     @return True if deletion allowed, False if not.
   }
 begin
-  Result := fUserDefined and fSnippets.IsEmpty
+  Result := __TMP__GetUserDefined and fSnippets.IsEmpty
     and not TReservedCategories.IsReserved(Self);
 end;
 
@@ -224,6 +248,19 @@ begin
   Result := StrCompareText(Self.ID, Cat.ID);
 end;
 
+constructor TCategory.Create(const CatID: string;
+  const ACollectionID: TCollectionID; const Data: TCategoryData);
+begin
+  Assert(ClassType <> TCategory,
+    ClassName + '.Create: must only be called from descendants.');
+  inherited Create;
+  fID := CatID;
+  fDescription := Data.Desc;
+  SetCollectionID(ACollectionID);
+  // Create list to store snippets in category
+  fSnippets := TSnippetListEx.Create;
+end;
+
 constructor TCategory.Create(const CatID: string; const UserDefined: Boolean;
   const Data: TCategoryData);
   {Class contructor. Sets up category object with given property values.
@@ -235,7 +272,8 @@ begin
   inherited Create;
   fID := CatID;
   fDescription := Data.Desc;
-  fUserDefined := UserDefined;
+//  fUserDefined := UserDefined;
+  __TMP__SetUserDefined(UserDefined);   // sets CollectionID property
   // Create list to store snippets in category
   fSnippets := TSnippetListEx.Create;
 end;
@@ -256,6 +294,22 @@ function TCategory.IsEqual(const Cat: TCategory): Boolean;
   }
 begin
   Result := CompareIDTo(Cat) = 0;
+end;
+
+procedure TCategory.SetCollectionID(const AValue: TCollectionID);
+begin
+  Assert(not AValue.IsNull, ClassName + '.SetCollectionID: Value is null');
+  fCollectionID := AValue;
+end;
+
+function TCategory.__TMP__GetUserDefined: Boolean;
+begin
+  Result := fCollectionID <> TCollectionID.__TMP__MainDBCollectionID;
+end;
+
+procedure TCategory.__TMP__SetUserDefined(const AValue: Boolean);
+begin
+  fCollectionID := TCollectionID.__TMP__DBCollectionID(AValue);
 end;
 
 { TCategoryEx }
