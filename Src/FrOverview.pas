@@ -235,9 +235,12 @@ implementation
 
 uses
   // Delphi
+  SysUtils,
   Messages,
   // Project
-  UKeysHelper, UOverviewTreeBuilder;
+  DB.UCollections,
+  UKeysHelper,
+  UOverviewTreeBuilder;
 
 
 {$R *.dfm}
@@ -976,11 +979,22 @@ function TOverviewFrame.TTVDraw.IsUserDefinedNode(
     @return True if node represents user defined object, False if not.
   }
 var
-  ViewItem: IView;  // view item represented by node
+  ViewItem: IView;              // view item represented by node
+  SnippetView: ISnippetView;    // view item if node represents a snippet
+  CategoryView: ICategoryView;  // view item if node represents a category
+  CollectionID: TCollectionID;  // ID of collection node item belongs to, if any
 begin
-  ViewItem := (Node as TViewItemTreeNode).ViewItem;
   // TODO -cBug: Exception reported as issue #70 seems to be triggered here
-  Result := ViewItem.IsUserDefined;
+  ViewItem := (Node as TViewItemTreeNode).ViewItem;
+//  Result := ViewItem.IsUserDefined;
+  if Supports(ViewItem, ISnippetView, SnippetView) then
+    CollectionID := SnippetView.Snippet.CollectionID
+  else if Supports(ViewItem, ICategoryView, CategoryView) then
+    CollectionID := CategoryView.Category.CollectionID
+  else
+    CollectionID := TCollectionID.CreateNull;
+  Result := (CollectionID <> TCollectionID.__TMP__MainDBCollectionID)
+    and not CollectionID.IsNull;
 end;
 
 end.
