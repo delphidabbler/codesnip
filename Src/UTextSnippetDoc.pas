@@ -20,6 +20,7 @@ uses
   // Delphi
   Classes,
   // Project
+  DB.UCollections,
   ActiveText.UMain, UEncodings, UIStringList, USnippetDoc;
 
 
@@ -44,12 +45,20 @@ type
   strict protected
     ///  <summary>Initialises plain text document.</summary>
     procedure InitialiseDoc; override;
-    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
-    ///  user defined or from main database.</summary>
-    ///  <remarks>Heading is output the same whether user defined or not, so
-    ///  UserDefined parameter is ignored.</remarks>
-    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
-      override;
+
+//    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
+//    ///  user defined or from main database.</summary>
+//    ///  <remarks>Heading is output the same whether user defined or not, so
+//    ///  UserDefined parameter is ignored.</remarks>
+//    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
+//      override;
+
+    ///  <summary>Output given heading, i.e. snippet name for snippet from a
+    ///  given collection.</summary>
+    ///  <remarks>Heading is output the same regardless of the snippet's
+    ///  collection.</remarks>
+    procedure RenderHeading(const Heading: string;
+      const ACollectionID: TCollectionID); override;
     ///  <summary>Interprets and adds given snippet description to document.
     ///  </summary>
     ///  <remarks>Active text is converted to word-wrapped plain text
@@ -165,10 +174,16 @@ begin
 end;
 
 procedure TTextSnippetDoc.RenderHeading(const Heading: string;
-  const UserDefined: Boolean);
+  const ACollectionID: TCollectionID);
 begin
   fWriter.WriteLine(Heading);
 end;
+
+//procedure TTextSnippetDoc.RenderHeading(const Heading: string;
+//  const UserDefined: Boolean);
+//begin
+//  fWriter.WriteLine(Heading);
+//end;
 
 procedure TTextSnippetDoc.RenderNoCompilerInfo(const Heading,
   NoCompileTests: string);

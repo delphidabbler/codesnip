@@ -18,6 +18,7 @@ interface
 
 uses
   // Project
+  DB.UCollections,
   ActiveText.UMain, ActiveText.URTFRenderer, Hiliter.UGlobals, UEncodings,
   UIStringList, USnippetDoc, URTFBuilder, URTFStyles;
 
@@ -75,12 +76,20 @@ type
   strict protected
     ///  <summary>Initialises rich text document.</summary>
     procedure InitialiseDoc; override;
-    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
-    ///  user defined or from main database.</summary>
-    ///  <remarks>Heading is coloured according to whether user defined or not.
+
+//    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
+//    ///  user defined or from main database.</summary>
+//    ///  <remarks>Heading is coloured according to whether user defined or not.
+//    ///  </remarks>
+//    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
+//      override;
+
+    ///  <summary>Output given heading, i.e. snippet name for snippet from a
+    ///  given collection..</summary>
+    ///  <remarks>Heading is coloured according the the snippet's collection.
     ///  </remarks>
-    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
-      override;
+    procedure RenderHeading(const Heading: string;
+      const ACollectionID: TCollectionID); override;
     ///  <summary>Adds given snippet description to document.</summary>
     ///  <remarks>Active text formatting is observed and styled to suit
     ///  document.</remarks>
@@ -416,13 +425,25 @@ begin
   end;
 end;
 
+//procedure TRTFSnippetDoc.RenderHeading(const Heading: string;
+//  const UserDefined: Boolean);
+//begin
+//  fBuilder.SetFontStyle([fsBold]);
+//  fBuilder.SetFontSize(HeadingFontSize);
+//  if fUseColour then
+//    fBuilder.SetColour(Preferences.DBHeadingColours[UserDefined]);
+//  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(0.0, ParaSpacing));
+//  fBuilder.AddText(Heading);
+//  fBuilder.EndPara;
+//end;
+
 procedure TRTFSnippetDoc.RenderHeading(const Heading: string;
-  const UserDefined: Boolean);
+  const ACollectionID: TCollectionID);
 begin
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.SetFontSize(HeadingFontSize);
   if fUseColour then
-    fBuilder.SetColour(Preferences.DBHeadingColours[UserDefined]);
+    fBuilder.SetColour(Preferences.DBHeadingColours[ACollectionID <> TCollectionID.__TMP__MainDBCollectionID]);
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(0.0, ParaSpacing));
   fBuilder.AddText(Heading);
   fBuilder.EndPara;
