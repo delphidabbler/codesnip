@@ -108,7 +108,7 @@ uses
   // Delphi
   SysUtils, Dialogs, Windows {for inlining}, IOUtils,
   // Project
-  DB.UMain, DB.USnippet,
+  DB.UCollections, DB.UMain, DB.USnippet,
   FmAddCategoryDlg, FmDeleteCategoryDlg, FmDuplicateSnippetDlg,
   FmRenameCategoryDlg, FmSnippetsEditorDlg,
   {$IFNDEF PORTABLE}
@@ -362,7 +362,8 @@ var
 begin
   Result := TCategoryList.Create;
   for Cat in Database.Categories do
-    if Cat.UserDefined and
+//    if Cat.UserDefined and
+    if (Cat.CollectionID <> TCollectionID.__TMP__MainDBCollectionID) and
       (IncludeSpecial or not TReservedCategories.IsReserved(Cat)) then
       Result.Add(Cat);
 end;

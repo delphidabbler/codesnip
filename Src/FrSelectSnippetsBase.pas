@@ -42,6 +42,9 @@ type
       }
       TTVDraw = class(TSnippetsTVDraw)
       strict protected
+        {TODO -cCollections: Need to change following method in base class to
+            get collection ID and calling code then needs to take action based
+            on that instead of user-defined.}
         function IsUserDefinedNode(const Node: TTreeNode): Boolean; override;
           {Checks if a node represents a user defined snippets object.
             @param Node [in] Node to be checked.
@@ -118,9 +121,12 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StdCtrls,
+  SysUtils,
+  StdCtrls,
   // Project
-  DB.UMain, UGroups;
+  DB.UCollections,
+  DB.UMain,
+  UGroups;
 
 
 {$R *.dfm}
@@ -283,9 +289,11 @@ begin
   SnipObj := TObject(Node.Data);
   Result := False;
   if SnipObj is TSnippet then
-    Result := (SnipObj as TSnippet).UserDefined
+//    Result := (SnipObj as TSnippet).UserDefined
+    Result := (SnipObj as TSnippet).CollectionID <> TCollectionID.__TMP__MainDBCollectionID
   else if SnipObj is TCategory then
-    Result := (SnipObj as TCategory).UserDefined;
+//    Result := (SnipObj as TCategory).UserDefined;
+    Result := (SnipObj as TCategory).CollectionID <> TCollectionID.__TMP__MainDBCollectionID;
 end;
 
 end.

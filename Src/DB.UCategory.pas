@@ -54,9 +54,6 @@ type
     fDescription: string;     // Category description
 //    fUserDefined: Boolean;    // Whether this is a user-defined snippet
     fCollectionID: TCollectionID;
-
-    function __TMP__GetUserDefined: Boolean;
-    procedure __TMP__SetUserDefined(const AValue: Boolean);
     procedure SetCollectionID(const AValue: TCollectionID);
     function CompareIDTo(const Cat: TCategory): Integer;
       {Compares this category's ID to that of a given category. The check is not
@@ -111,9 +108,7 @@ type
     property Snippets: TSnippetList read fSnippets;
       {List of snippets in this category}
 //    property UserDefined: Boolean read fUserDefined;
-    property UserDefined: Boolean
-      read __TMP__GetUserDefined write __TMP__SetUserDefined;
-      {Flag that indicates if this is a user defined category}
+//      {Flag that indicates if this is a user defined category}
     ///  <summary>ID of collection that defines this category.</summary>
     ///  <remarks>ID must not be null.</remarks>
     property CollectionID: TCollectionID
@@ -217,7 +212,10 @@ function TCategory.CanDelete: Boolean;
     @return True if deletion allowed, False if not.
   }
 begin
-  Result := __TMP__GetUserDefined and fSnippets.IsEmpty
+//  Result := fUserDefined and fSnippets.IsEmpty
+//    and not TReservedCategories.IsReserved(Self);
+  Result := (fCollectionID <> TCollectionID.__TMP__MainDBCollectionID)
+    and fSnippets.IsEmpty
     and not TReservedCategories.IsReserved(Self);
 end;
 
@@ -271,8 +269,7 @@ end;
 //  inherited Create;
 //  fID := CatID;
 //  fDescription := Data.Desc;
-////  fUserDefined := UserDefined;
-//  __TMP__SetUserDefined(UserDefined);   // sets CollectionID property
+//  fUserDefined := UserDefined;
 //  // Create list to store snippets in category
 //  fSnippets := TSnippetListEx.Create;
 //end;
@@ -299,16 +296,6 @@ procedure TCategory.SetCollectionID(const AValue: TCollectionID);
 begin
   Assert(not AValue.IsNull, ClassName + '.SetCollectionID: Value is null');
   fCollectionID := AValue;
-end;
-
-function TCategory.__TMP__GetUserDefined: Boolean;
-begin
-  Result := fCollectionID <> TCollectionID.__TMP__MainDBCollectionID;
-end;
-
-procedure TCategory.__TMP__SetUserDefined(const AValue: Boolean);
-begin
-  fCollectionID := TCollectionID.__TMP__DBCollectionID(AValue);
 end;
 
 { TCategoryEx }

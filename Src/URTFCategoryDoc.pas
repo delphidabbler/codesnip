@@ -90,7 +90,7 @@ implementation
 
 uses
   // Project
-  ActiveText.UMain, UColours, UPreferences;
+  ActiveText.UMain, DB.UCollections, UColours, UPreferences;
 
 
 { TRTFCategoryDoc }
@@ -214,7 +214,8 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(HeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
-  SetColour(Preferences.DBHeadingColours[Category.UserDefined]);
+//  SetColour(Preferences.DBHeadingColours[Category.UserDefined]);
+  SetColour(Preferences.DBHeadingColours[Category.CollectionID <> TCollectionID.__TMP__MainDBCollectionID]);
   fBuilder.AddText(Category.Description);
   fBuilder.EndPara;
   fBuilder.EndGroup;

@@ -669,7 +669,8 @@ end;
 
 function TCategoryPageHTML.GetH1ClassName: string;
 begin
-  if (View as ICategoryView).Category.UserDefined then
+//  if (View as ICategoryView).Category.UserDefined then
+  if (View as ICategoryView).Category.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
     Result := 'userdb'
   else
     Result := inherited GetH1ClassName;

@@ -818,7 +818,9 @@ function TDatabase.GetEditableCategoryInfo(
     @return Required data.
   }
 begin
-  Assert(not Assigned(Category) or Category.UserDefined,
+//  Assert(not Assigned(Category) or Category.UserDefined,
+//    ClassName + '.GetEditableCategoryInfo: Category is not user-defined');
+  Assert(not Assigned(Category) or (Category.CollectionID <> TCollectionID.__TMP__MainDBCollectionID),
     ClassName + '.GetEditableCategoryInfo: Category is not user-defined');
   if Assigned(Category) then
     Result := (Category as TCategoryEx).GetEditData

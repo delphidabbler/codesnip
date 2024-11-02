@@ -79,7 +79,8 @@ function TSelectUserSnippetsFrame.CanAddSnippetNode(
     @return True if snippet is user-defined.
   }
 begin
-  Result := Snippet.UserDefined;
+//  Result := Snippet.UserDefined;
+  Result := Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID;
 end;
 
 end.
