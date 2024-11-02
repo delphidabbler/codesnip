@@ -272,7 +272,12 @@ uses
   // Delphi
   SysUtils, Generics.Defaults,
   // Project
-  DB.UDatabaseIO, IntfCommon, UExceptions, UQuery, UStrUtils;
+  DB.UCollections,
+  DB.UDatabaseIO,
+  IntfCommon,
+  UExceptions,
+  UQuery,
+  UStrUtils;
 
 
 var
@@ -888,7 +893,8 @@ function TDatabase.InternalAddCategory(const CatID: string;
     @return Reference to new category object.
   }
 begin
-  Result := TCategoryEx.Create(CatID, True, Data);
+//  Result := TCategoryEx.Create(CatID, True, Data);
+  Result := TCategoryEx.Create(CatID, TCollectionID.__TMP__DBCollectionID(True), Data);
   fCategories.Add(Result);
 end;
 
@@ -1152,7 +1158,7 @@ function TDBDataItemFactory.CreateCategory(const CatID: string;
     @return Instance of new category object.
   }
 begin
-  Result := TCategoryEx.Create(CatID, UserDefined, Data);
+  Result := TCategoryEx.Create(CatID, TCollectionID.__TMP__DBCollectionID(UserDefined), Data);
 end;
 
 function TDBDataItemFactory.CreateSnippet(const Name: string;

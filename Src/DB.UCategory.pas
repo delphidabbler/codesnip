@@ -75,14 +75,13 @@ type
     ///  </param>
     constructor Create(const CatID: string; const ACollectionID: TCollectionID;
       const Data: TCategoryData);
-      overload; {TODO -cCollections: remove overload }
 
-    constructor Create(const CatID: string; const UserDefined: Boolean;
-      const Data: TCategoryData); overload;
-      {TODO -cCollections: remove this constructor}
-      {Class contructor. Sets up category object with given property values.
-        @param Data [in] Contains required property values.
-      }
+//    constructor Create(const CatID: string; const UserDefined: Boolean;
+//      const Data: TCategoryData); overload;
+//      {Class contructor. Sets up category object with given property values.
+//        @param Data [in] Contains required property values.
+//      }
+
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
@@ -261,22 +260,22 @@ begin
   fSnippets := TSnippetListEx.Create;
 end;
 
-constructor TCategory.Create(const CatID: string; const UserDefined: Boolean;
-  const Data: TCategoryData);
-  {Class contructor. Sets up category object with given property values.
-    @param Data [in] Contains required property values.
-  }
-begin
-  Assert(ClassType <> TCategory,
-    ClassName + '.Create: must only be called from descendants.');
-  inherited Create;
-  fID := CatID;
-  fDescription := Data.Desc;
-//  fUserDefined := UserDefined;
-  __TMP__SetUserDefined(UserDefined);   // sets CollectionID property
-  // Create list to store snippets in category
-  fSnippets := TSnippetListEx.Create;
-end;
+//constructor TCategory.Create(const CatID: string; const UserDefined: Boolean;
+//  const Data: TCategoryData);
+//  {Class contructor. Sets up category object with given property values.
+//    @param Data [in] Contains required property values.
+//  }
+//begin
+//  Assert(ClassType <> TCategory,
+//    ClassName + '.Create: must only be called from descendants.');
+//  inherited Create;
+//  fID := CatID;
+//  fDescription := Data.Desc;
+////  fUserDefined := UserDefined;
+//  __TMP__SetUserDefined(UserDefined);   // sets CollectionID property
+//  // Create list to store snippets in category
+//  fSnippets := TSnippetListEx.Create;
+//end;
 
 destructor TCategory.Destroy;
   {Destructor. Tears down object.
