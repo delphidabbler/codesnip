@@ -346,7 +346,7 @@ begin
   fNotifier.DisplaySnippet(
     SelectedSnippet.Name,
 //    SelectedSnippet.UserDefined,
-    SelectedSnippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID,
+    SelectedSnippet.CollectionID,// <> TCollectionID.__TMP__MainDBCollectionID,
     chkNewTab.Checked
   );
   fFavourites.Touch(SelectedSnippet);

@@ -73,16 +73,16 @@ type
     ///  <remarks>Methods of INotifier.</remarks>
     procedure UpdateDbase;
 
-    ///  <summary>Displays a snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of required snippet.
-    ///  </param>
-    ///  <param name="UserDefined">WordBool [in] Indicates whether snippet is
-    ///  user defined.</param>
-    ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
-    ///  detail pane tab.</param>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool); overload;
+//    ///  <summary>Displays a snippet.</summary>
+//    ///  <param name="SnippetName">WideString [in] Name of required snippet.
+//    ///  </param>
+//    ///  <param name="UserDefined">WordBool [in] Indicates whether snippet is
+//    ///  user defined.</param>
+//    ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
+//    ///  detail pane tab.</param>
+//    ///  <remarks>Methods of INotifier.</remarks>
+//    procedure DisplaySnippet(const SnippetName: WideString;
+//      UserDefined: WordBool; NewTab: WordBool); overload;
 
     ///  <summary>Displays a snippet.</summary>
     ///  <param name="SnippetName">WideString [in] Name of required snippet.
@@ -92,7 +92,7 @@ type
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
     procedure DisplaySnippet(const SnippetName: WideString;
-      ACollectionID: TCollectionID; NewTab: WordBool); overload;
+      ACollectionID: TCollectionID; NewTab: WordBool);
 
     ///  <summary>Displays a category.</summary>
     ///  <param name="CatId">WideString [in] ID of required category.</param>
@@ -278,17 +278,17 @@ begin
   end;
 end;
 
-procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
-  UserDefined: WordBool; NewTab: WordBool);
-begin
-  if Assigned(fDisplaySnippetAction) then
-  begin
-    (fDisplaySnippetAction as TSnippetAction).SnippetName := SnippetName;
-    (fDisplaySnippetAction as TSnippetAction).UserDefined := UserDefined;
-    (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
-    fDisplaySnippetAction.Execute;
-  end;
-end;
+//procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
+//  UserDefined: WordBool; NewTab: WordBool);
+//begin
+//  if Assigned(fDisplaySnippetAction) then
+//  begin
+//    (fDisplaySnippetAction as TSnippetAction).SnippetName := SnippetName;
+//    (fDisplaySnippetAction as TSnippetAction).UserDefined := UserDefined;
+//    (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
+//    fDisplaySnippetAction.Execute;
+//  end;
+//end;
 
 procedure TNotifier.EditSnippet(const SnippetName: WideString);
 begin
