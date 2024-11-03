@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a singleton object and subsidiary classes that encapsulate the
  * snippets and categories in the CodeSnip database and user defined databases.
@@ -678,7 +678,7 @@ begin
   try
     // Check if snippet with same name exists in user database: error if so
 //    if fSnippets.Find(SnippetName, True) <> nil then
-    if fSnippets.Find(SnippetName, TCollectionID.__TMP__DBCollectionID(True)) <> nil then
+    if fSnippets.Find(SnippetName, TCollectionID.__TMP__UserDBCollectionID) <> nil then
       raise ECodeSnip.CreateFmt(sNameExists, [SnippetName]);
     Result := InternalAddSnippet(SnippetName, Data);
     Query.Update;
@@ -958,7 +958,7 @@ function TDatabase.InternalAddCategory(const CatID: string;
   }
 begin
 //  Result := TCategoryEx.Create(CatID, True, Data);
-  Result := TCategoryEx.Create(CatID, TCollectionID.__TMP__DBCollectionID(True), Data);
+  Result := TCategoryEx.Create(CatID, TCollectionID.__TMP__UserDBCollectionID, Data);
   fCategories.Add(Result);
 end;
 
@@ -1152,7 +1152,7 @@ begin
     // If name has changed then new name musn't exist in user database
     if not StrSameText(SnippetName, Snippet.Name) then
 //      if fSnippets.Find(SnippetName, True) <> nil then
-      if fSnippets.Find(SnippetName, TCollectionID.__TMP__DBCollectionID(True)) <> nil then
+      if fSnippets.Find(SnippetName, TCollectionID.__TMP__UserDBCollectionID) <> nil then
         raise ECodeSnip.CreateFmt(sCantRename, [Snippet.Name, SnippetName]);
     // We update by deleting old snippet and inserting new one
     // get lists of snippets that cross reference or depend on this snippet
@@ -1188,6 +1188,8 @@ end;
 
 constructor TDatabase.TEventInfo.Create(const Kind: TDatabaseChangeEventKind;
   const Info: TObject);
+
+
   {Constructor. Creates an event information object.
     @param Kind [in] Kind of event.
     @param Info [in] Reference to further information about the event. May be

@@ -374,7 +374,7 @@ begin
     ErrorMsg := Format(sErrBadName, [TrimmedName])
   else if CheckForUniqueness and
 //    (Database.Snippets.Find(TrimmedName, True) <> nil) then
-    (Database.Snippets.Find(TrimmedName, TCollectionID.__TMP__DBCollectionID(True)) <> nil) then
+    (Database.Snippets.Find(TrimmedName, TCollectionID.__TMP__UserDBCollectionID) <> nil) then
     ErrorMsg := Format(sErrDupName, [TrimmedName])
   else
     Result := True;

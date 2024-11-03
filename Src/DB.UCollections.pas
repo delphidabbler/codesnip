@@ -102,8 +102,6 @@ type
     {TODO -c__TMP__: remove following __TMP__*** methods}
     class function __TMP__MainDBCollectionID: TCollectionID; static;
     class function __TMP__UserDBCollectionID: TCollectionID; static;
-    class function __TMP__DBCollectionID(const AUserDefined: Boolean): TCollectionID;
-      static;
   end;
 
   ECollectionID = class(ECodeSnip);
@@ -559,15 +557,6 @@ end;
 function TCollectionID.ToHexString: string;
 begin
   Result := BytesToHexString(fID);
-end;
-
-class function TCollectionID.__TMP__DBCollectionID(
-  const AUserDefined: Boolean): TCollectionID;
-begin
-  if AUserDefined then
-    Result := __TMP__UserDBCollectionID
-  else
-    Result := __TMP__MainDBCollectionID;
 end;
 
 class function TCollectionID.__TMP__MainDBCollectionID: TCollectionID;

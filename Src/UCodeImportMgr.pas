@@ -288,7 +288,7 @@ begin
     AdjustDependsList(SnippetInfo.Data.Refs.Depends);
 
 //    Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, True);
-    Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, TCollectionID.__TMP__DBCollectionID(True));
+    Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, TCollectionID.__TMP__UserDBCollectionID);
     if Assigned(Snippet) then
       // snippet already exists: overwrite it
       Editor.UpdateSnippet(Snippet, SnippetInfo.Data)

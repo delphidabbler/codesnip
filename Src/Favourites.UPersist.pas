@@ -80,8 +80,9 @@ var
   Line: string;
   Fields: IStringList;
   SnippetName: string;
-  UserDef: Boolean;
+//  UserDef: Boolean;
   LastAccess: TDateTime;
+  CollectionID: TCollectionID;
 resourcestring
   sBadFormat = 'Invalid favourites file format';
 begin
@@ -111,16 +112,20 @@ begin
     if Fields.Count <> 3 then
       raise EFavouritesPersist.Create(sBadFormat);
     SnippetName := Fields[0];
-    UserDef := True; // accept any text as true excpet "false"
+//    UserDef := True; // accept any text as true excpet "false"
+    // accept any text as user collection, except "false"
+    CollectionID := TCollectionID.__TMP__UserDBCollectionID;
     if StrSameText(Fields[1], 'false') then
-      UserDef := False;
+      // we have "false" so main collection
+//      UserDef := False;
+      CollectionID := TCollectionID.__TMP__MainDBCollectionID;
     if not TryStrToDateTime(Fields[2], LastAccess) then
       raise EFavouritesPersist.Create(sBadFormat);
     // only add to favourites if snippet in database
 //    if Database.Snippets.Find(SnippetName, UserDef) <> nil then
-    if Database.Snippets.Find(SnippetName, TCollectionID.__TMP__DBCollectionID(UserDef)) <> nil then
+    if Database.Snippets.Find(SnippetName, CollectionID) <> nil then
 //      Favourites.Add(TSnippetID.Create(SnippetName, UserDef), LastAccess);
-      Favourites.Add(TSnippetID.Create(SnippetName, TCollectionID.__TMP__DBCollectionID(UserDef)), LastAccess);
+      Favourites.Add(TSnippetID.Create(SnippetName, CollectionID), LastAccess);
   end;
 end;
 
