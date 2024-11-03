@@ -271,8 +271,7 @@ begin
   if Assigned(fDisplaySnippetAction) then
   begin
     (fDisplaySnippetAction as TSnippetAction).SnippetName := SnippetName;
-    (fDisplaySnippetAction as TSnippetAction).UserDefined :=
-      ACollectionID <> TCollectionID.__TMP__MainDBCollectionID;
+    (fDisplaySnippetAction as TSnippetAction).CollectionID := ACollectionID;
     (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
     fDisplaySnippetAction.Execute;
   end;
