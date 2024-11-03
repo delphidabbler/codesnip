@@ -18,10 +18,18 @@ interface
 
 uses
   // Delphi
-  Classes, Generics.Collections,
+  Classes,
+  Generics.Collections,
   // Project
-  ActiveText.UMain, Compilers.UGlobals, DB.UCategory, DB.USnippet, UContainers,
-  UIStringList, UMultiCastEvents, USnippetIDs;
+  ActiveText.UMain,
+  Compilers.UGlobals,
+  DB.UCategory,
+  DB.UCollections,
+  DB.USnippet,
+  UContainers,
+  UIStringList,
+  UMultiCastEvents,
+  USnippetIDs;
 
 
 type
@@ -105,23 +113,46 @@ type
   }
   IDBDataItemFactory = interface(IInterface)
     ['{C6DD85BD-E649-4A90-961C-4011D2714B3E}']
-    function CreateCategory(const CatID: string; const UserDefined: Boolean;
-      const Data: TCategoryData): TCategory;
-      {Creates a new category object.
-        @param CatID [in] ID of new category. Must be unique.
-        @param UserDefined [in] True if category is user defined, False if not.
-        @param Data [in] Record describing category's properties.
-        @return Instance of new category object.
-      }
-    function CreateSnippet(const Name: string; const UserDefined: Boolean;
-      const Props: TSnippetData): TSnippet;
-      {Creates a new snippet object.
-        @param Name [in] Name of new snippet. Must not exist in database
-          specified by UserDefined parameter.
-        @param UserDefined [in] True if snippet is user defined, False if not.
-        @param Props [in] Record describing snippet's properties.
-        @return Instance of new snippet with no references.
-      }
+//    function CreateCategory(const CatID: string; const UserDefined: Boolean;
+//      const Data: TCategoryData): TCategory;
+//      {Creates a new category object.
+//        @param CatID [in] ID of new category. Must be unique.
+//        @param UserDefined [in] True if category is user defined, False if not.
+//        @param Data [in] Record describing category's properties.
+//        @return Instance of new category object.
+//      }
+//    function CreateSnippet(const Name: string; const UserDefined: Boolean;
+//      const Props: TSnippetData): TSnippet;
+//      {Creates a new snippet object.
+//        @param Name [in] Name of new snippet. Must not exist in database
+//          specified by UserDefined parameter.
+//        @param UserDefined [in] True if snippet is user defined, False if not.
+//        @param Props [in] Record describing snippet's properties.
+//        @return Instance of new snippet with no references.
+//      }
+
+    ///  <summary>Creates a new category object.</summary>
+    ///  <param name="CatID"><c>string</c> [in] ID of new category. Must be
+    ///  unique.</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection with
+    ///  which the category is associated.</param>
+    ///  <param name="Data"><c>TCategoryData</c> [in] Record describing
+    ///  category's properties.</param>
+    ///  <returns><c>TCategory</c>. Instance of new category object.</returns>
+    function CreateCategory(const CatID: string;
+      const ACollectionID: TCollectionID; const Data: TCategoryData): TCategory;
+
+    ///  <summary>Creates a new snippet object.</summary>
+    ///  <param name="Name"><c>string</c> [in] Name of new snippet. Must not
+    ///  exist in database</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection
+    ///  containing the snippet.</param>
+    ///  <param name="Props"><c>TSnippetData</c> [in] Record describing
+    ///  snippet's properties.</param>
+    ///  <returns>Instance of new snippet with no references.</returns>
+    function CreateSnippet(const Name: string;
+      const ACollectionID: TCollectionID; const Props: TSnippetData): TSnippet;
+
   end;
 
   {
@@ -270,9 +301,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
+  SysUtils,
+  Generics.Defaults,
   // Project
-  DB.UCollections,
   DB.UDatabaseIO,
   IntfCommon,
   UExceptions,
@@ -293,23 +324,46 @@ type
   }
   TDBDataItemFactory = class(TInterfacedObject, IDBDataItemFactory)
   public
-    function CreateCategory(const CatID: string; const UserDefined: Boolean;
-      const Data: TCategoryData): TCategory;
-      {Creates a new category object.
-        @param CatID [in] ID of new category. Must be unique.
-        @param UserDefined [in] True if category is user defined, False if not.
-        @param Data [in] Record describing category's properties.
-        @return Instance of new category object.
-      }
-    function CreateSnippet(const Name: string; const UserDefined: Boolean;
-      const Props: TSnippetData): TSnippet;
-      {Creates a new snippet object.
-        @param Name [in] Name of new snippet. Must not exist in database
-          specified by UserDefined parameter.
-        @param UserDefined [in] True if snippet is user defined, False if not.
-        @param Props [in] Record describing snippet's properties.
-        @return Instance of new snippet with no references.
-      }
+//    function CreateCategory(const CatID: string; const UserDefined: Boolean;
+//      const Data: TCategoryData): TCategory;
+//      {Creates a new category object.
+//        @param CatID [in] ID of new category. Must be unique.
+//        @param UserDefined [in] True if category is user defined, False if not.
+//        @param Data [in] Record describing category's properties.
+//        @return Instance of new category object.
+//      }
+//    function CreateSnippet(const Name: string; const UserDefined: Boolean;
+//      const Props: TSnippetData): TSnippet;
+//      {Creates a new snippet object.
+//        @param Name [in] Name of new snippet. Must not exist in database
+//          specified by UserDefined parameter.
+//        @param UserDefined [in] True if snippet is user defined, False if not.
+//        @param Props [in] Record describing snippet's properties.
+//        @return Instance of new snippet with no references.
+//      }
+
+    ///  <summary>Creates a new category object.</summary>
+    ///  <param name="CatID"><c>string</c> [in] ID of new category. Must be
+    ///  unique.</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection with
+    ///  which the category is associated.</param>
+    ///  <param name="Data"><c>TCategoryData</c> [in] Record describing
+    ///  category's properties.</param>
+    ///  <returns><c>TCategory</c>. Instance of new category object.</returns>
+    function CreateCategory(const CatID: string;
+      const ACollectionID: TCollectionID; const Data: TCategoryData): TCategory;
+
+    ///  <summary>Creates a new snippet object.</summary>
+    ///  <param name="Name"><c>string</c> [in] Name of new snippet. Must not
+    ///  exist in database</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection
+    ///  containing the snippet.</param>
+    ///  <param name="Props"><c>TSnippetData</c> [in] Record describing
+    ///  snippet's properties.</param>
+    ///  <returns>Instance of new snippet with no references.</returns>
+    function CreateSnippet(const Name: string;
+      const ACollectionID: TCollectionID; const Props: TSnippetData): TSnippet;
+
   end;
 
   {
@@ -1163,29 +1217,41 @@ end;
 
 { TDBDataItemFactory }
 
+//function TDBDataItemFactory.CreateCategory(const CatID: string;
+//  const UserDefined: Boolean; const Data: TCategoryData): TCategory;
+//  {Creates a new category object.
+//    @param CatID [in] ID of new category. Must be unique.
+//    @param UserDefined [in] True if category is user defined, False if not.
+//    @param Data [in] Record describing category's properties.
+//    @return Instance of new category object.
+//  }
+//begin
+//  Result := TCategoryEx.Create(CatID, TCollectionID.__TMP__DBCollectionID(UserDefined), Data);
+//end;
+//
+//function TDBDataItemFactory.CreateSnippet(const Name: string;
+//  const UserDefined: Boolean; const Props: TSnippetData): TSnippet;
+//  {Creates a new snippet object.
+//    @param Name [in] Name of new snippet. Must not exist in database specified
+//      by UserDefined parameter.
+//    @param UserDefined [in] True if snippet is user defined, False if not.
+//    @param Props [in] Record describing snippet's properties.
+//    @return Instance of new snippet with no references.
+//  }
+//begin
+//  Result := TSnippetEx.Create(Name, UserDefined, Props);
+//end;
+
 function TDBDataItemFactory.CreateCategory(const CatID: string;
-  const UserDefined: Boolean; const Data: TCategoryData): TCategory;
-  {Creates a new category object.
-    @param CatID [in] ID of new category. Must be unique.
-    @param UserDefined [in] True if category is user defined, False if not.
-    @param Data [in] Record describing category's properties.
-    @return Instance of new category object.
-  }
+  const ACollectionID: TCollectionID; const Data: TCategoryData): TCategory;
 begin
-  Result := TCategoryEx.Create(CatID, TCollectionID.__TMP__DBCollectionID(UserDefined), Data);
+  Result := TCategoryEx.Create(CatID, ACollectionID, Data);
 end;
 
 function TDBDataItemFactory.CreateSnippet(const Name: string;
-  const UserDefined: Boolean; const Props: TSnippetData): TSnippet;
-  {Creates a new snippet object.
-    @param Name [in] Name of new snippet. Must not exist in database specified
-      by UserDefined parameter.
-    @param UserDefined [in] True if snippet is user defined, False if not.
-    @param Props [in] Record describing snippet's properties.
-    @return Instance of new snippet with no references.
-  }
+  const ACollectionID: TCollectionID; const Props: TSnippetData): TSnippet;
 begin
-  Result := TSnippetEx.Create(Name, UserDefined, Props);
+  Result := TSnippetEx.Create(Name, ACollectionID, Props);
 end;
 
 { TUserDataProvider }

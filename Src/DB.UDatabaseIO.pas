@@ -353,7 +353,8 @@ procedure TDatabaseLoader.CreateCategory(const CatID: string;
     @param CatData [in] Properties of category.
   }
 begin
-  fCategories.Add(fFactory.CreateCategory(CatID, IsUserDatabase, CatData));
+//  fCategories.Add(fFactory.CreateCategory(CatID, IsUserDatabase, CatData));
+  fCategories.Add(fFactory.CreateCategory(CatID, CollectionID, CatData));
 end;
 
 procedure TDatabaseLoader.HandleException(const E: Exception);
@@ -503,8 +504,11 @@ begin
     if not Assigned(Snippet) then
     begin
       fReader.GetSnippetProps(SnippetName, SnippetProps);
+//      Snippet := fFactory.CreateSnippet(
+//        SnippetName, IsUserDatabase, SnippetProps
+//      );
       Snippet := fFactory.CreateSnippet(
-        SnippetName, IsUserDatabase, SnippetProps
+        SnippetName, CollectionID, SnippetProps
       );
       fSnipList.Add(Snippet);
     end;
