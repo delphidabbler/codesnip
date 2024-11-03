@@ -117,7 +117,8 @@ begin
     if not TryStrToDateTime(Fields[2], LastAccess) then
       raise EFavouritesPersist.Create(sBadFormat);
     // only add to favourites if snippet in database
-    if Database.Snippets.Find(SnippetName, UserDef) <> nil then
+//    if Database.Snippets.Find(SnippetName, UserDef) <> nil then
+    if Database.Snippets.Find(SnippetName, TCollectionID.__TMP__DBCollectionID(UserDef)) <> nil then
 //      Favourites.Add(TSnippetID.Create(SnippetName, UserDef), LastAccess);
       Favourites.Add(TSnippetID.Create(SnippetName, TCollectionID.__TMP__DBCollectionID(UserDef)), LastAccess);
   end;

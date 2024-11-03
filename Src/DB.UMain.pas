@@ -623,7 +623,8 @@ begin
   TriggerEvent(evChangeBegin);
   try
     // Check if snippet with same name exists in user database: error if so
-    if fSnippets.Find(SnippetName, True) <> nil then
+//    if fSnippets.Find(SnippetName, True) <> nil then
+    if fSnippets.Find(SnippetName, TCollectionID.__TMP__DBCollectionID(True)) <> nil then
       raise ECodeSnip.CreateFmt(sNameExists, [SnippetName]);
     Result := InternalAddSnippet(SnippetName, Data);
     Query.Update;
@@ -1094,7 +1095,8 @@ begin
       SnippetName := Snippet.Name;
     // If name has changed then new name musn't exist in user database
     if not StrSameText(SnippetName, Snippet.Name) then
-      if fSnippets.Find(SnippetName, True) <> nil then
+//      if fSnippets.Find(SnippetName, True) <> nil then
+      if fSnippets.Find(SnippetName, TCollectionID.__TMP__DBCollectionID(True)) <> nil then
         raise ECodeSnip.CreateFmt(sCantRename, [Snippet.Name, SnippetName]);
     // We update by deleting old snippet and inserting new one
     // get lists of snippets that cross reference or depend on this snippet

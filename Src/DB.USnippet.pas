@@ -325,14 +325,14 @@ type
         @param SnippetID [in] ID of snippet to find.
         @return Reference to required snippet or nil if not found.
       }
-    function Find(const SnippetName: string;
-      const UserDefined: Boolean): TSnippet; overload;
-      {Finds a named snippet in list with a matching user defined property.
-        @param SnippetName [in] Name of required snippet.
-        @param UserDefined [in] Flag that determines if we are looking for a
-          user defined snippet or one from main database.
-        @return Reference to required snippet or nil if not found.
-      }
+//    function Find(const SnippetName: string;
+//      const UserDefined: Boolean): TSnippet; overload;
+//      {Finds a named snippet in list with a matching user defined property.
+//        @param SnippetName [in] Name of required snippet.
+//        @param UserDefined [in] Flag that determines if we are looking for a
+//          user defined snippet or one from main database.
+//        @return Reference to required snippet or nil if not found.
+//      }
 
     ///  <summary>Finds a snippet in the list with whose name and collection ID
     ///  match.</summary>
@@ -818,23 +818,23 @@ begin
   end;
 end;
 
-function TSnippetList.Find(const SnippetName: string;
-  const UserDefined: Boolean): TSnippet;
-  {Finds a named snippet in list with a matching user defined property.
-    @param SnippetName [in] Name of required snippet.
-    @param UserDefined [in] Flag that determines if we are looking for a
-      user defined snippet or one from main database.
-    @return Reference to required snippet or nil if not found.
-  }
-var
-  Idx: Integer; // index of snippet name in list
-begin
-  if Find(SnippetName, TCollectionID.__TMP__DBCollectionID(UserDefined), Idx) then
-//  if Find(SnippetName, UserDefined, Idx) then
-    Result := Items[Idx]
-  else
-    Result := nil;
-end;
+//function TSnippetList.Find(const SnippetName: string;
+//  const UserDefined: Boolean): TSnippet;
+//  {Finds a named snippet in list with a matching user defined property.
+//    @param SnippetName [in] Name of required snippet.
+//    @param UserDefined [in] Flag that determines if we are looking for a
+//      user defined snippet or one from main database.
+//    @return Reference to required snippet or nil if not found.
+//  }
+//var
+//  Idx: Integer; // index of snippet name in list
+//begin
+//  if Find(SnippetName, TCollectionID.__TMP__DBCollectionID(UserDefined), Idx) then
+////  if Find(SnippetName, UserDefined, Idx) then
+//    Result := Items[Idx]
+//  else
+//    Result := nil;
+//end;
 
 function TSnippetList.Find(const SnippetName: string;
   const ACollectionID: TCollectionID): TSnippet;

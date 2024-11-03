@@ -469,7 +469,8 @@ class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
 var
   Snippet: TSnippet;    // reference to snippet to be edited
 begin
-  Snippet := Database.Snippets.Find(SnippetName, True);
+//  Snippet := Database.Snippets.Find(SnippetName, True);
+  Snippet := Database.Snippets.Find(SnippetName, TCollectionID.__TMP__DBCollectionID(True));
   if not Assigned(Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in user database');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);

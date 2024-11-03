@@ -72,7 +72,10 @@ implementation
 
 uses
   // Project
-  DB.UMain, DB.USnippet, UView;
+  DB.UCollections,
+  DB.UMain,
+  DB.USnippet,
+  UView;
 
 
 { TSnippetAction }
@@ -83,7 +86,8 @@ var
 begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
   Assert(SnippetName <> '', ClassName + '.Execute: SnippetName not provided');
-  Snippet := Database.Snippets.Find(SnippetName, UserDefined);
+//  Snippet := Database.Snippets.Find(SnippetName, UserDefined);
+  Snippet := Database.Snippets.Find(SnippetName, TCollectionID.__TMP__DBCollectionID(UserDefined));
   Assert(Assigned(Snippet), ClassName + '.Execute: SnippetName not valid');
   // Create a view item for snippet and get notifier to display it
   fNotifier.ShowViewItem(TViewFactory.CreateSnippetView(Snippet), NewTab);

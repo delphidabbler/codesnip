@@ -991,7 +991,8 @@ begin
       (
 //        Snippet.UserDefined or
         (Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID) or
-        not Assigned(Database.Snippets.Find(Snippet.Name, True))
+//        not Assigned(Database.Snippets.Find(Snippet.Name, True))
+        not Assigned(Database.Snippets.Find(Snippet.Name, TCollectionID.__TMP__DBCollectionID(True)))
       ) then
     begin
       // Decide if snippet can be added to depends list: must be correct kind
