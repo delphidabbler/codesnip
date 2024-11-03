@@ -228,7 +228,8 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(SubHeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
-  SetColour(Preferences.DBHeadingColours[Snippet.UserDefined]);
+//  SetColour(Preferences.DBHeadingColours[Snippet.UserDefined]);
+  SetColour(Preferences.DBHeadingColours[Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID]);
   fBuilder.AddText(Snippet.DisplayName);
   fBuilder.EndPara;
   fBuilder.EndGroup;

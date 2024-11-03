@@ -246,7 +246,8 @@ begin
   SnippetList := TSnippetList.Create;
   try
     for Snippet in Database.Snippets do
-      if Snippet.UserDefined = UserDefined then
+//      if Snippet.UserDefined = UserDefined then
+      if Snippet.CollectionID = TCollectionID.__TMP__DBCollectionID(UserDefined) then
         SnippetList.Add(Snippet);
     frmSelect.SelectedSnippets := SnippetList;
   finally

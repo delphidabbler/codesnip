@@ -100,9 +100,13 @@ implementation
 
 uses
   // Delphi
-  Graphics, StdCtrls,
+  Graphics,
+  StdCtrls,
   // Project
-  UColours, UGraphicUtils, UPreferences;
+  DB.UCollections,
+  UColours,
+  UGraphicUtils,
+  UPreferences;
 
 
 { TSnippetsChkListMgr }
@@ -200,7 +204,8 @@ begin
   Canvas := fCLB.Canvas;
   if not (odSelected in State) then
     Canvas.Font.Color := Preferences.DBHeadingColours[
-      (fCLB.Items.Objects[Index] as TSnippet).UserDefined
+//      (fCLB.Items.Objects[Index] as TSnippet).UserDefined
+      (fCLB.Items.Objects[Index] as TSnippet).CollectionID <> TCollectionID.__TMP__MainDBCollectionID
     ];
   Canvas.TextRect(
     Rect,

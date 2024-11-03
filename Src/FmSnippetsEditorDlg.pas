@@ -989,7 +989,8 @@ begin
     // a user-defined one with same name
     if (Snippet.ID <> EditSnippetID) and
       (
-        Snippet.UserDefined or
+//        Snippet.UserDefined or
+        (Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID) or
         not Assigned(Database.Snippets.Find(Snippet.Name, True))
       ) then
     begin

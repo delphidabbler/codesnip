@@ -72,6 +72,7 @@ uses
   // Delphi
   SysUtils, Dialogs,
   // Project
+  DB.UCollections,
   UCodeImportExport, UCtrlArranger, UEncodings, UExceptions, UIOUtils,
   UMessageBox, UOpenDialogHelper, USaveDialogEx, UStrUtils, UUtils;
 
@@ -209,7 +210,8 @@ procedure TCodeExportDlg.SelectSnippet(const Snippet: TSnippet);
 var
   List: TSnippetList; // list containing only the provided snippet
 begin
-  if not Assigned(Snippet) or not Snippet.UserDefined then
+  if not Assigned(Snippet) or (Snippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID) then
+//  if not Assigned(Snippet) or not Snippet.UserDefined then
     // Snippet is nil or not user-defined: select nothing
     frmSnippets.SelectedSnippets := nil
   else

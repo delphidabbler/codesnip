@@ -103,7 +103,8 @@ var
   SnippetView: ISnippetView;  // ViewItem as snippet view if supported
 begin
   if Supports(ViewItem, ISnippetView, SnippetView)
-    and (SnippetView.Snippet.UserDefined) then
+//    and (SnippetView.Snippet.UserDefined) then
+    and (SnippetView.Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID) then
     Result := SnippetView.Snippet
   else
     Result := nil;

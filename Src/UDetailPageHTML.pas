@@ -528,15 +528,18 @@ begin
       'overflowXFixScript',
       'window.onload = null;'
     );
-  if GetSnippet.UserDefined then
+//  if GetSnippet.UserDefined then
+  if GetSnippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
     Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
   else
     Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
   Tplt.ResolvePlaceholderHTML(
-    'TestingInfo', TCSS.BlockDisplayProp(not GetSnippet.UserDefined)
+//    'TestingInfo', TCSS.BlockDisplayProp(not GetSnippet.UserDefined)
+    'TestingInfo', TCSS.BlockDisplayProp(GetSnippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID)
   );
   Tplt.ResolvePlaceholderHTML(
-    'EditLink', TCSS.BlockDisplayProp(GetSnippet.UserDefined)
+//    'EditLink', TCSS.BlockDisplayProp(GetSnippet.UserDefined)
+    'EditLink', TCSS.BlockDisplayProp(GetSnippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID)
   );
   Tplt.ResolvePlaceholderText(
     'EditEventHandler',
@@ -544,7 +547,8 @@ begin
   );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
-    if not GetSnippet.UserDefined then
+//    if not GetSnippet.UserDefined then
+    if GetSnippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID then
       Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
     Tplt.ResolvePlaceholderHTML('SnippetName', SnippetHTML.SnippetName);
   finally

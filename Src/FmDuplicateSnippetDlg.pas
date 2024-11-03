@@ -77,6 +77,7 @@ uses
   // Delphi
   Math,
   // Project
+  DB.UCollections,
   DB.UCategory, DB.UMain, UCtrlArranger, UExceptions, UMessageBox, USettings,
   USnippetValidator, UStructs, UStrUtils, UUserDBMgr;
 
@@ -131,7 +132,8 @@ begin
   Result := TIStringList.Create;
   Result.CaseSensitive := False;
   for Snippet in Database.Snippets do
-    if Snippet.UserDefined then
+//    if Snippet.UserDefined then
+    if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
       Result.Add(Snippet.Name);
 end;
 

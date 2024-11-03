@@ -138,7 +138,6 @@ type
       {Gets snippet's display name, or name if no display name is set
         @return Required display name.
       }
-    function __TMP__GetUserDefined: Boolean;
   strict protected
     procedure SetName(const Name: string);
       {Sets Name property.
@@ -214,8 +213,6 @@ type
     property XRef: TSnippetList read fXRef;
       {List of cross referenced snippets in database}
 //    property UserDefined: Boolean read fUserDefined;;
-    property UserDefined: Boolean read __TMP__GetUserDefined;
-    {TODO -cCollections: Remove above property & getter/setter}
       {Flag that indicates if this is a user defined snippet}
     property CollectionID: TCollectionID read fCollectionID;
   end;
@@ -555,11 +552,6 @@ begin
   fExtra := TActiveTextFactory.CloneActiveText(Data.Extra);
   fCompatibility := Data.CompilerResults;
   fTestInfo := Data.TestInfo;
-end;
-
-function TSnippet.__TMP__GetUserDefined: Boolean;
-begin
-  Result := fCollectionID = TCollectionID.__TMP__UserDBCollectionID;
 end;
 
 { TSnippet.TDisplayNameComparer }

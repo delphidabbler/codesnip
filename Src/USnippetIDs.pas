@@ -25,8 +25,6 @@ uses
 
 
 type
-  {TODO -cNote: TSnippetID.UserDefined is now uses CollectionID property.}
-
 
   ///  <summary>Record that uniquely identifies a code snippet. Specifies name
   ///  and flag indicating whether snippet is user-defined.</summary>

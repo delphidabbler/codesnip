@@ -158,9 +158,16 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics,
+  SysUtils,
+  Graphics,
   // Project
-  DB.UMain, DB.USnippetKind, UBox, UColours, UCtrlArranger, UFontHelper,
+  DB.UCollections,
+  DB.UMain,
+  DB.USnippetKind,
+  UBox,
+  UColours,
+  UCtrlArranger,
+  UFontHelper,
   UPreferences;
 
 {$R *.dfm}
@@ -444,7 +451,8 @@ begin
         Assert(Assigned(ASnippet),
           ClassName + '.PopulateRequiredByList: Snippet id not found');
         lbDependents.Items.AddObject(
-          ASnippet.DisplayName, TBox<Boolean>.Create(ASnippet.UserDefined)
+          ASnippet.DisplayName, TBox<Boolean>.Create(ASnippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID)
+//          ASnippet.DisplayName, TBox<Boolean>.Create(ASnippet.UserDefined)
         );
       end;
     end;
@@ -514,7 +522,8 @@ begin
   if not Assigned(Node.Data) then
     Result := True
   else
-    Result := TSnippet(Node.Data).UserDefined;
+//    Result := TSnippet(Node.Data).UserDefined;
+    Result := TSnippet(Node.Data).CollectionID <> TCollectionID.__TMP__MainDBCollectionID;
 end;
 
 end.

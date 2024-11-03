@@ -666,8 +666,10 @@ begin
   Assert(Snippet is TSnippetEx,
     ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
   Data := (Snippet as TSnippetEx).GetEditData;
+//  Result := TTempSnippet.Create(
+//    Snippet.Name, Snippet.UserDefined, (Snippet as TSnippetEx).GetProps);
   Result := TTempSnippet.Create(
-    Snippet.Name, Snippet.UserDefined, (Snippet as TSnippetEx).GetProps);
+    Snippet.Name, Snippet.CollectionID, (Snippet as TSnippetEx).GetProps);
   (Result as TTempSnippet).UpdateRefs(
     (Snippet as TSnippetEx).GetReferences, fSnippets
   );
@@ -718,7 +720,9 @@ var
   Referrer: TSnippet;       // loops thru snippets that cross references Snippet
   Referrers: TSnippetList;  // list of referencing snippets
 begin
-  Assert(Snippet.UserDefined,
+//  Assert(Snippet.UserDefined,
+//    ClassName + '.DeleteSnippet: Snippet is not user-defined');
+  Assert(Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID,
     ClassName + '.DeleteSnippet: Snippet is not user-defined');
   Assert(fSnippets.Contains(Snippet),
     ClassName + '.DeleteSnippet: Snippet is not in the database');
@@ -837,8 +841,10 @@ function TDatabase.GetEditableSnippetInfo(
     @return Required data.
   }
 begin
-  Assert(not Assigned(Snippet) or Snippet.UserDefined,
+  Assert(not Assigned(Snippet) or (Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID),
     ClassName + '.GetEditableSnippetInfo: Snippet is not user-defined');
+//  Assert(not Assigned(Snippet) or Snippet.UserDefined,
+//    ClassName + '.GetEditableSnippetInfo: Snippet is not user-defined');
   if Assigned(Snippet) then
     Result := (Snippet as TSnippetEx).GetEditData
   else
@@ -1072,8 +1078,10 @@ resourcestring
     + '%1:s already exists in user database';
 begin
   Result := Snippet;      // keeps compiler happy
-  Assert(Snippet.UserDefined,
+  Assert(Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID,
     ClassName + '.UpdateSnippet: Snippet is not user-defined');
+//  Assert(Snippet.UserDefined,
+//    ClassName + '.UpdateSnippet: Snippet is not user-defined');
   Referrers := nil;
   Dependents := nil;
   TriggerEvent(evChangeBegin);
@@ -1211,7 +1219,8 @@ var
 begin
   Result := TIStringList.Create;
   for Snippet in Cat.Snippets do
-    if Snippet.UserDefined then
+//    if Snippet.UserDefined then
+    if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
       Result.Add(Snippet.Name);
 end;
 
