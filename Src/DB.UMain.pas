@@ -686,7 +686,8 @@ function TDatabase.CreateTempSnippet(const SnippetName: string;
     @return Reference to new snippet.
   }
 begin
-  Result := TTempSnippet.Create(SnippetName, True, Data.Props);
+//  Result := TTempSnippet.Create(SnippetName, True, Data.Props);
+  Result := TTempSnippet.Create(SnippetName, TCollectionID.__TMP__UserDBCollectionID, Data.Props);
   (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
 end;
 
@@ -923,7 +924,8 @@ resourcestring
   sCatNotFound = 'Category "%0:s" referenced by new snippet named "%1:s" does '
     + 'not exist';
 begin
-  Result := TSnippetEx.Create(SnippetName, True, Data.Props);
+//  Result := TSnippetEx.Create(SnippetName, True, Data.Props);
+  Result := TSnippetEx.Create(SnippetName, TCollectionID.__TMP__UserDBCollectionID, Data.Props);
   (Result as TSnippetEx).UpdateRefs(Data.Refs, fSnippets);
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then

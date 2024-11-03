@@ -152,13 +152,13 @@ type
         @return Required field content.
       }
   public
-    constructor Create(const Name: string; const UserDefined: Boolean;
-      const Props: TSnippetData); overload; {TODO -cCollections: remove constructor}
-      {Class contructor. Sets up snippet object with given property values.
-        @param Name [in] Name of snippet.
-        @param UserDefined [in] Indicates if this is a user defined snippet.
-        @param Props [in] Values of various snippet properties.
-      }
+//    constructor Create(const Name: string; const UserDefined: Boolean;
+//      const Props: TSnippetData);
+//      {Class contructor. Sets up snippet object with given property values.
+//        @param Name [in] Name of snippet.
+//        @param UserDefined [in] Indicates if this is a user defined snippet.
+//        @param Props [in] Values of various snippet properties.
+//      }
 
     ///  <summary>Object constructor. Sets up snippet object with given property
     ///  values belonging to a specified collection.</summary>
@@ -169,7 +169,6 @@ type
     ///  properties.</param>
     constructor Create(const Name: string; const ACollectionID: TCollectionID;
       const Props: TSnippetData);
-      overload; {TODO -cCollections: remove overload;}
 
     destructor Destroy; override;
       {Destructor. Tears down object.
@@ -456,16 +455,16 @@ begin
   Result := Kind <> skFreeform;
 end;
 
-constructor TSnippet.Create(const Name: string; const UserDefined: Boolean;
-  const Props: TSnippetData);
-  {Class contructor. Sets up snippet object with given property values.
-    @param Name [in] Name of snippet.
-    @param UserDefined [in] Indicates if this is a user defined snippet.
-    @param Props [in] Values of various snippet properties.
-  }
-begin
-  Create(Name, TCollectionID.__TMP__DBCollectionID(UserDefined), Props);
-end;
+//constructor TSnippet.Create(const Name: string; const UserDefined: Boolean;
+//  const Props: TSnippetData);
+//  {Class contructor. Sets up snippet object with given property values.
+//    @param Name [in] Name of snippet.
+//    @param UserDefined [in] Indicates if this is a user defined snippet.
+//    @param Props [in] Values of various snippet properties.
+//  }
+//begin
+//  Create(Name, TCollectionID.__TMP__DBCollectionID(UserDefined), Props);
+//end;
 
 constructor TSnippet.Create(const Name: string;
   const ACollectionID: TCollectionID; const Props: TSnippetData);
