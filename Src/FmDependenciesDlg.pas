@@ -414,9 +414,14 @@ var
   LB: TListBox;
   Canvas: TCanvas;
 
-  function IsUserDefinedItem: Boolean;
+//  function IsUserDefinedItem: Boolean;
+//  begin
+//    Result := (LB.Items.Objects[Index] as TBox<Boolean>).Value;
+//  end;
+
+  function ExtractCollectionItem: TCollectionID;
   begin
-    Result := (LB.Items.Objects[Index] as TBox<Boolean>).Value;
+    Result := (LB.Items.Objects[Index] as TBox<TCollectionID>).Value;
   end;
 
 begin
@@ -424,7 +429,7 @@ begin
   Canvas := LB.Canvas;
   if not (odSelected in State) then
 //    Canvas.Font.Color := Preferences.DBHeadingColours[IsUserDefinedItem];
-    Canvas.Font.Color := Preferences.GetDBHeadingColour(TCollectionID.__TMP__DBCollectionID(IsUserDefinedItem));
+    Canvas.Font.Color := Preferences.GetDBHeadingColour(ExtractCollectionItem);
   Canvas.TextRect(
     Rect,
     Rect.Left + 2,
@@ -461,7 +466,7 @@ begin
         Assert(Assigned(ASnippet),
           ClassName + '.PopulateRequiredByList: Snippet id not found');
         lbDependents.Items.AddObject(
-          ASnippet.DisplayName, TBox<Boolean>.Create(ASnippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID)
+          ASnippet.DisplayName, TBox<TCollectionID>.Create(ASnippet.CollectionID)
 //          ASnippet.DisplayName, TBox<Boolean>.Create(ASnippet.UserDefined)
         );
       end;
