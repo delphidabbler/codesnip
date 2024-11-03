@@ -109,7 +109,9 @@ uses
   // Delphi
   SysUtils, Graphics, Menus, Math,
   // Project
-  ActiveText.UHTMLRenderer, Browser.UHighlighter, Hiliter.UAttrs, Hiliter.UCSS,
+  ActiveText.UHTMLRenderer, Browser.UHighlighter,
+  DB.UCollections,
+  Hiliter.UAttrs, Hiliter.UCSS,
   Hiliter.UGlobals, UColours, UCSSUtils, UFontHelper, UPreferences, UQuery,
   USystemInfo, UUtils, UWBCommandBars;
 
@@ -226,10 +228,14 @@ begin
       .AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
 
     // Heading colours for user & main databases
+//    CSSBuilder.AddSelector('.userdb')
+//      .AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[True]));
+//    CSSBuilder.AddSelector('.maindb')
+//      .AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[False]));
     CSSBuilder.AddSelector('.userdb')
-      .AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[True]));
+      .AddProperty(TCSS.ColorProp(Preferences.GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID)));
     CSSBuilder.AddSelector('.maindb')
-      .AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[False]));
+      .AddProperty(TCSS.ColorProp(Preferences.GetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID)));
 
     // Sets CSS for style of New Tab text
     CSSFont.Assign(ContentFont);

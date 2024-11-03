@@ -70,7 +70,9 @@ uses
   // Delphi
   Graphics,
   // Project
-  UColours, UPreferences;
+  DB.UCollections,
+  UColours,
+  UPreferences;
 
 
 { TSnippetsTVDraw }
@@ -118,7 +120,8 @@ begin
         TV.Canvas.Font.Color := clWarningText
       else
         TV.Canvas.Font.Color :=
-          Preferences.DBHeadingColours[IsUserDefinedNode(Node)];
+//          Preferences.DBHeadingColours[IsUserDefinedNode(Node)];
+          Preferences.GetDBHeadingColour(TCollectionID.__TMP__DBCollectionID(IsUserDefinedNode(Node)));
       TV.Canvas.Brush.Color := TV.Color;
     end;
     if IsSectionHeadNode(Node) then

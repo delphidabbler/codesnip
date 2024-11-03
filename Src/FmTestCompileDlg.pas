@@ -290,7 +290,7 @@ begin
   TFontHelper.SetDefaultBaseFont(lblSnippetName.Font);
   lblSnippetName.Font.Color :=
 //    Preferences.DBHeadingColours[fSnippet.UserDefined];
-    Preferences.DBHeadingColours[fSnippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID];
+    Preferences.GetDBHeadingColour(fSnippet.CollectionID);
   lblSnippetName.Caption := fSnippet.DisplayName;
 end;
 

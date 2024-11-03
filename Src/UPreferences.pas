@@ -19,6 +19,7 @@ uses
   // Delphi
   Graphics,
   // Project
+  DB.UCollections,
   Hiliter.UGlobals, UIStringList, UMeasurement, UPrintInfo,
   USnippetPageStructure, USourceFileInfo, USourceGen, UWarnings;
 
@@ -136,44 +137,74 @@ type
     property ShowNewSnippetsInNewTabs: Boolean
       read GetShowNewSnippetsInNewTabs write SetShowNewSnippetsInNewTabs;
 
+//    ///  <summary>Gets heading colour used for snippets from a specified
+//    ///  database.</summary>
+//    ///  <param name="UserDefined">Boolean [in] Required database: True for user
+//    ///  database and False for inline database.</param>
+//    ///  <returns>TColor. Required colour.</returns>
+//    function GetDBHeadingColour(UserDefined: Boolean): TColor;
+//    ///  <summary>Sets heading colour used for snippets from a specified
+//    ///  database.</summary>
+//    ///  <param name="UserDefined">Boolean [in] Required database: True for user
+//    ///  database and False for online database.</param>
+//    ///  <param name="Value">TColor [in] Required heading colour.</param>
+//    procedure SetDBHeadingColour(UserDefined: Boolean;
+//      const Value: TColor);
+//    ///  <summary>Records colour to be used for headings of items from either
+//    ///  online database (UserDefined = False) or user database (UserDefined =
+//    ///  True).</summary>
+//    property DBHeadingColours[UserDefined: Boolean]: TColor
+//      read GetDBHeadingColour write SetDBHeadingColour;
+
     ///  <summary>Gets heading colour used for snippets from a specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for inline database.</param>
+    ///  collection.</summary>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of required
+    ///  collection.</param>
     ///  <returns>TColor. Required colour.</returns>
-    function GetDBHeadingColour(UserDefined: Boolean): TColor;
+    function GetDBHeadingColour(const ACollectionID: TCollectionID): TColor;
     ///  <summary>Sets heading colour used for snippets from a specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <param name="Value">TColor [in] Required heading colour.</param>
-    procedure SetDBHeadingColour(UserDefined: Boolean;
+    ///  collection.</summary>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of required
+    ///  collection.</param>
+    ///  <returns>TColor. Required colour.</returns>
+    procedure SetDBHeadingColour(const ACollectionID: TCollectionID;
       const Value: TColor);
-    ///  <summary>Records colour to be used for headings of items from either
-    ///  online database (UserDefined = False) or user database (UserDefined =
-    ///  True).</summary>
-    property DBHeadingColours[UserDefined: Boolean]: TColor
-      read GetDBHeadingColour write SetDBHeadingColour;
+
+//    ///  <summary>Gets custom colours available for headings for specified
+//    ///  database.</summary>
+//    ///  <param name="UserDefined">Boolean [in] Required database: True for user
+//    ///  database and False for online database.</param>
+//    ///  <returns>IStringList. String list containing custom colours.</returns>
+//    function GetDBHeadingCustomColours(UserDefined: Boolean): IStringList;
+//    ///  <summary>Sets custom colours available for headings for specified
+//    ///  database.</summary>
+//    ///  <param name="UserDefined">Boolean [in] Required database: True for user
+//    ///  database and False for online database.</param>
+//    ///  <param name="Value">IStringList [in] String list containing custom
+//    ///  colours.</param>
+//    procedure SetDBHeadingCustomColours(UserDefined: Boolean;
+//      Value: IStringList);
+//    ///  <summary>Records custom colours available for headings of items from
+//    ///  either online database (UserDefined = False) or user database
+//    ///  (UserDefined = True).</summary>
+//    property DBHeadingCustomColours[UserDefined: Boolean]: IStringList
+//      read GetDBHeadingCustomColours write SetDBHeadingCustomColours;
 
     ///  <summary>Gets custom colours available for headings for specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
+    ///  collection.</summary>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of required
+    ///  collection.</param>
     ///  <returns>IStringList. String list containing custom colours.</returns>
-    function GetDBHeadingCustomColours(UserDefined: Boolean): IStringList;
+    function GetDBHeadingCustomColours(const ACollectionID: TCollectionID):
+      IStringList;
     ///  <summary>Sets custom colours available for headings for specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
+    ///  collection.</summary>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of required
+    ///  collection.</param>
     ///  <param name="Value">IStringList [in] String list containing custom
     ///  colours.</param>
-    procedure SetDBHeadingCustomColours(UserDefined: Boolean;
+    procedure SetDBHeadingCustomColours(const ACollectionID: TCollectionID;
       Value: IStringList);
-    ///  <summary>Records custom colours available for headings of items from
-    ///  either online database (UserDefined = False) or user database
-    ///  (UserDefined = True).</summary>
-    property DBHeadingCustomColours[UserDefined: Boolean]: IStringList
-      read GetDBHeadingCustomColours write SetDBHeadingCustomColours;
 
     ///  <summary>Gets size of font used in overview pane tree view.</summary>
     function GetOverviewFontSize: Integer;
@@ -340,13 +371,17 @@ type
       ///  in new tabs in details pane.</summary>
       fShowNewSnippetsInNewTabs: Boolean;
       ///  <summary>Records colour to be used for headings of items from either
-      ///  online database (UserDefined = False) or user database (UserDefined =
-      ///  True).</summary>
+      ///  main (False) or user (True) collections.</summary>
       fDBHeadingColours: array[Boolean] of TColor;
+        {TODO -cCollections: WARNING. The fDBHeadingColours field only supports
+                the two original main & user collections. This MUST be changed
+                once more than two snippet collections are supported}
       ///  <summary>Records custom colours available for headings of items from
-      ///  either online database (UserDefined = False) or user database
-      ///  (UserDefined = True).</summary>
+      ///  either main (False) or user (True) collections.</summary>
       fDBHeadingCustomColours: array[Boolean] of IStringList;
+        {TODO -cCollections: WARNING. The fDBHeadingCustomColours field only
+                supports the two original main & user collections. This MUST be
+                changed once more than two snippet collections are supported}
       ///  <summary>Records size of font used in overview pane tree view.
       ///  </summary>
       fOverviewFontSize: Integer;
@@ -381,6 +416,9 @@ type
     function DefaultOverviewFontSize: Integer;
     ///  <summary>Returns default font size for details pane.</summary>
     function DefaultDetailFontSize: Integer;
+
+    function __TMP__UseUserDBHeadingColour(const ACollectionID: TCollectionID):
+      Boolean;
   public
     ///  <summary>Constructs a new object instance.</summary>
     constructor Create;
@@ -482,39 +520,75 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
 
+//    ///  <summary>Gets heading colour used for snippets from a specified
+//    ///  database.</summary>
+//    ///  <param name="UserDefined">Boolean [in] Required database: True for user
+//    ///  database and False for inline database.</param>
+//    ///  <returns>TColor. Required colour.</returns>
+//    ///  <remarks>Method of IPreferences.</remarks>
+//    function GetDBHeadingColour(UserDefined: Boolean): TColor;
+
     ///  <summary>Gets heading colour used for snippets from a specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for inline database.</param>
+    ///  collection.</summary>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of required
+    ///  collection.</param>
     ///  <returns>TColor. Required colour.</returns>
     ///  <remarks>Method of IPreferences.</remarks>
-    function GetDBHeadingColour(UserDefined: Boolean): TColor;
+    function GetDBHeadingColour(const ACollectionID: TCollectionID): TColor;
+
+//    ///  <summary>Sets heading colour used for snippets from a specified
+//    ///  database.</summary>
+//    ///  <param name="UserDefined">Boolean [in] Required database: True for user
+//    ///  database and False for online database.</param>
+//    ///  <param name="Value">TColor [in] Required heading colour.</param>
+//    ///  <remarks>Method of IPreferences.</remarks>
+//    procedure SetDBHeadingColour(UserDefined: Boolean;
+//      const Value: TColor);
 
     ///  <summary>Sets heading colour used for snippets from a specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <param name="Value">TColor [in] Required heading colour.</param>
+    ///  collection.</summary>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of required
+    ///  collection.</param>
+    ///  <returns>TColor. Required colour.</returns>
     ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetDBHeadingColour(UserDefined: Boolean;
+    procedure SetDBHeadingColour(const ACollectionID: TCollectionID;
       const Value: TColor);
 
+//    ///  <summary>Gets custom colours available for headings for specified
+//    ///  database.</summary>
+//    ///  <param name="UserDefined">Boolean [in] Required database: True for user
+//    ///  database and False for online database.</param>
+//    ///  <returns>IStringList. String list containing custom colours.</returns>
+//    ///  <remarks>Method of IPreferences.</remarks>
+//    function GetDBHeadingCustomColours(UserDefined: Boolean): IStringList;
+
     ///  <summary>Gets custom colours available for headings for specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
+    ///  collection.</summary>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of required
+    ///  collection.</param>
     ///  <returns>IStringList. String list containing custom colours.</returns>
     ///  <remarks>Method of IPreferences.</remarks>
-    function GetDBHeadingCustomColours(UserDefined: Boolean): IStringList;
+    function GetDBHeadingCustomColours(const ACollectionID: TCollectionID):
+      IStringList;
+
+//    ///  <summary>Sets custom colours available for headings for specified
+//    ///  database.</summary>
+//    ///  <param name="UserDefined">Boolean [in] Required database: True for user
+//    ///  database and False for online database.</param>
+//    ///  <param name="Value">IStringList [in] String list containing custom
+//    ///  colours.</param>
+//    ///  <remarks>Method of IPreferences.</remarks>
+//    procedure SetDBHeadingCustomColours(UserDefined: Boolean;
+//      Value: IStringList);
 
     ///  <summary>Sets custom colours available for headings for specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
+    ///  collection.</summary>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of required
+    ///  collection.</param>
     ///  <param name="Value">IStringList [in] String list containing custom
     ///  colours.</param>
     ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetDBHeadingCustomColours(UserDefined: Boolean;
+    procedure SetDBHeadingCustomColours(const ACollectionID: TCollectionID;
       Value: IStringList);
 
     ///  <summary>Gets size of font used in overview pane tree view.</summary>
@@ -695,10 +769,14 @@ begin
   Self.fOverviewStartState := SrcPref.OverviewStartState;
   Self.fShowEmptySections := SrcPref.ShowEmptySections;
   Self.fShowNewSnippetsInNewTabs := SrcPref.ShowNewSnippetsInNewTabs;
-  Self.fDBHeadingColours[False] := SrcPref.DBHeadingColours[False];
-  Self.fDBHeadingCustomColours[False] := SrcPref.DBHeadingCustomColours[False];
-  Self.fDBHeadingColours[True] := SrcPref.DBHeadingColours[True];
-  Self.fDBHeadingCustomColours[True] := SrcPref.DBHeadingCustomColours[True];
+//  Self.fDBHeadingColours[False] := SrcPref.DBHeadingColours[False];
+  Self.SetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID, SrcPref.GetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID));
+//  Self.fDBHeadingCustomColours[False] := SrcPref.DBHeadingCustomColours[False];
+  Self.SetDBHeadingCustomColours(TCollectionID.__TMP__MainDBCollectionID, SrcPref.GetDBHeadingCustomColours(TCollectionID.__TMP__MainDBCollectionID));
+//  Self.fDBHeadingColours[True] := SrcPref.DBHeadingColours[True];
+  Self.SetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID, SrcPref.GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID));
+//  Self.fDBHeadingCustomColours[True] := SrcPref.DBHeadingCustomColours[True];
+  Self.SetDBHeadingCustomColours(TCollectionID.__TMP__UserDBCollectionID, SrcPref.GetDBHeadingCustomColours(TCollectionID.__TMP__UserDBCollectionID));
   Self.fOverviewFontSize := SrcPref.OverviewFontSize;
   Self.fDetailFontSize := SrcPref.DetailFontSize;
   Self.fSourceCodeBGColour := SrcPref.SourceCodeBGColour;
@@ -746,16 +824,38 @@ begin
   Result := fHiliteCustomColours;
 end;
 
-function TPreferences.GetDBHeadingColour(UserDefined: Boolean): TColor;
+//function TPreferences.GetDBHeadingColour(UserDefined: Boolean): TColor;
+//begin
+//  Result := fDBHeadingColours[UserDefined];
+//end;
+
+function TPreferences.GetDBHeadingColour(
+  const ACollectionID: TCollectionID): TColor;
 begin
-  Result := fDBHeadingColours[UserDefined];
+  {TODO -cCollections: WARNING: This implementation of GetDBHeadingColour only
+          supports the old main and user collections. It will break when further
+          collections are added.
+  }
+  Result := fDBHeadingColours[__TMP__UseUserDBHeadingColour(ACollectionID)];
 end;
 
 function TPreferences.GetDBHeadingCustomColours(
-  UserDefined: Boolean): IStringList;
+  const ACollectionID: TCollectionID): IStringList;
 begin
-  Result := fDBHeadingCustomColours[UserDefined];
+  {TODO -cCollections: WARNING: This implementation of GetDBHeadingCustomColours
+          only supports the old main and user collections. It will break when
+          further collections are added.
+  }
+  Result := fDBHeadingCustomColours[
+    __TMP__UseUserDBHeadingColour(ACollectionID)
+  ];
 end;
+
+//function TPreferences.GetDBHeadingCustomColours(
+//  UserDefined: Boolean): IStringList;
+//begin
+//  Result := fDBHeadingCustomColours[UserDefined];
+//end;
 
 function TPreferences.GetDetailFontSize: Integer;
 begin
@@ -857,17 +957,39 @@ begin
   fHiliteCustomColours := Colours;
 end;
 
-procedure TPreferences.SetDBHeadingColour(UserDefined: Boolean;
+//procedure TPreferences.SetDBHeadingColour(UserDefined: Boolean;
+//  const Value: TColor);
+//begin
+//  fDBHeadingColours[UserDefined] := Value;
+//end;
+
+procedure TPreferences.SetDBHeadingColour(const ACollectionID: TCollectionID;
   const Value: TColor);
 begin
-  fDBHeadingColours[UserDefined] := Value;
+  {TODO -cCollections: WARNING: This implementation of SetDBHeadingColour only
+          supports the old main and user collections. It will break when further
+          collections are added.
+  }
+  fDBHeadingColours[__TMP__UseUserDBHeadingColour(ACollectionID)] := Value;
 end;
 
-procedure TPreferences.SetDBHeadingCustomColours(UserDefined: Boolean;
-  Value: IStringList);
+procedure TPreferences.SetDBHeadingCustomColours(
+  const ACollectionID: TCollectionID; Value: IStringList);
 begin
-  fDBHeadingCustomColours[UserDefined] := Value;
+  {TODO -cCollections: WARNING: This implementation of SetDBHeadingCustomColours
+          only supports the old main and user collections. It will break when
+          further collections are added.
+  }
+  fDBHeadingCustomColours[
+    __TMP__UseUserDBHeadingColour(ACollectionID)
+  ] := Value;
 end;
+
+//procedure TPreferences.SetDBHeadingCustomColours(UserDefined: Boolean;
+//  Value: IStringList);
+//begin
+//  fDBHeadingCustomColours[UserDefined] := Value;
+//end;
 
 procedure TPreferences.SetDetailFontSize(const Value: Integer);
 begin
@@ -971,6 +1093,13 @@ begin
   (fWarnings as IAssignable).Assign(Warnings);
 end;
 
+function TPreferences.__TMP__UseUserDBHeadingColour(
+  const ACollectionID: TCollectionID): Boolean;
+begin
+  Result := (ACollectionID <> TCollectionID.__TMP__MainDBCollectionID)
+    and not ACollectionID.IsNull;
+end;
+
 { TPreferencesPersist }
 
 function TPreferencesPersist.Clone: IInterface;
@@ -990,10 +1119,14 @@ begin
   NewPref.OverviewStartState := Self.fOverviewStartState;
   NewPref.ShowEmptySections := Self.fShowEmptySections;
   NewPref.ShowNewSnippetsInNewTabs := Self.fShowNewSnippetsInNewTabs;
-  NewPref.DBHeadingColours[False] := Self.fDBHeadingColours[False];
-  NewPref.DBHeadingCustomColours[False] := Self.fDBHeadingCustomColours[False];
-  NewPref.DBHeadingColours[True] := Self.fDBHeadingColours[True];
-  NewPref.DBHeadingCustomColours[True] := Self.fDBHeadingCustomColours[True];
+//  NewPref.DBHeadingColours[False] := Self.fDBHeadingColours[False];
+  NewPref.SetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID, Self.GetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID));
+//  NewPref.DBHeadingCustomColours[False] := Self.fDBHeadingCustomColours[False];
+  NewPref.SetDBHeadingCustomColours(TCollectionID.__TMP__MainDBCollectionID, Self.GetDBHeadingCustomColours(TCollectionID.__TMP__MainDBCollectionID));
+//  NewPref.DBHeadingColours[True] := Self.fDBHeadingColours[True];
+  NewPref.SetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID, Self.GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID));
+//  NewPref.DBHeadingCustomColours[True] := Self.fDBHeadingCustomColours[True];
+  NewPref.SetDBHeadingCustomColours(TCollectionID.__TMP__UserDBCollectionID, Self.GetDBHeadingCustomColours(TCollectionID.__TMP__UserDBCollectionID));
   NewPref.OverviewFontSize := Self.fOverviewFontSize;
   NewPref.DetailFontSize := Self.fDetailFontSize;
   NewPref.SourceCodeBGColour := Self.fSourceCodeBGColour;
@@ -1035,11 +1168,19 @@ begin
   fShowNewSnippetsInNewTabs := Storage.GetBoolean(
     'ShowNewSnippetsInNewTabs', False
   );
-  fDBHeadingColours[False] := TColor(
-    Storage.GetInteger('MainDBHeadingColour', clMainSnippet)
+//  fDBHeadingColours[False] := TColor(
+//    Storage.GetInteger('MainDBHeadingColour', clMainSnippet)
+//  );
+  SetDBHeadingColour(
+    TCollectionID.__TMP__MainDBCollectionID,
+    TColor(Storage.GetInteger('MainDBHeadingColour', clMainSnippet))
   );
-  fDBHeadingColours[True] := TColor(
-    Storage.GetInteger('UserDBHeadingColour', clUserSnippet)
+//  fDBHeadingColours[True] := TColor(
+//    Storage.GetInteger('UserDBHeadingColour', clUserSnippet)
+//  );
+  SetDBHeadingColour(
+    TCollectionID.__TMP__UserDBCollectionID,
+    TColor(Storage.GetInteger('UserDBHeadingColour', clUserSnippet))
   );
   fSourceCodeBGColour := TColor(
     Storage.GetInteger('SourceCodeBGColour', clSourceBg)
@@ -1124,8 +1265,16 @@ begin
   Storage.SetInteger('OverviewStartState', Ord(fOverviewStartState));
   Storage.SetBoolean('ShowEmptySections', fShowEmptySections);
   Storage.SetBoolean('ShowNewSnippetsInNewTabs', fShowNewSnippetsInNewTabs);
-  Storage.SetInteger('MainDBHeadingColour', fDBHeadingColours[False]);
-  Storage.SetInteger('UserDBHeadingColour', fDBHeadingColours[True]);
+//  Storage.SetInteger('MainDBHeadingColour', fDBHeadingColours[False]);
+  Storage.SetInteger(
+    'MainDBHeadingColour',
+    GetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID)
+  );
+//  Storage.SetInteger('UserDBHeadingColour', fDBHeadingColours[True]);
+  Storage.SetInteger(
+    'UserDBHeadingColour',
+    GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID)
+  );
   Storage.SetInteger('OverviewFontSize', fOverviewFontSize);
   Storage.SetInteger('DetailFontSize', fDetailFontSize);
   Storage.SetInteger('SourceCodeBGColour', fSourceCodeBGColour);

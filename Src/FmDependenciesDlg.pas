@@ -414,7 +414,8 @@ begin
   LB := Control as TListBox;
   Canvas := LB.Canvas;
   if not (odSelected in State) then
-    Canvas.Font.Color := Preferences.DBHeadingColours[IsUserDefinedItem];
+//    Canvas.Font.Color := Preferences.DBHeadingColours[IsUserDefinedItem];
+    Canvas.Font.Color := Preferences.GetDBHeadingColour(TCollectionID.__TMP__DBCollectionID(IsUserDefinedItem));
   Canvas.TextRect(
     Rect,
     Rect.Left + 2,

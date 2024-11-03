@@ -582,12 +582,12 @@ procedure TFavouritesDlg.LVCustomDrawItem(Sender: TCustomListView;
   Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
 var
 //  UserDefined: Boolean;
-  IsMainDB: Boolean;
+  CollectionID: TCollectionID;
 begin
 //  UserDefined := (Item as TFavouriteListItem).Favourite.SnippetID.UserDefined;
 //  fLVFavs.Canvas.Font.Color := Preferences.DBHeadingColours[UserDefined];
-  IsMainDB := (Item as TFavouriteListItem).Favourite.SnippetID.CollectionID = TCollectionID.__TMP__MainDBCollectionID;
-  fLVFavs.Canvas.Font.Color := Preferences.DBHeadingColours[not IsMainDB];
+  CollectionID := (Item as TFavouriteListItem).Favourite.SnippetID.CollectionID;
+  fLVFavs.Canvas.Font.Color := Preferences.GetDBHeadingColour(CollectionID);
 end;
 
 procedure TFavouritesDlg.LVCustomDrawSubItem(Sender: TCustomListView;
