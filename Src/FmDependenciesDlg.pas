@@ -20,6 +20,7 @@ uses
   // Delphi
   ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Windows, ActnList,
   // Project
+  DB.UCollections,
   DB.USnippet, FmGenericViewDlg, UBaseObjects, USearch, USnippetIDs,
   USnippetsTVDraw;
 
@@ -65,12 +66,21 @@ type
       strict private
         fRootID: TSnippetID;  // ID of snippet whose dependency nodes displayed
       strict protected
-        function IsUserDefinedNode(const Node: TTreeNode): Boolean;
+        ///  <summary>Gets the collection ID, if any, associated with a  tree
+        ///  node.</summary>
+        ///  <param name="Node"><c>TTreeNode</c> [in] Node to be checked.
+        ///  </param>
+        ///  <returns><c>TCollectionID</c>. Associated collection ID. If
+        ///  <c>Node</c> has no associated collection then a null collection ID
+        ///  is returned.</returns>
+        function GetCollectionID(const Node: TTreeNode): TCollectionID;
           override;
-          {Checks if a node represents a user defined snippets object.
-            @param Node [in] Node to be checked.
-            @return True if node represents user defined object, False if not.
-          }
+//        function IsUserDefinedNode(const Node: TTreeNode): Boolean;
+//          override;
+//          {Checks if a node represents a user defined snippets object.
+//            @param Node [in] Node to be checked.
+//            @return True if node represents user defined object, False if not.
+//          }
         function IsErrorNode(const Node: TTreeNode): Boolean;
           override;
           {Checks if a node represents an error condition.
@@ -161,7 +171,6 @@ uses
   SysUtils,
   Graphics,
   // Project
-  DB.UCollections,
   DB.UMain,
   DB.USnippetKind,
   UBox,
@@ -503,6 +512,15 @@ begin
   fRootID := RootID;
 end;
 
+function TDependenciesDlg.TTVDraw.GetCollectionID(
+  const Node: TTreeNode): TCollectionID;
+begin
+  if not Assigned(Node.Data) then
+    Result := TCollectionID.CreateNull
+  else
+    Result := TSnippet(Node.Data).CollectionID;
+end;
+
 function TDependenciesDlg.TTVDraw.IsErrorNode(
   const Node: TTreeNode): Boolean;
   {Checks if a node represents an error condition.
@@ -513,19 +531,18 @@ begin
   Result := Assigned(Node.Data) and (TSnippet(Node.Data).ID = fRootID);
 end;
 
-function TDependenciesDlg.TTVDraw.IsUserDefinedNode(
-  const Node: TTreeNode): Boolean;
-  {Checks if a node represents a user defined snippets object.
-    @param Node [in] Node to be checked.
-    @return True if node represents user defined object, False if not.
-  }
-begin
-  if not Assigned(Node.Data) then
-    Result := True
-  else
+//function TDependenciesDlg.TTVDraw.IsUserDefinedNode(
+//  const Node: TTreeNode): Boolean;
+//  {Checks if a node represents a user defined snippets object.
+//    @param Node [in] Node to be checked.
+//    @return True if node represents user defined object, False if not.
+//  }
+//begin
+//  if not Assigned(Node.Data) then
+//    Result := True
+//  else
 //    Result := TSnippet(Node.Data).UserDefined;
-    Result := TSnippet(Node.Data).CollectionID <> TCollectionID.__TMP__MainDBCollectionID;
-end;
+//end;
 
 end.
 

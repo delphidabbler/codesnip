@@ -18,7 +18,9 @@ interface
 
 uses
   // Delphi
-  ComCtrls;
+  ComCtrls,
+  // Project
+  DB.UCollections;
 
 
 type
@@ -30,12 +32,22 @@ type
   }
   TSnippetsTVDraw = class abstract(TObject)
   strict protected
-    function IsUserDefinedNode(const Node: TTreeNode): Boolean;
+    ///  <summary>Gets the collection ID, if any, associated with a tree node.
+    ///  </summary>
+    ///  <param name="Node"><c>TTreeNode</c> [in] Node to be checked.</param>
+    ///  <returns><c>TCollectionID</c>. Associated collection ID. If <c>Node</c>
+    ///  has no associated collection then a null collection ID is returned.
+    ///  </returns>
+    function GetCollectionID(const Node: TTreeNode): TCollectionID;
       virtual; abstract;
-      {Checks if a node represents a user defined snippets object.
-        @param Node [in] Node to be checked.
-        @return True if node represents user defined object, False if not.
-      }
+
+//    function IsUserDefinedNode(const Node: TTreeNode): Boolean;
+//      virtual; abstract;
+//      {Checks if a node represents a user defined snippets object.
+//        @param Node [in] Node to be checked.
+//        @return True if node represents user defined object, False if not.
+//      }
+
     function IsSectionHeadNode(const Node: TTreeNode): Boolean;
       virtual;
       {Checks if a node represents a section header.
@@ -70,7 +82,6 @@ uses
   // Delphi
   Graphics,
   // Project
-  DB.UCollections,
   UColours,
   UPreferences;
 
@@ -121,7 +132,7 @@ begin
       else
         TV.Canvas.Font.Color :=
 //          Preferences.DBHeadingColours[IsUserDefinedNode(Node)];
-          Preferences.GetDBHeadingColour(TCollectionID.__TMP__DBCollectionID(IsUserDefinedNode(Node)));
+          Preferences.GetDBHeadingColour(GetCollectionID(Node));
       TV.Canvas.Brush.Color := TV.Color;
     end;
     if IsSectionHeadNode(Node) then
