@@ -345,8 +345,7 @@ begin
   SelectedSnippet := LI.Favourite.SnippetID;
   fNotifier.DisplaySnippet(
     SelectedSnippet.Name,
-//    SelectedSnippet.UserDefined,
-    SelectedSnippet.CollectionID,// <> TCollectionID.__TMP__MainDBCollectionID,
+    SelectedSnippet.CollectionID,
     chkNewTab.Checked
   );
   fFavourites.Touch(SelectedSnippet);
@@ -581,11 +580,8 @@ end;
 procedure TFavouritesDlg.LVCustomDrawItem(Sender: TCustomListView;
   Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
 var
-//  UserDefined: Boolean;
   CollectionID: TCollectionID;
 begin
-//  UserDefined := (Item as TFavouriteListItem).Favourite.SnippetID.UserDefined;
-//  fLVFavs.Canvas.Font.Color := Preferences.DBHeadingColours[UserDefined];
   CollectionID := (Item as TFavouriteListItem).Favourite.SnippetID.CollectionID;
   fLVFavs.Canvas.Font.Color := Preferences.GetDBHeadingColour(CollectionID);
 end;

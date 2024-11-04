@@ -49,6 +49,7 @@ type
       }
       TTVDraw = class(TSnippetsTVDraw)
       strict protected
+
         ///  <summary>Gets the collection ID, if any, associated with a  tree
         ///  node.</summary>
         ///  <param name="Node"><c>TTreeNode</c> [in] Node to be checked.
@@ -58,12 +59,6 @@ type
         ///  is returned.</returns>
         function GetCollectionID(const Node: TTreeNode): TCollectionID;
           override;
-
-//        function IsUserDefinedNode(const Node: TTreeNode): Boolean; override;
-//          {Checks if a node represents a user defined snippets object.
-//            @param Node [in] Node to be checked.
-//            @return True if node represents user defined object, False if not.
-//          }
 
         function IsSectionHeadNode(const Node: TTreeNode): Boolean;
           override;
@@ -304,23 +299,6 @@ begin
   // Header section is a category
   Result := TObject(Node.Data) is TCategory;
 end;
-
-//function TSelectSnippetsBaseFrame.TTVDraw.IsUserDefinedNode(
-//  const Node: TTreeNode): Boolean;
-//  {Checks if a node represents a user defined snippets object.
-//    @param Node [in] Node to be checked.
-//    @return True if node represents user defined object, False if not.
-//  }
-//var
-//  SnipObj: TObject; // object referenced in Node.Data
-//begin
-//  SnipObj := TObject(Node.Data);
-//  Result := False;
-//  if SnipObj is TSnippet then
-//    Result := (SnipObj as TSnippet).UserDefined
-//  else if SnipObj is TCategory then
-//    Result := (SnipObj as TCategory).UserDefined;
-//end;
 
 end.
 

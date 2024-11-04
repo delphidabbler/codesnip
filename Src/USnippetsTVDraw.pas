@@ -41,13 +41,6 @@ type
     function GetCollectionID(const Node: TTreeNode): TCollectionID;
       virtual; abstract;
 
-//    function IsUserDefinedNode(const Node: TTreeNode): Boolean;
-//      virtual; abstract;
-//      {Checks if a node represents a user defined snippets object.
-//        @param Node [in] Node to be checked.
-//        @return True if node represents user defined object, False if not.
-//      }
-
     function IsSectionHeadNode(const Node: TTreeNode): Boolean;
       virtual;
       {Checks if a node represents a section header.
@@ -131,7 +124,6 @@ begin
         TV.Canvas.Font.Color := clWarningText
       else
         TV.Canvas.Font.Color :=
-//          Preferences.DBHeadingColours[IsUserDefinedNode(Node)];
           Preferences.GetDBHeadingColour(GetCollectionID(Node));
       TV.Canvas.Brush.Color := TV.Color;
     end;

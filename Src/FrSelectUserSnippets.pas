@@ -66,7 +66,6 @@ function TSelectUserSnippetsFrame.CanAddCatNode(const Cat: TCategory): Boolean;
     @return True if category contains any user-defined snippets.
   }
 begin
-//  Result := Cat.Snippets.Count(True) > 0;
   Result := not Cat.Snippets.IsEmpty(
     TCollectionID.__TMP__UserDBCollectionID
   );
@@ -79,7 +78,6 @@ function TSelectUserSnippetsFrame.CanAddSnippetNode(
     @return True if snippet is user-defined.
   }
 begin
-//  Result := Snippet.UserDefined;
   Result := Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID;
 end;
 

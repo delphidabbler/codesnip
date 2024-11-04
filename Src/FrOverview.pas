@@ -84,11 +84,7 @@ type
         ///  is returned.</returns>
         function GetCollectionID(const Node: TTreeNode): TCollectionID;
           override;
-//        function IsUserDefinedNode(const Node: TTreeNode): Boolean; override;
-//          {Checks if a node represents a user defined snippets object.
-//            @param Node [in] Node to be checked.
-//            @return True if node represents user defined object, False if not.
-//          }
+
         function IsSectionHeadNode(const Node: TTreeNode): Boolean;
           override;
           {Checks if a node represents a section header.
@@ -997,21 +993,6 @@ begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
   Result := ViewItem.IsGrouping;
 end;
-
-//function TOverviewFrame.TTVDraw.IsUserDefinedNode(
-//  const Node: TTreeNode): Boolean;
-//  {Checks if a node represents a user defined snippets object.
-//    @param Node [in] Node to be checked.
-//    @return True if node represents user defined object, False if not.
-//  }
-//var
-//  ViewItem: IView;              // view item represented by node
-//  CollectionID: TCollectionID;  // ID of collection node item belongs to, if any
-//begin
-//  // TODO -cBug: Exception reported as issue #70 seems to be triggered here
-//  ViewItem := (Node as TViewItemTreeNode).ViewItem;
-//  Result := ViewItem.IsUserDefined;
-//end;
 
 end.
 

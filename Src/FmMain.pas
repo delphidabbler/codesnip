@@ -942,7 +942,6 @@ end;
 
 procedure TMainForm.ActNonEmptyUserDBUpdate(Sender: TObject);
 begin
-//  (Sender as TAction).Enabled := not Database.Snippets.IsEmpty(True);
   (Sender as TAction).Enabled := not Database.Snippets.IsEmpty(
     TCollectionID.__TMP__UserDBCollectionID
   );

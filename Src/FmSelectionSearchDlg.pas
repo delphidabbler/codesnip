@@ -63,12 +63,6 @@ type
         @param Sender [in] Not used.
       }
 
-//    procedure SelectDB(const UserDefined: Boolean);
-//      {Selects all snippets from either main or user defined database.
-//        @param UserDefined [in] Flag true if user-defined snippets are to be
-//          selected, False if main database snippets are to be selected.
-//      }
-
     ///  <summary>Selects all snippets from the given collection.</summary>
     ///  <param name="ACollectionID"><c>TCollectionID</c> ID of the required
     ///  collection.</param>
@@ -148,7 +142,6 @@ procedure TSelectionSearchDlg.btnMainDBClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-//  SelectDB(False);
   SelectDB(TCollectionID.__TMP__MainDBCollectionID);
 end;
 
@@ -184,7 +177,6 @@ procedure TSelectionSearchDlg.btnUserDBClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-//  SelectDB(True);
   SelectDB(TCollectionID.__TMP__UserDBCollectionID);
 end;
 
@@ -238,32 +230,10 @@ procedure TSelectionSearchDlg.InitForm;
 begin
   inherited;
   frmSelect.CollapseTree;
-//  btnUserDB.Enabled := Database.Snippets.Count(True) > 0;
   btnUserDB.Enabled := not Database.Snippets.IsEmpty(
     TCollectionID.__TMP__UserDBCollectionID
   );
 end;
-
-//procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);
-//  {Selects all snippets from either main or user defined database.
-//    @param UserDefined [in] Flag true if user-defined snippets are to be
-//      selected, False if main database snippets are to be selected.
-//  }
-//var
-//  Snippet: TSnippet;          // references each snippet in database
-//  SnippetList: TSnippetList;  // list of selected snippets
-//begin
-//  SnippetList := TSnippetList.Create;
-//  try
-//    for Snippet in Database.Snippets do
-////      if Snippet.UserDefined = UserDefined then
-//      if Snippet.CollectionID = TCollectionID.__TMP__DBCollectionID(UserDefined) then
-//        SnippetList.Add(Snippet);
-//    frmSelect.SelectedSnippets := SnippetList;
-//  finally
-//    FreeAndNil(SnippetList);
-//  end;
-//end;
 
 procedure TSelectionSearchDlg.SelectDB(const ACollectionID: TCollectionID);
 var

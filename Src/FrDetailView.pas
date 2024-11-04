@@ -228,10 +228,6 @@ begin
       .AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
 
     // Heading colours for user & main databases
-//    CSSBuilder.AddSelector('.userdb')
-//      .AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[True]));
-//    CSSBuilder.AddSelector('.maindb')
-//      .AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[False]));
     CSSBuilder.AddSelector('.userdb')
       .AddProperty(TCSS.ColorProp(Preferences.GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID)));
     CSSBuilder.AddSelector('.maindb')

@@ -52,7 +52,6 @@ type
     fSnippets: TSnippetList;  // List of snippet objects in category
     fID: string;              // Category id
     fDescription: string;     // Category description
-//    fUserDefined: Boolean;    // Whether this is a user-defined snippet
     fCollectionID: TCollectionID;
     procedure SetCollectionID(const AValue: TCollectionID);
     function CompareIDTo(const Cat: TCategory): Integer;
@@ -72,12 +71,6 @@ type
     ///  </param>
     constructor Create(const CatID: string; const ACollectionID: TCollectionID;
       const Data: TCategoryData);
-
-//    constructor Create(const CatID: string; const UserDefined: Boolean;
-//      const Data: TCategoryData); overload;
-//      {Class contructor. Sets up category object with given property values.
-//        @param Data [in] Contains required property values.
-//      }
 
     destructor Destroy; override;
       {Destructor. Tears down object.
@@ -107,8 +100,6 @@ type
       {Description of category}
     property Snippets: TSnippetList read fSnippets;
       {List of snippets in this category}
-//    property UserDefined: Boolean read fUserDefined;
-//      {Flag that indicates if this is a user defined category}
     ///  <summary>ID of collection that defines this category.</summary>
     ///  <remarks>ID must not be null.</remarks>
     property CollectionID: TCollectionID
@@ -212,8 +203,6 @@ function TCategory.CanDelete: Boolean;
     @return True if deletion allowed, False if not.
   }
 begin
-//  Result := fUserDefined and fSnippets.IsEmpty
-//    and not TReservedCategories.IsReserved(Self);
   Result := (fCollectionID <> TCollectionID.__TMP__MainDBCollectionID)
     and fSnippets.IsEmpty
     and not TReservedCategories.IsReserved(Self);
@@ -257,22 +246,6 @@ begin
   // Create list to store snippets in category
   fSnippets := TSnippetListEx.Create;
 end;
-
-//constructor TCategory.Create(const CatID: string; const UserDefined: Boolean;
-//  const Data: TCategoryData);
-//  {Class contructor. Sets up category object with given property values.
-//    @param Data [in] Contains required property values.
-//  }
-//begin
-//  Assert(ClassType <> TCategory,
-//    ClassName + '.Create: must only be called from descendants.');
-//  inherited Create;
-//  fID := CatID;
-//  fDescription := Data.Desc;
-//  fUserDefined := UserDefined;
-//  // Create list to store snippets in category
-//  fSnippets := TSnippetListEx.Create;
-//end;
 
 destructor TCategory.Destroy;
   {Destructor. Tears down object.

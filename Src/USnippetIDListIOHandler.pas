@@ -110,9 +110,6 @@ begin
       raise ESnippetIDListFileReader.CreateFmt(sMissingName, [Line]);
     if UserDefStr = '' then
       raise ESnippetIDListFileReader.CreateFmt(sMissingUserDef, [Line]);
-//    if not TryStrToInt(UserDefStr, UserDefInt)
-//      or not (UserDefInt in [0, 1]) then
-//      raise ESnippetIDListFileReader.CreateFmt(sBadUserDef, [Line]);
     if not TryStrToInt(UserDefStr, UserDefInt) then
       raise ESnippetIDListFileReader.CreateFmt(sBadUserDef, [Line]);
     case UserDefInt of
@@ -121,7 +118,6 @@ begin
       else
         raise ESnippetIDListFileReader.CreateFmt(sBadUserDef, [Line]);
     end;
-//    fSnippetIDs.Add(TSnippetID.Create(Name, Boolean(UserDefInt)));
     fSnippetIDs.Add(TSnippetID.Create(Name, CollectionID));
   end;
 end;
@@ -168,9 +164,6 @@ begin
   begin
     fBuilder.Append(SnippetID.Name);
     fBuilder.Append(TAB);
-    // NOTE: TStringBuilder.Append(Boolean) override not used here since ordinal
-    // value wanted instead of "True" or "False" or localised equivalent.
-//    fBuilder.Append(Ord(SnippetID.UserDefined));
     fBuilder.Append(Ord(SnippetID.CollectionID <> TCollectionID.__TMP__MainDBCollectionID));
     fBuilder.AppendLine;
   end;

@@ -217,15 +217,6 @@ type
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
-//    function IsNativeSnippet(const Snippet: TSnippet): Boolean; override;
-//      {Checks if a snippet is native (belongs) to the main database.
-//        @param Snippet [in] Snippet to test.
-//        @return True if snippet is native, False if not.
-//      }
-//    function IsUserDatabase: Boolean; override;
-//      {Checks if the database is the user database.
-//        @return False - this is not the user database.
-//      }
 
     ///  <summary>Returns the ID of the collection being loaded into the
     ///  database.</summary>
@@ -257,15 +248,6 @@ type
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
-//    function IsNativeSnippet(const Snippet: TSnippet): Boolean; override;
-//      {Checks if a snippet is native (belongs) to the user database.
-//        @param Snippet [in] Snippet to test.
-//        @return True if snippet is native, False if not.
-//      }
-//    function IsUserDatabase: Boolean; override;
-//      {Checks if the database is the user database.
-//        @return True - this is the user database.
-//      }
 
     ///  <summary>Returns the ID of the collection being loaded into the
     ///  database.</summary>
@@ -499,14 +481,10 @@ begin
   for SnippetName in SnippetNames do
   begin
     // Check if snippet exists in current database and add it to list if not
-//    Snippet := fSnipList.Find(SnippetName, IsUserDatabase);
     Snippet := fSnipList.Find(SnippetName, CollectionID);
     if not Assigned(Snippet) then
     begin
       fReader.GetSnippetProps(SnippetName, SnippetProps);
-//      Snippet := fFactory.CreateSnippet(
-//        SnippetName, IsUserDatabase, SnippetProps
-//      );
       Snippet := fFactory.CreateSnippet(
         SnippetName, CollectionID, SnippetProps
       );
@@ -555,26 +533,8 @@ function TMainDatabaseLoader.FindSnippet(const SnippetName: string;
   }
 begin
   // We only search main database
-//  Result := SnipList.Find(SnippetName, False);
   Result := SnipList.Find(SnippetName, CollectionID);
 end;
-
-//function TMainDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
-//  {Checks if a snippet is native (belongs) to the main database.
-//    @param Snippet [in] Snippet to test.
-//    @return True if snippet is native, False if not.
-//  }
-//begin
-//  Result := not Snippet.UserDefined;
-//end;
-
-//function TMainDatabaseLoader.IsUserDatabase: Boolean;
-//  {Checks if the database is the user database.
-//    @return False - this is not the user database.
-//  }
-//begin
-//  Result := False;
-//end;
 
 { TUserDatabaseLoader }
 
@@ -614,30 +574,11 @@ function TUserDatabaseLoader.FindSnippet(const SnippetName: string;
   }
 begin
   // Search in user database
-//  Result := SnipList.Find(SnippetName, True);
   Result := SnipList.Find(SnippetName, CollectionID);
   if not Assigned(Result) then
     // Not in user database: try main database
-//    Result := SnipList.Find(SnippetName, False);
     Result := SnipList.Find(SnippetName, TCollectionID.__TMP__MainDBCollectionID);
 end;
-
-//function TUserDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
-//  {Checks if a snippet is native (belongs) to the user database.
-//    @param Snippet [in] Snippet to test.
-//    @return True if snippet is native, False if not.
-//  }
-//begin
-//  Result := Snippet.UserDefined;
-//end;
-
-//function TUserDatabaseLoader.IsUserDatabase: Boolean;
-//  {Checks if the database is the user database.
-//    @return True - this is the user database.
-//  }
-//begin
-//  Result := True;
-//end;
 
 procedure TUserDatabaseLoader.LoadCategories;
   {Loads all categories from storage and adds user and imports categories if not
@@ -734,7 +675,6 @@ begin
   for Snippet in fSnipList do
   begin
     // Only write user-defined snippets
-//    if Snippet.UserDefined then
     if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
     begin
       // Get and write a snippet's properties

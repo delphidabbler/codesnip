@@ -66,6 +66,7 @@ type
       strict private
         fRootID: TSnippetID;  // ID of snippet whose dependency nodes displayed
       strict protected
+
         ///  <summary>Gets the collection ID, if any, associated with a  tree
         ///  node.</summary>
         ///  <param name="Node"><c>TTreeNode</c> [in] Node to be checked.
@@ -75,12 +76,7 @@ type
         ///  is returned.</returns>
         function GetCollectionID(const Node: TTreeNode): TCollectionID;
           override;
-//        function IsUserDefinedNode(const Node: TTreeNode): Boolean;
-//          override;
-//          {Checks if a node represents a user defined snippets object.
-//            @param Node [in] Node to be checked.
-//            @return True if node represents user defined object, False if not.
-//          }
+
         function IsErrorNode(const Node: TTreeNode): Boolean;
           override;
           {Checks if a node represents an error condition.
@@ -414,11 +410,6 @@ var
   LB: TListBox;
   Canvas: TCanvas;
 
-//  function IsUserDefinedItem: Boolean;
-//  begin
-//    Result := (LB.Items.Objects[Index] as TBox<Boolean>).Value;
-//  end;
-
   function ExtractCollectionItem: TCollectionID;
   begin
     Result := (LB.Items.Objects[Index] as TBox<TCollectionID>).Value;
@@ -428,7 +419,6 @@ begin
   LB := Control as TListBox;
   Canvas := LB.Canvas;
   if not (odSelected in State) then
-//    Canvas.Font.Color := Preferences.DBHeadingColours[IsUserDefinedItem];
     Canvas.Font.Color := Preferences.GetDBHeadingColour(ExtractCollectionItem);
   Canvas.TextRect(
     Rect,
@@ -467,7 +457,6 @@ begin
           ClassName + '.PopulateRequiredByList: Snippet id not found');
         lbDependents.Items.AddObject(
           ASnippet.DisplayName, TBox<TCollectionID>.Create(ASnippet.CollectionID)
-//          ASnippet.DisplayName, TBox<Boolean>.Create(ASnippet.UserDefined)
         );
       end;
     end;
@@ -535,19 +524,6 @@ function TDependenciesDlg.TTVDraw.IsErrorNode(
 begin
   Result := Assigned(Node.Data) and (TSnippet(Node.Data).ID = fRootID);
 end;
-
-//function TDependenciesDlg.TTVDraw.IsUserDefinedNode(
-//  const Node: TTreeNode): Boolean;
-//  {Checks if a node represents a user defined snippets object.
-//    @param Node [in] Node to be checked.
-//    @return True if node represents user defined object, False if not.
-//  }
-//begin
-//  if not Assigned(Node.Data) then
-//    Result := True
-//  else
-//    Result := TSnippet(Node.Data).UserDefined;
-//end;
 
 end.
 

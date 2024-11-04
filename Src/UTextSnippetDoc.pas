@@ -46,13 +46,6 @@ type
     ///  <summary>Initialises plain text document.</summary>
     procedure InitialiseDoc; override;
 
-//    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
-//    ///  user defined or from main database.</summary>
-//    ///  <remarks>Heading is output the same whether user defined or not, so
-//    ///  UserDefined parameter is ignored.</remarks>
-//    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
-//      override;
-
     ///  <summary>Output given heading, i.e. snippet name for snippet from a
     ///  given collection.</summary>
     ///  <remarks>Heading is output the same regardless of the snippet's
@@ -178,12 +171,6 @@ procedure TTextSnippetDoc.RenderHeading(const Heading: string;
 begin
   fWriter.WriteLine(Heading);
 end;
-
-//procedure TTextSnippetDoc.RenderHeading(const Heading: string;
-//  const UserDefined: Boolean);
-//begin
-//  fWriter.WriteLine(Heading);
-//end;
 
 procedure TTextSnippetDoc.RenderNoCompilerInfo(const Heading,
   NoCompileTests: string);

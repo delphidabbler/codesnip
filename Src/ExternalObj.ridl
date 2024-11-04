@@ -16,8 +16,8 @@
   helpstring("CodeSnip DOM External Object Extender Type Library"),
   custom(DE77BA64-517C-11D1-A2DA-0000F8773CE9, 117441012),
   custom(DE77BA63-517C-11D1-A2DA-0000F8773CE9, 1219706147)
-
 ]
+
 library ExternalObj
 {
 
@@ -43,16 +43,6 @@ library ExternalObj
      */
     [id(0x00000065)]
     HRESULT _stdcall UpdateDbase(void);
-
-    /* - TODO: Delete following commented out method
-     * Display named snippet.
-     *    @param SnippetName [in] Name of snippet to display.
-     *    @param UserDefined [in] Whether snippet is user defined.
-     *
-    [id(0x00000066)]
-    HRESULT _stdcall DisplaySnippet([in] BSTR SnippetName,
-        [in] VARIANT_BOOL UserDefined, [in] VARIANT_BOOL NewTab);
-    */
 
     /*
      * Display named snippet.

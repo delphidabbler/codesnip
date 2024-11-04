@@ -57,17 +57,6 @@ type
     ///  <remarks>Method of IWBExternal15.</remarks>
     procedure UpdateDbase; safecall;
 
-//    ///  <summary>Displays a named snippet.</summary>
-//    ///  <param name="SnippetName">WideString [in] Name of snippet to be
-//    ///  displayed.</param>
-//    ///  <param name="UserDefined">WordBool [in] Whether the snippet is user
-//    ///  defined.</param>
-//    ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
-//    ///  tab.</param>
-//    ///  <remarks>Method of IWBExternal14.</remarks>
-//    procedure DisplaySnippet(const SnippetName: WideString;
-//      UserDefined: WordBool; NewTab: WordBool); safecall;
-
     ///  <summary>Displays the Configure Compilers dialogue box.</summary>
     ///  <summary>Displays a named snippet.</summary>
     ///  <param name="SnippetName">WideString [in] Name of snippet to be
@@ -183,17 +172,6 @@ begin
     HandleException;
   end;
 end;
-
-//procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
-//  UserDefined: WordBool; NewTab: WordBool);
-//begin
-//  try
-//    if Assigned(fNotifier) then
-//      fNotifier.DisplaySnippet(SnippetName, UserDefined, NewTab);
-//  except
-//    HandleException;
-//  end;
-//end;
 
 procedure TWBExternal.EditSnippet(const SnippetName: WideString);
 begin

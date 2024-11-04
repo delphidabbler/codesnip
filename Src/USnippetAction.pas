@@ -37,8 +37,6 @@ type
     var
       ///  <summary>Value of SnippetName property.</summary>
       fSnippetName: string;
-//      ///  <summary>Value of UserDefined property.</summary>
-//      fUserDefined: Boolean;
       ///  <summary>Value of CollectionID property.</summary>
       fCollectionID: TCollectionID;
       ///  <summary>Value of NewTab property.</summary>
@@ -61,9 +59,6 @@ type
     procedure SetNotifier(const Notifier: INotifier);
     ///  <summary>Name of snippet to be displayed.</summary>
     property SnippetName: string read fSnippetName write fSnippetName;
-//    ///  <summary>Flag indicating whether snippet to be displayed is user
-//    ///  defined.</summary>
-//    property UserDefined: Boolean read fUserDefined write fUserDefined;
     ///  <summary>ID of the collection containing the snippet to be displayed.
     ///  </summary>
     property CollectionID: TCollectionID read fCollectionID write fCollectionID;
@@ -91,7 +86,6 @@ var
 begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
   Assert(SnippetName <> '', ClassName + '.Execute: SnippetName not provided');
-//  Snippet := Database.Snippets.Find(SnippetName, UserDefined);
   Snippet := Database.Snippets.Find(SnippetName, fCollectionID);
   Assert(Assigned(Snippet), ClassName + '.Execute: SnippetName not valid');
   // Create a view item for snippet and get notifier to display it

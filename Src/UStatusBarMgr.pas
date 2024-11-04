@@ -362,7 +362,6 @@ const
 begin
   // Calculate database stats
   TotalSnippets := Database.Snippets.Count;
-//  TotalUserSnippets := Database.Snippets.Count(True);
   TotalUserSnippets := Database.Snippets.Count(
     TCollectionID.__TMP__UserDBCollectionID
   );

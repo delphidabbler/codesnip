@@ -80,7 +80,6 @@ var
   Line: string;
   Fields: IStringList;
   SnippetName: string;
-//  UserDef: Boolean;
   LastAccess: TDateTime;
   CollectionID: TCollectionID;
 resourcestring
@@ -112,19 +111,15 @@ begin
     if Fields.Count <> 3 then
       raise EFavouritesPersist.Create(sBadFormat);
     SnippetName := Fields[0];
-//    UserDef := True; // accept any text as true excpet "false"
     // accept any text as user collection, except "false"
     CollectionID := TCollectionID.__TMP__UserDBCollectionID;
     if StrSameText(Fields[1], 'false') then
       // we have "false" so main collection
-//      UserDef := False;
       CollectionID := TCollectionID.__TMP__MainDBCollectionID;
     if not TryStrToDateTime(Fields[2], LastAccess) then
       raise EFavouritesPersist.Create(sBadFormat);
     // only add to favourites if snippet in database
-//    if Database.Snippets.Find(SnippetName, UserDef) <> nil then
     if Database.Snippets.Find(SnippetName, CollectionID) <> nil then
-//      Favourites.Add(TSnippetID.Create(SnippetName, UserDef), LastAccess);
       Favourites.Add(TSnippetID.Create(SnippetName, CollectionID), LastAccess);
   end;
 end;
@@ -141,7 +136,6 @@ begin
     begin
       SB.Append(Fav.SnippetID.Name);
       SB.Append(TAB);
-//      SB.Append(BoolToStr(Fav.SnippetID.UserDefined, True));
       SB.Append(BoolToStr(Fav.SnippetID.CollectionID <> TCollectionID.__TMP__MainDBCollectionID, True));
       SB.Append(TAB);
       SB.Append(DateTimeToStr(Fav.LastAccessed));

@@ -294,7 +294,6 @@ begin
   Assert(Assigned(ViewItem), ClassName + '.CanEdit: ViewItem is nil');
   Result := Assigned(ViewItem)
     and Supports(ViewItem, ISnippetView, SnippetView)
-//    and SnippetView.Snippet.UserDefined;
     and (SnippetView.Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID);
 end;
 
@@ -363,7 +362,6 @@ var
 begin
   Result := TCategoryList.Create;
   for Cat in Database.Categories do
-//    if Cat.UserDefined and
     if (Cat.CollectionID <> TCollectionID.__TMP__MainDBCollectionID) and
       (IncludeSpecial or not TReservedCategories.IsReserved(Cat)) then
       Result.Add(Cat);
@@ -425,8 +423,6 @@ begin
   Assert(Supports(ViewItem, ISnippetView),
     ClassName + '.Delete: Current view is not a snippet');
   Snippet := (ViewItem as ISnippetView).Snippet;
-//  Assert(Snippet.UserDefined,
-//    ClassName + '.Delete: Snippet must be user defined');
   Assert(Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID,
     ClassName + '.Delete: Snippet must be user defined');
   // Check if snippet has dependents: don't allow deletion if so
@@ -469,7 +465,6 @@ class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
 var
   Snippet: TSnippet;    // reference to snippet to be edited
 begin
-//  Snippet := Database.Snippets.Find(SnippetName, True);
   Snippet := Database.Snippets.Find(SnippetName, TCollectionID.__TMP__UserDBCollectionID);
   if not Assigned(Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in user database');

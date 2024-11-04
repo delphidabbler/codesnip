@@ -371,9 +371,6 @@ procedure TCodeImporter.Execute(const Data: TBytes);
     TXMLDocHelper.GetPascalNameList(fXMLDoc, DependsNode, SnippetNames);
     Depends.Clear;
     for SnippetName in SnippetNames do
-//      // Note: in building snippet ID list we assume each snippet is user-
-//      // defined. It may not be, but there is no way of telling from XML.
-//      Depends.Add(TSnippetID.Create(SnippetName, True));
       // Note: in building snippet ID list we assume each snippet is from the
       // standard user collection. It may not be, but there is no way of telling
       // from XML.

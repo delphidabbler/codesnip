@@ -62,13 +62,6 @@ type
     ///  initialisation here.</remarks>
     procedure InitialiseDoc; virtual;
 
-//    ///  <summary>Output given heading, i.e. snippet name. Can be user defined
-//    ///  or from main database.</summary>
-//    ///  <remarks>Heading may be rendered differently depending on whether user
-//    ///  defined or not.</remarks>
-//    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
-//      virtual; abstract;
-
     ///  <summary>Output given heading, i.e. snippet name for snippet from a
     ///  given collection..</summary>
     ///  <remarks>Heading may be rendered differently depending on the snippet's
@@ -187,7 +180,6 @@ begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   // generate document
   InitialiseDoc;
-//  RenderHeading(Snippet.DisplayName, Snippet.UserDefined);
   RenderHeading(Snippet.DisplayName, Snippet.CollectionID);
   RenderDescription(Snippet.Description);
   RenderSourceCode(Snippet.SourceCode);
@@ -210,7 +202,6 @@ begin
   end;
   if Snippet.Extra.HasContent then
     RenderExtra(Snippet.Extra);
-//  if not Snippet.UserDefined then
   if Snippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID then
     // database info written only if snippet is from main database
     RenderDBInfo(MainDBInfo);

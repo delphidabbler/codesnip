@@ -33,27 +33,17 @@ type
     var
       ///  <summary>Value of Name property.</summary>
       fName: string;
-//      ///  <summary>Value of UserDefined property.</summary>
-//      fUserDefined: Boolean;
       fCollectionID: TCollectionID;
     procedure SetCollectionID(const AValue: TCollectionID);
   public
     ///  <summary>Name of snippet.</summary>
     property Name: string read fName write fName;
 
-    ///  <summary>Whether snippet is user defined.</summary>
-//    property UserDefined: Boolean read fUserDefined write fUserDefined;
-    {TODO -cCollections: Remove above property & getter/setter}
-
     ///  <summary>ID of the collection to which a snippet with this ID belongs.
     ///  </summary>
     ///  <remarks>ID must not be null.</remarks>
     property CollectionID: TCollectionID
       read fCollectionID write SetCollectionID;
-
-//    ///  <summary>Creates a record with given property values.</summary>
-//    constructor Create(const AName: string; const AUserDefined: Boolean);
-//      overload; {TODO -cCollections: remove constructor}
 
     ///  <summary>Creates a record with given property values.</summary>
     ///  <remarks><c>ACollectionID</c> must not be null.</remarks>
@@ -186,7 +176,6 @@ begin
   if Result = 0 then
     // TODO -cNote: New comparison changes ordering (no problem tho!)
     Result := TCollectionID.Compare(CollectionID, SID.CollectionID);
-//    Result := Ord(UserDefined) - Ord(SID.UserDefined);
 end;
 
 constructor TSnippetID.Create(const AName: string;
@@ -195,12 +184,6 @@ begin
   fName := AName;
   SetCollectionID(ACollectionID);
 end;
-
-//constructor TSnippetID.Create(const AName: string; const AUserDefined: Boolean);
-//begin
-//  fName := AName;
-//  fUserDefined := AUserDefined);
-//end;
 
 class operator TSnippetID.Equal(const SID1, SID2: TSnippetID): Boolean;
 begin

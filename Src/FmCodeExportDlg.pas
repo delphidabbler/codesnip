@@ -211,7 +211,6 @@ var
   List: TSnippetList; // list containing only the provided snippet
 begin
   if not Assigned(Snippet) or (Snippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID) then
-//  if not Assigned(Snippet) or not Snippet.UserDefined then
     // Snippet is nil or not user-defined: select nothing
     frmSnippets.SelectedSnippets := nil
   else

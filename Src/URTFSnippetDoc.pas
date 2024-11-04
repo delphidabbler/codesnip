@@ -76,14 +76,6 @@ type
   strict protected
     ///  <summary>Initialises rich text document.</summary>
     procedure InitialiseDoc; override;
-
-//    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
-//    ///  user defined or from main database.</summary>
-//    ///  <remarks>Heading is coloured according to whether user defined or not.
-//    ///  </remarks>
-//    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
-//      override;
-
     ///  <summary>Output given heading, i.e. snippet name for snippet from a
     ///  given collection..</summary>
     ///  <remarks>Heading is coloured according the the snippet's collection.
@@ -181,8 +173,6 @@ begin
   fBuilder.ColourTable.Add(clWarningText);
   fBuilder.ColourTable.Add(clVarText);
   fBuilder.ColourTable.Add(clExternalLink);
-//  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[False]);
-//  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[True]);
   { TODO -cCollections: Replace following two statements with iteration over all
            supported collections when support for multiple collections is added.
   }
@@ -429,18 +419,6 @@ begin
     RTFWriter.Free;
   end;
 end;
-
-//procedure TRTFSnippetDoc.RenderHeading(const Heading: string;
-//  const UserDefined: Boolean);
-//begin
-//  fBuilder.SetFontStyle([fsBold]);
-//  fBuilder.SetFontSize(HeadingFontSize);
-//  if fUseColour then
-//    fBuilder.SetColour(Preferences.DBHeadingColours[UserDefined]);
-//  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(0.0, ParaSpacing));
-//  fBuilder.AddText(Heading);
-//  fBuilder.EndPara;
-//end;
 
 procedure TRTFSnippetDoc.RenderHeading(const Heading: string;
   const ACollectionID: TCollectionID);

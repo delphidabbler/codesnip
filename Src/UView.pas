@@ -60,8 +60,6 @@ type
     ///  without having have an instance of any object wrapped by the view.
     ///  </remarks>
     function GetKey: IViewKey;
-//    ///  <summary>Checks if view is user-defined.</summary>
-//    function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>A grouping is a view that groups views together.
     ///  </remarks>
@@ -234,9 +232,6 @@ type
     ///  <summary>Gets object containing view's unique key.</summary>
     ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
-//    ///  <summary>Checks if view is user-defined.</summary>
-//    ///  <remarks>Method of IView.</remarks>
-//    function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
@@ -324,8 +319,6 @@ type
     ///  <summary>Gets object containing view's unique key.</summary>
     ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
-//    ///  <summary>Checks if view is user-defined.</summary>
-//    function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
@@ -371,9 +364,6 @@ type
     ///  <summary>Gets object containing view's unique key.</summary>
     ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
-//    ///  <summary>Checks if view is user-defined.</summary>
-//    ///  <remarks>Method of IView.</remarks>
-//    function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
@@ -421,9 +411,6 @@ type
     ///  <summary>Gets object containing view's unique key.</summary>
     ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
-//    ///  <summary>Checks if view is user-defined.</summary>
-//    ///  <remarks>Method of IView.</remarks>
-//    function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
@@ -471,9 +458,6 @@ type
     ///  <summary>Gets object containing view's unique key.</summary>
     ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
-//    ///  <summary>Checks if view is user-defined.</summary>
-//    ///  <remarks>Method of IView.</remarks>
-//    function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
@@ -498,11 +482,6 @@ function TSimpleView.IsGrouping: Boolean;
 begin
   Result := False;
 end;
-
-//function TSimpleView.IsUserDefined: Boolean;
-//begin
-//  Result := False;
-//end;
 
 { TSimpleView.TKey }
 
@@ -590,11 +569,6 @@ begin
   Result := False;
 end;
 
-//function TSnippetView.IsUserDefined: Boolean;
-//begin
-//  Result := GetSnippet.UserDefined;
-//end;
-
 { TSnippetView.TKey }
 
 constructor TSnippetView.TKey.Create(const ID: TSnippetID);
@@ -649,11 +623,6 @@ begin
   Result := True;
 end;
 
-//function TCategoryView.IsUserDefined: Boolean;
-//begin
-//  Result := GetCategory.UserDefined;
-//end;
-
 { TCategoryView.TKey }
 
 constructor TCategoryView.TKey.Create(const ID: string);
@@ -706,11 +675,6 @@ begin
   Result := True;
 end;
 
-//function TSnippetKindView.IsUserDefined: Boolean;
-//begin
-//  Result := False;
-//end;
-
 { TSnippetKindView.TKey }
 
 constructor TSnippetKindView.TKey.Create(const ID: TSnippetKind);
@@ -762,11 +726,6 @@ function TInitialLetterView.IsGrouping: Boolean;
 begin
   Result := True;
 end;
-
-//function TInitialLetterView.IsUserDefined: Boolean;
-//begin
-//  Result := False;
-//end;
 
 { TInitialLetterView.TKey }
 

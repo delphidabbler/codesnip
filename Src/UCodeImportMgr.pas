@@ -185,7 +185,6 @@ begin
   Result := TIStringList.Create;
   Result.CaseSensitive := False;
   for Snippet in Database.Snippets do
-//    if Snippet.UserDefined then
     if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
       Result.Add(Snippet.Name);
   for SnippetInfo in fSnippetInfoList do
@@ -257,8 +256,6 @@ procedure TCodeImportMgr.UpdateDatabase;
     for Idx := 0 to Pred(Depends.Count) do
     begin
       SnippetID := Depends[Idx];
-//      SnippetID.UserDefined :=
-//        Database.Snippets.Find(SnippetID.Name, True) <> nil;
       CollectionID := TCollectionID.__TMP__UserDBCollectionID;
       if Database.Snippets.Find(SnippetID.Name, CollectionID) = nil then
         CollectionID := TCollectionID.__TMP__MainDBCollectionID;
@@ -287,7 +284,6 @@ begin
 
     AdjustDependsList(SnippetInfo.Data.Refs.Depends);
 
-//    Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, True);
     Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, TCollectionID.__TMP__UserDBCollectionID);
     if Assigned(Snippet) then
       // snippet already exists: overwrite it

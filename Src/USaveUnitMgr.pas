@@ -263,7 +263,6 @@ begin
   fContainsMainDBSnippets := False;
   for Snippet in Snips do
   begin
-//    if not Snippet.UserDefined then
     if Snippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID then
     begin
       fContainsMainDBSnippets := True;

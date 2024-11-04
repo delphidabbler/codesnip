@@ -126,7 +126,6 @@ type
     fXRef: TSnippetList;                    // List of cross-referenced snippets
     fExtra: IActiveText;                    // Further information for snippet
     fCompatibility: TCompileResults;        // Snippet's compiler compatibility
-//    fUserDefined: Boolean;                  // If this snippet is user-defined
     fCollectionID: TCollectionID;           // Snippet's collection ID
     fHiliteSource: Boolean;                 // If source is syntax highlighted
     fTestInfo: TSnippetTestInfo;            // Level of testing of snippet
@@ -152,13 +151,6 @@ type
         @return Required field content.
       }
   public
-//    constructor Create(const Name: string; const UserDefined: Boolean;
-//      const Props: TSnippetData);
-//      {Class contructor. Sets up snippet object with given property values.
-//        @param Name [in] Name of snippet.
-//        @param UserDefined [in] Indicates if this is a user defined snippet.
-//        @param Props [in] Values of various snippet properties.
-//      }
 
     ///  <summary>Object constructor. Sets up snippet object with given property
     ///  values belonging to a specified collection.</summary>
@@ -211,8 +203,7 @@ type
       {List of any other snippet in database on which this snippet depends}
     property XRef: TSnippetList read fXRef;
       {List of cross referenced snippets in database}
-//    property UserDefined: Boolean read fUserDefined;;
-      {Flag that indicates if this is a user defined snippet}
+    ///  <summary>ID of collection to which the snippet belongs.</summary>
     property CollectionID: TCollectionID read fCollectionID;
   end;
 
@@ -269,16 +260,6 @@ type
         @param Idx [in] Index of required snippet in list.
         @return Snippet at specified index in list.
       }
-//    function Find(const SnippetName: string;
-//      const UserDefined: Boolean; out Index: Integer): Boolean; overload;
-//      {Finds a snippet in the list that has a specified name and user defined
-//      property. Uses a binary search.
-//        @param SnippetName [in] Name of snippet to be found.
-//        @param UserDefined [in] Whether required snippet is user defined or not.
-//        @param Index [out] Index of required snippet in list. Valid only if
-//          method returns True.
-//        @return True if snippet found, False if not.
-//      }
 
     ///  <summary>Finds a snippet in the list with whose name and collection ID
     ///  match.</summary>
@@ -324,14 +305,6 @@ type
         @param SnippetID [in] ID of snippet to find.
         @return Reference to required snippet or nil if not found.
       }
-//    function Find(const SnippetName: string;
-//      const UserDefined: Boolean): TSnippet; overload;
-//      {Finds a named snippet in list with a matching user defined property.
-//        @param SnippetName [in] Name of required snippet.
-//        @param UserDefined [in] Flag that determines if we are looking for a
-//          user defined snippet or one from main database.
-//        @return Reference to required snippet or nil if not found.
-//      }
 
     ///  <summary>Finds a snippet in the list with whose name and collection ID
     ///  match.</summary>
@@ -361,13 +334,6 @@ type
       {Gets an intialised snippet list enumerator.
         @return Required enumerator.
       }
-//    function Count(const UserDefined: Boolean): Integer; overload;
-//      {Counts number of snippets in list that are either from or not from user
-//      defined database.
-//        @param UserDefined [in] Flags whether to count snippets in user database
-//          (True) or in main database (False).
-//        @return Number of snippets in specified database.
-//      }
 
     ///  <summary>Counts number of snippets in list that belong to a specified
     ///  collection.</summary>
@@ -384,13 +350,6 @@ type
       {Checks if list is empty.
         @return True if list is empty, False otehrwise.
       }
-//    function IsEmpty(const UserDefined: Boolean): Boolean; overload; {__TMP__ inline;}
-//      {Checks if sub-set of list from either from or not from use defined
-//      database is empty.
-//        @param UserDefined [in] Flags whether to check for snippets in user
-//          database (True) or in main database (False).
-//        @return True if required subset is empty, False if not empty.
-//      }
 
     ///  <summary>Checks if the sub-set of snippets in the list belonging to a
     ///  specified collection is empty.</summary>
@@ -454,17 +413,6 @@ function TSnippet.CanCompile: Boolean;
 begin
   Result := Kind <> skFreeform;
 end;
-
-//constructor TSnippet.Create(const Name: string; const UserDefined: Boolean;
-//  const Props: TSnippetData);
-//  {Class contructor. Sets up snippet object with given property values.
-//    @param Name [in] Name of snippet.
-//    @param UserDefined [in] Indicates if this is a user defined snippet.
-//    @param Props [in] Values of various snippet properties.
-//  }
-//begin
-//  Create(Name, TCollectionID.__TMP__DBCollectionID(UserDefined), Props);
-//end;
 
 constructor TSnippet.Create(const Name: string;
   const ACollectionID: TCollectionID; const Props: TSnippetData);
@@ -713,23 +661,6 @@ begin
     end;
 end;
 
-//function TSnippetList.Count(const UserDefined: Boolean): Integer;
-//  {Counts number of snippets in list that are either from or not from user
-//  defined database.
-//    @param UserDefined [in] Flags whether to count snippets in user database
-//      (True) or in main database (False).
-//    @return Number of snippets in specified database.
-//  }
-////var
-////  Snippet: TSnippet;  // refers to all snippets in list
-//begin
-//  Result := Count(TCollectionID.__TMP__DBCollectionID(UserDefined));
-////  Result := 0;
-////  for Snippet in Self do
-////    if Snippet.UserDefined = UserDefined then
-////      Inc(Result);
-//end;
-
 function TSnippetList.Count(const ACollectionID: TCollectionID): Integer;
 var
   Snippet: TSnippet;  // refers to all snippets in list
@@ -775,31 +706,6 @@ begin
   inherited;
 end;
 
-//function TSnippetList.Find(const SnippetName: string;
-//  const UserDefined: Boolean; out Index: Integer): Boolean;
-//  {Finds a snippet in the list that has a specified name and user defined
-//  property. Uses a binary search.
-//    @param SnippetName [in] Name of snippet to be found.
-//    @param UserDefined [in] Whether required snippet is user defined or not.
-//    @param Index [out] Index of required snippet in list. Valid only if
-//      method returns True.
-//    @return True if snippet found, False if not.
-//  }
-//var
-//  TempSnippet: TSnippet;  // temp snippet used to perform search
-//  NulData: TSnippetData;  // nul data used to create snippet
-//begin
-//  // We need a temporary snippet object in order to perform binary search using
-//  // object list's built in search
-//  NulData.Init;
-//  TempSnippet := TTempSnippet.Create(SnippetName, UserDefined, NulData);
-//  try
-//    Result := fList.Find(TempSnippet, Index);
-//  finally
-//    TempSnippet.Free;
-//  end;
-//end;
-
 function TSnippetList.Find(const SnippetName: string;
   const ACollectionID: TCollectionID; out Index: Integer): Boolean;
 var
@@ -816,24 +722,6 @@ begin
     TempSnippet.Free;
   end;
 end;
-
-//function TSnippetList.Find(const SnippetName: string;
-//  const UserDefined: Boolean): TSnippet;
-//  {Finds a named snippet in list with a matching user defined property.
-//    @param SnippetName [in] Name of required snippet.
-//    @param UserDefined [in] Flag that determines if we are looking for a
-//      user defined snippet or one from main database.
-//    @return Reference to required snippet or nil if not found.
-//  }
-//var
-//  Idx: Integer; // index of snippet name in list
-//begin
-//  if Find(SnippetName, TCollectionID.__TMP__DBCollectionID(UserDefined), Idx) then
-////  if Find(SnippetName, UserDefined, Idx) then
-//    Result := Items[Idx]
-//  else
-//    Result := nil;
-//end;
 
 function TSnippetList.Find(const SnippetName: string;
   const ACollectionID: TCollectionID): TSnippet;
@@ -852,7 +740,6 @@ function TSnippetList.Find(const SnippetID: TSnippetID): TSnippet;
     @return Reference to required snippet or nil if not found.
   }
 begin
-//  Result := Find(SnippetID.Name, SnippetID.UserDefined);
   Result := Find(SnippetID.Name, SnippetID.CollectionID);
 end;
 
@@ -880,12 +767,6 @@ function TSnippetList.IsEmpty: Boolean;
 begin
   Result := Count = 0;
 end;
-
-//function TSnippetList.IsEmpty(const UserDefined: Boolean): Boolean;
-//begin
-////  Result := Count(UserDefined) = 0;
-//  Result := Count(TCollectionID.__TMP__DBCollectionID(UserDefined)) = 0;
-//end;
 
 function TSnippetList.IsEmpty(const ACollectionID: TCollectionID): Boolean;
 begin
