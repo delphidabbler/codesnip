@@ -969,18 +969,47 @@ procedure TDatabase.Load;
   }
 var
   Factory: IDBDataItemFactory;  // object reader uses to create snippets objects
+  MainCollectionIdx, UserCollectionIdx: Integer;
+  Loader: IDatabaseLoader;
+  Collections: TCollections;
+  Collection: TCollection;
 begin
   Clear;
+
   // Create factory that reader calls into to create category and snippet
   // objects. This is done to keep updating of snippet and categories private
   // to this unit
   Factory := TDBDataItemFactory.Create;
+
+  Collections := TCollections.Instance;
+
+  {TODO: -cVault: The following code is a kludge to maintain compatibility with
+          CodeSnip 4. In CodeSnip Vault we should iterate over all collections
+          creating a loader for each one. }
+
   try
-    // Load main database: MUST do this first since user database can
-    // reference objects in main database
-    TDatabaseIOFactory.CreateMainDBLoader.Load(fSnippets, fCategories, Factory);
-    // Load any user database
-    TDatabaseIOFactory.CreateUserDBLoader.Load(fSnippets, fCategories, Factory);
+    MainCollectionIdx := TCollections.Instance.IndexOfID(
+      TCollectionID.__TMP__MainDBCollectionID
+    );
+    if MainCollectionIdx >= 0 then
+    begin
+      Collection := Collections[MainCollectionIdx];
+      Loader := TDatabaseIOFactory.CreateDBLoader(Collection);
+      if Assigned(Loader) then
+        Loader.Load(fSnippets, fCategories, Factory);
+    end;
+
+    UserCollectionIdx := TCollections.Instance.IndexOfID(
+      TCollectionID.__TMP__UserDBCollectionID
+    );
+    if UserCollectionIdx >= 0 then
+    begin
+      Collection := Collections[UserCollectionIdx];
+      Loader := TDatabaseIOFactory.CreateDBLoader(Collection);
+      if Assigned(Loader) then
+        Loader.Load(fSnippets, fCategories, Factory);
+    end;
+
     fUpdated := False;
   except
     // If an exception occurs clear the database
@@ -1002,11 +1031,46 @@ procedure TDatabase.Save;
   }
 var
   Provider: IDBDataProvider;  // object that supplies info to writer
+  MainCollectionIdx, UserCollectionIdx: Integer;
+  Saver: IDatabaseWriter;
+  Collections: TCollections;
+  Collection: TCollection;
 begin
   // Create object that can provide required information about user database
   Provider := TUserDataProvider.Create(fSnippets, fCategories);
-  // Use a writer object to write out the database
-  TDatabaseIOFactory.CreateWriter.Write(fSnippets, fCategories, Provider);
+
+  Collections := TCollections.Instance;
+
+  {TODO: -cVault: The following code is a kludge to maintain compatibility with
+          CodeSnip 4. In CodeSnip Vault we should iterate over all collections
+          creating a writer for each one. }
+
+  // *** The following code is a stub for later versions. For CodeSnip 4
+  //     compatibility this code does nothing because there is no writer for
+  //     the "main" collection. TDatabaseIOFactory.CreateDBWriter will return
+  //     nil for this format, so Saver.Write will never be called.
+  MainCollectionIdx := TCollections.Instance.IndexOfID(
+    TCollectionID.__TMP__MainDBCollectionID
+  );
+  if MainCollectionIdx >= 0 then
+  begin
+    Collection := Collections[MainCollectionIdx];
+    Saver := TDatabaseIOFactory.CreateDBWriter(Collection);
+    if Assigned(Saver) then
+      Saver.Write(fSnippets, fCategories, Provider);
+  end;
+
+  UserCollectionIdx := TCollections.Instance.IndexOfID(
+    TCollectionID.__TMP__UserDBCollectionID
+  );
+  if UserCollectionIdx >= 0 then
+  begin
+    Collection := Collections[UserCollectionIdx];
+    Saver := TDatabaseIOFactory.CreateDBWriter(Collection);
+    if Assigned(Saver) then
+      Saver.Write(fSnippets, fCategories, Provider);
+  end;
+
   fUpdated := False;
 end;
 
