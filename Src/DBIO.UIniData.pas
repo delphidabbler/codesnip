@@ -10,7 +10,7 @@
 }
 
 
-unit DBIO.UIniDataReader;
+unit DBIO.UIniData;
 
 
 interface

@@ -105,7 +105,7 @@ uses
   SysUtils,
   // Project
   DBIO.UFileIOIntf,
-  DBIO.UIniDataReader,
+  DBIO.UIniData,
   DBIO.UNulDataReader,
   DBIO.UXMLDataIO,
   UAppInfo,

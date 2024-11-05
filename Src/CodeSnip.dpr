@@ -70,7 +70,7 @@ uses
   DB.USnippet in 'DB.USnippet.pas',
   DB.USnippetKind in 'DB.USnippetKind.pas',
   DBIO.UFileIOIntf in 'DBIO.UFileIOIntf.pas',
-  DBIO.UIniDataReader in 'DBIO.UIniDataReader.pas',
+  DBIO.UIniData in 'DBIO.UIniData.pas',
   DBIO.UNulDataReader in 'DBIO.UNulDataReader.pas',
   DBIO.UXMLDataIO in 'DBIO.UXMLDataIO.pas',
   Favourites.UManager in 'Favourites.UManager.pas',
