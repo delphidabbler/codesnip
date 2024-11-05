@@ -20,7 +20,8 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  IntfCommon;
+  IntfCommon,
+  DB.UCollections;
 
 
 type
@@ -32,17 +33,21 @@ type
     var
       ///  <summary>Value of Name property.</summary>
       fName: string;
-      ///  <summary>Value of UserDefined property.</summary>
-      fUserDefined: Boolean;
+      fCollectionID: TCollectionID;
+    procedure SetCollectionID(const AValue: TCollectionID);
   public
     ///  <summary>Name of snippet.</summary>
     property Name: string read fName write fName;
 
-    ///  <summary>Whether snippet is user defined.</summary>
-    property UserDefined: Boolean read fUserDefined write fUserDefined;
+    ///  <summary>ID of the collection to which a snippet with this ID belongs.
+    ///  </summary>
+    ///  <remarks>ID must not be null.</remarks>
+    property CollectionID: TCollectionID
+      read fCollectionID write SetCollectionID;
 
     ///  <summary>Creates a record with given property values.</summary>
-    constructor Create(const AName: string; const AUserDefined: Boolean);
+    ///  <remarks><c>ACollectionID</c> must not be null.</remarks>
+    constructor Create(const AName: string; const ACollectionID: TCollectionID);
 
     ///  <summary>Creates copy of given snippet ID</summary>
     constructor Clone(const Src: TSnippetID);
@@ -157,7 +162,7 @@ uses
 
 constructor TSnippetID.Clone(const Src: TSnippetID);
 begin
-  Create(Src.Name, Src.UserDefined);
+  Create(Src.Name, Src.CollectionID);
 end;
 
 class function TSnippetID.CompareNames(const Left, Right: string): Integer;
@@ -169,13 +174,15 @@ function TSnippetID.CompareTo(const SID: TSnippetID): Integer;
 begin
   Result := CompareNames(Name, SID.Name);
   if Result = 0 then
-    Result := Ord(UserDefined) - Ord(SID.UserDefined);
+    // TODO -cNote: New comparison changes ordering (no problem tho!)
+    Result := TCollectionID.Compare(CollectionID, SID.CollectionID);
 end;
 
-constructor TSnippetID.Create(const AName: string; const AUserDefined: Boolean);
+constructor TSnippetID.Create(const AName: string;
+  const ACollectionID: TCollectionID);
 begin
   fName := AName;
-  fUserDefined := AUserDefined;
+  SetCollectionID(ACollectionID);
 end;
 
 class operator TSnippetID.Equal(const SID1, SID2: TSnippetID): Boolean;
@@ -186,6 +193,12 @@ end;
 class operator TSnippetID.NotEqual(const SID1, SID2: TSnippetID): Boolean;
 begin
   Result := not (SID1 = SID2);
+end;
+
+procedure TSnippetID.SetCollectionID(const AValue: TCollectionID);
+begin
+  Assert(not AValue.IsNull, 'TSnippetID.SetCollectionID: Value is null');
+  fCollectionID := AValue.Clone;
 end;
 
 { TSnippetIDList }

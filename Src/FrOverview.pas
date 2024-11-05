@@ -20,6 +20,7 @@ uses
   // Delphi
   ComCtrls, Controls, Classes, Windows, ExtCtrls, StdCtrls, ToolWin, Menus,
   // Project
+  DB.UCollections,
   DB.USnippet, FrTitled, IntfFrameMgrs, IntfNotifier, UCommandBars,
   UOverviewTreeState, USnippetsTVDraw, UView, UViewItemTreeNode;
 
@@ -74,11 +75,16 @@ type
       }
       TTVDraw = class(TSnippetsTVDraw)
       strict protected
-        function IsUserDefinedNode(const Node: TTreeNode): Boolean; override;
-          {Checks if a node represents a user defined snippets object.
-            @param Node [in] Node to be checked.
-            @return True if node represents user defined object, False if not.
-          }
+        ///  <summary>Gets the collection ID, if any, associated with a  tree
+        ///  node.</summary>
+        ///  <param name="Node"><c>TTreeNode</c> [in] Node to be checked.
+        ///  </param>
+        ///  <returns><c>TCollectionID</c>. Associated collection ID. If
+        ///  <c>Node</c> has no associated collection then a null collection ID
+        ///  is returned.</returns>
+        function GetCollectionID(const Node: TTreeNode): TCollectionID;
+          override;
+
         function IsSectionHeadNode(const Node: TTreeNode): Boolean;
           override;
           {Checks if a node represents a section header.
@@ -235,9 +241,11 @@ implementation
 
 uses
   // Delphi
+  SysUtils,
   Messages,
   // Project
-  UKeysHelper, UOverviewTreeBuilder;
+  UKeysHelper,
+  UOverviewTreeBuilder;
 
 
 {$R *.dfm}
@@ -956,6 +964,23 @@ end;
 
 { TOverviewFrame.TTVDraw }
 
+function TOverviewFrame.TTVDraw.GetCollectionID(const Node: TTreeNode):
+  TCollectionID;
+var
+  ViewItem: IView;              // view item represented by node
+  SnippetView: ISnippetView;    // view item if node represents a snippet
+  CategoryView: ICategoryView;  // view item if node represents a category
+begin
+  // TODO -cBug: Exception reported as issue #70 could have moved here
+  ViewItem := (Node as TViewItemTreeNode).ViewItem;
+  if Supports(ViewItem, ISnippetView, SnippetView) then
+    Result := SnippetView.Snippet.CollectionID
+  else if Supports(ViewItem, ICategoryView, CategoryView) then
+    Result := CategoryView.Category.CollectionID
+  else
+    Result := TCollectionID.CreateNull;
+end;
+
 function TOverviewFrame.TTVDraw.IsSectionHeadNode(
   const Node: TTreeNode): Boolean;
   {Checks if a node represents a section header.
@@ -967,20 +992,6 @@ var
 begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
   Result := ViewItem.IsGrouping;
-end;
-
-function TOverviewFrame.TTVDraw.IsUserDefinedNode(
-  const Node: TTreeNode): Boolean;
-  {Checks if a node represents a user defined snippets object.
-    @param Node [in] Node to be checked.
-    @return True if node represents user defined object, False if not.
-  }
-var
-  ViewItem: IView;  // view item represented by node
-begin
-  ViewItem := (Node as TViewItemTreeNode).ViewItem;
-  // TODO -cBug: Exception reported as issue #70 seems to be triggered here
-  Result := ViewItem.IsUserDefined;
 end;
 
 end.

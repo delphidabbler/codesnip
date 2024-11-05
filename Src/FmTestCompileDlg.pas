@@ -155,9 +155,16 @@ implementation
 
 uses
   // Delphi
-  Math, Windows, Graphics, Types {for inlining},
+  Math,
+  Windows,
+  Graphics,
+  Types {for inlining},
   // Project
-  UColours, UCtrlArranger, UFontHelper, UPreferences;
+  DB.UCollections,
+  UColours,
+  UCtrlArranger,
+  UFontHelper,
+  UPreferences;
 
 {$R *.dfm}
 
@@ -282,7 +289,7 @@ begin
   // Set required label fonts and captions
   TFontHelper.SetDefaultBaseFont(lblSnippetName.Font);
   lblSnippetName.Font.Color :=
-    Preferences.DBHeadingColours[fSnippet.UserDefined];
+    Preferences.GetDBHeadingColour(fSnippet.CollectionID);
   lblSnippetName.Caption := fSnippet.DisplayName;
 end;
 

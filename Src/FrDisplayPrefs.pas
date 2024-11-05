@@ -107,6 +107,7 @@ uses
   // Delphi
   SysUtils, Math, Graphics, ExtCtrls,
   // Project
+  DB.UCollections,
   FmPreferencesDlg, UColours, UCtrlArranger, UFontHelper, UGraphicUtils,
   UMessageBox;
 
@@ -133,11 +134,11 @@ begin
   chkHideEmptySections.Checked := not Prefs.ShowEmptySections;
   chkHideEmptySections.OnClick := chkHideEmptySectionsClick;
   chkSnippetsInNewTab.Checked := Prefs.ShowNewSnippetsInNewTabs;
-  fMainColourBox.Selected := Prefs.DBHeadingColours[False];
-  fUserColourBox.Selected := Prefs.DBHeadingColours[True];
+  fMainColourBox.Selected := Prefs.GetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID);
+  fUserColourBox.Selected := Prefs.GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID);
   fSourceBGColourBox.Selected := Prefs.SourceCodeBGcolour;
-  Prefs.DBHeadingCustomColours[False].CopyTo(fMainColourDlg.CustomColors, True);
-  Prefs.DBHeadingCustomColours[True].CopyTo(fUserColourDlg.CustomColors, True);
+  Prefs.GetDBHeadingCustomColours(TCollectionID.__TMP__MainDBCollectionID).CopyTo(fMainColourDlg.CustomColors, True);
+  Prefs.GetDBHeadingCustomColours(TCollectionID.__TMP__UserDBCollectionID).CopyTo(fUserColourDlg.CustomColors, True);
   Prefs.SourceCodeBGCustomColours.CopyTo(fSourceBGColourDlg.CustomColors, True);
   cbOverviewFontSize.Tag := Prefs.OverviewFontSize; // store font size in .Tag
   cbOverviewFontSize.Text := IntToStr(Prefs.OverviewFontSize);
@@ -294,13 +295,13 @@ begin
   Prefs.OverviewStartState := TOverviewStartState(
     cbOverviewTree.Items.Objects[cbOverviewTree.ItemIndex]
   );
-  Prefs.DBHeadingColours[False] := fMainColourBox.Selected;
-  Prefs.DBHeadingColours[True] := fUserColourBox.Selected;
+  Prefs.SetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID, fMainColourBox.Selected);
+  Prefs.SetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID, fUserColourBox.Selected);
   Prefs.SourceCodeBGcolour := fSourceBGColourBox.Selected;
-  Prefs.DBHeadingCustomColours[False].CopyFrom(
+  Prefs.GetDBHeadingCustomColours(TCollectionID.__TMP__MainDBCollectionID).CopyFrom(
     fMainColourDlg.CustomColors, True
   );
-  Prefs.DBHeadingCustomColours[True].CopyFrom(
+  Prefs.GetDBHeadingCustomColours(TCollectionID.__TMP__UserDBCollectionID).CopyFrom(
     fUserColourDlg.CustomColors, True
   );
   Prefs.SourceCodeBGCustomColours.CopyFrom(

@@ -254,6 +254,7 @@ uses
   // Delphi
   Windows {for inlining}, Graphics,
   // Project
+  DB.UCollections,
   DB.UMain, DB.USnippetKind, FmDependenciesDlg, IntfCommon, UColours, UConsts,
   UCSSUtils, UCtrlArranger, UExceptions, UFontHelper, UIStringList,
   UReservedCategories, USnippetExtraHelper, USnippetValidator, UMessageBox,
@@ -424,7 +425,7 @@ begin
     fDependsCLBMgr.GetCheckedSnippets(DependsList);
     TDependenciesDlg.Execute(
       Self,
-      TSnippetID.Create(StrTrim(edName.Text), True),
+      TSnippetID.Create(StrTrim(edName.Text), TCollectionID.__TMP__UserDBCollectionID),
       StrTrim(edDisplayName.Text),
       DependsList,
       [tiDependsUpon],
@@ -978,7 +979,8 @@ begin
   fDependsCLBMgr.Clear;
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
-  EditSnippetID := TSnippetID.Create(fOrigName, True);
+
+  EditSnippetID := TSnippetID.Create(fOrigName, TCollectionID.__TMP__UserDBCollectionID);
   EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
   for Snippet in Database.Snippets do
   begin
@@ -986,8 +988,8 @@ begin
     // a user-defined one with same name
     if (Snippet.ID <> EditSnippetID) and
       (
-        Snippet.UserDefined or
-        not Assigned(Database.Snippets.Find(Snippet.Name, True))
+        (Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID) or
+        not Assigned(Database.Snippets.Find(Snippet.Name, TCollectionID.__TMP__UserDBCollectionID))
       ) then
     begin
       // Decide if snippet can be added to depends list: must be correct kind

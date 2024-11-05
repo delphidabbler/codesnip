@@ -47,8 +47,8 @@ type
       ///  <summary>Instance of class used to perform directory move.</summary>
       fDirCopier: TDirectoryCopier;
     ///  <summary>Validates source and destination directories.</summary>
-    ///  <exceptions>Raises EInOutError exception if either directory is not
-    ///  valid.</exceptions>
+    ///  <exception>Raises EInOutError exception if either directory is not
+    ///  valid.</exception>
     procedure ValidateDirectories;
     ///  <summary>Handles TDirectoryCopier.OnAfterCopyDir event to update user
     ///  database location.</summary>
@@ -91,7 +91,9 @@ uses
   // Delphi
   SysUtils, IOUtils,
   // Project
-  UAppInfo, UStrUtils;
+  DB.UCollections,
+  UAppInfo,
+  UStrUtils;
 
 
 { TUserDBMove }
@@ -134,9 +136,18 @@ begin
 end;
 
 procedure TUserDBMove.SetNewDBDirectory(Sender: TObject);
+var
+  Collection: TCollection;
+  Collections: TCollections;
 begin
   // record new location BEFORE deleting old directory
-  TAppInfo.ChangeUserDataDir(fDestDir);
+  Collections := TCollections.Instance;
+  Collection := Collections.GetCollection(TCollectionID.__TMP__UserDBCollectionID);
+  Collection.Location.Directory := fDestDir;
+  Collections.Update(Collection);
+  // Persist collections immediately to save new directory ASAP to prevent
+  // directory change being lost following a program crash.
+  Collections.Save;
 end;
 
 procedure TUserDBMove.ValidateDirectories;

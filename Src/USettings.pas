@@ -119,6 +119,20 @@ type
     ///  regardless of locale.</remarks>
     procedure SetDateTime(const Name: string; const Value: TDateTime);
 
+    ///  <summary>Gets a named byte array from settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <returns>TBytes. The required array of bytes.</returns>
+    ///  <remarks>The value is stored as a comma separated sequence of decimal
+    ///  values in the range 0..255.</remarks>
+    function GetBytes(const Name: string): TBytes;
+
+    ///  <summary>Stores a named byte array in settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Value">TBytes [in] Byte array to be recorded.</param>
+    ///  <remarks>The bytes must be stored as comma separated decimal values.
+    ///  </remarks>
+    procedure SetBytes(const Name: string; const Value: TBytes);
+
     ///  <summary>Gets a list of related string values from the section.
     ///  </summary>
     ///  <param name="CountName">string [in] Name of an integer value that
@@ -163,13 +177,15 @@ type
   ///  <para>-ssFavourites - persistent settings from Favourites dlg</para>
   ///  <para>-ssWindowState - info about the size and state of various
   ///  windows</para>
-  ///  <para>-ssDatabase - database customisation info</para>
   ///  <para>-ssCompilers - info about all compilers</para>
+  ///  <para>-ssCollections - info about all snippet collections</para>
+  ///  <para>-ssCollection - info about a specific snippet collection</para>
   ///  </summary>
   TSettingsSectionId = (
     ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo,
     ssPreferences, ssUnits, ssDuplicateSnippet,
-    ssFavourites, ssWindowState, ssDatabase, ssCompilers
+    ssFavourites, ssWindowState, ssCompilers, ssCollections,
+    ssCollection
   );
 
 type
@@ -222,7 +238,8 @@ uses
   UAppInfo,
   UHexUtils,
   UIOUtils,
-  UStrUtils;
+  UStrUtils,
+  UUtils;
 
 
 var
@@ -442,13 +459,33 @@ type
 
     ///  <summary>Records a named date time value in settings.</summary>
     ///  <param name="Name">string [in] Name of value.</param>
-    ///  <param name="Value">TDateTime [in] Value to be recored.</param>
+    ///  <param name="Value">TDateTime [in] Value to be recorded.</param>
     ///  <remarks>
     ///  <para>The value must be stored in YYYY-MM-DD hh:mm:ss format
     ///  regardless of locale.</para>
     ///  <para>Method of ISettingsSection.</para>
     ///  </remarks>
     procedure SetDateTime(const Name: string; const Value: TDateTime);
+
+    ///  <summary>Gets a named byte array from settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <returns>TBytes. The required array of bytes.</returns>
+    ///  <remarks>
+    ///  <para>The value is stored as a comma separated sequence of decimal
+    ///  values in the range 0..255.</para>
+    ///  <para>Method of ISettingsSection.</para>
+    ///  </remarks>
+    function GetBytes(const Name: string): TBytes;
+
+    ///  <summary>Stores a named byte array in settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Value">TBytes [in] Byte array to be recorded.</param>
+    ///  <remarks>
+    ///  <para>The bytes must be stored as comma separated decimal values.
+    ///  </para>
+    ///  <para>Method of ISettingsSection.</para>
+    ///  </remarks>
+    procedure SetBytes(const Name: string; const Value: TBytes);
 
     ///  <summary>Gets a list of related string values from the section.
     ///  </summary>
@@ -475,6 +512,7 @@ type
     ///  <remarks>Method of ISettingsSection.</remarks>
     procedure SetStrings(const CountName, ItemFmt: string;
       Value: IStringList);
+
   end;
 
 function Settings: ISettings;
@@ -540,8 +578,9 @@ const
     'DuplicateSnippet', // ssDuplicateSnippet
     'Favourites',       // ssFavourites
     'WindowState',      // ssWindowState
-    'Database',         // ssDatabase
-    'Compilers'         // ssCompilers
+    'Compilers',        // ssCompilers
+    'Collections',      // ssCollections
+    'Collection'        // ssCollection
   );
 begin
   Result := cSectionNames[Id];
@@ -587,6 +626,35 @@ begin
   if ValStr = '' then
     Exit(Default);
   Result := not StrMatchText(ValStr, ['0', 'false', 'no', 'n']);
+end;
+
+function TIniSettingsSection.GetBytes(const Name: string): TBytes;
+var
+  ValStr: string;
+  ValSL: TStrings;
+  B: Byte;
+  Idx: Integer;
+begin
+  ValStr := StrTrim(GetItemValue(Name));
+  if ValStr = '' then
+  begin
+    SetLength(Result, 0);
+    Exit;
+  end;
+  ValSL := TStringList.Create;
+  try
+    StrExplode(ValStr, ',', ValSL, False, True);
+    SetLength(Result, ValSL.Count);
+    for Idx := 0 to Pred(ValSL.Count) do
+    begin
+      if TryStrToByte(ValSL[Idx], B) then
+        Result[Idx] := B
+      else
+        Result[Idx] := 0;
+    end;
+  finally
+    ValSL.Free;
+  end;
 end;
 
 function TIniSettingsSection.GetDateTime(const Name: string;
@@ -700,6 +768,24 @@ const
   BoolStrs: array[Boolean] of string = ('False', 'True');
 begin
   SetItemValue(Name, BoolStrs[Value]);
+end;
+
+procedure TIniSettingsSection.SetBytes(const Name: string;
+  const Value: TBytes);
+var
+  SL: TStrings;
+  B: Byte;
+begin
+  SL := TStringList.Create;
+  try
+    for B in Value do
+    begin
+      SL.Add(IntToStr(B));
+    end;
+    SetItemValue(Name, StrJoin(SL, ','));
+  finally
+    SL.Free;
+  end;
 end;
 
 procedure TIniSettingsSection.SetDateTime(const Name: string;

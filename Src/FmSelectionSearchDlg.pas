@@ -20,6 +20,7 @@ uses
   // Delphi
   Forms, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
+  DB.UCollections,
   DB.USnippet, FmGenericOKDlg, FrCheckedTV, FrSelectSnippets,
   FrSelectSnippetsBase, UBaseObjects, USearch;
 
@@ -61,12 +62,14 @@ type
       no snippet selected.
         @param Sender [in] Not used.
       }
-    procedure SelectDB(const UserDefined: Boolean);
-      {Selects all snippets from either main or user defined database.
-        @param UserDefined [in] Flag true if user-defined snippets are to be
-          selected, False if main database snippets are to be selected.
-      }
+
+    ///  <summary>Selects all snippets from the given collection.</summary>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> ID of the required
+    ///  collection.</param>
+    procedure SelectDB(const ACollectionID: TCollectionID);
+
   strict protected
+
     procedure ConfigForm; override;
     procedure InitForm; override;
       {Initialises form. Disables User Defined button if there are no user
@@ -96,7 +99,9 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UCtrlArranger, UQuery;
+  DB.UMain,
+  UCtrlArranger,
+  UQuery;
 
 
 {$R *.dfm}
@@ -137,7 +142,7 @@ procedure TSelectionSearchDlg.btnMainDBClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  SelectDB(False);
+  SelectDB(TCollectionID.__TMP__MainDBCollectionID);
 end;
 
 procedure TSelectionSearchDlg.btnOKClick(Sender: TObject);
@@ -172,7 +177,7 @@ procedure TSelectionSearchDlg.btnUserDBClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  SelectDB(True);
+  SelectDB(TCollectionID.__TMP__UserDBCollectionID);
 end;
 
 procedure TSelectionSearchDlg.ConfigForm;
@@ -225,14 +230,12 @@ procedure TSelectionSearchDlg.InitForm;
 begin
   inherited;
   frmSelect.CollapseTree;
-  btnUserDB.Enabled := Database.Snippets.Count(True) > 0;
+  btnUserDB.Enabled := not Database.Snippets.IsEmpty(
+    TCollectionID.__TMP__UserDBCollectionID
+  );
 end;
 
-procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);
-  {Selects all snippets from either main or user defined database.
-    @param UserDefined [in] Flag true if user-defined snippets are to be
-      selected, False if main database snippets are to be selected.
-  }
+procedure TSelectionSearchDlg.SelectDB(const ACollectionID: TCollectionID);
 var
   Snippet: TSnippet;          // references each snippet in database
   SnippetList: TSnippetList;  // list of selected snippets
@@ -240,7 +243,7 @@ begin
   SnippetList := TSnippetList.Create;
   try
     for Snippet in Database.Snippets do
-      if Snippet.UserDefined = UserDefined then
+      if Snippet.CollectionID = ACollectionID then
         SnippetList.Add(Snippet);
     frmSelect.SelectedSnippets := SnippetList;
   finally

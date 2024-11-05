@@ -63,13 +63,6 @@ type
       files.
         @return Full path to required directory.
       }
-    class procedure ChangeUserDataDir(const NewDir: string);
-      {Changes directory where CodeSnip stores the user's "database" files and
-      records it in the user config file.
-      Does nothing on portable edition since it does not permit the user
-      database to be moved.
-        @param NewDir [in] New directory.
-      }
     class function AppExeFilePath: string;
       {Returns fully specified name of program's executable file.
         @return Name of file.
@@ -115,6 +108,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  DB.UCollections,
   USettings,
   UStrUtils,
   USystemInfo,
@@ -154,28 +148,6 @@ class function TAppInfo.AppExeFilePath: string;
   }
 begin
   Result := ParamStr(0);
-end;
-
-class procedure TAppInfo.ChangeUserDataDir(const NewDir: string);
-  {Changes directory where CodeSnip stores the user's "database" files and
-  records it in the user config file.
-  Does nothing on portable edition since it does not permit the user database
-  to be moved.
-    @param NewDir [in] New directory.
-  }
-{$IFNDEF PORTABLE}
-var
-  Section: ISettingsSection;
-{$ENDIF}
-begin
-  {$IFNDEF PORTABLE}
-  Section := Settings.ReadSection(ssDatabase);
-  if StrSameText(ExcludeTrailingPathDelimiter(NewDir), DefaultUserDataDir) then
-    Section.DeleteItem('UserDataDir')
-  else
-    Section.SetString('UserDataDir', NewDir);
-  Section.Save;
-  {$ENDIF}
 end;
 
 class function TAppInfo.CommonAppDir: string;
@@ -276,12 +248,16 @@ class function TAppInfo.UserDataDir: string;
   }
 {$IFNDEF PORTABLE}
 var
-  Section: ISettingsSection;  // persistent storage where code is recorded
+  Collections: TCollections;
+  Collection: TCollection;
 {$ENDIF}
 begin
   {$IFNDEF PORTABLE}
-  Section := Settings.ReadSection(ssDatabase);
-  Result := Section.GetString('UserDataDir', DefaultUserDataDir);
+  Collections := TCollections.Instance;
+  Collection := Collections.GetCollection(TCollectionID.__TMP__UserDBCollectionID);
+  Result := Collection.Location.Directory;
+  if Result = '' then
+    Result := DefaultUserDataDir;
   {$ELSE}
   Result := DefaultUserDataDir;
   {$ENDIF}

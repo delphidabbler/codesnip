@@ -90,7 +90,7 @@ implementation
 
 uses
   // Project
-  ActiveText.UMain, UColours, UPreferences;
+  ActiveText.UMain, DB.UCollections, UColours, UPreferences;
 
 
 { TRTFCategoryDoc }
@@ -104,8 +104,10 @@ begin
   fBuilder.FontTable.Add(MainFontName, rgfSwiss, 0);
   fBuilder.FontTable.Add(MonoFontName, rgfModern, 0);
   // Set up colour table
-  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[False]);
-  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[True]);
+  {TODO -cCollection: Replace following 2 statements with loop that iterates
+          over all collections.}
+  fBuilder.ColourTable.Add(Preferences.GetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID));
+  fBuilder.ColourTable.Add(Preferences.GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID));
   fBuilder.ColourTable.Add(clExternalLink);
   fDescStyles := TActiveTextRTFStyleMap.Create;
   InitStyles;
@@ -214,7 +216,7 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(HeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
-  SetColour(Preferences.DBHeadingColours[Category.UserDefined]);
+  SetColour(Preferences.GetDBHeadingColour(Category.CollectionID));
   fBuilder.AddText(Category.Description);
   fBuilder.EndPara;
   fBuilder.EndGroup;
@@ -227,7 +229,7 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(SubHeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
-  SetColour(Preferences.DBHeadingColours[Snippet.UserDefined]);
+  SetColour(Preferences.GetDBHeadingColour(Snippet.CollectionID));
   fBuilder.AddText(Snippet.DisplayName);
   fBuilder.EndPara;
   fBuilder.EndGroup;

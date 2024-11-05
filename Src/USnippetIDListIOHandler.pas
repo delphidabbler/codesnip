@@ -66,7 +66,10 @@ uses
   // Delphi
   Classes,
   // Project
-  UConsts, UIOUtils, UStrUtils;
+  DB.UCollections,
+  UConsts,
+  UIOUtils,
+  UStrUtils;
 
 
 { TSnippetIDListFileReader }
@@ -92,6 +95,7 @@ var
   Name: string;         // name of each snippet
   UserDefStr: string;   // user defined value of each snippet as string
   UserDefInt: Integer;  // user defined value of each snippet as integer
+  CollectionID: TCollectionID;
 begin
   fSnippetIDs.Clear;
   if (fLines.Count <= 1) or (fLines[0] <> fWatermark) then
@@ -106,10 +110,15 @@ begin
       raise ESnippetIDListFileReader.CreateFmt(sMissingName, [Line]);
     if UserDefStr = '' then
       raise ESnippetIDListFileReader.CreateFmt(sMissingUserDef, [Line]);
-    if not TryStrToInt(UserDefStr, UserDefInt)
-      or not (UserDefInt in [0, 1]) then
+    if not TryStrToInt(UserDefStr, UserDefInt) then
       raise ESnippetIDListFileReader.CreateFmt(sBadUserDef, [Line]);
-    fSnippetIDs.Add(TSnippetID.Create(Name, Boolean(UserDefInt)));
+    case UserDefInt of
+      0: CollectionID := TCollectionID.__TMP__MainDBCollectionID;
+      1: CollectionID := TCollectionID.__TMP__UserDBCollectionID;
+      else
+        raise ESnippetIDListFileReader.CreateFmt(sBadUserDef, [Line]);
+    end;
+    fSnippetIDs.Add(TSnippetID.Create(Name, CollectionID));
   end;
 end;
 
@@ -155,9 +164,7 @@ begin
   begin
     fBuilder.Append(SnippetID.Name);
     fBuilder.Append(TAB);
-    // NOTE: TStringBuilder.Append(Boolean) override not used here since ordinal
-    // value wanted instead of "True" or "False" or localised equivalent.
-    fBuilder.Append(Ord(SnippetID.UserDefined));
+    fBuilder.Append(Ord(SnippetID.CollectionID <> TCollectionID.__TMP__MainDBCollectionID));
     fBuilder.AppendLine;
   end;
 end;

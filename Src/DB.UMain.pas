@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a singleton object and subsidiary classes that encapsulate the
  * snippets and categories in the CodeSnip database and user defined databases.
@@ -18,10 +18,18 @@ interface
 
 uses
   // Delphi
-  Classes, Generics.Collections,
+  Classes,
+  Generics.Collections,
   // Project
-  ActiveText.UMain, Compilers.UGlobals, DB.UCategory, DB.USnippet, UContainers,
-  UIStringList, UMultiCastEvents, USnippetIDs;
+  ActiveText.UMain,
+  Compilers.UGlobals,
+  DB.UCategory,
+  DB.UCollections,
+  DB.USnippet,
+  UContainers,
+  UIStringList,
+  UMultiCastEvents,
+  USnippetIDs;
 
 
 type
@@ -105,23 +113,29 @@ type
   }
   IDBDataItemFactory = interface(IInterface)
     ['{C6DD85BD-E649-4A90-961C-4011D2714B3E}']
-    function CreateCategory(const CatID: string; const UserDefined: Boolean;
-      const Data: TCategoryData): TCategory;
-      {Creates a new category object.
-        @param CatID [in] ID of new category. Must be unique.
-        @param UserDefined [in] True if category is user defined, False if not.
-        @param Data [in] Record describing category's properties.
-        @return Instance of new category object.
-      }
-    function CreateSnippet(const Name: string; const UserDefined: Boolean;
-      const Props: TSnippetData): TSnippet;
-      {Creates a new snippet object.
-        @param Name [in] Name of new snippet. Must not exist in database
-          specified by UserDefined parameter.
-        @param UserDefined [in] True if snippet is user defined, False if not.
-        @param Props [in] Record describing snippet's properties.
-        @return Instance of new snippet with no references.
-      }
+
+    ///  <summary>Creates a new category object.</summary>
+    ///  <param name="CatID"><c>string</c> [in] ID of new category. Must be
+    ///  unique.</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection with
+    ///  which the category is associated.</param>
+    ///  <param name="Data"><c>TCategoryData</c> [in] Record describing
+    ///  category's properties.</param>
+    ///  <returns><c>TCategory</c>. Instance of new category object.</returns>
+    function CreateCategory(const CatID: string;
+      const ACollectionID: TCollectionID; const Data: TCategoryData): TCategory;
+
+    ///  <summary>Creates a new snippet object.</summary>
+    ///  <param name="Name"><c>string</c> [in] Name of new snippet. Must not
+    ///  exist in database</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection
+    ///  containing the snippet.</param>
+    ///  <param name="Props"><c>TSnippetData</c> [in] Record describing
+    ///  snippet's properties.</param>
+    ///  <returns>Instance of new snippet with no references.</returns>
+    function CreateSnippet(const Name: string;
+      const ACollectionID: TCollectionID; const Props: TSnippetData): TSnippet;
+
   end;
 
   {
@@ -270,9 +284,14 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
+  SysUtils,
+  Generics.Defaults,
   // Project
-  DB.UDatabaseIO, IntfCommon, UExceptions, UQuery, UStrUtils;
+  DB.UDatabaseIO,
+  IntfCommon,
+  UExceptions,
+  UQuery,
+  UStrUtils;
 
 
 var
@@ -288,23 +307,28 @@ type
   }
   TDBDataItemFactory = class(TInterfacedObject, IDBDataItemFactory)
   public
-    function CreateCategory(const CatID: string; const UserDefined: Boolean;
-      const Data: TCategoryData): TCategory;
-      {Creates a new category object.
-        @param CatID [in] ID of new category. Must be unique.
-        @param UserDefined [in] True if category is user defined, False if not.
-        @param Data [in] Record describing category's properties.
-        @return Instance of new category object.
-      }
-    function CreateSnippet(const Name: string; const UserDefined: Boolean;
-      const Props: TSnippetData): TSnippet;
-      {Creates a new snippet object.
-        @param Name [in] Name of new snippet. Must not exist in database
-          specified by UserDefined parameter.
-        @param UserDefined [in] True if snippet is user defined, False if not.
-        @param Props [in] Record describing snippet's properties.
-        @return Instance of new snippet with no references.
-      }
+    ///  <summary>Creates a new category object.</summary>
+    ///  <param name="CatID"><c>string</c> [in] ID of new category. Must be
+    ///  unique.</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection with
+    ///  which the category is associated.</param>
+    ///  <param name="Data"><c>TCategoryData</c> [in] Record describing
+    ///  category's properties.</param>
+    ///  <returns><c>TCategory</c>. Instance of new category object.</returns>
+    function CreateCategory(const CatID: string;
+      const ACollectionID: TCollectionID; const Data: TCategoryData): TCategory;
+
+    ///  <summary>Creates a new snippet object.</summary>
+    ///  <param name="Name"><c>string</c> [in] Name of new snippet. Must not
+    ///  exist in database</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection
+    ///  containing the snippet.</param>
+    ///  <param name="Props"><c>TSnippetData</c> [in] Record describing
+    ///  snippet's properties.</param>
+    ///  <returns>Instance of new snippet with no references.</returns>
+    function CreateSnippet(const Name: string;
+      const ACollectionID: TCollectionID; const Props: TSnippetData): TSnippet;
+
   end;
 
   {
@@ -618,7 +642,7 @@ begin
   TriggerEvent(evChangeBegin);
   try
     // Check if snippet with same name exists in user database: error if so
-    if fSnippets.Find(SnippetName, True) <> nil then
+    if fSnippets.Find(SnippetName, TCollectionID.__TMP__UserDBCollectionID) <> nil then
       raise ECodeSnip.CreateFmt(sNameExists, [SnippetName]);
     Result := InternalAddSnippet(SnippetName, Data);
     Query.Update;
@@ -662,7 +686,7 @@ begin
     ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
   Data := (Snippet as TSnippetEx).GetEditData;
   Result := TTempSnippet.Create(
-    Snippet.Name, Snippet.UserDefined, (Snippet as TSnippetEx).GetProps);
+    Snippet.Name, Snippet.CollectionID, (Snippet as TSnippetEx).GetProps);
   (Result as TTempSnippet).UpdateRefs(
     (Snippet as TSnippetEx).GetReferences, fSnippets
   );
@@ -678,7 +702,7 @@ function TDatabase.CreateTempSnippet(const SnippetName: string;
     @return Reference to new snippet.
   }
 begin
-  Result := TTempSnippet.Create(SnippetName, True, Data.Props);
+  Result := TTempSnippet.Create(SnippetName, TCollectionID.__TMP__UserDBCollectionID, Data.Props);
   (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
 end;
 
@@ -713,7 +737,7 @@ var
   Referrer: TSnippet;       // loops thru snippets that cross references Snippet
   Referrers: TSnippetList;  // list of referencing snippets
 begin
-  Assert(Snippet.UserDefined,
+  Assert(Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID,
     ClassName + '.DeleteSnippet: Snippet is not user-defined');
   Assert(fSnippets.Contains(Snippet),
     ClassName + '.DeleteSnippet: Snippet is not in the database');
@@ -813,7 +837,7 @@ function TDatabase.GetEditableCategoryInfo(
     @return Required data.
   }
 begin
-  Assert(not Assigned(Category) or Category.UserDefined,
+  Assert(not Assigned(Category) or (Category.CollectionID <> TCollectionID.__TMP__MainDBCollectionID),
     ClassName + '.GetEditableCategoryInfo: Category is not user-defined');
   if Assigned(Category) then
     Result := (Category as TCategoryEx).GetEditData
@@ -830,7 +854,7 @@ function TDatabase.GetEditableSnippetInfo(
     @return Required data.
   }
 begin
-  Assert(not Assigned(Snippet) or Snippet.UserDefined,
+  Assert(not Assigned(Snippet) or (Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID),
     ClassName + '.GetEditableSnippetInfo: Snippet is not user-defined');
   if Assigned(Snippet) then
     Result := (Snippet as TSnippetEx).GetEditData
@@ -888,7 +912,7 @@ function TDatabase.InternalAddCategory(const CatID: string;
     @return Reference to new category object.
   }
 begin
-  Result := TCategoryEx.Create(CatID, True, Data);
+  Result := TCategoryEx.Create(CatID, TCollectionID.__TMP__UserDBCollectionID, Data);
   fCategories.Add(Result);
 end;
 
@@ -908,7 +932,7 @@ resourcestring
   sCatNotFound = 'Category "%0:s" referenced by new snippet named "%1:s" does '
     + 'not exist';
 begin
-  Result := TSnippetEx.Create(SnippetName, True, Data.Props);
+  Result := TSnippetEx.Create(SnippetName, TCollectionID.__TMP__UserDBCollectionID, Data.Props);
   (Result as TSnippetEx).UpdateRefs(Data.Refs, fSnippets);
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
@@ -945,18 +969,47 @@ procedure TDatabase.Load;
   }
 var
   Factory: IDBDataItemFactory;  // object reader uses to create snippets objects
+  MainCollectionIdx, UserCollectionIdx: Integer;
+  Loader: IDatabaseLoader;
+  Collections: TCollections;
+  Collection: TCollection;
 begin
   Clear;
+
   // Create factory that reader calls into to create category and snippet
   // objects. This is done to keep updating of snippet and categories private
   // to this unit
   Factory := TDBDataItemFactory.Create;
+
+  Collections := TCollections.Instance;
+
+  {TODO: -cVault: The following code is a kludge to maintain compatibility with
+          CodeSnip 4. In CodeSnip Vault we should iterate over all collections
+          creating a loader for each one. }
+
   try
-    // Load main database: MUST do this first since user database can
-    // reference objects in main database
-    TDatabaseIOFactory.CreateMainDBLoader.Load(fSnippets, fCategories, Factory);
-    // Load any user database
-    TDatabaseIOFactory.CreateUserDBLoader.Load(fSnippets, fCategories, Factory);
+    MainCollectionIdx := TCollections.Instance.IndexOfID(
+      TCollectionID.__TMP__MainDBCollectionID
+    );
+    if MainCollectionIdx >= 0 then
+    begin
+      Collection := Collections[MainCollectionIdx];
+      Loader := TDatabaseIOFactory.CreateDBLoader(Collection);
+      if Assigned(Loader) then
+        Loader.Load(fSnippets, fCategories, Factory);
+    end;
+
+    UserCollectionIdx := TCollections.Instance.IndexOfID(
+      TCollectionID.__TMP__UserDBCollectionID
+    );
+    if UserCollectionIdx >= 0 then
+    begin
+      Collection := Collections[UserCollectionIdx];
+      Loader := TDatabaseIOFactory.CreateDBLoader(Collection);
+      if Assigned(Loader) then
+        Loader.Load(fSnippets, fCategories, Factory);
+    end;
+
     fUpdated := False;
   except
     // If an exception occurs clear the database
@@ -978,11 +1031,46 @@ procedure TDatabase.Save;
   }
 var
   Provider: IDBDataProvider;  // object that supplies info to writer
+  MainCollectionIdx, UserCollectionIdx: Integer;
+  Saver: IDatabaseWriter;
+  Collections: TCollections;
+  Collection: TCollection;
 begin
   // Create object that can provide required information about user database
   Provider := TUserDataProvider.Create(fSnippets, fCategories);
-  // Use a writer object to write out the database
-  TDatabaseIOFactory.CreateWriter.Write(fSnippets, fCategories, Provider);
+
+  Collections := TCollections.Instance;
+
+  {TODO: -cVault: The following code is a kludge to maintain compatibility with
+          CodeSnip 4. In CodeSnip Vault we should iterate over all collections
+          creating a writer for each one. }
+
+  // *** The following code is a stub for later versions. For CodeSnip 4
+  //     compatibility this code does nothing because there is no writer for
+  //     the "main" collection. TDatabaseIOFactory.CreateDBWriter will return
+  //     nil for this format, so Saver.Write will never be called.
+  MainCollectionIdx := TCollections.Instance.IndexOfID(
+    TCollectionID.__TMP__MainDBCollectionID
+  );
+  if MainCollectionIdx >= 0 then
+  begin
+    Collection := Collections[MainCollectionIdx];
+    Saver := TDatabaseIOFactory.CreateDBWriter(Collection);
+    if Assigned(Saver) then
+      Saver.Write(fSnippets, fCategories, Provider);
+  end;
+
+  UserCollectionIdx := TCollections.Instance.IndexOfID(
+    TCollectionID.__TMP__UserDBCollectionID
+  );
+  if UserCollectionIdx >= 0 then
+  begin
+    Collection := Collections[UserCollectionIdx];
+    Saver := TDatabaseIOFactory.CreateDBWriter(Collection);
+    if Assigned(Saver) then
+      Saver.Write(fSnippets, fCategories, Provider);
+  end;
+
   fUpdated := False;
 end;
 
@@ -1064,7 +1152,7 @@ resourcestring
     + '%1:s already exists in user database';
 begin
   Result := Snippet;      // keeps compiler happy
-  Assert(Snippet.UserDefined,
+  Assert(Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID,
     ClassName + '.UpdateSnippet: Snippet is not user-defined');
   Referrers := nil;
   Dependents := nil;
@@ -1078,7 +1166,7 @@ begin
       SnippetName := Snippet.Name;
     // If name has changed then new name musn't exist in user database
     if not StrSameText(SnippetName, Snippet.Name) then
-      if fSnippets.Find(SnippetName, True) <> nil then
+      if fSnippets.Find(SnippetName, TCollectionID.__TMP__UserDBCollectionID) <> nil then
         raise ECodeSnip.CreateFmt(sCantRename, [Snippet.Name, SnippetName]);
     // We update by deleting old snippet and inserting new one
     // get lists of snippets that cross reference or depend on this snippet
@@ -1144,28 +1232,15 @@ end;
 { TDBDataItemFactory }
 
 function TDBDataItemFactory.CreateCategory(const CatID: string;
-  const UserDefined: Boolean; const Data: TCategoryData): TCategory;
-  {Creates a new category object.
-    @param CatID [in] ID of new category. Must be unique.
-    @param UserDefined [in] True if category is user defined, False if not.
-    @param Data [in] Record describing category's properties.
-    @return Instance of new category object.
-  }
+  const ACollectionID: TCollectionID; const Data: TCategoryData): TCategory;
 begin
-  Result := TCategoryEx.Create(CatID, UserDefined, Data);
+  Result := TCategoryEx.Create(CatID, ACollectionID, Data);
 end;
 
 function TDBDataItemFactory.CreateSnippet(const Name: string;
-  const UserDefined: Boolean; const Props: TSnippetData): TSnippet;
-  {Creates a new snippet object.
-    @param Name [in] Name of new snippet. Must not exist in database specified
-      by UserDefined parameter.
-    @param UserDefined [in] True if snippet is user defined, False if not.
-    @param Props [in] Record describing snippet's properties.
-    @return Instance of new snippet with no references.
-  }
+  const ACollectionID: TCollectionID; const Props: TSnippetData): TSnippet;
 begin
-  Result := TSnippetEx.Create(Name, UserDefined, Props);
+  Result := TSnippetEx.Create(Name, ACollectionID, Props);
 end;
 
 { TUserDataProvider }
@@ -1203,7 +1278,7 @@ var
 begin
   Result := TIStringList.Create;
   for Snippet in Cat.Snippets do
-    if Snippet.UserDefined then
+    if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
       Result.Add(Snippet.Name);
 end;
 

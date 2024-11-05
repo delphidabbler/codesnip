@@ -19,7 +19,9 @@ uses
   // Delphi
   Classes, ActiveX,
   // Project
-  IntfNotifier, UView;
+  DB.UCollections,
+  IntfNotifier,
+  UView;
 
 
 type
@@ -74,13 +76,12 @@ type
     ///  <summary>Displays a snippet.</summary>
     ///  <param name="SnippetName">WideString [in] Name of required snippet.
     ///  </param>
-    ///  <param name="UserDefined">WordBool [in] Indicates whether snippet is
-    ///  user defined.</param>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
+    ///  collection.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
-    ///  <remarks>Methods of INotifier.</remarks>
     procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool);
+      ACollectionID: TCollectionID; NewTab: WordBool);
 
     ///  <summary>Displays a category.</summary>
     ///  <param name="CatId">WideString [in] ID of required category.</param>
@@ -254,12 +255,12 @@ begin
 end;
 
 procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
-  UserDefined: WordBool; NewTab: WordBool);
+  ACollectionID: TCollectionID; NewTab: WordBool);
 begin
   if Assigned(fDisplaySnippetAction) then
   begin
     (fDisplaySnippetAction as TSnippetAction).SnippetName := SnippetName;
-    (fDisplaySnippetAction as TSnippetAction).UserDefined := UserDefined;
+    (fDisplaySnippetAction as TSnippetAction).CollectionID := ACollectionID;
     (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
     fDisplaySnippetAction.Execute;
   end;

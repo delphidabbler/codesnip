@@ -66,10 +66,25 @@ uses
   // Delphi
   SysUtils, Generics.Defaults,
   // Project
-  Compilers.UGlobals, Compilers.UCompilers, DB.UMain, DB.USnippet, UConsts,
-  UContainers, UCSSUtils, UEncodings, UHTMLTemplate, UHTMLUtils,
-  UJavaScriptUtils, UPreferences, UQuery, UResourceUtils, USnippetHTML,
-  USnippetPageHTML, UStrUtils, USystemInfo;
+  Compilers.UGlobals,
+  Compilers.UCompilers,
+  DB.UCollections,
+  DB.UMain,
+  DB.USnippet,
+  UConsts,
+  UContainers,
+  UCSSUtils,
+  UEncodings,
+  UHTMLTemplate,
+  UHTMLUtils,
+  UJavaScriptUtils,
+  UPreferences,
+  UQuery,
+  UResourceUtils,
+  USnippetHTML,
+  USnippetPageHTML,
+  UStrUtils,
+  USystemInfo;
 
 
 type
@@ -418,7 +433,9 @@ begin
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
-  UserDBCount := Database.Snippets.Count(True);
+  UserDBCount := Database.Snippets.Count(
+    TCollectionID.__TMP__UserDBCollectionID
+  );
   Tplt.ResolvePlaceholderHTML(
     'HaveUserDB', TCSS.BlockDisplayProp(UserDBCount > 0)
   );
@@ -429,7 +446,9 @@ begin
     'UserDBCount', IntToStr(UserDBCount)
   );
 
-  MainDBCount := Database.Snippets.Count(False);
+  MainDBCount := Database.Snippets.Count(
+    TCollectionID.__TMP__MainDBCollectionID
+  );
   Tplt.ResolvePlaceholderHTML(
     'HaveMainDB', TCSS.BlockDisplayProp(MainDBCount > 0)
   );
@@ -507,15 +526,15 @@ begin
       'overflowXFixScript',
       'window.onload = null;'
     );
-  if GetSnippet.UserDefined then
+  if GetSnippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
     Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
   else
     Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
   Tplt.ResolvePlaceholderHTML(
-    'TestingInfo', TCSS.BlockDisplayProp(not GetSnippet.UserDefined)
+    'TestingInfo', TCSS.BlockDisplayProp(GetSnippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID)
   );
   Tplt.ResolvePlaceholderHTML(
-    'EditLink', TCSS.BlockDisplayProp(GetSnippet.UserDefined)
+    'EditLink', TCSS.BlockDisplayProp(GetSnippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID)
   );
   Tplt.ResolvePlaceholderText(
     'EditEventHandler',
@@ -523,7 +542,7 @@ begin
   );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
-    if not GetSnippet.UserDefined then
+    if GetSnippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID then
       Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
     Tplt.ResolvePlaceholderHTML('SnippetName', SnippetHTML.SnippetName);
   finally
@@ -648,7 +667,7 @@ end;
 
 function TCategoryPageHTML.GetH1ClassName: string;
 begin
-  if (View as ICategoryView).Category.UserDefined then
+  if (View as ICategoryView).Category.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
     Result := 'userdb'
   else
     Result := inherited GetH1ClassName;

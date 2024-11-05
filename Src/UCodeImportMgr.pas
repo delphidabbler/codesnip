@@ -148,9 +148,16 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes,
+  SysUtils,
+  Classes,
   // Project
-  ActiveText.UMain, DB.UMain, DB.USnippet, UIOUtils, USnippetIDs, UStrUtils;
+  ActiveText.UMain,
+  DB.UCollections,
+  DB.UMain,
+  DB.USnippet,
+  UIOUtils,
+  USnippetIDs,
+  UStrUtils;
 
 
 { TCodeImportMgr }
@@ -178,7 +185,7 @@ begin
   Result := TIStringList.Create;
   Result.CaseSensitive := False;
   for Snippet in Database.Snippets do
-    if Snippet.UserDefined then
+    if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
       Result.Add(Snippet.Name);
   for SnippetInfo in fSnippetInfoList do
     if not StrSameText(SnippetInfo.Name, ExcludedName) then
@@ -241,6 +248,7 @@ procedure TCodeImportMgr.UpdateDatabase;
   var
     Idx: Integer;           // loops through dependencies
     SnippetID: TSnippetID;  // each snippet ID in dependency list
+    CollectionID: TCollectionID;
   begin
     // NOTE: The data file format does not record which database a required
     // snippet belongs to, so we first look in the user database and if it's
@@ -248,8 +256,10 @@ procedure TCodeImportMgr.UpdateDatabase;
     for Idx := 0 to Pred(Depends.Count) do
     begin
       SnippetID := Depends[Idx];
-      SnippetID.UserDefined :=
-        Database.Snippets.Find(SnippetID.Name, True) <> nil;
+      CollectionID := TCollectionID.__TMP__UserDBCollectionID;
+      if Database.Snippets.Find(SnippetID.Name, CollectionID) = nil then
+        CollectionID := TCollectionID.__TMP__MainDBCollectionID;
+      SnippetID.CollectionID := CollectionID;
       Depends[Idx] := SnippetID;
     end;
   end;
@@ -274,7 +284,7 @@ begin
 
     AdjustDependsList(SnippetInfo.Data.Refs.Depends);
 
-    Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, True);
+    Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, TCollectionID.__TMP__UserDBCollectionID);
     if Assigned(Snippet) then
       // snippet already exists: overwrite it
       Editor.UpdateSnippet(Snippet, SnippetInfo.Data)

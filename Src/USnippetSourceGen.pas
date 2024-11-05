@@ -87,6 +87,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  DB.UCollections,
   DB.UMetaData,
   DB.USnippet,
   DB.USnippetKind,
@@ -243,7 +244,7 @@ begin
     // view is single snippet: just record that
     Snippet := (View as ISnippetView).Snippet;
     fGenerator.IncludeSnippet(Snippet);
-    fContainsMainDBSnippets := not Snippet.UserDefined;
+    fContainsMainDBSnippets := Snippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID;
   end
   else
   begin
@@ -254,7 +255,7 @@ begin
       fGenerator.IncludeSnippets(Snips);  // ignores freeform snippets
       for Snippet in Snips do
       begin
-        if not Snippet.UserDefined then
+        if Snippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID then
         begin
           fContainsMainDBSnippets := True;
           Break;
