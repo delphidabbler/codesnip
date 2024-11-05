@@ -970,7 +970,7 @@ procedure TDatabase.Load;
 var
   Factory: IDBDataItemFactory;  // object reader uses to create snippets objects
   MainCollectionIdx, UserCollectionIdx: Integer;
-  Loader: IDatabaseLoader;
+  Loader: IDataFormatLoader;
   Collections: TCollections;
   Collection: TCollection;
 begin
@@ -1032,7 +1032,7 @@ procedure TDatabase.Save;
 var
   Provider: IDBDataProvider;  // object that supplies info to writer
   MainCollectionIdx, UserCollectionIdx: Integer;
-  Saver: IDatabaseWriter;
+  Saver: IDataFormatSaver;
   Collections: TCollections;
   Collection: TCollection;
 begin
@@ -1055,9 +1055,9 @@ begin
   if MainCollectionIdx >= 0 then
   begin
     Collection := Collections[MainCollectionIdx];
-    Saver := TDatabaseIOFactory.CreateDBWriter(Collection);
+    Saver := TDatabaseIOFactory.CreateDBSaver(Collection);
     if Assigned(Saver) then
-      Saver.Write(fSnippets, fCategories, Provider);
+      Saver.Save(fSnippets, fCategories, Provider);
   end;
 
   UserCollectionIdx := TCollections.Instance.IndexOfID(
@@ -1066,9 +1066,9 @@ begin
   if UserCollectionIdx >= 0 then
   begin
     Collection := Collections[UserCollectionIdx];
-    Saver := TDatabaseIOFactory.CreateDBWriter(Collection);
+    Saver := TDatabaseIOFactory.CreateDBSaver(Collection);
     if Assigned(Saver) then
-      Saver.Write(fSnippets, fCategories, Provider);
+      Saver.Save(fSnippets, fCategories, Provider);
   end;
 
   fUpdated := False;
