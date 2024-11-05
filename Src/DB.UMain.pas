@@ -54,33 +54,39 @@ type
     evCategoryChanged       // a category's properties have changed
   );
 
-  {
-  IDBDataProvider:
-    Interface supported by objects that provides data about the categories and
-    snippets in the database.
-  }
+  ///  <summary>Interface supported by objects that provide information about
+  ///  categories and snippets.</summary>
   IDBDataProvider = interface(IInterface)
     ['{D2D57A0D-DB29-4012-891E-E817E0EED8C8}']
+
+    ///  <summary>Retrieves all the properties of a category.</summary>
+    ///  <param name="Cat"><c>Category</c> [in] Category for which properties
+    ///  are requested.</param>
+    ///  <returns><c>TCategoryData</c>. Record containing the property data.
+    ///  </returns>
     function GetCategoryProps(const Cat: TCategory): TCategoryData;
-      {Retrieves all the properties of a category.
-        @param Cat [in] Category for which data is requested.
-        @return Record containing property data.
-      }
+
+    ///  <summary>Retrieves names of all snippets that belong to a category.
+    ///  </summary>
+    ///  <param name="Cat"><c>Category</c> [in] Category for which snippet names
+    ///  are requested.</param>
+    ///  <returns><c>IStringList</c>. List of snippet names.</returns>
     function GetCategorySnippets(const Cat: TCategory): IStringList;
-      {Retrieves names of all snippets that belong to a category.
-        @param Cat [in] Category for which snippet names are requested.
-        @return Required list of snippet names.
-      }
+
+    ///  <summary>Retrieves all the properties of a snippet.</summary>
+    ///  <param name="Snippet"><c>TSnippet</c> [in] Snippet for which properties
+    ///  are requested.</param>
+    ///  <returns><c>TSnippetData</c>. Record containing the property data.
+    ///  </returns>
     function GetSnippetProps(const Snippet: TSnippet): TSnippetData;
-      {Retrieves all the properties of a snippet.
-        @param Snippet [in] Snippet for which data is requested.
-        @return Record containing property data.
-      }
+
+    ///  <summary>Retrieves information about all the references of a snippet.
+    ///  </summary>
+    ///  <param name="Snippet"><c>TSnippet</c> [in] Snippet for which references
+    ///  are requested.</param>
+    ///  <returns><c>TSnippetReferences</c>. Record containing references.
+    ///  </returns>
     function GetSnippetRefs(const Snippet: TSnippet): TSnippetReferences;
-      {Retrieves information about all the references of a snippet.
-        @param Snippet [in] Snippet for which information is requested.
-        @return Record containing references.
-      }
   end;
 
   {
@@ -106,11 +112,8 @@ type
       depends on Kind. May be nil}
   end;
 
-  {
-  IDataItemFactory:
-    Interface to factory object that creates snippet and category objects. For
-    use by database loader objects.
-  }
+  ///  <summary>Interface to factory object that creates snippet and category
+  ///  objects use by collection loader objects.</summary>
   IDBDataItemFactory = interface(IInterface)
     ['{C6DD85BD-E649-4A90-961C-4011D2714B3E}']
 
@@ -301,12 +304,10 @@ var
 
 type
 
-  {
-  TDBDataItemFactory:
-    Class that can create category and snippet objects.
-  }
+  ///  <summary>Class that can create category and snippet objects.</summary>.
   TDBDataItemFactory = class(TInterfacedObject, IDBDataItemFactory)
   public
+
     ///  <summary>Creates a new category object.</summary>
     ///  <param name="CatID"><c>string</c> [in] ID of new category. Must be
     ///  unique.</param>
@@ -540,44 +541,59 @@ type
       }
   end;
 
-  {
-  TUserDataProvider:
-    Class that provides data about the categories and snippets in the user-
-    defined database.
-  }
-  TUserDataProvider = class(TInterfacedObject, IDBDataProvider)
+  ///  <summary>Class that provides data about the categories and snippets in
+  ///  a given collection.</summary>
+  TCollectionDataProvider = class(TInterfacedObject, IDBDataProvider)
   strict private
-    fSnippets: TSnippetList;    // All snippets in the whole database
-    fCategories: TCategoryList; // All categories in the whole database
+    var
+      fCollectionID: TCollectionID; // Collection on which to operate
+      fSnippets: TSnippetList;      // All snippets in the whole database
+      fCategories: TCategoryList;   // All categories in the whole database
   public
-    constructor Create(const SnipList: TSnippetList;
+    ///  <summary>Object constructor. Sets up data provider.</summary>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection for
+    ///  which to provide data.</param>
+    ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
+    ///  in the database.</param>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] List of all
+    ///  categories in the database.</param>
+    constructor Create(const ACollectionID: TCollectionID;
+      const SnipList: TSnippetList;
       const Categories: TCategoryList);
-      {Constructor. Records list of all snippets and categories in both
-      databases.
-        @param SnipList [in] List of all snippets in whole database.
-        @param Categories [in] List of all categories in whole database.
-      }
-    { IDBDataProvider methods }
+
+    ///  <summary>Retrieves all the properties of a category.</summary>
+    ///  <param name="Cat"><c>Category</c> [in] Category for which properties
+    ///  are requested.</param>
+    ///  <returns><c>TCategoryData</c>. Record containing the property data.
+    ///  </returns>
+    ///  <remarks>Method of <c>IDBDataProvider</c></remarks>
     function GetCategoryProps(const Cat: TCategory): TCategoryData;
-      {Retrieves all the properties of a category.
-        @param Cat [in] Category for which data is requested.
-        @return Record containing property data.
-      }
+
+    ///  <summary>Retrieves names of all snippets from the collection that
+    ///  belong to a category.</summary>
+    ///  <param name="Cat"><c>Category</c> [in] Category for which snippet names
+    ///  are requested.</param>
+    ///  <returns><c>IStringList</c>. List of snippet names.</returns>
+    ///  <remarks>Method of <c>IDBDataProvider</c></remarks>
     function GetCategorySnippets(const Cat: TCategory): IStringList;
-      {Retrieves names of all user-defined snippets that belong to a category.
-        @param Cat [in] Category for which snippet names are requested.
-        @return Required list of snippet names.
-      }
+
+    ///  <summary>Retrieves all the properties of a snippet.</summary>
+    ///  <param name="Snippet"><c>TSnippet</c> [in] Snippet for which properties
+    ///  are requested.</param>
+    ///  <returns><c>TSnippetData</c>. Record containing the property data.
+    ///  </returns>
+    ///  <remarks>Method of <c>IDBDataProvider</c></remarks>
     function GetSnippetProps(const Snippet: TSnippet): TSnippetData;
-      {Retrieves all the properties of a snippet.
-        @param Snippet [in] Snippet for which data is requested.
-        @return Record containing property data.
-      }
+
+    ///  <summary>Retrieves information about all the references of a snippet.
+    ///  </summary>
+    ///  <param name="Snippet"><c>TSnippet</c> [in] Snippet for which references
+    ///  are requested.</param>
+    ///  <returns><c>TSnippetReferences</c>. Record containing references.
+    ///  </returns>
+    ///  <remarks>Method of <c>IDBDataProvider</c></remarks>
     function GetSnippetRefs(const Snippet: TSnippet): TSnippetReferences;
-      {Retrieves information about all the references of a snippet.
-        @param Snippet [in] Snippet for which information is requested.
-        @return Record containing references.
-      }
+
   end;
 
 function Database: IDatabase;
@@ -1030,15 +1046,12 @@ procedure TDatabase.Save;
   {Saves user defined snippets and all categories to user database.
   }
 var
-  Provider: IDBDataProvider;  // object that supplies info to writer
+  MainProvider, UserProvider: IDBDataProvider;  // object that supplies info to writer
   MainCollectionIdx, UserCollectionIdx: Integer;
   Saver: IDataFormatSaver;
   Collections: TCollections;
   Collection: TCollection;
 begin
-  // Create object that can provide required information about user database
-  Provider := TUserDataProvider.Create(fSnippets, fCategories);
-
   Collections := TCollections.Instance;
 
   {TODO: -cVault: The following code is a kludge to maintain compatibility with
@@ -1055,9 +1068,12 @@ begin
   if MainCollectionIdx >= 0 then
   begin
     Collection := Collections[MainCollectionIdx];
+    MainProvider := TCollectionDataProvider.Create(
+      TCollectionID.__TMP__MainDBCollectionID, fSnippets, fCategories
+    );
     Saver := TDatabaseIOFactory.CreateDBSaver(Collection);
     if Assigned(Saver) then
-      Saver.Save(fSnippets, fCategories, Provider);
+      Saver.Save(fSnippets, fCategories, MainProvider);
   end;
 
   UserCollectionIdx := TCollections.Instance.IndexOfID(
@@ -1066,9 +1082,12 @@ begin
   if UserCollectionIdx >= 0 then
   begin
     Collection := Collections[UserCollectionIdx];
+    UserProvider := TCollectionDataProvider.Create(
+      TCollectionID.__TMP__UserDBCollectionID, fSnippets, fCategories
+    );
     Saver := TDatabaseIOFactory.CreateDBSaver(Collection);
     if Assigned(Saver) then
-      Saver.Save(fSnippets, fCategories, Provider);
+      Saver.Save(fSnippets, fCategories, UserProvider);
   end;
 
   fUpdated := False;
@@ -1243,64 +1262,46 @@ begin
   Result := TSnippetEx.Create(Name, ACollectionID, Props);
 end;
 
-{ TUserDataProvider }
+{ TCollectionDataProvider }
 
-constructor TUserDataProvider.Create(const SnipList: TSnippetList;
-  const Categories: TCategoryList);
-  {Constructor. Records list of all snippets and categories in both databases.
-    @param SnipList [in] List of all snippets in whole database.
-    @param Categories [in] List of all categories in whole database.
-  }
+constructor TCollectionDataProvider.Create(const ACollectionID: TCollectionID;
+  const SnipList: TSnippetList; const Categories: TCategoryList);
 begin
   inherited Create;
+  fCollectionID := ACollectionID;
   fSnippets := SnipList;
   fCategories := Categories;
 end;
 
-function TUserDataProvider.GetCategoryProps(
+function TCollectionDataProvider.GetCategoryProps(
   const Cat: TCategory): TCategoryData;
-  {Retrieves all the properties of a category.
-    @param Cat [in] Category for which data is requested.
-    @return Record containing property data.
-  }
 begin
   Result.Desc := Cat.Description;
 end;
 
-function TUserDataProvider.GetCategorySnippets(
+function TCollectionDataProvider.GetCategorySnippets(
   const Cat: TCategory): IStringList;
-  {Retrieves names of all user-defined snippets that belong to a category.
-    @param Cat [in] Category for which snippet names are requested.
-    @return Required list of snippet names.
-  }
 var
   Snippet: TSnippet;  // references each snippet in category
 begin
   Result := TIStringList.Create;
   for Snippet in Cat.Snippets do
-    if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
+    if Snippet.CollectionID = fCollectionID then
       Result.Add(Snippet.Name);
 end;
 
-function TUserDataProvider.GetSnippetProps(
+function TCollectionDataProvider.GetSnippetProps(
   const Snippet: TSnippet): TSnippetData;
-  {Retrieves all the properties of a snippet.
-    @param Snippet [in] Snippet for which data is requested.
-    @return Record containing property data.
-  }
 begin
   Result := (Snippet as TSnippetEx).GetProps;
 end;
 
-function TUserDataProvider.GetSnippetRefs(
+function TCollectionDataProvider.GetSnippetRefs(
   const Snippet: TSnippet): TSnippetReferences;
-  {Retrieves information about all the references of a snippet.
-    @param Snippet [in] Snippet for which information is requested.
-    @return Record containing references.
-  }
 begin
   Result := (Snippet as TSnippetEx).GetReferences;
 end;
+
 
 initialization
 
