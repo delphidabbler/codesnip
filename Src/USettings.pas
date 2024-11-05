@@ -177,7 +177,6 @@ type
   ///  <para>-ssFavourites - persistent settings from Favourites dlg</para>
   ///  <para>-ssWindowState - info about the size and state of various
   ///  windows</para>
-  ///  <para>-ssDatabase - database customisation info</para>
   ///  <para>-ssCompilers - info about all compilers</para>
   ///  <para>-ssCollections - info about all snippet collections</para>
   ///  <para>-ssCollection - info about a specific snippet collection</para>
@@ -185,7 +184,7 @@ type
   TSettingsSectionId = (
     ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo,
     ssPreferences, ssUnits, ssDuplicateSnippet,
-    ssFavourites, ssWindowState, ssDatabase, ssCompilers, ssCollections,
+    ssFavourites, ssWindowState, ssCompilers, ssCollections,
     ssCollection
   );
 
@@ -579,7 +578,6 @@ const
     'DuplicateSnippet', // ssDuplicateSnippet
     'Favourites',       // ssFavourites
     'WindowState',      // ssWindowState
-    'Database',         // ssDatabase
     'Compilers',        // ssCompilers
     'Collections',      // ssCollections
     'Collection'        // ssCollection

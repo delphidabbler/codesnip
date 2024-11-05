@@ -91,7 +91,9 @@ uses
   // Delphi
   SysUtils, IOUtils,
   // Project
-  UAppInfo, UStrUtils;
+  DB.UCollections,
+  UAppInfo,
+  UStrUtils;
 
 
 { TUserDBMove }
@@ -134,9 +136,18 @@ begin
 end;
 
 procedure TUserDBMove.SetNewDBDirectory(Sender: TObject);
+var
+  Collection: TCollection;
+  Collections: TCollections;
 begin
   // record new location BEFORE deleting old directory
-  TAppInfo.ChangeUserDataDir(fDestDir);
+  Collections := TCollections.Instance;
+  Collection := Collections.GetCollection(TCollectionID.__TMP__UserDBCollectionID);
+  Collection.Location.Directory := fDestDir;
+  Collections.Update(Collection);
+  // Persist collections immediately to save new directory ASAP to prevent
+  // directory change being lost following a program crash.
+  Collections.Save;
 end;
 
 procedure TUserDBMove.ValidateDirectories;
