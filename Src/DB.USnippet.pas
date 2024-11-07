@@ -480,7 +480,8 @@ end;
 
 procedure TSnippet.SetKey(const AKey: string);
 begin
-  fKey := AKey;
+  fKey := StrTrim(AKey);
+  Assert(fKey <> '', ClassName + '.SetKey: AKey is whitespace or empty');
 end;
 
 procedure TSnippet.SetProps(const Data: TSnippetData);

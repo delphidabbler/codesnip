@@ -34,10 +34,11 @@ type
       ///  <summary>Value of Key property.</summary>
       fKey: string;
       fCollectionID: TCollectionID;
+    procedure SetKey(const AValue: string);
     procedure SetCollectionID(const AValue: TCollectionID);
   public
     ///  <summary>Snippet's key.</summary>
-    property Key: string read fKey write fKey;
+    property Key: string read fKey write SetKey;
 
     ///  <summary>ID of the collection to which a snippet with this ID belongs.
     ///  </summary>
@@ -181,7 +182,7 @@ end;
 constructor TSnippetID.Create(const AKey: string;
   const ACollectionID: TCollectionID);
 begin
-  fKey := AKey;
+  SetKey(AKey);
   SetCollectionID(ACollectionID);
 end;
 
@@ -199,6 +200,12 @@ procedure TSnippetID.SetCollectionID(const AValue: TCollectionID);
 begin
   Assert(not AValue.IsNull, 'TSnippetID.SetCollectionID: Value is null');
   fCollectionID := AValue.Clone;
+end;
+
+procedure TSnippetID.SetKey(const AValue: string);
+begin
+  fKey := StrTrim(AValue);
+  Assert(fKey <> '', 'TSnippetID.SetKey: Value is whitespace or empty');
 end;
 
 { TSnippetIDList }
