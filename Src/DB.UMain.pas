@@ -182,6 +182,14 @@ type
   }
   IDatabaseEdit = interface(IInterface)
     ['{CBF6FBB0-4C18-481F-A378-84BB09E5ECF4}']
+
+    ///  <summary>Creates a new snippet key that is unique within the given
+    ///  collection.</summary>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> ID of collection that
+    ///  the new key must be unique within.</param>
+    ///  <returns><c>string</c> containing the key.</returns>
+    function GetUniqueSnippetKey(const ACollectionID: TCollectionID): string;
+
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
       {Provides details of all a snippet's data (properties and references) that
@@ -294,7 +302,8 @@ uses
   IntfCommon,
   UExceptions,
   UQuery,
-  UStrUtils;
+  UStrUtils,
+  UUniqueID;
 
 
 var
@@ -448,7 +457,17 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
+
     { IDatabaseEdit methods }
+
+    ///  <summary>Creates a new snippet key that is unique within the given
+    ///  collection.</summary>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> ID of collection that
+    ///  the new key must be unique within.</param>
+    ///  <returns><c>string</c> containing the key.</returns>
+    ///  <remarks>Method of <c>IDatabaseEdit</c>.</remarks>
+    function GetUniqueSnippetKey(const ACollectionID: TCollectionID): string;
+
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
       {Provides details of all a snippet's data (properties and references) that
@@ -917,6 +936,29 @@ function TDatabase.GetSnippets: TSnippetList;
   }
 begin
   Result := fSnippets;
+end;
+
+function TDatabase.GetUniqueSnippetKey(
+  const ACollectionID: TCollectionID): string;
+var
+  SnippetsInCollection: TSnippetList;
+  Snippet: TSnippet;
+begin
+  // NOTE: It is probable that TUniqueID will always generate a key that is
+  // unique across the whole database, let alone within the collection. But it's
+  // safer to check and regenerate if necessary.
+  SnippetsInCollection := TSnippetList.Create;
+  try
+    // Build list of all snippets in collection
+    for Snippet in fSnippets do
+      if Snippet.CollectionID = ACollectionID then
+        SnippetsInCollection.Add(Snippet);
+    repeat
+      Result := TUniqueID.GenerateAlpha;
+    until SnippetsInCollection.Find(Result, ACollectionID) = nil;
+  finally
+    SnippetsInCollection.Free;
+  end;
 end;
 
 function TDatabase.InternalAddCategory(const CatID: string;
