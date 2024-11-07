@@ -39,10 +39,10 @@ type
           returned.
         @return True if dependency list is valid or False if not.
       }
-    class function ValidateDependsList(const SnippetName: string;
+    class function ValidateDependsList(const SnippetKey: string;
       const Data: TSnippetEditData; out ErrorMsg: string): Boolean; overload;
       {Recursively checks dependency list of a snippet for validity.
-        @param SnippetName [in] Name of snippet for which dependencies are to be
+        @param SnippetKey [in] Key of snippet for which dependencies are to be
           checked.
         @param Data [in] Data describing properties and references of snippet
           for which dependencies are to be checked.
@@ -68,36 +68,36 @@ type
         @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if description is valid or False if not.
       }
-    class function ValidateName(const Name: string;
+    class function ValidateName(const Key: string;
       const CheckForUniqueness: Boolean): Boolean; overload;
-      {Validates a snippet's name.
-        @param Name [in] Snippet name to be checked.
+      {Validates a snippet's key.
+        @param Key [in] Snippet key to be checked.
         @param CheckForUniqueness [in] Flag indicating whether a check should
-          be made to see if snippet name is already in user database.
-        @return True if name is valid or False if not.
+          be made to see if snippet key is already in user database.
+        @return True if key is valid or False if not.
       }
-    class function ValidateName(const Name: string;
+    class function ValidateName(const Key: string;
       const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
       overload;
-      {Validates a snippet's name.
-        @param Name [in] Snippet name to be checked.
+      {Validates a snippet's key.
+        @param Key [in] Snippet key to be checked.
         @param CheckForUniqueness [in] Flag indicating whether a check should
-          be made to see if snippet name is already in user database.
+          be made to see if snippet key is already in user database.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
-        @return True if name is valid or False if not.
+        @return True if key is valid or False if not.
       }
-    class function ValidateName(const Name: string;
+    class function ValidateName(const Key: string;
       const CheckForUniqueness: Boolean; out ErrorMsg: string;
       out ErrorSel: TSelection): Boolean; overload;
-      {Validates a snippet's name.
-        @param Name [in] Snippet name to be checked.
+      {Validates a snippet's key.
+        @param Key [in] Snippet key to be checked.
         @param CheckForUniqueness [in] Flag indicating whether a check should
-          be made to see if snippet name is already in user database.
+          be made to see if snippet key is already in user database.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
         @param ErrorSel [out] Selection that can be used to highlight error.
-        @return True if name is valid or False if not.
+        @return True if key is valid or False if not.
       }
     class function ValidateExtra(const Extra: IActiveText;
       out ErrorMsg: string): Boolean;
@@ -275,10 +275,10 @@ begin
     );
 end;
 
-class function TSnippetValidator.ValidateDependsList(const SnippetName: string;
+class function TSnippetValidator.ValidateDependsList(const SnippetKey: string;
   const Data: TSnippetEditData; out ErrorMsg: string): Boolean;
   {Recursively checks dependency list of a snippet for validity.
-    @param SnippetName [in] Name of snippet for which dependencies are to be
+    @param SnippetKey [in] Key of snippet for which dependencies are to be
       checked.
     @param Data [in] Data describing properties and references of snippet for
       which dependencies are to be checked.
@@ -290,7 +290,7 @@ var
   TempSnippet: TSnippet;  // temporary snippet that is checked for dependencies
 begin
   TempSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
-    SnippetName, Data
+    SnippetKey, Data
   );
   try
     Result := ValidateDependsList(TempSnippet, ErrorMsg);
@@ -348,67 +348,67 @@ begin
     ErrorMsg := ErrorInfo.Description;
 end;
 
-class function TSnippetValidator.ValidateName(const Name: string;
+class function TSnippetValidator.ValidateName(const Key: string;
   const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
-  {Validates a snippet's name.
-    @param Name [in] Snippet name to be checked.
+  {Validates a snippet's key.
+    @param Key [in] Snippet key to be checked.
     @param CheckForUniqueness [in] Flag indicating whether a check should be
-      made to see if snippet name is already in user database.
+      made to see if snippet key is already in user database.
     @param ErrorMsg [out] Message that describes error. Undefined if True
       returned.
-    @return True if name is valid or False if not.
+    @return True if key is valid or False if not.
   }
 resourcestring
   // Error messages
-  sErrNoName = 'A name must be provided';
-  sErrDupName = '"%s" is already in the database. Please choose another name';
-  sErrBadName = '"%s" is not a valid Pascal identifier';
+  sErrNoKey = 'A key must be provided';
+  sErrDupKey = 'Key "%s" is already in the database. Please choose another key';
+  sErrBadKey = '"%s" is not a valid Pascal identifier';
 var
-  TrimmedName: string;  // Name param trimmed of leading trailing spaces
+  TrimmedKey: string;  // Key param trimmed of leading trailing spaces
 begin
   Result := False;
-  TrimmedName := StrTrim(Name);
-  if TrimmedName = '' then
-    ErrorMsg := sErrNoName
-  else if not IsValidIdent(TrimmedName) then
-    ErrorMsg := Format(sErrBadName, [TrimmedName])
+  TrimmedKey := StrTrim(Key);
+  if TrimmedKey = '' then
+    ErrorMsg := sErrNoKey
+  else if not IsValidIdent(TrimmedKey) then
+    ErrorMsg := Format(sErrBadKey, [TrimmedKey])
   else if CheckForUniqueness and
-    (Database.Snippets.Find(TrimmedName, TCollectionID.__TMP__UserDBCollectionID) <> nil) then
-    ErrorMsg := Format(sErrDupName, [TrimmedName])
+    (Database.Snippets.Find(TrimmedKey, TCollectionID.__TMP__UserDBCollectionID) <> nil) then
+    ErrorMsg := Format(sErrDupKey, [TrimmedKey])
   else
     Result := True;
 end;
 
-class function TSnippetValidator.ValidateName(const Name: string;
+class function TSnippetValidator.ValidateName(const Key: string;
   const CheckForUniqueness: Boolean; out ErrorMsg: string;
   out ErrorSel: TSelection): Boolean;
-  {Validates a snippet's name.
-    @param Name [in] Snippet name to be checked.
+  {Validates a snippet's key.
+    @param Key [in] Snippet key to be checked.
     @param CheckForUniqueness [in] Flag indicating whether a check should be
-      made to see if snippet name is already in user database.
+      made to see if snippet key is already in user database.
     @param ErrorMsg [out] Message that describes error. Undefined if True
       returned.
     @param ErrorSel [out] Selection that can be used to highlight error.
-    @return True if name is valid or False if not.
+    @return True if key is valid or False if not.
   }
 begin
-  Result := ValidateName(Name, CheckForUniqueness, ErrorMsg);
+  Result := ValidateName(Key, CheckForUniqueness, ErrorMsg);
   if not Result then
-    ErrorSel := TSelection.Create(0, Length(Name));
+    ErrorSel := TSelection.Create(0, Length(Key));
 end;
 
-class function TSnippetValidator.ValidateName(const Name: string;
+class function TSnippetValidator.ValidateName(const Key: string;
   const CheckForUniqueness: Boolean): Boolean;
-  {Validates a snippet's name.
-    @param Name [in] Snippet name to be checked.
+  {Validates a snippet's key.
+    @param Key [in] Snippet key to be checked.
     @param CheckForUniqueness [in] Flag indicating whether a check should be
-      made to see if snippet name is already in user database.
-    @return True if name is valid or False if not.
+      made to see if snippet key is already in user database.
+    @return True if key is valid or False if not.
   }
 var
   DummyErrMsg: string;
 begin
-  Result := ValidateName(Name, CheckForUniqueness, DummyErrMsg);
+  Result := ValidateName(Key, CheckForUniqueness, DummyErrMsg);
 end;
 
 class function TSnippetValidator.ValidateSourceCode(const Source: string;

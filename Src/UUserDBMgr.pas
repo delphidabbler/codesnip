@@ -53,10 +53,10 @@ type
     ///  <summary>Enables user to adds a new user defined snippet to the
     ///  database using the snippets editor.</summary>
     class procedure AddSnippet;
-    ///  <summary>Enables user to edit the snippet with the given name using the
+    ///  <summary>Enables user to edit the snippet with the given key using the
     ///  snippets editor.</summary>
-    ///  <remarks>The named snippet must be user defined.</remarks>
-    class procedure EditSnippet(const SnippetName: string);
+    ///  <remarks>The snippet must be user defined.</remarks>
+    class procedure EditSnippet(const SnippetKey: string);
     ///  <summary>Duplicates the snippet specified by the given view as a user
     ///  defined snippet with name specified by user.</summary>
     class procedure DuplicateSnippet(ViewItem: IView);
@@ -392,7 +392,9 @@ end;
 
 class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
 
-  // Builds a list of snippet names from a given snippet ID list.
+  {TODO -cVault: rename following inner method to SnippetDisplayNames for
+          clarity}
+  // Builds a list of snippet display names from a given snippet ID list.
   function SnippetNames(const IDList: ISnippetIDList): IStringList;
   var
     ID: TSnippetID;     // loops through all IDs in list
@@ -461,11 +463,13 @@ begin
   TDuplicateSnippetDlg.Execute(nil, (ViewItem as ISnippetView).Snippet);
 end;
 
-class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
+class procedure TUserDBMgr.EditSnippet(const SnippetKey: string);
+  {TODO -cVault: lift restriction on being user defined. Change to take a
+          collection ID as 2nd param?}
 var
   Snippet: TSnippet;    // reference to snippet to be edited
 begin
-  Snippet := Database.Snippets.Find(SnippetName, TCollectionID.__TMP__UserDBCollectionID);
+  Snippet := Database.Snippets.Find(SnippetKey, TCollectionID.__TMP__UserDBCollectionID);
   if not Assigned(Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in user database');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);

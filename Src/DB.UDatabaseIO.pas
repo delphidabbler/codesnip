@@ -151,10 +151,10 @@ type
       reader must be created.
         @return Reader object instance.
       }
-    function FindSnippet(const SnippetName: string;
+    function FindSnippet(const SnippetKey: string;
       const SnipList: TSnippetList): TSnippet; virtual; abstract;
-      {Finds the snippet object with a specified name.
-        @param SnippetName [in] Name of required snippet.
+      {Finds the snippet object with a specified key.
+        @param SnippetKey [in] Key of required snippet.
         @param SnipList [in] List of snippets to search.
         @return Reference to required snippet object or nil if snippet is not
           found.
@@ -208,10 +208,10 @@ type
       created.
         @return Reader object instance.
       }
-    function FindSnippet(const SnippetName: string;
+    function FindSnippet(const SnippetKey: string;
       const SnipList: TSnippetList): TSnippet; override;
-      {Finds the snippet object with a specified name in the main database.
-        @param SnippetName [in] Name of required snippet.
+      {Finds the snippet object with a specified key in the main database.
+        @param SnippetKey [in] Key of required snippet.
         @param SnipList [in] List of snippets to search.
         @return Reference to required snippet object or nil if snippet is not
           found.
@@ -234,11 +234,11 @@ type
       created.
         @return Reader object instance.
       }
-    function FindSnippet(const SnippetName: string;
+    function FindSnippet(const SnippetKey: string;
       const SnipList: TSnippetList): TSnippet; override;
-      {Finds the snippet object with a specified name. If snippet is not in this
+      {Finds the snippet object with a specified key. If snippet is not in this
       (user) database the main database is searched.
-        @param SnippetName [in] Name of required snippet.
+        @param SnippetKey [in] Key of required snippet.
         @param SnipList [in] List of snippets to search.
         @return Reference to required snippet object or nil if snippet is not
           found.
@@ -296,7 +296,7 @@ type
     ///  <param name="ACategory"><c>TCategory</c> [in] The category being
     ///  queried.</param>
     ///  <param name="ASnippetsInCategory"><c>IStringList</c> [in] List of the
-    ///  names of all snippets in the category.</param>
+    ///  keys of all snippets in the category.</param>
     ///  <returns><c>Boolean</c>. True if category can be written, False
     ///  otherwise.</returns>
     function CanWriteCategory(const ACategory: TCategory;
@@ -350,7 +350,7 @@ type
     ///  <param name="ACategory"><c>TCategory</c> [in] The category being
     ///  queried.</param>
     ///  <param name="ASnippetsInCategory"><c>IStringList</c> [in] List of the
-    ///  names of all snippets in the category.</param>
+    ///  keys of all snippets in the category.</param>
     ///  <returns><c>Boolean</c>. True if category contains snippets, False
     ///  otherwise.</returns>
     function CanWriteCategory(const ACategory: TCategory;
@@ -390,7 +390,7 @@ type
     ///  <param name="ACategory"><c>TCategory</c> [in] The category being
     ///  queried.</param>
     ///  <param name="ASnippetsInCategory"><c>IStringList</c> [in] List of the
-    ///  names of all snippets in the category.</param>
+    ///  keys of all snippets in the category.</param>
     ///  <returns><c>Boolean</c>. Always True: all categories are written.
     ///  </returns>
     function CanWriteCategory(const ACategory: TCategory;
@@ -549,20 +549,20 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
 
   // ---------------------------------------------------------------------------
   procedure LoadSnippetReferences(const RefList: TSnippetList;
-    const RefNames: IStringList);
-    {Creates a snippet list from names of snippets in a string list. If no
-    snippet with a given name is found no matching entry is added to snippet
+    const RefKeys: IStringList);
+    {Creates a snippet list from keys of snippets in a string list. If no
+    snippet with a given key is found no matching entry is added to snippet
     list.
       @param RefList [in] List to receive referenced snippets.
-      @param RefNames [in] List of snippet names.
+      @param RefKeys [in] List of snippet keys.
     }
   var
-    RefName: string;        // referenced snippet name
+    RefKey: string;         // referenced snippet key
     Reference: TSnippet;    // referenced snippet object
   begin
-    for RefName in RefNames do
+    for RefKey in RefKeys do
     begin
-      Reference := FindSnippet(RefName, fSnipList);
+      Reference := FindSnippet(RefKey, fSnipList);
       if Assigned(Reference) then
         RefList.Add(Reference);
     end;
@@ -584,24 +584,24 @@ procedure TDatabaseLoader.LoadSnippets(const Cat: TCategory);
     @param Cat [in] Category to be loaded.
   }
 var
-  SnippetNames: IStringList;    // list of names of snippets in category
+  SnippetKeys: IStringList;     // list of keys of snippets in category
   SnippetProps: TSnippetData;   // properties of a snippet
-  SnippetName: string;          // each name in name list
+  SnippetKey: string;           // each key in key list
   Snippet: TSnippet;            // references a snippet object
 begin
   FillChar(SnippetProps, SizeOf(SnippetProps), 0);
-  // Get names of all snippets in category
-  SnippetNames := fReader.GetCatSnippets(Cat.ID);
-  // Process each snippet name in list
-  for SnippetName in SnippetNames do
+  // Get keys of all snippets in category
+  SnippetKeys := fReader.GetCatSnippets(Cat.ID);
+  // Process each snippet key in list
+  for SnippetKey in SnippetKeys do
   begin
     // Check if snippet exists in current database and add it to list if not
-    Snippet := fSnipList.Find(SnippetName, Collection.UID);
+    Snippet := fSnipList.Find(SnippetKey, Collection.UID);
     if not Assigned(Snippet) then
     begin
-      fReader.GetSnippetProps(SnippetName, SnippetProps);
+      fReader.GetSnippetProps(SnippetKey, SnippetProps);
       Snippet := fFactory.CreateSnippet(
-        SnippetName, Collection.UID, SnippetProps
+        SnippetKey, Collection.UID, SnippetProps
       );
       fSnipList.Add(Snippet);
     end;
@@ -634,16 +634,16 @@ begin
   Result := sError;
 end;
 
-function TDCSCV2FormatLoader.FindSnippet(const SnippetName: string;
+function TDCSCV2FormatLoader.FindSnippet(const SnippetKey: string;
   const SnipList: TSnippetList): TSnippet;
-  {Finds the snippet object with a specified name in the main database.
-    @param SnippetName [in] Name of required snippet.
+  {Finds the snippet object with a specified key in the main database.
+    @param SnippetKey [in] Key of required snippet.
     @param SnipList [in] List of snippets to search.
     @return Reference to required snippet object or nil if snippet is not found.
   }
 begin
   // We only search main database
-  Result := SnipList.Find(SnippetName, Collection.UID);
+  Result := SnipList.Find(SnippetKey, Collection.UID);
 end;
 
 { TNativeV4FormatLoader }
@@ -669,24 +669,22 @@ begin
   Result := sError;
 end;
 
-function TNativeV4FormatLoader.FindSnippet(const SnippetName: string;
+function TNativeV4FormatLoader.FindSnippet(const SnippetKey: string;
   const SnipList: TSnippetList): TSnippet;
-  {Finds the snippet object with a specified name. If snippet is not in this
+  {Finds the snippet object with a specified key. If snippet is not in this
   (user) database the main database is searched.
-    @param SnippetName [in] Name of required snippet.
+    @param SnippetKey [in] Key of required snippet.
     @param SnipList [in] List of snippets to search.
     @return Reference to required snippet object or nil if snippet is not found.
   }
-
-
 begin
   // Search in user database
-  Result := SnipList.Find(SnippetName, Collection.UID);
+  Result := SnipList.Find(SnippetKey, Collection.UID);
   {TODO -cVault: Delete the following - only allow references in same collection
   }
   if not Assigned(Result) then
     // Not in user database: try main database
-    Result := SnipList.Find(SnippetName, TCollectionID.__TMP__MainDBCollectionID);
+    Result := SnipList.Find(SnippetKey, TCollectionID.__TMP__MainDBCollectionID);
 end;
 
 procedure TNativeV4FormatLoader.LoadCategories;
@@ -733,7 +731,7 @@ procedure TFormatSaver.WriteCategories;
 var
   Cat: TCategory;         // loops through each category
   Props: TCategoryData;   // category properties
-  SnipList: IStringList;  // list of names of snippets in a category
+  SnipList: IStringList;  // list of keys of snippets in a category
 begin
   for Cat in fCategories do
   begin

@@ -95,14 +95,14 @@ type
     ///  <summary>
     ///  Returns ID of category associated with a snippet.
     ///  </summary>
-    ///  <param name="Snippet">string [in] Name of snippet.</param>
+    ///  <param name="SnippetKey">string [in] Snippet's key.</param>
     ///  <returns>string containing category ID</returns>
-    function SnippetToCat(const Snippet: string): string;
+    function SnippetToCat(const SnippetKey: string): string;
     ///  <summary>
     ///  Returns name of ini file containing details of a category.
     ///  </summary>
     ///  <param name="CatID">string [in] Id of category.</param>
-    ///  <returns>string containing bame of category's ini file</returns>
+    ///  <returns>string containing name of category's ini file</returns>
     function CatToCatIni(const CatID: string): string;
     ///  <summary>
     ///  Loads indices of all names of categories and snippets in database.
@@ -129,11 +129,11 @@ type
     ///  Gets a list from ini file of all of items of a specified kind that are
     ///  referenced by a snippet.
     ///  </summary>
-    ///  <param name="Snippet">string [in] Name of snippet.</param>
-    ///  <param name="RefName">string [in] Name of a key in ini file storing
+    ///  <param name="SnippetKey">string [in] Snippet's key.</param>
+    ///  <param name="KeyName">string [in] Name of a key in ini file storing
     ///  comma separated list of references.</param>
     ///  <returns>IStringList containing names of referenced items.</returns>
-    function GetSnippetReferences(const Snippet, RefName: string): IStringList;
+    function GetSnippetReferences(const SnippetKey, KeyName: string): IStringList;
   strict protected
     ///  <summary>
     ///  Extracts comma delimited text fields into a string list.
@@ -173,37 +173,38 @@ type
     ///  record and updates relevant property fields.</param>
     procedure GetCatProps(const CatID: string; var Props: TCategoryData);
     ///  <summary>
-    ///  Gets names of all snippets in a category.
+    ///  Gets keys of all snippets in a category.
     ///  </summary>
     ///  <param name="CatID">string [in] Id of category.</param>
-    ///  <returns>IStringList containing names of snippets.</returns>
+    ///  <returns>IStringList containing keys of snippets.</returns>
     function GetCatSnippets(const CatID: string): IStringList;
     ///  <summary>
     ///  Gets properties of a snippet.
     ///  </summary>
-    ///  <param name="Snippet">string [in] Name of snippet.</param>
+    ///  <param name="SnippetKey">string [in] Snippet's key.</param>
     ///  <param name="Props">TSnippetData [in/out] Receives empty property
     ///  record and updates relevant property fields.</param>
-    procedure GetSnippetProps(const Snippet: string; var Props: TSnippetData);
+    procedure GetSnippetProps(const SnippetKey: string;
+      var Props: TSnippetData);
     ///  <summary>
     ///  Gets list of all snippets that are cross referenced by a specified
     ///  snippet.
     ///  </summary>
-    ///  <param name="Snippet">string [in] Name of snippet.</param>
-    ///  <returns>IStringList containing snippet names.</returns>
-    function GetSnippetXRefs(const Snippet: string): IStringList;
+    ///  <param name="SnippetKey">string [in] Snippet's key.</param>
+    ///  <returns>IStringList containing snippet keys.</returns>
+    function GetSnippetXRefs(const SnippetKey: string): IStringList;
     ///  <summary>
     ///  Gets list of all snippets on which a specified snippet depends.
     ///  </summary>
-    ///  <param name="Snippet">string [in] Name of snippet.</param>
-    ///  <returns>IStringList containing snippet names.</returns>
-    function GetSnippetDepends(const Snippet: string): IStringList;
+    ///  <param name="SnippetKey">string [in] Snippet's key.</param>
+    ///  <returns>IStringList containing snippet keys.</returns>
+    function GetSnippetDepends(const SnippetKey: string): IStringList;
     ///  <summary>
     ///  Gets list of all units referenced by a snippet.
     ///  </summary>
-    ///  <param name="Snippet">string [in] Name of snippet.</param>
+    ///  <param name="SnippetKey">string [in] Snippet's key.</param>
     ///  <returns>IStringList containing unit names.</returns>
-    function GetSnippetUnits(const Snippet: string): IStringList;
+    function GetSnippetUnits(const SnippetKey: string): IStringList;
   end;
 
   ///  <summary>Write a collection to disk in the DelphiDabbler Code Snippets
@@ -327,11 +328,11 @@ type
     ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
     procedure WriteCatProps(const CatID: string; const Props: TCategoryData);
 
-    ///  <summary>Write the list of snippets belonging to a category. Always
+    ///  <summary>Write the list of snippet keys belonging to a category. Always
     ///  called after <c>WriteCatProps</c> for any given category.</summary>
     ///  <param name="CatID"><c>string</c> [in] ID of category.</param>
-    ///  <param name="SnipList"><c>IStringList</c> [in] List of names of
-    ///  snippets.</param>
+    ///  <param name="SnipList"><c>IStringList</c> [in] List of snippet keys.
+    ///  </param>
     ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
     procedure WriteCatSnippets(const CatID: string;
       const SnipList: IStringList);
@@ -339,7 +340,7 @@ type
     ///  <summary>Write the properties of a snippet. Always called after all
     ///  categories are written and before <c>WriteSnippetUnits</c>, so can be
     ///  used to perform any per-snippet intialisation.</summary>
-    ///  <param name="SnippetName"><c>string</c> [in] Name of snippet.</param>
+    ///  <param name="SnippetKey"><c>string</c> [in] Snippet's key.</param>
     ///  <param name="Props"><c>TSnippetData</c> [in] Properties of snippet.
     ///  </param>
     ///  <remarks>
@@ -347,33 +348,33 @@ type
     ///  collection format v2.1.x.</para>
     ///  <para>Method of <c>IDataWriter</c>.</para>
     ///  </remarks>
-    procedure WriteSnippetProps(const SnippetName: string;
+    procedure WriteSnippetProps(const SnippetKey: string;
       const Props: TSnippetData);
 
     ///  <summary>Write the list of units required by a snippet.</summary>
-    ///  <param name="SnippetName"><c>string</c> [in] Name of snippet.</param>
+    ///  <param name="SnippetKey"><c>string</c> [in] Snippet's key.</param>
     ///  <param name="Units"><c>IStringList</c> [in] List of names of required
     ///  units.</param>
     ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
-    procedure WriteSnippetUnits(const SnippetName: string;
+    procedure WriteSnippetUnits(const SnippetKey: string;
       const Units: IStringList);
 
     ///  <summary>Write the list of snippets on which a snippet depends.
     ///  </summary>
-    ///  <param name="SnippetName"><c>string</c> [in] Name of snippet.</param>
-    ///  <param name="Depends"><c>IStringList</c> [in] List of snippet names.
+    ///  <param name="SnippetKey"><c>string</c> [in] Snippet's key.</param>
+    ///  <param name="Depends"><c>IStringList</c> [in] List of snippet keys.
     ///  </param>
     ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
-    procedure WriteSnippetDepends(const SnippetName: string;
+    procedure WriteSnippetDepends(const SnippetKey: string;
       const Depends: IStringList);
 
     ///  <summary>Write the list of snippets that a snippet cross-references.
     ///  </summary>
-    ///  <param name="SnippetName"><c>string</c> [in] Name of snippet.</param>
-    ///  <param name="XRefs"><c>IStringList</c> [in] List of snippet names.
+    ///  <param name="SnippetKey"><c>string</c> [in] Snippet's keys.</param>
+    ///  <param name="XRefs"><c>IStringList</c> [in] List of snippet keys.
     ///  </param>
     ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
-    procedure WriteSnippetXRefs(const SnippetName: string;
+    procedure WriteSnippetXRefs(const SnippetKey: string;
       const XRefs: IStringList);
 
     ///  <summary>Finalises the output. Always called after all other methods.
@@ -401,7 +402,7 @@ uses
   UREMLDataIO,
   USnippetExtraHelper,
   USystemInfo,
-  UStrUtils, 
+  UStrUtils,
   UUtils;
 
 
@@ -531,12 +532,13 @@ begin
   end;
 end;
 
-function TIniDataReader.GetSnippetDepends(const Snippet: string): IStringList;
+function TIniDataReader.GetSnippetDepends(const SnippetKey: string):
+  IStringList;
 begin
-  Result := GetSnippetReferences(Snippet, cDependsName);
+  Result := GetSnippetReferences(SnippetKey, cDependsName);
 end;
 
-procedure TIniDataReader.GetSnippetProps(const Snippet: string;
+procedure TIniDataReader.GetSnippetProps(const SnippetKey: string;
   var Props: TSnippetData);
 var
   CatIni: TCustomIniFile; // .ini file associated with snippet's category
@@ -546,7 +548,7 @@ var
   /// <summary>Reads "StandardFormat" value from ini file.</summary>
   function GetStdFormatProperty: Boolean;
   begin
-    Result := CatIni.ReadBool(Snippet, cStdFormatName, True);
+    Result := CatIni.ReadBool(SnippetKey, cStdFormatName, True);
   end;
 
   ///  <summary>Reads "Kind" value from ini file.</summary>
@@ -554,7 +556,7 @@ var
   var
     KindStr: string;  // string value read from ini file
   begin
-    KindStr := CatIni.ReadString(Snippet, cKindName, '');
+    KindStr := CatIni.ReadString(SnippetKey, cKindName, '');
     if StrSameText(KindStr, 'freeform') then
       Result := skFreeform
     else if StrSameText(KindStr, 'routine') then
@@ -581,7 +583,7 @@ var
     Extra: string;  // extra value from ini file if present
   begin
     try
-      Extra := CatIni.ReadString(Snippet, cExtraName, '');
+      Extra := CatIni.ReadString(SnippetKey, cExtraName, '');
       if Extra <> '' then
         // There is an "extra" value: use it to set Extra property. We ignore
         // any credits, credits url and comments values in this case
@@ -590,9 +592,9 @@ var
         // There is no "extra" value: use any comments, credits and credits URL
         // values to set Extra property
         Result := TSnippetExtraHelper.BuildActiveText(
-          CatIni.ReadString(Snippet, cCommentsName, ''),
-          CatIni.ReadString(Snippet, cCreditsName, ''),
-          CatIni.ReadString(Snippet, cCreditsURLName, '')
+          CatIni.ReadString(SnippetKey, cCommentsName, ''),
+          CatIni.ReadString(SnippetKey, cCreditsName, ''),
+          CatIni.ReadString(SnippetKey, cCreditsURLName, '')
         );
     except
       // There was an error: use an empty property value
@@ -606,7 +608,7 @@ var
   var
     SnipFileName: string; // name of file containing source code
   begin
-    SnipFileName := CatIni.ReadString(Snippet, cSnipFileName, '');
+    SnipFileName := CatIni.ReadString(SnippetKey, cSnipFileName, '');
     try
       Result := fFileReader.ReadAllText(DataFile(SnipFileName));
     except
@@ -627,7 +629,7 @@ var
   begin
     for CompID := Low(TCompilerID) to High(TCompilerID) do
     begin
-      CompRes := CatIni.ReadString(Snippet, cCompilerIDNames[CompID], '?');
+      CompRes := CatIni.ReadString(SnippetKey, cCompilerIDNames[CompID], '?');
       if CompRes = '' then
         CompRes := '?';
       case CompRes[1] of
@@ -648,12 +650,12 @@ var
     REML: string;       // REML code from DescEx field
     PlainText: string;  // plain text from Desc field
   begin
-    REML := CatIni.ReadString(Snippet, cDescExName, '');
+    REML := CatIni.ReadString(SnippetKey, cDescExName, '');
     if REML <> '' then
       Result := TSnippetExtraHelper.BuildActiveText(REML)
     else
     begin
-      PlainText := CatIni.ReadString(Snippet, cDescName, '');
+      PlainText := CatIni.ReadString(SnippetKey, cDescName, '');
       if PlainText <> '' then
         Result := TSnippetExtraHelper.PlainTextToActiveText(PlainText)
       else
@@ -664,7 +666,7 @@ var
   ///  <summary>Gets snippet's display name from ini file.</summary>
   function GetDisplayNameProperty: string;
   begin
-    Result := CatIni.ReadString(Snippet, cDisplayName, '');
+    Result := CatIni.ReadString(SnippetKey, cDisplayName, '');
   end;
 
   ///  <summary>Get's snippet's test info from ini file.</summary>
@@ -672,7 +674,7 @@ var
   var
     Str: string;  // string value read from ini file
   begin
-    Str := CatIni.ReadString(Snippet, cTestInfoName, 'basic');
+    Str := CatIni.ReadString(SnippetKey, cTestInfoName, 'basic');
     if StrSameText(Str, 'basic') then
       Result := stiBasic
     else if StrSameText(Str, 'advanced') then
@@ -685,7 +687,7 @@ var
 begin
   try
     // Get name of category associated with this snippet
-    CatID := SnippetToCat(Snippet);
+    CatID := SnippetToCat(SnippetKey);
     // Get snippet properties from values listed under snippet's section in
     // category's .ini file
     CatIni := fIniCache.GetIniFile(CatToCatIni(CatID));
@@ -705,29 +707,29 @@ begin
   end;
 end;
 
-function TIniDataReader.GetSnippetReferences(const Snippet,
-  RefName: string): IStringList;
+function TIniDataReader.GetSnippetReferences(const SnippetKey,
+  KeyName: string): IStringList;
 var
   CatIni: TCustomIniFile; // accesses snippet's category's .ini
 begin
   try
     // References are contained in comma separated value in category's ini file
     // under snippet's section
-    CatIni := fIniCache.GetIniFile(CatToCatIni(SnippetToCat(Snippet)));
-    Result := CommaStrToStrings(CatIni.ReadString(Snippet, RefName, ''));
+    CatIni := fIniCache.GetIniFile(CatToCatIni(SnippetToCat(SnippetKey)));
+    Result := CommaStrToStrings(CatIni.ReadString(SnippetKey, KeyName, ''));
   except
     HandleCorruptDatabase(ExceptObject);
   end;
 end;
 
-function TIniDataReader.GetSnippetUnits(const Snippet: string): IStringList;
+function TIniDataReader.GetSnippetUnits(const SnippetKey: string): IStringList;
 begin
-  Result := GetSnippetReferences(Snippet, cUnitsName);
+  Result := GetSnippetReferences(SnippetKey, cUnitsName);
 end;
 
-function TIniDataReader.GetSnippetXRefs(const Snippet: string): IStringList;
+function TIniDataReader.GetSnippetXRefs(const SnippetKey: string): IStringList;
 begin
-  Result := GetSnippetReferences(Snippet, cXRefName);
+  Result := GetSnippetReferences(SnippetKey, cXRefName);
 end;
 
 procedure TIniDataReader.HandleCorruptDatabase(const EObj: TObject);
@@ -748,7 +750,7 @@ end;
 
 procedure TIniDataReader.LoadIndices;
 var
-  SnippetName: string;        // each snippet name in a category
+  SnippetKey: string;         // key of each snippet in a category
   CatIdx: Integer;            // loops thru all categories
   CatSnippets: IStringList;   // list of snippets in a single category
 begin
@@ -761,8 +763,8 @@ begin
   begin
     // Get list of snippets in category ...
     CatSnippets := GetCatSnippets(fCatIDs[CatIdx]);
-    for SnippetName in CatSnippets do
-      fSnippetCatMap.Add(SnippetName, CatIdx);
+    for SnippetKey in CatSnippets do
+      fSnippetCatMap.Add(SnippetKey, CatIdx);
   end;
 end;
 
@@ -771,16 +773,16 @@ begin
   Result := DataFile(cMasterFileName);
 end;
 
-function TIniDataReader.SnippetToCat(const Snippet: string): string;
+function TIniDataReader.SnippetToCat(const SnippetKey: string): string;
 var
   CatIdx: Integer;  // index of category in category list for this snippet
 resourcestring
   // Error message
-  sMissingSnippet = 'Snippet "%s" not found in database.';
+  sMissingSnippet = 'Snippet key "%s" not found in database.';
 begin
-  if not fSnippetCatMap.ContainsKey(Snippet) then
-    raise EDataIO.CreateFmt(sMissingSnippet, [Snippet]);
-  CatIdx := fSnippetCatMap[Snippet];
+  if not fSnippetCatMap.ContainsKey(SnippetKey) then
+    raise EDataIO.CreateFmt(sMissingSnippet, [SnippetKey]);
+  CatIdx := fSnippetCatMap[SnippetKey];
   Result := fCatIDs[CatIdx];
 end;
 
@@ -906,15 +908,15 @@ begin
   // Do nothing
 end;
 
-procedure TIniDataWriter.WriteSnippetDepends(const SnippetName: string;
+procedure TIniDataWriter.WriteSnippetDepends(const SnippetKey: string;
   const Depends: IStringList);
 begin
   fCurrentCatIni.WriteString(
-    SnippetName, cDependsName, Depends.GetText(',', False)
+    SnippetKey, cDependsName, Depends.GetText(',', False)
   );
 end;
 
-procedure TIniDataWriter.WriteSnippetProps(const SnippetName: string;
+procedure TIniDataWriter.WriteSnippetProps(const SnippetKey: string;
   const Props: TSnippetData);
 const
   Kinds: array[TSnippetKind] of string = (
@@ -953,16 +955,16 @@ begin
     TFileIO.WriteAllText(SourceFilePath, Props.SourceCode, TEncoding.UTF8, True);
 
     // snippet kind
-    fCurrentCatIni.WriteString(SnippetName, cKindName, Kinds[Props.Kind]);
+    fCurrentCatIni.WriteString(SnippetKey, cKindName, Kinds[Props.Kind]);
 
     // display name, if set
     if (Props.DisplayName <> '') then
       {TODO -cVault: strictly, for v2 format, this name must be <=64 chars}
-      fCurrentCatIni.WriteString(SnippetName, cDisplayName, Props.DisplayName);
+      fCurrentCatIni.WriteString(SnippetKey, cDisplayName, Props.DisplayName);
 
     // description (must be set for v2)
     fCurrentCatIni.WriteString(
-      SnippetName,
+      SnippetKey,
       cDescExName,
       DOUBLEQUOTE + ActiveTextToREML(Props.Desc) + DOUBLEQUOTE
     );
@@ -970,13 +972,13 @@ begin
     // extra info, if set
     if Props.Extra.HasContent then
       fCurrentCatIni.WriteString(
-        SnippetName,
+        SnippetKey,
         cExtraName,
         DOUBLEQUOTE + ActiveTextToREML(Props.Extra) + DOUBLEQUOTE
       );
 
     // snippet file reference
-    fCurrentCatIni.WriteString(SnippetName, cSnipFileName, SourceFileName);
+    fCurrentCatIni.WriteString(SnippetKey, cSnipFileName, SourceFileName);
 
     // compiler info
     for CompilerID := Low(TCompilerID) to High(TCompilerID) do
@@ -984,14 +986,14 @@ begin
       CompileResult := CompileResults[Props.CompilerResults[CompilerID]];
       if CompileResult <> 'Q' then
           fCurrentCatIni.WriteString(
-            SnippetName, cCompilerIDNames[CompilerID], CompileResult
+            SnippetKey, cCompilerIDNames[CompilerID], CompileResult
           );
     end;
 
     // test info: only write if not basic
     {TODO -cVault: Add support for AdvancedTest .Level & .URL}
     if Props.TestInfo <> stiBasic then
-      fCurrentCatIni.WriteString(SnippetName, cTestInfoName, TestInfo[Props.TestInfo]);
+      fCurrentCatIni.WriteString(SnippetKey, cTestInfoName, TestInfo[Props.TestInfo]);
 
   except
 
@@ -1009,19 +1011,19 @@ begin
 
 end;
 
-procedure TIniDataWriter.WriteSnippetUnits(const SnippetName: string;
+procedure TIniDataWriter.WriteSnippetUnits(const SnippetKey: string;
   const Units: IStringList);
 begin
   fCurrentCatIni.WriteString(
-    SnippetName, cUnitsName, Units.GetText(',', False)
+    SnippetKey, cUnitsName, Units.GetText(',', False)
   );
 end;
 
-procedure TIniDataWriter.WriteSnippetXRefs(const SnippetName: string;
+procedure TIniDataWriter.WriteSnippetXRefs(const SnippetKey: string;
   const XRefs: IStringList);
 begin
   fCurrentCatIni.WriteString(
-    SnippetName, cXRefName, XRefs.GetText(',', False)
+    SnippetKey, cXRefName, XRefs.GetText(',', False)
   );
 end;
 

@@ -56,9 +56,9 @@ type
         @param CatID [in] Id of required category.
         @return Required node or nil if node doesn't exist.
       }
-    function FindSnippetNode(const SnippetName: string): IXMLNode;
+    function FindSnippetNode(const SnippetKey: string): IXMLNode;
       {Finds a specified snippet node for a snippet in the file.
-        @param SnippetName [in] Name of required snippet.
+        @param SnippetKey [in] Key of required snippet.
         @return Required node or nil if node doesn't exist.
       }
   public
@@ -94,11 +94,12 @@ type
           called.
         @except Exception always raised.
       }
-    function GetSnippetReferences(const Snippet, RefName: string): IStringList;
+    function GetSnippetReferences(const SnippetKey, RefName: string):
+      IStringList;
       {Get list of all specified references made by a snippet.
-        @param Snippet [in] Name of required snippet.
+        @param SnippetKey [in] Key of required snippet.
         @param RefName [in] Name of node containing snippet's references.
-        @return List of names of references.
+        @return List of references.
       }
   public
     constructor Create(const DBDir: string);
@@ -123,29 +124,30 @@ type
           values of category properties by implementor.
       }
     function GetCatSnippets(const CatID: string): IStringList;
-      {Get names of all snippets in a category.
+      {Get keys of all snippets in a category.
         @param CatID [in] Id of category containing snippets.
-        @return List of snippet names.
+        @return List of snippet keys.
       }
-    procedure GetSnippetProps(const Snippet: string; var Props: TSnippetData);
+    procedure GetSnippetProps(const SnippetKey: string;
+      var Props: TSnippetData);
       {Get properties of a snippet.
-        @param Snippet [in] Name of required snippet.
+        @param SnippetKey [in] Key of required snippet.
         @param Props [in/out] Empty properties passed in. Record fields set to
           values of snippet properties.
       }
-    function GetSnippetXRefs(const Snippet: string): IStringList;
+    function GetSnippetXRefs(const SnippetKey: string): IStringList;
       {Get list of all snippets that are cross referenced by a snippet.
-        @param Snippet [in] Name of snippet we need cross references for.
-        @return List of snippet names.
+        @param SnippetKey [in] Key of snippet we need cross references for.
+        @return List of snippet keys.
       }
-    function GetSnippetDepends(const Snippet: string): IStringList;
+    function GetSnippetDepends(const SnippetKey: string): IStringList;
       {Get list of all snippets on which a given snippet depends.
-        @param Snippet [in] Name of required snippet.
-        @return List of snippet names.
+        @param SnippetKey [in] Key of required snippet.
+        @return List of snippet keys.
       }
-    function GetSnippetUnits(const Snippet: string): IStringList;
+    function GetSnippetUnits(const SnippetKey: string): IStringList;
       {Get list of all units referenced by a snippet.
-        @param Snippet [in] Name of required snippet.
+        @param SnippetKey [in] Key of required snippet.
         @return List of unit names.
       }
   end;
@@ -170,10 +172,10 @@ type
         @param ItemName [in] Name of each list item tag.
         @param Items [in] List of names in list. One ItemName node per name.
       }
-    procedure WriteReferenceList(const SnippetName, ListName: string;
+    procedure WriteReferenceList(const SnippetKey, ListName: string;
       const Items: IStringList);
       {Writes a snippet's reference list to XML.
-        @param SnippetName [in] Name of snippet whose reference list is to be
+        @param SnippetKey [in] Key of snippet whose reference list is to be
           written.
         @param ListName [in] Name of tag that encloses list entry.
         @param Items [in] List of items in reference list.
@@ -198,36 +200,36 @@ type
       }
     procedure WriteCatSnippets(const CatID: string;
       const SnipList: IStringList);
-      {Write the list of snippets belonging to a category. Always called after
-      WriteCatProps for any given category.
+      {Write the list of snippets keys belonging to a category. Always called
+      after WriteCatProps for any given category.
         @param CatID [in] ID of category.
-        @param SnipList [in] List of names of snippets.
+        @param SnipList [in] List of snippet keys.
       }
-    procedure WriteSnippetProps(const SnippetName: string;
+    procedure WriteSnippetProps(const SnippetKey: string;
       const Props: TSnippetData);
       {Write the properties of a snippet. Always called after all categories are
       written and before WriteSnippetUnits, so can be used to perform any per-
       snippet intialisation.
-        @param SnippetName [in] Name of snippet.
+        @param SnippetKey [in] Snippet's key.
         @param Props [in] Properties of snippet.
       }
-    procedure WriteSnippetUnits(const SnippetName: string;
+    procedure WriteSnippetUnits(const SnippetKey: string;
       const Units: IStringList);
       {Write the list of units required by a snippet.
-        @param SnippetName [in] Name of snippet.
+        @param SnippetKey [in] Snippet's key.
         @param Units [in] List of names of required units.
       }
-    procedure WriteSnippetDepends(const SnippetName: string;
+    procedure WriteSnippetDepends(const SnippetKey: string;
       const Depends: IStringList);
       {Write the list of snippets on which a snippet depends.
-        @param SnippetName [in] Name of snippet.
-        @param Depends [in] List of snippet names.
+        @param SnippetKey [in] Snippet's key.
+        @param Depends [in] List of snippet keys.
       }
-    procedure WriteSnippetXRefs(const SnippetName: string;
+    procedure WriteSnippetXRefs(const SnippetKey: string;
       const XRefs: IStringList);
       {Write the list of snippets that a snippet cross-references.
-        @param SnippetName [in] Name of snippet.
-        @param XRefs [in] List of cross references snippets.
+        @param SnippetKey [in] Snippet's key.
+        @param XRefs [in] List of snippet keys.
       }
     procedure Finalise;
       {Finalises the database. Always called after all other methods.
@@ -345,9 +347,9 @@ begin
   )
 end;
 
-function TXMLDataIO.FindSnippetNode(const SnippetName: string): IXMLNode;
+function TXMLDataIO.FindSnippetNode(const SnippetKey: string): IXMLNode;
   {Finds a specified snippet node for a snippet in the file.
-    @param SnippetName [in] Name of required snippet.
+    @param SnippetKey [in] Key of required snippet.
     @return Required node or nil if node doesn't exist.
   }
 var
@@ -360,7 +362,7 @@ begin
     Error(sMissingNode, [cSnippetsNode]);
   // Find required snippet node
   Result := fXMLDoc.FindFirstChildNode(
-    SnippetListNode, cSnippetNode, cSnippetNameAttr, SnippetName
+    SnippetListNode, cSnippetNode, cSnippetNameAttr, SnippetKey
   );
 end;
 
@@ -379,7 +381,7 @@ resourcestring
   // Error messages
   sNoCategoriesNode = 'No categories node in XML file';
   sCatNotFound = 'Can''t find reference to category "%s" in XML file';
-  sSnippetNotFound = 'Can''t find reference to snippet "%s" in XML file';
+  sSnippetNotFound = 'Can''t find reference to snippet key "%s" in XML file';
   sMissingSource = 'Source code file name missing for snippet "%s"';
   sDBError = 'The database is corrupt and had been deleted.' + EOL2 + '%s';
 
@@ -472,9 +474,9 @@ begin
 end;
 
 function TXMLDataReader.GetCatSnippets(const CatID: string): IStringList;
-  {Get names of all snippets in a category.
+  {Get keys of all snippets in a category.
     @param CatID [in] Id of category containing snippets.
-    @return List of snippet names.
+    @return List of snippet keys.
   }
 var
   CatNode: IXMLNode;  // reference to required category node
@@ -494,19 +496,20 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetSnippetDepends(const Snippet: string): IStringList;
+function TXMLDataReader.GetSnippetDepends(const SnippetKey: string):
+  IStringList;
   {Get list of all snippets on which a given snippet depends.
-    @param Snippet [in] Name of required snippet.
-    @return List of snippet names.
+    @param SnippetKey [in] Key of required snippet.
+    @return List of snippet keys.
   }
 begin
-  Result := GetSnippetReferences(Snippet, cDependsNode);
+  Result := GetSnippetReferences(SnippetKey, cDependsNode);
 end;
 
-procedure TXMLDataReader.GetSnippetProps(const Snippet: string;
+procedure TXMLDataReader.GetSnippetProps(const SnippetKey: string;
   var Props: TSnippetData);
   {Get properties of a snippet.
-    @param Snippet [in] Name of required snippet.
+    @param SnippetKey [in] Key of required snippet.
     @param Props [in/out] Empty properties passed in. Record fields set to
       values of snippet's properties.
   }
@@ -532,7 +535,7 @@ var
   begin
     DataFileName := GetPropertyText(cSourceCodeFileNode);
     if DataFileName = '' then
-      Error(sMissingSource, [Snippet]);
+      Error(sMissingSource, [SnippetKey]);
     try
       // load the file: before file v5 files used default encoding, from v5
       // UTF-8 with no BOM was used
@@ -628,9 +631,9 @@ var
 begin
   try
     // Find snippet node
-    SnippetNode := FindSnippetNode(Snippet);
+    SnippetNode := FindSnippetNode(SnippetKey);
     if not Assigned(SnippetNode) then
-      Error(sSnippetNotFound, [Snippet]);
+      Error(sSnippetNotFound, [SnippetKey]);
     // Snippet found: read properties
     Props.Cat := GetPropertyText(cCatIdNode);
     Props.DisplayName := GetPropertyText(cDisplayNameNode);
@@ -649,21 +652,21 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetSnippetReferences(const Snippet,
-  RefName: string): IStringList;
+function TXMLDataReader.GetSnippetReferences(const SnippetKey, RefName: string):
+  IStringList;
   {Get list of all specified references made by a snippet.
-    @param Snippet [in] Name of required snippet.
+    @param SnippetKey [in] Key of required snippet.
     @param RefName [in] Name of node containing snippet's references.
-    @return List of names of references.
+    @return List of references.
   }
 var
   SnippetNode: IXMLNode;  // node for required snippet
 begin
   try
     Result := TIStringList.Create;
-    SnippetNode := FindSnippetNode(Snippet);
+    SnippetNode := FindSnippetNode(SnippetKey);
     if not Assigned(SnippetNode) then
-      Error(sSnippetNotFound, [Snippet]);
+      Error(sSnippetNotFound, [SnippetKey]);
     // References are contained in a list of contained <pascal-name> nodes
     TXMLDocHelper.GetPascalNameList(
       fXMLDoc, fXMLDoc.FindFirstChildNode(SnippetNode, RefName), Result
@@ -673,22 +676,22 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetSnippetUnits(const Snippet: string): IStringList;
+function TXMLDataReader.GetSnippetUnits(const SnippetKey: string): IStringList;
   {Get list of all units referenced by a snippet.
-    @param Snippet [in] Name of required snippet.
-    @return List of unit names.
+    @param SnippetKey [in] Key of required snippet.
+    @return List of unit keys.
   }
 begin
-  Result := GetSnippetReferences(Snippet, cUnitsNode);
+  Result := GetSnippetReferences(SnippetKey, cUnitsNode);
 end;
 
-function TXMLDataReader.GetSnippetXRefs(const Snippet: string): IStringList;
+function TXMLDataReader.GetSnippetXRefs(const SnippetKey: string): IStringList;
   {Get list of all snippets that are cross referenced by a snippet.
-    @param Snippet [in] Name of snippet we need cross references for.
-    @return List of snippet names.
+    @param SnippetKey [in] Key of snippet we need cross references for.
+    @return List of snippet keys.
   }
 begin
-  Result := GetSnippetReferences(Snippet, cXRefNode);
+  Result := GetSnippetReferences(SnippetKey, cXRefNode);
 end;
 
 procedure TXMLDataReader.HandleCorruptDatabase(const EObj: TObject);
@@ -835,7 +838,7 @@ procedure TXMLDataWriter.WriteCatSnippets(const CatID: string;
   {Write the list of snippets belonging to a category. Always called after
   WriteCatProps for any given category.
     @param CatID [in] ID of category.
-    @param SnipList [in] List of names of snippets.
+    @param SnipList [in] List of snippet keyss.
   }
 var
   CatNode: IXMLNode;  // reference to required category node
@@ -872,10 +875,10 @@ begin
     fXMLDoc.CreateElement(ListNode, ItemName, Item);
 end;
 
-procedure TXMLDataWriter.WriteReferenceList(const SnippetName, ListName: string;
+procedure TXMLDataWriter.WriteReferenceList(const SnippetKey, ListName: string;
   const Items: IStringList);
   {Writes a snippet's reference list to XML.
-    @param SnippetName [in] Name of snippet whose reference list is to be
+    @param SnippetKey [in] Key of snippet whose reference list is to be
       written.
     @param ListName [in] Name of tag that encloses list entry.
     @param Items [in] List of items in reference list.
@@ -888,7 +891,7 @@ begin
     if Items.Count = 0 then
       Exit;
     // Find snippet node
-    SnippetNode := FindSnippetNode(SnippetName);
+    SnippetNode := FindSnippetNode(SnippetKey);
     Assert(Assigned(SnippetNode),
       ClassName + '.WriteReferenceList: Can''t find snippet node');
     // Write the list
@@ -900,22 +903,22 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteSnippetDepends(const SnippetName: string;
+procedure TXMLDataWriter.WriteSnippetDepends(const SnippetKey: string;
   const Depends: IStringList);
   {Write the list of snippets on which a snippet depends.
-    @param SnippetName [in] Name of snippet.
-    @param Depends [in] List of snippet names.
+    @param SnippetKey [in] Snippet's key.
+    @param Depends [in] List of snippet keys.
   }
 begin
-  WriteReferenceList(SnippetName, cDependsNode, Depends);
+  WriteReferenceList(SnippetKey, cDependsNode, Depends);
 end;
 
-procedure TXMLDataWriter.WriteSnippetProps(const SnippetName: string;
+procedure TXMLDataWriter.WriteSnippetProps(const SnippetKey: string;
   const Props: TSnippetData);
   {Write the properties of a snippet. Always called after all categories are
   written and before WriteSnippetsUnits, so can be used to perform any per-
   snippet intialisation.
-    @param SnippetName [in] Name of snippet.
+    @param SnippetKey [in] Snippet's key.
     @param Props [in] Properties of snippet.
   }
 var
@@ -928,7 +931,7 @@ begin
   try
     // Create snippet node
     SnippetNode := fXMLDoc.CreateElement(fSnippetsNode, cSnippetNode);
-    SnippetNode.Attributes[cSnippetNameAttr] := SnippetName;
+    SnippetNode.Attributes[cSnippetNameAttr] := SnippetKey;
     // Add properties
     fXMLDoc.CreateElement(SnippetNode, cCatIdNode, Props.Cat);
     // description node is written even if empty (which it shouldn't be)
@@ -968,24 +971,24 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteSnippetUnits(const SnippetName: string;
+procedure TXMLDataWriter.WriteSnippetUnits(const SnippetKey: string;
   const Units: IStringList);
   {Write the list of units required by a snippet.
-    @param SnippetName [in] Name of snippet.
+    @param SnippetKey [in] Snippet's key.
     @param Units [in] List of names of required units.
   }
 begin
-  WriteReferenceList(SnippetName, cUnitsNode, Units);
+  WriteReferenceList(SnippetKey, cUnitsNode, Units);
 end;
 
-procedure TXMLDataWriter.WriteSnippetXRefs(const SnippetName: string;
+procedure TXMLDataWriter.WriteSnippetXRefs(const SnippetKey: string;
   const XRefs: IStringList);
   {Write the list of snippets that a snippet cross-references.
-    @param SnippetName [in] Name of snippet.
+    @param SnippetKey [in] Snippet's key.
     @param XRefs [in] List of cross references snippets.
   }
 begin
-  WriteReferenceList(SnippetName, cXRefNode, XRefs);
+  WriteReferenceList(SnippetKey, cXRefNode, XRefs);
 end;
 
 end.
