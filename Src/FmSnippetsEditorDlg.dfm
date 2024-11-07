@@ -42,14 +42,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Caption = '&Source code:'
           FocusControl = edSourceCode
         end
-        object lblName: TLabel
-          Left = 3
-          Top = 11
-          Width = 31
-          Height = 13
-          Caption = '&Name:'
-          FocusControl = edName
-        end
         object lblCategories: TLabel
           Left = 0
           Top = 183
@@ -111,15 +103,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           ParentFont = False
           PopupMenu = mnuEditCtrls
           ScrollBars = ssBoth
-          TabOrder = 6
-        end
-        object edName: TEdit
-          Left = 93
-          Top = 7
-          Width = 209
-          Height = 21
-          PopupMenu = mnuEditCtrls
-          TabOrder = 0
+          TabOrder = 5
         end
         object cbCategories: TComboBox
           Left = 93
@@ -127,7 +111,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 209
           Height = 21
           Style = csDropDownList
-          TabOrder = 5
+          TabOrder = 4
         end
         object cbKind: TComboBox
           Left = 93
@@ -135,7 +119,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 209
           Height = 21
           Style = csDropDownList
-          TabOrder = 4
+          TabOrder = 3
           OnChange = cbKindChange
         end
         inline frmDescription: TSnippetsActiveTextEdFrame
@@ -146,7 +130,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Color = clWindow
           ParentBackground = False
           ParentColor = False
-          TabOrder = 2
+          TabOrder = 1
           ExplicitLeft = 93
           ExplicitTop = 67
           ExplicitWidth = 462
@@ -171,7 +155,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Height = 25
           Action = actViewDescription
           Caption = 'Previe&w...'
-          TabOrder = 3
+          TabOrder = 2
         end
         object edDisplayName: TEdit
           Left = 93
@@ -179,7 +163,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 298
           Height = 21
           PopupMenu = mnuEditCtrls
-          TabOrder = 1
+          TabOrder = 0
         end
         object chkUseHiliter: TCheckBox
           Left = 3
@@ -187,7 +171,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 478
           Height = 17
           Caption = 'Synta&x highlight this snippet as Pascal code'
-          TabOrder = 7
+          TabOrder = 6
         end
       end
       object tsReferences: TTabSheet

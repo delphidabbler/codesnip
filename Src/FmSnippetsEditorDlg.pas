@@ -21,7 +21,8 @@ uses
   SysUtils, Classes, ActnList, Buttons, StdCtrls, Forms, Controls, CheckLst,
   ComCtrls, ExtCtrls, StdActns, Menus, ImgList,
   // Project
-  ActiveText.UMain, Compilers.UGlobals, DB.USnippet, FmGenericOKDlg,
+  ActiveText.UMain, Compilers.UGlobals,
+  DB.UCollections, DB.USnippet, FmGenericOKDlg,
   FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UBaseObjects, UCategoryListAdapter,
   UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, UMemoCaretPosDisplayMgr,
   UMemoHelper, USnipKindListAdapter, USnippetsChkListMgr, UUnitsChkListMgr,
@@ -61,7 +62,6 @@ type
     clbDepends: TCheckListBox;
     clbUnits: TCheckListBox;
     clbXRefs: TCheckListBox;
-    edName: TEdit;
     edSourceCode: TMemo;
     edUnit: TEdit;
     lbCompilers: TListBox;
@@ -73,7 +73,6 @@ type
     lblDescription: TLabel;
     lblExtra: TLabel;
     lblExtraCaretPos: TLabel;
-    lblName: TLabel;
     lblKind: TLabel;
     lblSourceCaretPos: TLabel;
     lblSourceCode: TLabel;
@@ -160,7 +159,6 @@ type
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
     fSnipKindList:
       TSnipKindListAdapter;         // Accesses sorted list of snippet kinds
-    fOrigName: string;              // Original name of snippet ('' for new)
     fEditData: TSnippetEditData;    // Record storing a snippet's editable data
     fCompileMgr: TCompileMgr;       // Manages compilation and results display
     fDependsCLBMgr:
@@ -173,6 +171,24 @@ type
     fSourceMemoHelper: TMemoHelper; // Helper for working with source code memo
     fMemoCaretPosDisplayMgr: TMemoCaretPosDisplayMgr;
                                     // Manages display of memo caret positions
+
+    ///  <summary>Returns the ID of the collection that applies to a new or
+    ///  existing snippet.</summary>
+    ///  <returns><c>TCollectionID</c>. The required collection ID.</returns>
+    ///  <remarks>For a new snippet the return value is the collection to be
+    ///  applied to the snippet. For an existing snippet this is collection to
+    ///  which the snippet already belongs.</remarks>
+    function SelectedCollectionID: TCollectionID;
+
+    ///  <summary>Returns a snippet key that is unique with the current
+    ///  snippet collection.</summary>
+    ///  <returns><c>string</c>. The required key.</returns>
+    ///  <remarks>For a new snippet this key will change depending each time the
+    ///  method is called, and will always be unique within the selected
+    ///  collection. For an existing snippet the key is always that of the
+    ///  snippet and never changes across method calls.</remarks>
+    function UniqueSnippetKey: string;
+
     procedure PopulateControls;
       {Populates controls with dynamic data.
       }
@@ -254,7 +270,6 @@ uses
   // Delphi
   Windows {for inlining}, Graphics,
   // Project
-  DB.UCollections,
   DB.UMain, DB.USnippetKind, FmDependenciesDlg, IntfCommon, UColours, UConsts,
   UCSSUtils, UCtrlArranger, UExceptions, UFontHelper, UIStringList,
   UReservedCategories, USnippetExtraHelper, USnippetValidator, UMessageBox,
@@ -425,7 +440,7 @@ begin
     fDependsCLBMgr.GetCheckedSnippets(DependsList);
     TDependenciesDlg.Execute(
       Self,
-      TSnippetID.Create(StrTrim(edName.Text), TCollectionID.__TMP__UserDBCollectionID),
+      TSnippetID.Create(UniqueSnippetKey, TCollectionID.__TMP__UserDBCollectionID),
       StrTrim(edDisplayName.Text),
       DependsList,
       [tiDependsUpon],
@@ -555,7 +570,7 @@ begin
   edSourceCode.Width := tsCode.ClientWidth - 8;
   TCtrlArranger.AlignLefts(
     [
-      lblName, lblDisplayName, lblDescription, lblKind, lblCategories,
+      lblDisplayName, lblDescription, lblKind, lblCategories,
       lblSourceCode, edSourceCode
     ],
     3
@@ -564,10 +579,7 @@ begin
     [edSourceCode, lblSourceCaretPos, btnViewDescription]
   );
   frmDescription.Width := btnViewDescription.Left - frmDescription.Left - 8;
-  TCtrlArranger.AlignVCentres(3, [lblName, edName]);
-  TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblName, edName], 8),
-    [lblDisplayName, edDisplayName]
+  TCtrlArranger.AlignVCentres(3, [lblDisplayName, edDisplayName]
   );
   TCtrlArranger.AlignTops(
     [lblDescription, frmDescription, btnViewDescription],
@@ -622,24 +634,21 @@ procedure TSnippetsEditorDlg.btnOKClick(Sender: TObject);
   snippet if all is well.
     @param Sender [in] Not used.
   }
-var
-  SnippetName: string;  // name of snippet being edited / added
 begin
   inherited;
   try
     // Validate and record entered data
     ValidateData;
     fEditData.Assign(UpdateData);
-    SnippetName := StrTrim(edName.Text);
     // Add or update snippet
     if Assigned(fSnippet) then
-      fSnippet := (Database as IDatabaseEdit).UpdateSnippet(
-        fSnippet, fEditData, SnippetName
+      (Database as IDatabaseEdit).UpdateSnippet(
+        fSnippet, fEditData, UniqueSnippetKey
       )
     else
     begin
-      fSnippet := (Database as IDatabaseEdit).AddSnippet(
-        SnippetName, fEditData
+      (Database as IDatabaseEdit).AddSnippet(
+        UniqueSnippetKey, fEditData
       )
     end;
   except
@@ -685,7 +694,7 @@ begin
   // Create snippet object from entered data
   EditData.Assign(UpdateData);
   Result := (Database as IDatabaseEdit).CreateTempSnippet(
-    StrTrim(edName.Text), EditData
+    UniqueSnippetKey, EditData
   );
 end;
 
@@ -718,6 +727,7 @@ var
 resourcestring
   sCaption = 'Edit Snippet';  // dialogue box caption
 begin
+  Assert(Assigned(Snippet), ClassName + '.EditSnippet: Snippet is nil');
   Instance := InternalCreate(AOwner);
   try
     Instance.Caption := sCaption;
@@ -822,11 +832,7 @@ begin
     chkUseHiliter.Checked := fSnippet.HiliteSource;
     frmDescription.DefaultEditMode := emAuto;
     frmDescription.ActiveText := fSnippet.Description;
-    edName.Text := fSnippet.Key;
-    if fSnippet.Key <> fSnippet.DisplayName then
-      edDisplayName.Text := fSnippet.DisplayName
-    else
-      edDisplayName.Text := '';
+    edDisplayName.Text := fSnippet.DisplayName;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
     frmExtra.DefaultEditMode := emAuto;
     frmExtra.ActiveText := fSnippet.Extra;
@@ -845,7 +851,6 @@ begin
     chkUseHiliter.Checked := True;
     frmDescription.DefaultEditMode := emPlainText;
     frmDescription.Clear;
-    edName.Clear;
     edDisplayName.Clear;
     cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatID);
     if cbCategories.ItemIndex = -1 then
@@ -874,11 +879,6 @@ begin
   // Get data associated with snippet, or blank / default data if adding a new
   // snippet
   fEditData := (Database as IDatabaseEdit).GetEditableSnippetInfo(fSnippet);
-  // Record snippet's original name, if any
-  if Assigned(fSnippet) then
-    fOrigName := fSnippet.Key
-  else
-    fOrigName := '';
   // Populate controls with dynamic data
   PopulateControls;
   // Initialise controls to default values
@@ -934,6 +934,17 @@ begin
   fCatList.ToStrings(cbCategories.Items);
 end;
 
+function TSnippetsEditorDlg.SelectedCollectionID: TCollectionID;
+begin
+  if Assigned(fSnippet) then
+    Result := fSnippet.CollectionID
+  else
+    {TODO -cCollections: Replace the following __TMP__ method with collection ID
+            selected by user from a combo box. DO NOT permit this choice when
+            editing an existing snippet.}
+    Result := TCollectionID.__TMP__UserDBCollectionID;
+end;
+
 procedure TSnippetsEditorDlg.SetAllCompilerResults(
   const CompRes: TCompileResult);
   {Sets all compiler results to same value.
@@ -943,16 +954,23 @@ begin
   fCompilersLBMgr.SetCompileResults(CompRes);
 end;
 
+function TSnippetsEditorDlg.UniqueSnippetKey: string;
+begin
+  if Assigned(fSnippet) then
+    Result := fSnippet.Key
+  else
+    Result := (Database as IDatabaseEdit).GetUniqueSnippetKey(
+      SelectedCollectionID
+    );
+end;
+
 function TSnippetsEditorDlg.UpdateData: TSnippetEditData;
   {Updates snippet's data from user entries. Assumes data has been validated.
     @return Record containing snippet's data.
   }
 begin
   Result.Init;
-  if StrTrim(edName.Text) <> StrTrim(edDisplayName.Text) then
-    Result.Props.DisplayName := StrTrim(edDisplayName.Text)
-  else
-    Result.Props.DisplayName := '';
+  Result.Props.DisplayName := StrTrim(edDisplayName.Text);
   Result.Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
   Result.Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
   (Result.Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
@@ -980,7 +998,7 @@ begin
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
 
-  EditSnippetID := TSnippetID.Create(fOrigName, TCollectionID.__TMP__UserDBCollectionID);
+  EditSnippetID := TSnippetID.Create(UniqueSnippetKey, SelectedCollectionID);
   EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
   for Snippet in Database.Snippets do
   begin
@@ -1019,13 +1037,10 @@ var
   ErrorMessage: string;       // receives validation error messages
   ErrorSelection: TSelection; // receives selection containing errors
 begin
-  if not TSnippetValidator.ValidateName(
-    edName.Text,
-    not StrSameText(StrTrim(edName.Text), fOrigName),
-    ErrorMessage,
-    ErrorSelection
+  if not TSnippetValidator.ValidateDisplayName(
+    edDisplayName.Text, ErrorMessage
   ) then
-    raise EDataEntry.Create(ErrorMessage, edName, ErrorSelection);
+    raise EDataEntry.Create(ErrorMessage, edDisplayName);
   frmDescription.Validate;
   if not TSnippetValidator.ValidateSourceCode(
     edSourceCode.Text, ErrorMessage, ErrorSelection
@@ -1033,7 +1048,7 @@ begin
     raise EDataEntry.Create(ErrorMessage, edSourceCode, ErrorSelection);
   frmExtra.Validate;
   if not TSnippetValidator.ValidateDependsList(
-    StrTrim(edName.Text), UpdateData, ErrorMessage
+    UniqueSnippetKey, UpdateData, ErrorMessage
   ) then
     raise EDataEntry.Create(  // selection not applicable to list boxes
       StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
