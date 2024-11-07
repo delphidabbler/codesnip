@@ -133,7 +133,7 @@ begin
   Result.CaseSensitive := False;
   for Snippet in Database.Snippets do
     if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
-      Result.Add(Snippet.Name);
+      Result.Add(Snippet.Key);
 end;
 
 class function TDuplicateSnippetDlg.Execute(const AOwner: TComponent;
@@ -179,9 +179,9 @@ var
   SnippetCat: TCategory;
 begin
   inherited;
-  edUniqueName.Text := UniqueSnippetName(fSnippet.Name);
+  edUniqueName.Text := UniqueSnippetName(fSnippet.Key);
   edDisplayName.Text := StrIf(
-    StrSameStr(fSnippet.Name, fSnippet.DisplayName), '', fSnippet.DisplayName
+    StrSameStr(fSnippet.Key, fSnippet.DisplayName), '', fSnippet.DisplayName
   );
   fCatList.ToStrings(cbCategory.Items);
   SnippetCat := Database.Categories.Find(fSnippet.Category);

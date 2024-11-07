@@ -172,7 +172,7 @@ class function TSnippetValidator.Validate(const Snippet: TSnippet;
     @return True if snippet valid or False if not.
   }
 begin
-  Result := ValidateName(Snippet.Name, False, ErrorMsg, ErrorSel)
+  Result := ValidateName(Snippet.Key, False, ErrorMsg, ErrorSel)
     and ValidateDescription(Snippet.Description.ToString, ErrorMsg, ErrorSel)
     and ValidateSourceCode(Snippet.SourceCode, ErrorMsg, ErrorSel)
     and ValidateDependsList(Snippet, ErrorMsg)
@@ -241,8 +241,8 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
 resourcestring
   // Error messages
   sInvalidKind = 'Invalid snippet kind "%0:s" in depends list for snippet '
-    + 'named "%1:s"';
-  sCircular = '%0:s Snippet named "%1:s" cannot depend on itself.';
+    + 'with key "%1:s"';
+  sCircular = '%0:s snippet with key "%1:s" cannot depend on itself.';
 var
   DeniedDepends: TSnippetKinds; // snippet kinds that can't be in depends list
 begin
@@ -255,7 +255,7 @@ begin
     ErrorMsg := Format(
       sCircular, [
         TSnippetKindInfoList.Items[Snippet.Kind].DisplayName,
-        Snippet.Name
+        Snippet.Key
       ]
     );
     Exit;
@@ -270,7 +270,7 @@ begin
       sInvalidKind,
       [
         TSnippetKindInfoList.Items[Snippet.Kind].DisplayName,
-        Snippet.Name
+        Snippet.Key
       ]
     );
 end;

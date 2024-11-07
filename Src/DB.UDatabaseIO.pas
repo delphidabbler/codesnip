@@ -571,12 +571,12 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
 
 begin
   LoadSnippetReferences(
-    Snippet.Depends, fReader.GetSnippetDepends(Snippet.Name)
+    Snippet.Depends, fReader.GetSnippetDepends(Snippet.Key)
   );
   LoadSnippetReferences(
-    Snippet.XRef, fReader.GetSnippetXRefs(Snippet.Name)
+    Snippet.XRef, fReader.GetSnippetXRefs(Snippet.Key)
   );
-  fReader.GetSnippetUnits(Snippet.Name).CopyTo(Snippet.Units);
+  fReader.GetSnippetUnits(Snippet.Key).CopyTo(Snippet.Units);
 end;
 
 procedure TDatabaseLoader.LoadSnippets(const Cat: TCategory);
@@ -749,14 +749,14 @@ end;
 
 procedure TFormatSaver.WriteSnippets;
 
-  // Adds names of snippets from IDList to a string list
+  // Adds snippet keys from IDList to a string list
   function IDListToStrings(const IDList: ISnippetIDList): IStringList;
   var
     ID: TSnippetID; // each id in snippet id list
   begin
     Result := TIStringList.Create;
     for ID in IDList do
-      Result.Add(ID.Name);
+      Result.Add(ID.Key);
   end;
 
 var
@@ -770,12 +770,12 @@ begin
     begin
       // Get and write a snippet's properties
       Props := fProvider.GetSnippetProps(Snippet);
-      fWriter.WriteSnippetProps(Snippet.Name, Props);
+      fWriter.WriteSnippetProps(Snippet.Key, Props);
       // Get and write a snippet's references
       Refs := fProvider.GetSnippetRefs(Snippet);
-      fWriter.WriteSnippetUnits(Snippet.Name, Refs.Units);
-      fWriter.WriteSnippetDepends(Snippet.Name, IDListToStrings(Refs.Depends));
-      fWriter.WriteSnippetXRefs(Snippet.Name, IDListToStrings(Refs.XRef));
+      fWriter.WriteSnippetUnits(Snippet.Key, Refs.Units);
+      fWriter.WriteSnippetDepends(Snippet.Key, IDListToStrings(Refs.Depends));
+      fWriter.WriteSnippetXRefs(Snippet.Key, IDListToStrings(Refs.XRef));
     end;
   end;
 end;

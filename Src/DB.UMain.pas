@@ -702,7 +702,7 @@ begin
     ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
   Data := (Snippet as TSnippetEx).GetEditData;
   Result := TTempSnippet.Create(
-    Snippet.Name, Snippet.CollectionID, (Snippet as TSnippetEx).GetProps);
+    Snippet.Key, Snippet.CollectionID, (Snippet as TSnippetEx).GetProps);
   (Result as TTempSnippet).UpdateRefs(
     (Snippet as TSnippetEx).GetReferences, fSnippets
   );
@@ -952,7 +952,7 @@ begin
   (Result as TSnippetEx).UpdateRefs(Data.Refs, fSnippets);
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
-    raise ECodeSnip.CreateFmt(sCatNotFound, [Result.Category, Result.Name]);
+    raise ECodeSnip.CreateFmt(sCatNotFound, [Result.Category, Result.Key]);
   Cat.Snippets.Add(Result);
   fSnippets.Add(Result);
 end;
@@ -1182,11 +1182,11 @@ begin
     if NewName <> '' then
       SnippetName := NewName
     else
-      SnippetName := Snippet.Name;
-    // If name has changed then new name musn't exist in user database
-    if not StrSameText(SnippetName, Snippet.Name) then
+      SnippetName := Snippet.Key;
+    // If key has changed then new key musn't exist in user database
+    if not StrSameText(SnippetName, Snippet.Key) then
       if fSnippets.Find(SnippetName, TCollectionID.__TMP__UserDBCollectionID) <> nil then
-        raise ECodeSnip.CreateFmt(sCantRename, [Snippet.Name, SnippetName]);
+        raise ECodeSnip.CreateFmt(sCantRename, [Snippet.Key, SnippetName]);
     // We update by deleting old snippet and inserting new one
     // get lists of snippets that cross reference or depend on this snippet
     Dependents := TSnippetList.Create;
@@ -1287,7 +1287,7 @@ begin
   Result := TIStringList.Create;
   for Snippet in Cat.Snippets do
     if Snippet.CollectionID = fCollectionID then
-      Result.Add(Snippet.Name);
+      Result.Add(Snippet.Key);
 end;
 
 function TCollectionDataProvider.GetSnippetProps(

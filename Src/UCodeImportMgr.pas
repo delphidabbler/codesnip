@@ -186,7 +186,7 @@ begin
   Result.CaseSensitive := False;
   for Snippet in Database.Snippets do
     if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
-      Result.Add(Snippet.Name);
+      Result.Add(Snippet.Key);
   for SnippetInfo in fSnippetInfoList do
     if not StrSameText(SnippetInfo.Name, ExcludedName) then
       Result.Add(SnippetInfo.Name);
@@ -257,7 +257,7 @@ procedure TCodeImportMgr.UpdateDatabase;
     begin
       SnippetID := Depends[Idx];
       CollectionID := TCollectionID.__TMP__UserDBCollectionID;
-      if Database.Snippets.Find(SnippetID.Name, CollectionID) = nil then
+      if Database.Snippets.Find(SnippetID.Key, CollectionID) = nil then
         CollectionID := TCollectionID.__TMP__MainDBCollectionID;
       SnippetID.CollectionID := CollectionID;
       Depends[Idx] := SnippetID;
@@ -308,7 +308,7 @@ end;
 
 function TImportInfoComparer.Compare(const Left, Right: TImportInfo): Integer;
 begin
-  Result := TSnippetID.CompareNames(Left.OrigName, Right.OrigName);
+  Result := TSnippetID.CompareKeys(Left.OrigName, Right.OrigName);
 end;
 
 { TImportInfoList }

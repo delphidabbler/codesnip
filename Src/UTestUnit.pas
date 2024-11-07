@@ -136,8 +136,9 @@ var
 begin
   if fSnippet.Kind = skUnit then
     Exit(TUnitAnalyser.UnitName(fSnippet.SourceCode));
-  // Unit name is same as Snippet being tested, but with prefix to make unique
-  Result := cUnitPrefix + fSnippet.Name;
+  // Unit name is same as key of Snippet being tested, but with prefix to make
+  // unique
+  Result := cUnitPrefix + fSnippet.Key;
   // We ensure only ASCII characters are used in unit name. Any unsuitable
   // characters are replaced by underscore.
   // This is done because unit name is also used as unit file name. If we took

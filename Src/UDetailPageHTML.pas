@@ -538,7 +538,7 @@ begin
   );
   Tplt.ResolvePlaceholderText(
     'EditEventHandler',
-    TJavaScript.LiteralFunc('editSnippet', [GetSnippet.Name])
+    TJavaScript.LiteralFunc('editSnippet', [GetSnippet.Key])
   );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try

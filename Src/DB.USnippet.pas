@@ -118,8 +118,8 @@ type
     fKind: TSnippetKind;                    // Kind of snippet this is
     fCategory: string;                      // Name of snippet's category
     fDescription: IActiveText;              // Description of snippet
-    fSourceCode: string;                    // Snippet's source code
-    fName: string;                          // Name of snippet
+    fSourceCode: string;                    // Snippet source code
+    fKey: string;                           // Snippet key: unique in collection
     fDisplayName: string;                   // Display name of snippet
     fUnits: TStringList;                    // List of required units
     fDepends: TSnippetList;                 // List of required snippets
@@ -138,9 +138,9 @@ type
         @return Required display name.
       }
   strict protected
-    procedure SetName(const Name: string);
-      {Sets Name property.
-        @param Name [in] New name.
+    procedure SetKey(const AKey: string);
+      {Sets Key property.
+        @param AKey [in] New key.
       }
     procedure SetProps(const Data: TSnippetData);
       {Sets snippet's properties.
@@ -154,12 +154,12 @@ type
 
     ///  <summary>Object constructor. Sets up snippet object with given property
     ///  values belonging to a specified collection.</summary>
-    ///  <param name="Name"><c>string</c> [in] Name of snippet.</param>
+    ///  <param name="AKey"><c>string</c> [in] Snippet's key.</param>
     ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of collection
     ///  to which the snippet belongs. ID must not be null.</param>
     ///  <param name="Props"><c>TSnippetData</c> [in] Values of snippet
     ///  properties.</param>
-    constructor Create(const Name: string; const ACollectionID: TCollectionID;
+    constructor Create(const AKey: string; const ACollectionID: TCollectionID;
       const Props: TSnippetData);
 
     destructor Destroy; override;
@@ -179,8 +179,8 @@ type
       {Kind of snippet represented by this object}
     property ID: TSnippetID read GetID;
       {Snippet's unique ID}
-    property Name: string read fName;
-      {Name of snippet}
+    property Key: string read fKey;
+      {Snippet key}
     property DisplayName: string read GetDisplayName;
       {Displat name of snippet}
     property Category: string read fCategory;
@@ -414,7 +414,7 @@ begin
   Result := Kind <> skFreeform;
 end;
 
-constructor TSnippet.Create(const Name: string;
+constructor TSnippet.Create(const AKey: string;
   const ACollectionID: TCollectionID; const Props: TSnippetData);
 begin
   Assert(ClassType <> TSnippet,
@@ -423,7 +423,7 @@ begin
     ClassName + '.Create: ACollectionID is null');
   inherited Create;
   // Record simple property values
-  SetName(Name);
+  SetKey(AKey);
   SetProps(Props);
   // Create string list to store required units
   fUnits := TStringList.Create;
@@ -451,7 +451,7 @@ begin
   if GetDisplayNameValue <> '' then
     Result := GetDisplayNameValue
   else
-    Result := fName;
+    Result := fKey;
 end;
 
 function TSnippet.GetDisplayNameValue: string;
@@ -464,7 +464,7 @@ function TSnippet.GetID: TSnippetID;
     @return Required ID.
   }
 begin
-  Result := TSnippetID.Create(fName, fCollectionID);
+  Result := TSnippetID.Create(fKey, fCollectionID);
 end;
 
 function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
@@ -477,12 +477,9 @@ begin
   Result := Snippet.ID = Self.ID;
 end;
 
-procedure TSnippet.SetName(const Name: string);
-  {Sets Name property.
-    @param Name [in] New name.
-  }
+procedure TSnippet.SetKey(const AKey: string);
 begin
-  fName := Name;
+  fKey := AKey;
 end;
 
 procedure TSnippet.SetProps(const Data: TSnippetData);
@@ -740,7 +737,7 @@ function TSnippetList.Find(const SnippetID: TSnippetID): TSnippet;
     @return Reference to required snippet or nil if not found.
   }
 begin
-  Result := Find(SnippetID.Name, SnippetID.CollectionID);
+  Result := Find(SnippetID.Key, SnippetID.CollectionID);
 end;
 
 function TSnippetList.GetEnumerator: TEnumerator<TSnippet>;

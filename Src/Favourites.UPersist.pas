@@ -134,7 +134,7 @@ begin
     SB.AppendLine(Watermark);
     for Fav in Favourites do
     begin
-      SB.Append(Fav.SnippetID.Name);
+      SB.Append(Fav.SnippetID.Key);
       SB.Append(TAB);
       SB.Append(BoolToStr(Fav.SnippetID.CollectionID <> TCollectionID.__TMP__MainDBCollectionID, True));
       SB.Append(TAB);

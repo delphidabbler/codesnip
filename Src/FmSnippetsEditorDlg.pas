@@ -822,8 +822,8 @@ begin
     chkUseHiliter.Checked := fSnippet.HiliteSource;
     frmDescription.DefaultEditMode := emAuto;
     frmDescription.ActiveText := fSnippet.Description;
-    edName.Text := fSnippet.Name;
-    if fSnippet.Name <> fSnippet.DisplayName then
+    edName.Text := fSnippet.Key;
+    if fSnippet.Key <> fSnippet.DisplayName then
       edDisplayName.Text := fSnippet.DisplayName
     else
       edDisplayName.Text := '';
@@ -876,7 +876,7 @@ begin
   fEditData := (Database as IDatabaseEdit).GetEditableSnippetInfo(fSnippet);
   // Record snippet's original name, if any
   if Assigned(fSnippet) then
-    fOrigName := fSnippet.Name
+    fOrigName := fSnippet.Key
   else
     fOrigName := '';
   // Populate controls with dynamic data
@@ -985,11 +985,11 @@ begin
   for Snippet in Database.Snippets do
   begin
     // We ignore snippet being edited and main database snippets if there is
-    // a user-defined one with same name
+    // a user-defined one with same key
     if (Snippet.ID <> EditSnippetID) and
       (
         (Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID) or
-        not Assigned(Database.Snippets.Find(Snippet.Name, TCollectionID.__TMP__UserDBCollectionID))
+        not Assigned(Database.Snippets.Find(Snippet.Key, TCollectionID.__TMP__UserDBCollectionID))
       ) then
     begin
       // Decide if snippet can be added to depends list: must be correct kind
