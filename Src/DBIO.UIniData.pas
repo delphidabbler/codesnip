@@ -9,6 +9,8 @@
  * files.
 }
 
+{TODO -cVault: rename INI term to DCSCv2 - this isn't a general .ini data
+        IO unit, the .ini format only part of a wider collection format.}
 
 unit DBIO.UIniData;
 
@@ -18,9 +20,17 @@ interface
 
 uses
   // Delphi
-  Classes, Generics.Collections, IniFiles,
+  Classes,
+  Generics.Collections,
+  Generics.Defaults,
+  IniFiles,
   // Project
-  DB.UCategory, DB.USnippet, DBIO.UFileIOIntf, UIStringList, UMainDBFileReader;
+  ActiveText.UMain,
+  DB.UCategory,
+  DB.USnippet,
+  DBIO.UFileIOIntf,
+  UIStringList,
+  UMainDBFileReader;
 
 
 type
@@ -196,6 +206,182 @@ type
     function GetSnippetUnits(const Snippet: string): IStringList;
   end;
 
+  ///  <summary>Write a collection to disk in the DelphiDabbler Code Snippets
+  ///  collection format.</summary>
+  TIniDataWriter = class sealed(TInterfacedObject, IDataWriter)
+  strict private
+    type
+
+      ///  <summary>Encapsulates an INI file stored in UTF8 format.</summary>
+      TUTF8IniFile = class(TMemIniFile)
+      public
+        ///  <summary>Saves the ini data to a file in UTF8 format.</summary>
+        procedure Save;
+      end;
+
+      ///  <summary>Implements a cache of UTF8 format ini file objects, indexed
+      ///  by ini file name.</summary>
+      TUTF8IniFileCache = class(TObject)
+      strict private
+        type
+          ///  <summary>Maps ini file names to related ini file objects.
+          ///  </summary>
+          TIniFileMap = TObjectDictionary<string,TUTF8IniFile>;
+        var
+          ///  <summary>Maps file names to related ini file objects.</summary>
+          fCache: TIniFileMap;
+
+        ///  <summary>Adds an ini file to the cache and returns it.</summary>
+        ///  <remarks>Performs no checks on whether the ini file is already in
+        ///  the cache.</remarks>
+        ///  <param name="APathToFile"><c>string</c> [in] Fully specified path
+        ///  to ini file.</param>
+        ///  <returns><c>TUTF8IniFile</c> instance.</returns>
+        function InternalAddIniFile(const APathToFile: string): TUTF8IniFile;
+
+      public
+
+        ///  <summary>Object constructor. Sets up empty cache.</summary>
+        constructor Create;
+
+        ///  <summary>Object destructor. Frees cache.</summary>
+        destructor Destroy; override;
+
+        ///  <summary>Gets reference to ini file object. Creates it if i
+        ///  doesn't extist.</summary>
+        ///  <param name="APathToFile"><c>string</c> [in] Fully specified path
+        ///  to ini file.</param>
+        ///  <returns><c>TUTF8IniFile</c> instance.</returns>
+        ///  <remarks>Caller must not free the returned <c>TCustomIniFile</c>
+        ///  instance.</remarks>
+        function GetIniFile(const APathToFile: string): TUTF8IniFile;
+
+        ///  <summary>Creates and adds an ini file object to the cache if not
+        ///  already present.</summary>
+        ///  <param name="APathToFile"><c>string</c> [in] Fully specified path
+        ///  to ini file.</param>
+        procedure AddIniFile(const APathToFile: string);
+
+        ///  <summary>Enumerator for cached ini files.</summary>
+        function GetEnumerator:
+          TObjectDictionary<string,TUTF8IniFile>.TPairEnumerator;
+      end;
+
+    var
+      ///  <summary>Cache of ini files.</summary>
+      fCache: TUTF8IniFileCache;
+      ///  <summary>Output directory.</summary>
+      fOutDir: string;
+      ///  <summary>Path to master ini file.</summary>
+      fMasterIniPath: string;
+      ///  <summary>Ini file containing currently processed category.</summary>
+      fCurrentCatIni: TUTF8IniFile;
+      ///  <summary>Number of next available unused data file.</summary>
+      fFileNumber: Integer;
+
+    ///  <summary>Handles exceptions raised by converting expected exceptions
+    ///  into <c>ECodeSnip</c> derived exceptions.</summary>
+    ///  <param name="EObj"><c>TObject</c> [in] Reference to exception to be
+    ///  handled.</param>
+    ///  <exceptions>Always raise an exception.</exceptions>
+    ///  <remarks>Unexpected exceptions are re-raised as is.</remarks>
+    procedure HandleException(const EObj: TObject);
+
+    ///  <summary>Returns full path to <c>AFileName</c> rooted at
+    ///  <c>fOutDir</c>.</summary>
+    function MakePath(const AFileName: string): string;
+
+    ///  <summary>Returns the name of the ini file associated with
+    ///  <c>ACatID</c>.</summary>
+    function MakeCatIniName(const ACatID: string): string;
+
+    ///  <summary>Returns the full path to the ini file associated with
+    ///  <c>ACatID</c> rooted at <c>fOutDir</c>.</summary>
+    function MakeCatIniPath(const ACatID: string): string;
+
+    ///  <summary>Converts the given active text <c>AActiveText</c> to an
+    ///  unformatted, single line, REML string.</summary>
+    function ActiveTextToREML(AActiveText: IActiveText): string;
+
+  public
+
+    ///  <summary>Object constructor.</summary>
+    ///  <param name="AOutDir"><c>string</c> [in] Directory containing the
+    ///  output.</param>
+    constructor Create(const AOutDir: string);
+
+    ///  <summary>Object destructor.</summary>
+    destructor Destroy; override;
+
+    ///  <summary>Initialise the output. Always called before any other methods.
+    ///  </summary>
+    ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
+    procedure Initialise;
+
+    ///  <summary>Write the properties of a category. Always called before
+    ///  <c>WriteCatSnippets</c> for a given category, so can be used to perform
+    ///  any per-category initialisation.</summary>
+    ///  <param name="CatID"><c>string</c> [in] ID of category.</param>
+    ///  <param name="Props"><c>TCategoryData</c> [in] Properties of category.
+    ///  </param>
+    ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
+    procedure WriteCatProps(const CatID: string; const Props: TCategoryData);
+
+    ///  <summary>Write the list of snippets belonging to a category. Always
+    ///  called after <c>WriteCatProps</c> for any given category.</summary>
+    ///  <param name="CatID"><c>string</c> [in] ID of category.</param>
+    ///  <param name="SnipList"><c>IStringList</c> [in] List of names of
+    ///  snippets.</param>
+    ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
+    procedure WriteCatSnippets(const CatID: string;
+      const SnipList: IStringList);
+
+    ///  <summary>Write the properties of a snippet. Always called after all
+    ///  categories are written and before <c>WriteSnippetUnits</c>, so can be
+    ///  used to perform any per-snippet intialisation.</summary>
+    ///  <param name="SnippetName"><c>string</c> [in] Name of snippet.</param>
+    ///  <param name="Props"><c>TSnippetData</c> [in] Properties of snippet.
+    ///  </param>
+    ///  <remarks>
+    ///  <para>NOTE: This method conforms to DelphiDabbler Code Snippets
+    ///  collection format v2.1.x.</para>
+    ///  <para>Method of <c>IDataWriter</c>.</para>
+    ///  </remarks>
+    procedure WriteSnippetProps(const SnippetName: string;
+      const Props: TSnippetData);
+
+    ///  <summary>Write the list of units required by a snippet.</summary>
+    ///  <param name="SnippetName"><c>string</c> [in] Name of snippet.</param>
+    ///  <param name="Units"><c>IStringList</c> [in] List of names of required
+    ///  units.</param>
+    ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
+    procedure WriteSnippetUnits(const SnippetName: string;
+      const Units: IStringList);
+
+    ///  <summary>Write the list of snippets on which a snippet depends.
+    ///  </summary>
+    ///  <param name="SnippetName"><c>string</c> [in] Name of snippet.</param>
+    ///  <param name="Depends"><c>IStringList</c> [in] List of snippet names.
+    ///  </param>
+    ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
+    procedure WriteSnippetDepends(const SnippetName: string;
+      const Depends: IStringList);
+
+    ///  <summary>Write the list of snippets that a snippet cross-references.
+    ///  </summary>
+    ///  <param name="SnippetName"><c>string</c> [in] Name of snippet.</param>
+    ///  <param name="XRefs"><c>IStringList</c> [in] List of snippet names.
+    ///  </param>
+    ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
+    procedure WriteSnippetXRefs(const SnippetName: string;
+      const XRefs: IStringList);
+
+    ///  <summary>Finalises the output. Always called after all other methods.
+    ///  </summary>
+    ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
+    procedure Finalise;
+
+  end;
 
 implementation
 
@@ -203,9 +389,20 @@ implementation
 uses
   // Delphi
   SysUtils,
+  IOUtils,
   // Project
-  ActiveText.UMain, Compilers.UGlobals, DB.USnippetKind, UComparers, UConsts,
-  UIniDataLoader, USnippetExtraHelper, UStrUtils, UUtils;
+  Compilers.UGlobals,
+  DB.USnippetKind,
+  UComparers,
+  UConsts,
+  UExceptions,
+  UIniDataLoader,
+  UIOUtils,
+  UREMLDataIO,
+  USnippetExtraHelper,
+  USystemInfo,
+  UStrUtils, 
+  UUtils;
 
 
 const
@@ -612,6 +809,281 @@ begin
   if not fCache.ContainsKey(PathToFile) then
     fCache.Add(PathToFile, TDatabaseIniFile.Create(fFileReader, PathToFile));
   Result := fCache[PathToFile];
+end;
+
+{ TIniDataWriter }
+
+function TIniDataWriter.ActiveTextToREML(AActiveText: IActiveText): string;
+begin
+  Result := TREMLWriter.Render(AActiveText, False);
+end;
+
+constructor TIniDataWriter.Create(const AOutDir: string);
+begin
+  inherited Create;
+  fOutDir := AOutDir;
+  fCache := TUTF8IniFileCache.Create;
+end;
+
+destructor TIniDataWriter.Destroy;
+begin
+  fCache.Free;  // frees owned ini file objects
+  inherited;
+end;
+
+procedure TIniDataWriter.Finalise;
+var
+  IniInfo: TPair<string,TUTF8IniFile>;
+begin
+  try
+    for IniInfo in fCache do
+      IniInfo.Value.Save;
+  except
+    HandleException(ExceptObject);
+  end;
+end;
+
+procedure TIniDataWriter.HandleException(const EObj: TObject);
+begin
+  if (EObj is EFileStreamError) or (EObj is ECodeSnip)
+    or (EObj is EDirectoryNotFoundException) then
+    raise EDataIO.Create(EObj as Exception);
+  raise EObj;
+end;
+
+procedure TIniDataWriter.Initialise;
+begin
+  try
+    // Make sure database folder exists
+    TDirectory.CreateDirectory(fOutDir);
+
+    // Delete current ini and data files
+    // (don't delete special files: CONTRIBUTORS, LICENSE, LICENSE-INFO,
+    // TESTERS, VERSION).
+    DeleteFiles(fOutDir, '*.dat');
+    DeleteFiles(fOutDir, '*.ini');
+
+    // Initialise file count
+    fFileNumber := 0;
+
+    // Record path to master meta data file.
+    fMasterIniPath := MakePath(cMasterFileName);
+
+  except
+    HandleException(ExceptObject);
+  end;
+end;
+
+function TIniDataWriter.MakeCatIniName(const ACatID: string): string;
+begin
+  Result := ACatID + '.ini';
+end;
+
+function TIniDataWriter.MakeCatIniPath(const ACatID: string): string;
+begin
+  Result := MakePath(MakeCatIniName(ACatID));
+end;
+
+function TIniDataWriter.MakePath(const AFileName: string): string;
+begin
+  Result := TPath.Combine(fOutDir, AFileName);
+end;
+
+procedure TIniDataWriter.WriteCatProps(const CatID: string;
+  const Props: TCategoryData);
+var
+  Master: TUTF8IniFile;
+begin
+  // Add entry to master ini file
+  Master := fCache.GetIniFile(fMasterIniPath);
+  Master.WriteString(CatId, cMasterDescName, Props.Desc);
+  Master.WriteString(CatId, cMasterIniName, MakeCatIniName(CatID));
+end;
+
+procedure TIniDataWriter.WriteCatSnippets(const CatID: string;
+  const SnipList: IStringList);
+begin
+  // Do nothing
+end;
+
+procedure TIniDataWriter.WriteSnippetDepends(const SnippetName: string;
+  const Depends: IStringList);
+begin
+  fCurrentCatIni.WriteString(
+    SnippetName, cDependsName, Depends.GetText(',', False)
+  );
+end;
+
+procedure TIniDataWriter.WriteSnippetProps(const SnippetName: string;
+  const Props: TSnippetData);
+const
+  Kinds: array[TSnippetKind] of string = (
+    'freeform',     // skFreeform
+    'routine',      // skRoutine
+    'const',        // skConstant
+    'type',         // skTypeDef
+    'unit',         // skUnit
+    'class'         // skClass
+  );
+  CompileResults: array[TCompileResult] of Char = (
+    'Y',    // crSuccess
+    'Y',    // crWarning
+    'N',    // crError
+    'Q'     // crQuery
+  );
+  TestInfo: array[TSnippetTestInfo] of string = (
+    'none',     // stiNone
+    'basic',    // stiBasic
+    'advanced'  // stiAdvanced
+  );
+var
+  SourceFileName: string;
+  SourceFilePath: string;
+  CompilerID: TCompilerID;
+  CompileResult: Char;
+begin
+
+  fCurrentCatIni := fCache.GetIniFile(MakeCatIniPath(Props.Cat));
+
+  try
+    // Write source code file
+    Inc(fFileNumber);
+    SourceFileName := IntToStr(fFileNumber) + '.dat';
+    SourceFilePath := MakePath(SourceFileName);
+    TFileIO.WriteAllText(SourceFilePath, Props.SourceCode, TEncoding.UTF8, True);
+
+    // snippet kind
+    fCurrentCatIni.WriteString(SnippetName, cKindName, Kinds[Props.Kind]);
+
+    // display name, if set
+    if (Props.DisplayName <> '') then
+      {TODO -cVault: strictly, for v2 format, this name must be <=64 chars}
+      fCurrentCatIni.WriteString(SnippetName, cDisplayName, Props.DisplayName);
+
+    // description (must be set for v2)
+    fCurrentCatIni.WriteString(
+      SnippetName,
+      cDescExName,
+      DOUBLEQUOTE + ActiveTextToREML(Props.Desc) + DOUBLEQUOTE
+    );
+
+    // extra info, if set
+    if Props.Extra.HasContent then
+      fCurrentCatIni.WriteString(
+        SnippetName,
+        cExtraName,
+        DOUBLEQUOTE + ActiveTextToREML(Props.Extra) + DOUBLEQUOTE
+      );
+
+    // snippet file reference
+    fCurrentCatIni.WriteString(SnippetName, cSnipFileName, SourceFileName);
+
+    // compiler info
+    for CompilerID := Low(TCompilerID) to High(TCompilerID) do
+    begin
+      CompileResult := CompileResults[Props.CompilerResults[CompilerID]];
+      if CompileResult <> 'Q' then
+          fCurrentCatIni.WriteString(
+            SnippetName, cCompilerIDNames[CompilerID], CompileResult
+          );
+    end;
+
+    // test info: only write if not basic
+    {TODO -cVault: Add support for AdvancedTest .Level & .URL}
+    if Props.TestInfo <> stiBasic then
+      fCurrentCatIni.WriteString(SnippetName, cTestInfoName, TestInfo[Props.TestInfo]);
+
+  except
+
+    HandleException(ExceptObject);
+
+  end;
+  // NOTE:
+  //   The following deprecated keys are not written: alternatives are always
+  //   used:
+  //   * StandardFormat - Kind is used instead
+  //   * Credits        - Extra is used instead
+  //   * Credits_URL    - Extra is used instead
+  //   * Comments       - Extra is used instead
+  //   * Desc           - DescEx is used instead
+
+end;
+
+procedure TIniDataWriter.WriteSnippetUnits(const SnippetName: string;
+  const Units: IStringList);
+begin
+  fCurrentCatIni.WriteString(
+    SnippetName, cUnitsName, Units.GetText(',', False)
+  );
+end;
+
+procedure TIniDataWriter.WriteSnippetXRefs(const SnippetName: string;
+  const XRefs: IStringList);
+begin
+  fCurrentCatIni.WriteString(
+    SnippetName, cXRefName, XRefs.GetText(',', False)
+  );
+end;
+
+{ TIniDataWriter.TUTF8IniFile }
+
+procedure TIniDataWriter.TUTF8IniFile.Save;
+var
+  Data: TStringList;
+begin
+  Data := TStringList.Create;
+  try
+    GetStrings(Data);
+    TFileIO.WriteAllLines(FileName, Data.ToStringArray, Encoding, True);
+  finally
+    Data.Free;
+  end;
+end;
+
+{ TIniDataWriter.TUTF8IniFileCache }
+
+procedure TIniDataWriter.TUTF8IniFileCache.AddIniFile(
+  const APathToFile: string);
+begin
+  if not fCache.ContainsKey(APathToFile) then
+    InternalAddIniFile(APathToFile);
+end;
+
+constructor TIniDataWriter.TUTF8IniFileCache.Create;
+begin
+  inherited Create;
+  // fCache owns and frees the ini file objects
+  fCache := TIniFileMap.Create(
+    [doOwnsValues], TTextEqualityComparer.Create
+  );
+end;
+
+destructor TIniDataWriter.TUTF8IniFileCache.Destroy;
+begin
+  fCache.Free;  // frees all owned ini file objects in .Values[]
+  inherited;
+end;
+
+function TIniDataWriter.TUTF8IniFileCache.GetEnumerator: 
+  TObjectDictionary<string, TUTF8IniFile>.TPairEnumerator;
+begin
+  Result := fCache.GetEnumerator;
+end;
+
+function TIniDataWriter.TUTF8IniFileCache.GetIniFile(
+  const APathToFile: string): TUTF8IniFile;
+begin
+  if not fCache.ContainsKey(APathToFile) then
+    Result := InternalAddIniFile(APathToFile)
+  else
+    Result := fCache[APathToFile];
+end;
+
+function TIniDataWriter.TUTF8IniFileCache.InternalAddIniFile(
+  const APathToFile: string): TUTF8IniFile;
+begin
+  Result := TUTF8IniFile.Create(APathToFile, TEncoding.UTF8);
+  fCache.Add(APathToFile, Result);
 end;
 
 end.

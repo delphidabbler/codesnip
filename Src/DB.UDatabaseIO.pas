@@ -52,14 +52,14 @@ type
   ///  the database into storage in a supported data format.</summary>
   IDataFormatSaver = interface(IInterface)
     ['{F46EE2E3-68A7-4877-9E04-192D15D29BB1}']
-    ///  <summary>Saves data from a collection within the database to storage.
-    ///  </summary>
+    ///  <summary>Saves data to storage.</summary>
     ///  <param name="SnipList"><c>TSnippetList</c> [in] Contains information 
-    ///  about each snippet in the collection.</param>
+    ///  about each snippet to be saved.</param>
     ///  <param name="Categories"><c>TCategoryList</c> [in] Contains information
-    ///  about each category in the collection.</param>
+    ///  about each category to be saved.</param>
     ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
-    ///  obtain details of the data to storage.</param>
+    ///  obtain details of the data to be stored.</param>
+    ///  <remarks>Method of IDataFormatSaver.</remarks>
     procedure Save(const SnipList: TSnippetList;
       const Categories: TCategoryList; const Provider: IDBDataProvider);
   end;
@@ -97,6 +97,7 @@ implementation
 uses
   // Delphi
   SysUtils,
+  IOUtils,
   // Project
   DBIO.UFileIOIntf,
   DBIO.UIniData,
@@ -104,6 +105,7 @@ uses
   DBIO.UXMLDataIO,
   UAppInfo,
   UConsts,
+  UFolderBackup,
   UIStringList,
   UReservedCategories,
   USnippetIDs;
@@ -268,10 +270,56 @@ type
       }
   end;
 
-  {
-  TNativeV4FormatWriter:
-    Object used to write data from the native snippets v4 to storage.
-  }
+  {TODO -cVault: Extract common code in TNativeV4FormatSaver and
+          TDCSCV2FormatSaver into a common base class. }
+
+  ///  <summary>Class used to write data from a collection to storage in the
+  ///  DelphiDabbler Code Snippets v2 data format.</summary>
+  TDCSCV2FormatSaver = class(TInterfacedObject,
+    IDataFormatSaver
+  )
+  strict private
+    const
+      BakFileID = SmallInt($DC52);
+    var
+      fWriter: IDataWriter;             // Object used to write to storage
+      fSnipList: TSnippetList;          // List of snippets to be written
+      fCategories: TCategoryList;       // List of categories to be written
+      fProvider: IDBDataProvider;       // Object used to get data to be written
+      fCollection: TCollection;         // Collection being written
+      fBakFile: string;                 // Backup file used in case of failure
+    function CreateWriter: IDataWriter;
+      {Creates object that can write data for user-defined database to storage.
+        @return Requied writer object.
+      }
+    procedure WriteCategories;
+      {Writes information about categories to storage.
+      }
+    procedure WriteSnippets;
+      {Writes information about all snippets to storage.
+      }
+    ///  <summary>Backup current data.</summary>
+    procedure Backup;
+    ///  <summary>Restore current data.</summary>
+    procedure Restore;
+  public
+    constructor Create(const ACollection: TCollection);
+
+    ///  <summary>Saves data to storage.</summary>
+    ///  <param name="SnipList"><c>TSnippetList</c> [in] Contains information
+    ///  about each snippet to be saved.</param>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] Contains information
+    ///  about each category to be saved.</param>
+    ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
+    ///  obtain details of the data to be stored.</param>
+    ///  <remarks>Method of IDataFormatSaver.</remarks>
+    procedure Save(const SnipList: TSnippetList;
+      const Categories: TCategoryList;
+      const Provider: IDBDataProvider);
+  end;
+
+  ///  <summary>Class used to write data from a collection to storage in
+  ///  CodeSnip's native v4 data format.</summary>
   TNativeV4FormatSaver = class(TInterfacedObject,
     IDataFormatSaver
   )
@@ -293,8 +341,7 @@ type
       }
   public
     constructor Create(const ACollection: TCollection);
-    ///  <summary>Saves data from a collection within the database to storage.
-    ///  </summary>
+    ///  <summary>Saves data to storage.</summary>
     ///  <param name="SnipList"><c>TSnippetList</c> [in] Contains information 
     ///  about each snippet in the collection.</param>
     ///  <param name="Categories"><c>TCategoryList</c> [in] Contains information
@@ -312,7 +359,7 @@ type
 class function TDatabaseIOFactory.CreateDBLoader(const Collection: TCollection):
   IDataFormatLoader;
 begin
-  {TODO -cCollections: Revise database loaders to get file path and other
+  {TODO -cUDatabaseIO: Revise database loaders to get file path and other
           info from collection instead of hard wiring it.}
   case Collection.CollectionFormatKind of
     TCollectionFormatKind.DCSC_v2:
@@ -329,7 +376,7 @@ class function TDatabaseIOFactory.CreateDBSaver(
 begin
   case Collection.CollectionFormatKind of
     TCollectionFormatKind.DCSC_v2:
-      Result := nil;    {TODO -cVault: add writer object here}
+      Result := TDCSCV2FormatSaver.Create(Collection);
     TCollectionFormatKind.Native_v4:
       Result := TNativeV4FormatSaver.Create(Collection);
     else
@@ -588,6 +635,8 @@ function TNativeV4FormatLoader.FindSnippet(const SnippetName: string;
     @param SnipList [in] List of snippets to search.
     @return Reference to required snippet object or nil if snippet is not found.
   }
+
+
 begin
   // Search in user database
   Result := SnipList.Find(SnippetName, CollectionID);
@@ -615,6 +664,129 @@ begin
   end;
 end;
 
+{ TDCSCV2FormatSaver }
+
+procedure TDCSCV2FormatSaver.Backup;
+var
+  FB: TFolderBackup;
+begin
+  FB := TFolderBackup.Create(
+    fCollection.Location.Directory, fBakFile, BakFileID
+  );
+  try
+    FB.Backup;
+  finally
+    FB.Free;
+  end;
+end;
+
+constructor TDCSCV2FormatSaver.Create(const ACollection: TCollection);
+begin
+  inherited Create;
+  fCollection := ACollection;
+  // Find an used temp file name in system temp directory
+  repeat
+    fBakFile := TPath.Combine(
+      TPath.GetTempPath, '~codesnip-' + TPath.GetGUIDFileName
+    );
+  until not TFile.Exists(fBakFile);
+end;
+
+function TDCSCV2FormatSaver.CreateWriter: IDataWriter;
+begin
+  Result := TIniDataWriter.Create(fCollection.Location.Directory);
+end;
+
+procedure TDCSCV2FormatSaver.Restore;
+var
+  FB: TFolderBackup;
+begin
+  FB := TFolderBackup.Create(
+    fCollection.Location.Directory, fBakFile, BakFileID
+  );
+  try
+    FB.Restore;
+  finally
+    FB.Free;
+  end;
+end;
+
+procedure TDCSCV2FormatSaver.Save(const SnipList: TSnippetList;
+  const Categories: TCategoryList; const Provider: IDBDataProvider);
+begin
+  Backup;
+  try
+    try
+      fSnipList := SnipList;
+      fCategories := Categories;
+      fProvider := Provider;
+      fWriter := CreateWriter;
+      fWriter.Initialise;
+      WriteCategories;
+      WriteSnippets;
+      fWriter.Finalise;
+    except
+      Restore;
+      raise ExceptObject;
+    end;
+  finally
+    TFile.Delete(fBakFile);
+  end;
+end;
+
+procedure TDCSCV2FormatSaver.WriteCategories;
+var
+  Cat: TCategory;         // loops through each category
+  Props: TCategoryData;   // category properties
+  SnipList: IStringList;  // list of names of snippets in a category
+begin
+  for Cat in fCategories do
+  begin
+    SnipList := fProvider.GetCategorySnippets(Cat);
+    if SnipList.Count > 0 then
+    begin
+      // Only write categories containing snippets
+      Props := fProvider.GetCategoryProps(Cat);
+      fWriter.WriteCatProps(Cat.ID, Props);
+      fWriter.WriteCatSnippets(Cat.ID, SnipList);
+    end;
+  end;
+end;
+
+procedure TDCSCV2FormatSaver.WriteSnippets;
+
+  // Adds names of snippets from IDList to a string list
+  function IDListToStrings(const IDList: ISnippetIDList): IStringList;
+  var
+    ID: TSnippetID; // each id in snippet id list
+  begin
+    Result := TIStringList.Create;
+    for ID in IDList do
+      Result.Add(ID.Name);
+  end;
+
+var
+  Snippet: TSnippet;        // loops through each snippet in list
+  Props: TSnippetData;      // snippet properties
+  Refs: TSnippetReferences; // snippet references
+begin
+  for Snippet in fSnipList do
+  begin
+    // Only write user-defined snippets
+    if Snippet.CollectionID = fCollection.UID then
+    begin
+      // Get and write a snippet's properties
+      Props := fProvider.GetSnippetProps(Snippet);
+      fWriter.WriteSnippetProps(Snippet.Name, Props);
+      // Get and write a snippet's references
+      Refs := fProvider.GetSnippetRefs(Snippet);
+      fWriter.WriteSnippetUnits(Snippet.Name, Refs.Units);
+      fWriter.WriteSnippetDepends(Snippet.Name, IDListToStrings(Refs.Depends));
+      fWriter.WriteSnippetXRefs(Snippet.Name, IDListToStrings(Refs.XRef));
+    end;
+  end;
+end;
+
 { TNativeV4FormatSaver }
 
 constructor TNativeV4FormatSaver.Create(const ACollection: TCollection);
@@ -629,6 +801,7 @@ function TNativeV4FormatSaver.CreateWriter: IDataWriter;
     @return Requied writer object.
   }
 begin
+  {TODO -cUDatabaseIO: Use Collection.Location.Directory instead}
   Result := TXMLDataWriter.Create(TAppInfo.UserDataDir);
 end;
 
@@ -689,7 +862,7 @@ begin
   for Snippet in fSnipList do
   begin
     // Only write user-defined snippets
-    if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
+    if Snippet.CollectionID = fCollection.UID then
     begin
       // Get and write a snippet's properties
       Props := fProvider.GetSnippetProps(Snippet);
