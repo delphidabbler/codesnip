@@ -31,6 +31,17 @@ type
       cAllSnippetKinds: TSnippetKinds =   // Set of all possible snippet kinds
         [skFreeform, skRoutine, skConstant, skTypeDef, skUnit, skClass];
   public
+
+    ///  <summary>Validate a snippet display name.</summary>
+    ///  <param name="DisplayName"><c>string</c> [in] Display name to be
+    ///  checked.</param>
+    ///  <param name="ErrorMsg"><c>string</c> [out] Message that describes
+    ///  error. Undefined if <c>True</c> returned.</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if source code is valid or
+    ///  <c>False</c> if not.</returns>
+    class function ValidateDisplayName(const DisplayName: string;
+      out ErrorMsg: string): Boolean;
+
     class function ValidateDependsList(const Snippet: TSnippet;
       out ErrorMsg: string): Boolean; overload;
       {Recursively checks dependency list of a snippet for validity.
@@ -330,6 +341,19 @@ begin
   end
   else
     Result := True;
+end;
+
+class function TSnippetValidator.ValidateDisplayName(const DisplayName: string;
+  out ErrorMsg: string): Boolean;
+var
+  TrimmedDisplayName: string;
+resourcestring
+  sErrEmpty = 'A display name must be provided';
+begin
+  TrimmedDisplayName := StrTrim(DisplayName);
+  Result := TrimmedDisplayName <> '';
+  if not Result then
+    ErrorMsg := sErrEmpty;
 end;
 
 class function TSnippetValidator.ValidateExtra(const Extra: IActiveText;
