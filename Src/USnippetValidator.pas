@@ -79,37 +79,6 @@ type
         @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if description is valid or False if not.
       }
-    class function ValidateName(const Key: string;
-      const CheckForUniqueness: Boolean): Boolean; overload;
-      {Validates a snippet's key.
-        @param Key [in] Snippet key to be checked.
-        @param CheckForUniqueness [in] Flag indicating whether a check should
-          be made to see if snippet key is already in user database.
-        @return True if key is valid or False if not.
-      }
-    class function ValidateName(const Key: string;
-      const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
-      overload;
-      {Validates a snippet's key.
-        @param Key [in] Snippet key to be checked.
-        @param CheckForUniqueness [in] Flag indicating whether a check should
-          be made to see if snippet key is already in user database.
-        @param ErrorMsg [out] Message that describes error. Undefined if True
-          returned.
-        @return True if key is valid or False if not.
-      }
-    class function ValidateName(const Key: string;
-      const CheckForUniqueness: Boolean; out ErrorMsg: string;
-      out ErrorSel: TSelection): Boolean; overload;
-      {Validates a snippet's key.
-        @param Key [in] Snippet key to be checked.
-        @param CheckForUniqueness [in] Flag indicating whether a check should
-          be made to see if snippet key is already in user database.
-        @param ErrorMsg [out] Message that describes error. Undefined if True
-          returned.
-        @param ErrorSel [out] Selection that can be used to highlight error.
-        @return True if key is valid or False if not.
-      }
     class function ValidateExtra(const Extra: IActiveText;
       out ErrorMsg: string): Boolean;
       {Validates a extra information from a snippet.
@@ -183,8 +152,9 @@ class function TSnippetValidator.Validate(const Snippet: TSnippet;
     @return True if snippet valid or False if not.
   }
 begin
-  Result := ValidateName(Snippet.Key, False, ErrorMsg, ErrorSel)
-    and ValidateDescription(Snippet.Description.ToString, ErrorMsg, ErrorSel)
+  Result :=
+    {TODO -cVault: Add validation of display name here}
+    ValidateDescription(Snippet.Description.ToString, ErrorMsg, ErrorSel)
     and ValidateSourceCode(Snippet.SourceCode, ErrorMsg, ErrorSel)
     and ValidateDependsList(Snippet, ErrorMsg)
     and ValidateExtra(Snippet.Extra, ErrorMsg);
@@ -370,69 +340,6 @@ begin
   Result :=  TActiveTextValidator.Validate(Extra, ErrorInfo);
   if not Result then
     ErrorMsg := ErrorInfo.Description;
-end;
-
-class function TSnippetValidator.ValidateName(const Key: string;
-  const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
-  {Validates a snippet's key.
-    @param Key [in] Snippet key to be checked.
-    @param CheckForUniqueness [in] Flag indicating whether a check should be
-      made to see if snippet key is already in user database.
-    @param ErrorMsg [out] Message that describes error. Undefined if True
-      returned.
-    @return True if key is valid or False if not.
-  }
-resourcestring
-  // Error messages
-  sErrNoKey = 'A key must be provided';
-  sErrDupKey = 'Key "%s" is already in the database. Please choose another key';
-  sErrBadKey = '"%s" is not a valid Pascal identifier';
-var
-  TrimmedKey: string;  // Key param trimmed of leading trailing spaces
-begin
-  Result := False;
-  TrimmedKey := StrTrim(Key);
-  if TrimmedKey = '' then
-    ErrorMsg := sErrNoKey
-  else if not IsValidIdent(TrimmedKey) then
-    ErrorMsg := Format(sErrBadKey, [TrimmedKey])
-  else if CheckForUniqueness and
-    (Database.Snippets.Find(TrimmedKey, TCollectionID.__TMP__UserDBCollectionID) <> nil) then
-    ErrorMsg := Format(sErrDupKey, [TrimmedKey])
-  else
-    Result := True;
-end;
-
-class function TSnippetValidator.ValidateName(const Key: string;
-  const CheckForUniqueness: Boolean; out ErrorMsg: string;
-  out ErrorSel: TSelection): Boolean;
-  {Validates a snippet's key.
-    @param Key [in] Snippet key to be checked.
-    @param CheckForUniqueness [in] Flag indicating whether a check should be
-      made to see if snippet key is already in user database.
-    @param ErrorMsg [out] Message that describes error. Undefined if True
-      returned.
-    @param ErrorSel [out] Selection that can be used to highlight error.
-    @return True if key is valid or False if not.
-  }
-begin
-  Result := ValidateName(Key, CheckForUniqueness, ErrorMsg);
-  if not Result then
-    ErrorSel := TSelection.Create(0, Length(Key));
-end;
-
-class function TSnippetValidator.ValidateName(const Key: string;
-  const CheckForUniqueness: Boolean): Boolean;
-  {Validates a snippet's key.
-    @param Key [in] Snippet key to be checked.
-    @param CheckForUniqueness [in] Flag indicating whether a check should be
-      made to see if snippet key is already in user database.
-    @return True if key is valid or False if not.
-  }
-var
-  DummyErrMsg: string;
-begin
-  Result := ValidateName(Key, CheckForUniqueness, DummyErrMsg);
 end;
 
 class function TSnippetValidator.ValidateSourceCode(const Source: string;
