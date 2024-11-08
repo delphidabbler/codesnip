@@ -427,6 +427,8 @@ begin
       fSnippetInfo[Idx].Data.Props.DisplayName := TXMLDocHelper.GetSubTagText(
         fXMLDoc, SnippetNode, cDisplayNameNode
       );
+      if fSnippetInfo[Idx].Data.Props.DisplayName = '' then
+        fSnippetInfo[Idx].Data.Props.DisplayName := fSnippetInfo[Idx].Key;
       fSnippetInfo[Idx].Data.Props.SourceCode := TXMLDocHelper.GetSubTagText(
         fXMLDoc, SnippetNode, cSourceCodeTextNode
       );
