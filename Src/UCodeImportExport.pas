@@ -34,8 +34,8 @@ type
   ///  <summary>Encapsulates data that describes a snippet that has been read
   ///  from an import file.</summary>
   TSnippetInfo = record
-    ///  <summary>Snippet name.</summary>
-    Name: string;
+    ///  <summary>Snippet key.</summary>
+    Key: string;
     ///  <summary>Description of snippet.</summary>
     Data: TSnippetEditData;
     ///  <summary>Copies given TSnippetInfo record to this one.</summary>
@@ -419,7 +419,7 @@ begin
     begin
       // Read a snippet node
       SnippetNode := SnippetNodes[Idx];
-      fSnippetInfo[Idx].Name := SnippetNode.Attributes[cSnippetNameAttr];
+      fSnippetInfo[Idx].Key := SnippetNode.Attributes[cSnippetNameAttr];
       fSnippetInfo[Idx].Data :=
         (Database as IDatabaseEdit).GetEditableSnippetInfo;
       fSnippetInfo[Idx].Data.Props.Cat := TReservedCategories.ImportsCatID;
@@ -545,13 +545,13 @@ end;
 
 procedure TSnippetInfo.Assign(const Src: TSnippetInfo);
 begin
-  Name := Src.Name;
+  Key := Src.Key;
   Data.Assign(Src.Data);
 end;
 
 procedure TSnippetInfo.Init;
 begin
-  Name := '';
+  Key := '';
   Data.Init;
 end;
 

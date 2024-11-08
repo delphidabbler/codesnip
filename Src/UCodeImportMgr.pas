@@ -30,18 +30,18 @@ type
   TImportInfo = record
   strict private
     // Property values
-    fOrigName: string;
-    fImportAsName: string;
+    fOrigKey: string;
+    fImportAsKey: string;
     fSkip: Boolean;
   public
     ///  <summary>Initialises properties to given values.</summary>
-    constructor Create(const AOrigName, AImportAsName: string;
+    constructor Create(const AOrigKey, AImportAsKey: string;
       const ASkip: Boolean = False);
-    ///  <summary>Name of snippet per import file.</summary>
-    property OrigName: string read fOrigName;
-    ///  <summary>Name of snippet to be used when updating database.</summary>
+    ///  <summary>Snippet key per import file.</summary>
+    property OrigKey: string read fOrigKey;
+    ///  <summary>Key of snippet to be used when updating database.</summary>
     ///  <remarks>Can be changed by user.</remarks>
-    property ImportAsName: string read fImportAsName write fImportAsName;
+    property ImportAsKey: string read fImportAsKey write fImportAsKey;
     ///  <summary>Flag indicating if snippet is to be skipped (ignored) when
     ///  updating database.</summary>
     property Skip: Boolean read fSkip write fSkip;
@@ -68,16 +68,16 @@ type
   public
     ///  <summary>Constructs list with appropriate comparer.</summary>
     constructor Create;
-    ///  <summary>Finds a record based on its OrigName field value.</summary>
-    ///  <param name="Name">string [in] Name to be found.</param>
+    ///  <summary>Finds a record based on its OrigKey field value.</summary>
+    ///  <param name="Key">string [in] Key to be found.</param>
     ///  <param name="ImportInfo">TImportInfo [out] Found record. Undefined if
     ///  Name not found.</param>
-    ///  <returns>Boolean: True if Name found, False if not.</returns>
-    function FindByName(const Name: string; out ImportInfo: TImportInfo):
+    ///  <returns>Boolean: True if Key found, False if not.</returns>
+    function FindByKey(const Key: string; out ImportInfo: TImportInfo):
       Boolean;
-    ///  <summary>Returns index of record in list whose OrigName field matches
+    ///  <summary>Returns index of record in list whose OrigKey field matches
     ///  given name or -1 if name not found.</summary>
-    function IndexOfName(const Name: string): Integer;
+    function IndexOfKey(const Key: string): Integer;
   end;
 
 type
@@ -188,8 +188,8 @@ begin
     if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
       Result.Add(Snippet.Key);
   for SnippetInfo in fSnippetInfoList do
-    if not StrSameText(SnippetInfo.Name, ExcludedName) then
-      Result.Add(SnippetInfo.Name);
+    if not StrSameText(SnippetInfo.Key, ExcludedName) then
+      Result.Add(SnippetInfo.Key);
 end;
 
 function TCodeImportMgr.GetUniqueSnippetName(
@@ -234,7 +234,7 @@ begin
   begin
     fImportInfoList.Add(
       TImportInfo.Create(
-        SnippetInfo.Name, GetUniqueSnippetName(SnippetInfo.Name)
+        SnippetInfo.Key, GetUniqueSnippetName(SnippetInfo.Key)
       )
     );
   end;
@@ -271,36 +271,36 @@ var
   ImportInfo: TImportInfo;    // info about how / whether to import a snippet
 resourcestring
   // Error message
-  sBadNameError = 'Can''t find snippet "%s" in import data';
+  sBadNameError = 'Can''t find snippet with key "%s" in import data';
 begin
   Editor := Database as IDatabaseEdit;
   for SnippetInfo in fSnippetInfoList do
   begin
-    if not fImportInfoList.FindByName(SnippetInfo.Name, ImportInfo) then
-      raise EBug.CreateFmt(sBadNameError, [SnippetInfo.Name]);
+    if not fImportInfoList.FindByKey(SnippetInfo.Key, ImportInfo) then
+      raise EBug.CreateFmt(sBadNameError, [SnippetInfo.Key]);
 
     if ImportInfo.Skip then
       Continue;
 
     AdjustDependsList(SnippetInfo.Data.Refs.Depends);
 
-    Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, TCollectionID.__TMP__UserDBCollectionID);
+    Snippet := Database.Snippets.Find(ImportInfo.ImportAsKey, TCollectionID.__TMP__UserDBCollectionID);
     if Assigned(Snippet) then
       // snippet already exists: overwrite it
       Editor.UpdateSnippet(Snippet, SnippetInfo.Data)
     else
       // snippet is new: add to database
-      Editor.AddSnippet(ImportInfo.ImportAsName, SnippetInfo.Data);
+      Editor.AddSnippet(ImportInfo.ImportAsKey, SnippetInfo.Data);
   end;
 end;
 
 { TImportInfo }
 
-constructor TImportInfo.Create(const AOrigName, AImportAsName: string;
+constructor TImportInfo.Create(const AOrigKey, AImportAsKey: string;
   const ASkip: Boolean);
 begin
-  fOrigName := AOrigName;
-  fImportAsName := AImportAsName;
+  fOrigKey := AOrigKey;
+  fImportAsKey := AImportAsKey;
   fSkip := ASkip;
 end;
 
@@ -308,7 +308,7 @@ end;
 
 function TImportInfoComparer.Compare(const Left, Right: TImportInfo): Integer;
 begin
-  Result := TSnippetID.CompareKeys(Left.OrigName, Right.OrigName);
+  Result := TSnippetID.CompareKeys(Left.OrigKey, Right.OrigKey);
 end;
 
 { TImportInfoList }
@@ -318,21 +318,21 @@ begin
   inherited Create(TImportInfoComparer.Create);
 end;
 
-function TImportInfoList.FindByName(const Name: string;
+function TImportInfoList.FindByKey(const Key: string;
   out ImportInfo: TImportInfo): Boolean;
 var
   Idx: Integer;   // index of named snippet in list
 begin
-  Idx := IndexOf(TImportInfo.Create(Name, ''));
+  Idx := IndexOf(TImportInfo.Create(Key, ''));
   if Idx = -1 then
     Exit(False);
   ImportInfo := Items[Idx];
   Result := True;
 end;
 
-function TImportInfoList.IndexOfName(const Name: string): Integer;
+function TImportInfoList.IndexOfKey(const Key: string): Integer;
 begin
-  Result := IndexOf(TImportInfo.Create(Name, ''));
+  Result := IndexOf(TImportInfo.Create(Key, ''));
 end;
 
 end.

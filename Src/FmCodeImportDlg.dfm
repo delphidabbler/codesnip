@@ -14,6 +14,10 @@ inherited CodeImportDlg: TCodeImportDlg
       object tsInfo: TTabSheet
         Caption = 'tsInfo'
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblIntro: TLabel
           Left = 0
           Top = 8
@@ -30,6 +34,10 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsFile'
         ImageIndex = 1
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblFile: TLabel
           Left = 0
           Top = 8
@@ -71,6 +79,10 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsUpdate'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblImportList: TLabel
           Left = 0
           Top = 53
@@ -149,6 +161,10 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsFinish'
         ImageIndex = 5
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblFinish: TLabel
           Left = 0
           Top = 8

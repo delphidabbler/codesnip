@@ -346,8 +346,8 @@ procedure TCodeImportDlg.InitImportInfo;
     LI := lvImports.Items.Add;
     LI.SubItems.Add('');
     LI.SubItems.Add('');
-    LI.Caption := Info.OrigName;
-    SetImportNameInLV(LI, Info.ImportAsName);
+    LI.Caption := Info.OrigKey;
+    SetImportNameInLV(LI, Info.ImportAsKey);
     LI.Checked := not Info.Skip;
     UpdateActionDisplay(LI);
   end;
@@ -440,7 +440,7 @@ begin
   begin
     if DataItem.Skip then
       Continue;
-    AddLabel(LblTop, DataItem.ImportAsName);
+    AddLabel(LblTop, DataItem.ImportAsKey);
   end;
 end;
 
@@ -511,7 +511,7 @@ var
 begin
   if not Assigned(Item) then
     Exit;
-  Idx := fImportMgr.ImportInfo.IndexOfName(Item.Caption);
+  Idx := fImportMgr.ImportInfo.IndexOfKey(Item.Caption);
   if Idx = -1 then
     raise EBug.Create(
       ClassName + '.UpdateImportData: Can''t find import data item.'
