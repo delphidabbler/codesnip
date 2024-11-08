@@ -24,9 +24,11 @@ uses
   StdCtrls,
   Forms,
   ExtCtrls,
+  ActnList,
   Classes,
   Generics.Collections,
   // Project
+  DB.UCollections,
   FmWizardDlg,
   FrBrowserBase,
   FrFixedHTMLDlg,
@@ -37,7 +39,7 @@ uses
   UCSSBuilder,
   SWAG.UCommon,
   SWAG.UImporter,
-  SWAG.UReader, ActnList;
+  SWAG.UReader;
 
 
 type
@@ -106,6 +108,9 @@ type
     procedure actDisplayPacketUpdate(Sender: TObject);
   strict private
     const
+      {TODO -cCollections: Add combo box to select collection into which to add
+              imported snippets. Either add combo box to update page, or add a
+              new page for it before finish page or before update page.}
       ///  <summary>Index of introductory page in wizard.</summary>
       cIntroPage = 0;
       ///  <summary>Index of SWAG database folder selection page in wizard.
@@ -140,6 +145,10 @@ type
     ///  <summary>Retrieves import directory name from edit control where it is
     ///  entered.</summary>
     function GetDirNameFromEditCtrl: string;
+    ///  <summary>Retrieves collection specified by user that applies to
+    ///  imported snippets.</summary>
+    ///  <returns><c>TCollectionID</c>. The required collection ID.</returns>
+    function SelectedCollectionID: TCollectionID;
     ///  <summary>Validates entries on the wizard page identified by the given
     ///  page index.</summary>
     procedure ValidatePage(const PageIdx: Integer);
@@ -771,7 +780,6 @@ begin
     begin
       LI := lvImports.Items.Add;
       LI.Caption := Packet.Title;
-      LI.SubItems.Add(TSWAGImporter.MakeValidSnippetName(Packet.ID));
     end;
   finally
     lvImports.Items.EndUpdate;
@@ -823,6 +831,14 @@ begin
   );
 end;
 
+function TSWAGImportDlg.SelectedCollectionID: TCollectionID;
+begin
+  {TODO -cCollections: Replace the following __TMP__ method with collection ID
+          selected by user from a combo box. DO NOT permit this choice when
+          editing an existing snippet.}
+  Result := TCollectionID.__TMP__UserDBCollectionID;
+end;
+
 procedure TSWAGImportDlg.UpdateButtons(const PageIdx: Integer);
 resourcestring
   // button caption for update page
@@ -856,6 +872,7 @@ begin
       procedure
       begin
         fImporter.Import(
+          SelectedCollectionID,
           procedure (const Packet: TSWAGPacket)
           begin
             Application.ProcessMessages;
