@@ -248,15 +248,21 @@ type
     function DuplicateSnippet(const ASnippet: TSnippet; const ANewKey: string;
       const ANewCollectionID: TCollectionID; const ANewDisplayName: string;
       const ACatID: string): TSnippet;
-    function CreateTempSnippet(const SnippetKey: string;
-      const Data: TSnippetEditData): TSnippet; overload;
-      {Creates a new temporary snippet without adding it to the Snippets
-      object's snippets list. The new instance may not be added to the
-      Snippets object.
-        @param SnippetKey [in] New snippet's key.
-        @param Data [in] Record storing new snippet's properties and references.
-        @return Reference to new snippet.
-      }
+
+    ///  <summary>Creates a new temporary snippet without adding it to the
+    ///  database.</summary>
+    ///  <param name="AKey"><c>string</c> [in] The new nippet's key.</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of the
+    ///  collection to which the new snippet belongs.</param>
+    ///  <param name="AData"><c>TSnippetEditData</c> [in] Record storing the new
+    ///  snippet's properties and references.</param>
+    ///  <returns><c>TSnippet</c> Reference to new snippet.</returns>
+    ///  <remarks>The returned snippet must not be added to the database.
+    ///  </remarks>
+    function CreateTempSnippet(const AKey: string;
+      const ACollectionID: TCollectionID; const AData: TSnippetEditData):
+      TSnippet; overload;
+
     function CreateTempSnippet(const Snippet: TSnippet): TSnippet; overload;
       {Creates a new temporary copy of a snippet without adding it to the
       Snippets object's snippets list. The new instance may not be added to the
@@ -564,15 +570,21 @@ type
       const ANewCollectionID: TCollectionID; const ANewDisplayName: string;
       const ACatID: string): TSnippet;
 
-    function CreateTempSnippet(const SnippetKey: string;
-      const Data: TSnippetEditData): TSnippet; overload;
-      {Creates a new temporary user defined snippet without adding it to the
-      Snippets object's snippets list. The new instance may not be added to the
-      Snippets object.
-        @param SnippetKey [in] New snippet's key.
-        @param Data [in] Record storing new snippet's properties and references.
-        @return Reference to new snippet.
-      }
+    ///  <summary>Creates a new temporary snippet without adding it to the
+    ///  database.</summary>
+    ///  <param name="AKey"><c>string</c> [in] The new nippet's key.</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of the
+    ///  collection to which the new snippet belongs.</param>
+    ///  <param name="AData"><c>TSnippetEditData</c> [in] Record storing the new
+    ///  snippet's properties and references.</param>
+    ///  <returns><c>TSnippet</c> Reference to new snippet.</returns>
+    ///  <remarks>
+    ///  <para>The returned snippet must not be added to the database.</para>
+    ///  <para>Method of <c>IDatabaseEdit</c>.</para>
+    ///  </remarks>
+    function CreateTempSnippet(const AKey: string;
+      const ACollectionID: TCollectionID; const AData: TSnippetEditData):
+      TSnippet; overload;
 
     function CreateTempSnippet(const Snippet: TSnippet): TSnippet; overload;
       {Creates a new temporary copy of a snippet without adding it to the
@@ -781,18 +793,11 @@ begin
   );
 end;
 
-function TDatabase.CreateTempSnippet(const SnippetKey: string;
-  const Data: TSnippetEditData): TSnippet;
-  {Creates a new temporary user defined snippet without adding it to the
-  Snippets object's snippets list. The new instance may not be added to the
-  Snippets object.
-    @param SnippetKey [in] New snippet's key.
-    @param Data [in] Record storing new snippet's properties and references.
-    @return Reference to new snippet.
-  }
+function TDatabase.CreateTempSnippet(const AKey: string;
+  const ACollectionID: TCollectionID; const AData: TSnippetEditData): TSnippet;
 begin
-  Result := TTempSnippet.Create(SnippetKey, TCollectionID.__TMP__UserDBCollectionID, Data.Props);
-  (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
+  Result := TTempSnippet.Create(AKey, ACollectionID, AData.Props);
+  (Result as TTempSnippet).UpdateRefs(AData.Refs, fSnippets);
 end;
 
 procedure TDatabase.DeleteCategory(const Category: TCategory);

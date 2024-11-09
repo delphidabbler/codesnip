@@ -692,7 +692,7 @@ begin
   // Create snippet object from entered data
   EditData.Assign(UpdateData);
   Result := (Database as IDatabaseEdit).CreateTempSnippet(
-    UniqueSnippetKey, EditData
+    UniqueSnippetKey, SelectedCollectionID, EditData
   );
 end;
 
@@ -1046,7 +1046,7 @@ begin
     raise EDataEntry.Create(ErrorMessage, edSourceCode, ErrorSelection);
   frmExtra.Validate;
   if not TSnippetValidator.ValidateDependsList(
-    UniqueSnippetKey, UpdateData, ErrorMessage
+    UniqueSnippetKey, SelectedCollectionID, UpdateData, ErrorMessage
   ) then
     raise EDataEntry.Create(  // selection not applicable to list boxes
       StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends

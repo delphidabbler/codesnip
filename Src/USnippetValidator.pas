@@ -17,7 +17,12 @@ interface
 
 uses
   // Project
-  ActiveText.UMain, DB.USnippet, DB.USnippetKind, UBaseObjects, UStructs;
+  ActiveText.UMain,
+  DB.UCollections,
+  DB.USnippet,
+  DB.USnippetKind,
+  UBaseObjects,
+  UStructs;
 
 
 type
@@ -50,17 +55,24 @@ type
           returned.
         @return True if dependency list is valid or False if not.
       }
-    class function ValidateDependsList(const SnippetKey: string;
-      const Data: TSnippetEditData; out ErrorMsg: string): Boolean; overload;
-      {Recursively checks dependency list of a snippet for validity.
-        @param SnippetKey [in] Key of snippet for which dependencies are to be
-          checked.
-        @param Data [in] Data describing properties and references of snippet
-          for which dependencies are to be checked.
-        @param ErrorMsg [out] Message that describes error. Undefined if True
-          returned.
-        @return True if dependency list is valid or False if not.
-      }
+
+    ///  <summary>Recursively checks dependency list of a snippet for validity.
+    ///  </summary>
+    ///  <param name="AKey"><c>string</c> [in] Key of snippet for which
+    ///  dependencies are to be checked.</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of the
+    ///  collection to which snippet belongs.</param>
+    ///  <param name="AData"><c>TSnippetEditData</c> [in] Data describing
+    ///  properties and references of snippet for which dependencies are to be
+    ///  checked.</param>
+    ///  <param name="AErrorMsg"><c>string</c> [out] Message that describes any
+    ///  error. Undefined if <c>True</c> is returned.</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if dependency list is valid or
+    ///  <c>False</c> if not.</returns>
+    class function ValidateDependsList(const AKey: string;
+      const ACollectionID: TCollectionID; const AData: TSnippetEditData;
+      out AErrorMsg: string): Boolean; overload;
+
     class function ValidateSourceCode(const Source: string;
       out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
       {Validates a source code from a snippet.
@@ -121,7 +133,6 @@ uses
   SysUtils,
   // Project
   ActiveText.UValidator,
-  DB.UCollections,
   DB.UMain,
   UStrUtils;
 
@@ -256,8 +267,9 @@ begin
     );
 end;
 
-class function TSnippetValidator.ValidateDependsList(const SnippetKey: string;
-  const Data: TSnippetEditData; out ErrorMsg: string): Boolean;
+class function TSnippetValidator.ValidateDependsList(const AKey: string;
+  const ACollectionID: TCollectionID; const AData: TSnippetEditData;
+  out AErrorMsg: string): Boolean;
   {Recursively checks dependency list of a snippet for validity.
     @param SnippetKey [in] Key of snippet for which dependencies are to be
       checked.
@@ -271,10 +283,10 @@ var
   TempSnippet: TSnippet;  // temporary snippet that is checked for dependencies
 begin
   TempSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
-    SnippetKey, Data
+    AKey, ACollectionID, AData
   );
   try
-    Result := ValidateDependsList(TempSnippet, ErrorMsg);
+    Result := ValidateDependsList(TempSnippet, AErrorMsg);
   finally
     TempSnippet.Free;
   end;
