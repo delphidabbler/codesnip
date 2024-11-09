@@ -259,7 +259,7 @@ procedure TNotifier.DisplaySnippet(const Key: WideString;
 begin
   if Assigned(fDisplaySnippetAction) then
   begin
-    (fDisplaySnippetAction as TSnippetAction).SnippetName := Key;
+    (fDisplaySnippetAction as TSnippetAction).Key := Key;
     (fDisplaySnippetAction as TSnippetAction).CollectionID := ACollectionID;
     (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
     fDisplaySnippetAction.Execute;
@@ -270,7 +270,7 @@ procedure TNotifier.EditSnippet(const Key: WideString);
 begin
   if Assigned(fEditSnippetAction) then
   begin
-    (fEditSnippetAction as TEditSnippetAction).SnippetName := Key;
+    (fEditSnippetAction as TEditSnippetAction).Key := Key;
     fEditSnippetAction.Execute;
   end;
 end;

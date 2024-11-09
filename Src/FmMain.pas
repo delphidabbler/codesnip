@@ -762,7 +762,7 @@ end;
 
 procedure TMainForm.ActEditSnippetByNameExecute(Sender: TObject);
 begin
-  TUserDBMgr.EditSnippet((Sender as TEditSnippetAction).SnippetName);
+  TUserDBMgr.EditSnippet((Sender as TEditSnippetAction).Key);
 end;
 
 procedure TMainForm.actEditSnippetExecute(Sender: TObject);
