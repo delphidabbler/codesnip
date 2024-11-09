@@ -254,7 +254,9 @@ var
 begin
   SnippetKey := (Database as IDatabaseEdit).GetUniqueSnippetKey(ACollectionID);
   SnippetDetails := BuildSnippetInfo(SWAGPacket);
-  (Database as IDatabaseEdit).AddSnippet(SnippetKey, SnippetDetails);
+  (Database as IDatabaseEdit).AddSnippet(
+    SnippetKey, ACollectionID, SnippetDetails
+  );
 end;
 
 procedure TSWAGImporter.IncludePacket(const SWAGPacket: TSWAGPacket);

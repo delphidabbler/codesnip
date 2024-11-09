@@ -648,7 +648,7 @@ begin
     else
     begin
       (Database as IDatabaseEdit).AddSnippet(
-        UniqueSnippetKey, fEditData
+        UniqueSnippetKey, SelectedCollectionID, fEditData
       )
     end;
   except

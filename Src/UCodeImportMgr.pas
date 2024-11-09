@@ -273,7 +273,7 @@ begin
       )
     else
       SnippetKey := ImportInfo.OrigKey;
-    Editor.AddSnippet(SnippetKey, SnippetInfo.Data);
+    Editor.AddSnippet(SnippetKey, CollectionID, SnippetInfo.Data);
     {TODO -cVault: Reintroduce the option to overwrite a snippet with matching
             ID, but allow user to select whether this can happen.}
   end;

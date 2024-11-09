@@ -219,13 +219,17 @@ type
           key is not to change.
         @return Reference to updated snippet. Will have changed.
       }
-    function AddSnippet(const SnippetKey: string;
-      const Data: TSnippetEditData): TSnippet;
-      {Adds a new snippet to the user database.
-        @param SnippetKey [in] New snippet's key.
-        @param Data [in] Record storing new snippet's properties and references.
-        @return Reference to new snippet.
-      }
+
+    ///  <summary>Adds a new snippet to the database.</summary>
+    ///  <param name="AKey"><c>string</c> [in] New snippet's key.</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of collection
+    ///  that the new snippet will belong to.</param>
+    ///  <param name="AData"><c>TSnippetEditData</c> [in] Record storing the new
+    ///  snippet's properties and references.</param>
+    ///  <returns><c>TSnippet</c>. Reference to the new snippet.</returns>
+    function AddSnippet(const AKey: string; const ACollectionID: TCollectionID;
+      const AData: TSnippetEditData): TSnippet;
+
     function DuplicateSnippet(const Snippet: TSnippet;
       const UniqueKey, DisplayName: string; const CatID: string): TSnippet;
     function CreateTempSnippet(const SnippetKey: string;
@@ -390,14 +394,26 @@ type
         @param Info [in] Reference to any further information for event. May be
           nil.
       }
-    function InternalAddSnippet(const SnippetKey: string;
-      const Data: TSnippetEditData): TSnippet;
+
+    ///  <summary>Adds a new snippet to the database. Assumes the snippet is
+    ///  not already in the database.</summary>
+    ///  <param name="AKey"><c>string</c> [in] New snippet's key.</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of collection
+    ///  that the new snippet will belong to.</param>
+    ///  <param name="AData"><c>TSnippetEditData</c> [in] Record storing the new
+    ///  snippet's properties and references.</param>
+    ///  <returns><c>TSnippet</c>. Reference to the new snippet.</returns>
+    ///  <exception><c>ECodeSnip</c> raised if the snippet's category does not
+    ///  exist.</exception>
+    function InternalAddSnippet(const AKey: string;
+      const ACollectionID: TCollectionID; const AData: TSnippetEditData):
+      TSnippet;
       {Adds a new snippet to the user database. Assumes snippet not already in
       user database.
         @param SnippetKey [in] New snippet's key.
         @param Data [in] Properties and references of new snippet.
         @return Reference to new snippet object.
-        @except Exception raised if snippet's category does not exist.
+        @except Exception raised if
       }
     procedure InternalDeleteSnippet(const Snippet: TSnippet);
       {Deletes a snippet from the user database.
@@ -497,13 +513,18 @@ type
           key is not to change.
         @return Reference to updated snippet. Will have changed.
       }
-    function AddSnippet(const SnippetKey: string;
-      const Data: TSnippetEditData): TSnippet;
-      {Adds a new snippet to the user database.
-        @param SnippetKey [in] New snippet's key.
-        @param Data [in] Record storing new snippet's properties and references.
-        @return Reference to new snippet.
-      }
+
+    ///  <summary>Adds a new snippet to the database.</summary>
+    ///  <param name="AKey"><c>string</c> [in] New snippet's key.</param>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of collection
+    ///  that the new snippet will belong to.</param>
+    ///  <param name="AData"><c>TSnippetEditData</c> [in] Record storing the new
+    ///  snippet's properties and references.</param>
+    ///  <returns><c>TSnippet</c>. Reference to the new snippet.</returns>
+    ///  <remarks>Method of <c>IDatabaseEdit</c>.</remarks>
+    function AddSnippet(const AKey: string; const ACollectionID: TCollectionID;
+      const AData: TSnippetEditData): TSnippet;
+
     function DuplicateSnippet(const Snippet: TSnippet;
       const UniqueKey, DisplayName: string; const CatID: string): TSnippet;
     function CreateTempSnippet(const SnippetKey: string;
@@ -662,24 +683,19 @@ begin
   fChangeEvents.AddHandler(Handler);
 end;
 
-function TDatabase.AddSnippet(const SnippetKey: string;
-  const Data: TSnippetEditData): TSnippet;
-  {Adds a new snippet to the user database.
-    @param SnippetKey [in] New snippet's key.
-    @param Data [in] Record storing new snippet's properties and references.
-    @return Reference to new snippet.
-  }
+function TDatabase.AddSnippet(const AKey: string;
+  const ACollectionID: TCollectionID; const AData: TSnippetEditData): TSnippet;
 resourcestring
   // Error message
-  sKeyExists = 'Snippet with key "%s" already exists in user database';
+  sKeyExists = 'Snippet with key "%s" already exists in collection';
 begin
   Result := nil;  // keeps compiler happy
   TriggerEvent(evChangeBegin);
   try
     // Check if snippet with same key exists in user database: error if so
-    if fSnippets.Find(SnippetKey, TCollectionID.__TMP__UserDBCollectionID) <> nil then
-      raise ECodeSnip.CreateFmt(sKeyExists, [SnippetKey]);
-    Result := InternalAddSnippet(SnippetKey, Data);
+    if fSnippets.Find(AKey, ACollectionID) <> nil then
+      raise ECodeSnip.CreateFmt(sKeyExists, [AKey]);
+    Result := InternalAddSnippet(AKey, ACollectionID, AData);
     Query.Update;
     TriggerEvent(evSnippetAdded, Result);
   finally
@@ -815,13 +831,14 @@ end;
 
 function TDatabase.DuplicateSnippet(const Snippet: TSnippet;
   const UniqueKey, DisplayName: string; const CatID: string): TSnippet;
+  {TODO -cCollections: Add collection ID parameter}
 var
   Data: TSnippetEditData;
 begin
   Data := (Snippet as TSnippetEx).GetEditData;
   Data.Props.Cat := CatID;
   Data.Props.DisplayName := DisplayName;
-  Result := AddSnippet(UniqueKey, Data);
+  Result := AddSnippet(UniqueKey, TCollectionID.__TMP__UserDBCollectionID, Data);
 end;
 
 function TDatabase.GetCategories: TCategoryList;
@@ -974,15 +991,8 @@ begin
   fCategories.Add(Result);
 end;
 
-function TDatabase.InternalAddSnippet(const SnippetKey: string;
-  const Data: TSnippetEditData): TSnippet;
-  {Adds a new snippet to the user database. Assumes snippet not already in user
-  database.
-    @param SnippetKey [in] New snippet's key.
-    @param Data [in] Properties and references of new snippet.
-    @return Reference to new snippet object.
-    @except Exception raised if snippet's category does not exist.
-  }
+function TDatabase.InternalAddSnippet(const AKey: string;
+  const ACollectionID: TCollectionID; const AData: TSnippetEditData): TSnippet;
 var
   Cat: TCategory; // category object containing new snippet
 resourcestring
@@ -990,8 +1000,8 @@ resourcestring
   sCatNotFound = 'Category "%0:s" referenced by new snippet with key "%1:s" '
     + 'does not exist';
 begin
-  Result := TSnippetEx.Create(SnippetKey, TCollectionID.__TMP__UserDBCollectionID, Data.Props);
-  (Result as TSnippetEx).UpdateRefs(Data.Refs, fSnippets);
+  Result := TSnippetEx.Create(AKey, ACollectionID, AData.Props);
+  (Result as TSnippetEx).UpdateRefs(AData.Refs, fSnippets);
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
     raise ECodeSnip.CreateFmt(sCatNotFound, [Result.Category, Result.Key]);
@@ -1193,6 +1203,10 @@ end;
 
 function TDatabase.UpdateSnippet(const Snippet: TSnippet;
   const Data: TSnippetEditData; const NewKey: string): TSnippet;
+  {TODO -cCollections: Don't need NewKey parameter: key never changes. Also
+          don't pass a collection ID, since that can never change either,
+          because to do so would (1) invalidate the key because key is only
+          guaranteed unique in collection and (2) would change the snippet ID}
   {Updates a user defined snippet's properties and references using provided
   data.
     @param Snippet [in] Snippet to be updated. Must be user-defined.
@@ -1202,7 +1216,7 @@ function TDatabase.UpdateSnippet(const Snippet: TSnippet;
     @return Reference to updated snippet. Will have changed.
   }
 var
-  SnippetKey: string;      // snippet key
+  SnippetKey: string;       // snippet key
   Dependent: TSnippet;      // loops thru each snippetthat depends on Snippet
   Dependents: TSnippetList; // list of dependent snippets
   Referrer: TSnippet;       // loops thru snippets that cross references Snippet
@@ -1243,7 +1257,7 @@ begin
     // delete the snippet
     InternalDeleteSnippet(Snippet);
     // add new snippet
-    Result := InternalAddSnippet(SnippetKey, Data);
+    Result := InternalAddSnippet(SnippetKey, TCollectionID.__TMP__UserDBCollectionID, Data);
     // add new snippet to referrer list of referring snippets
     for Referrer in Referrers do
       Referrer.XRef.Add(Result);
