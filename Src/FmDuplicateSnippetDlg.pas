@@ -82,6 +82,9 @@ uses
 
 {$R *.dfm}
 
+{TODO -cTidy: Re-order methods alphabetically}
+{TODO -cRefactor: Add method to get display name from ctrl and strip whitespace}
+
 { TDuplicateSnippetDlg }
 
 procedure TDuplicateSnippetDlg.ArrangeForm;
@@ -183,14 +186,12 @@ begin
 end;
 
 procedure TDuplicateSnippetDlg.UpdateDatabase;
-var
-  DisplayName: string;
 begin
-  DisplayName := StrTrim(edDisplayName.Text);
   (Database as IDatabaseEdit).DuplicateSnippet(
     fSnippet,
     fSnippetKey,
-    DisplayName,
+    SelectedCollectionID,
+    StrTrim(edDisplayName.Text),
     fCatList.CatID(cbCategory.ItemIndex)
   );
 end;

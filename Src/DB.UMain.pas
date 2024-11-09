@@ -232,8 +232,22 @@ type
     function AddSnippet(const AKey: string; const ACollectionID: TCollectionID;
       const AData: TSnippetEditData): TSnippet;
 
-    function DuplicateSnippet(const Snippet: TSnippet;
-      const UniqueKey, DisplayName: string; const CatID: string): TSnippet;
+    ///  <summary>Duplicates a snippet in the database.</summary>
+    ///  <param name="ASnippet"><c>TSnippet</c> [in] Snippet to be duplicated.
+    ///  </param>
+    ///  <param name="ANewKey"><c>string</c> [in] Key to be used for duplicated
+    ///  snippet.</param>
+    ///  <param name="ANewCollectionID"><c>TCollectionID</c> [in] ID of
+    ///  collection the duplicated snippet belongs to.</param>
+    ///  <param name="ANewDisplayName"><c>string</c> [in] Display name of the
+    ///  duplicated snippet.</param>
+    ///  <param name="ACatID"><c>string</c> [in] ID of the category to which the
+    ///  duplicated snippet will belong.</param>
+    ///  <returns><c>TSnippet</c>. Reference to the duplicated snippet.
+    ///  </returns>
+    function DuplicateSnippet(const ASnippet: TSnippet; const ANewKey: string;
+      const ANewCollectionID: TCollectionID; const ANewDisplayName: string;
+      const ACatID: string): TSnippet;
     function CreateTempSnippet(const SnippetKey: string;
       const Data: TSnippetEditData): TSnippet; overload;
       {Creates a new temporary snippet without adding it to the Snippets
@@ -532,8 +546,24 @@ type
     function AddSnippet(const AKey: string; const ACollectionID: TCollectionID;
       const AData: TSnippetEditData): TSnippet;
 
-    function DuplicateSnippet(const Snippet: TSnippet;
-      const UniqueKey, DisplayName: string; const CatID: string): TSnippet;
+    ///  <summary>Duplicates a snippet in the database.</summary>
+    ///  <param name="ASnippet"><c>TSnippet</c> [in] Snippet to be duplicated.
+    ///  </param>
+    ///  <param name="ANewKey"><c>string</c> [in] Key to be used for duplicated
+    ///  snippet.</param>
+    ///  <param name="ANewCollectionID"><c>TCollectionID</c> [in] ID of
+    ///  collection the duplicated snippet belongs to.</param>
+    ///  <param name="ANewDisplayName"><c>string</c> [in] Display name of the
+    ///  duplicated snippet.</param>
+    ///  <param name="ACatID"><c>string</c> [in] ID of the category to which the
+    ///  duplicated snippet will belong.</param>
+    ///  <returns><c>TSnippet</c>. Reference to the duplicated snippet.
+    ///  </returns>
+    ///  <remarks>Method of <c>IDatabaseEdit</c>.</remarks>
+    function DuplicateSnippet(const ASnippet: TSnippet; const ANewKey: string;
+      const ANewCollectionID: TCollectionID; const ANewDisplayName: string;
+      const ACatID: string): TSnippet;
+
     function CreateTempSnippet(const SnippetKey: string;
       const Data: TSnippetEditData): TSnippet; overload;
       {Creates a new temporary user defined snippet without adding it to the
@@ -543,6 +573,7 @@ type
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
+
     function CreateTempSnippet(const Snippet: TSnippet): TSnippet; overload;
       {Creates a new temporary copy of a snippet without adding it to the
       Snippets object's snippets list. The new instance may not be added to the
@@ -836,16 +867,18 @@ begin
   inherited;
 end;
 
-function TDatabase.DuplicateSnippet(const Snippet: TSnippet;
-  const UniqueKey, DisplayName: string; const CatID: string): TSnippet;
-  {TODO -cCollections: Add collection ID parameter}
+function TDatabase.DuplicateSnippet(const ASnippet: TSnippet;
+  const ANewKey: string; const ANewCollectionID: TCollectionID;
+  const ANewDisplayName: string; const ACatID: string): TSnippet;
 var
   Data: TSnippetEditData;
 begin
-  Data := (Snippet as TSnippetEx).GetEditData;
-  Data.Props.Cat := CatID;
-  Data.Props.DisplayName := DisplayName;
-  Result := AddSnippet(UniqueKey, TCollectionID.__TMP__UserDBCollectionID, Data);
+  {TODO -cVault: Update edit data before calling this method and replace
+          and ANewDisplayName and ACatID with a single AData parameter.}
+  Data := (ASnippet as TSnippetEx).GetEditData;
+  Data.Props.Cat := ACatID;
+  Data.Props.DisplayName := ANewDisplayName;
+  Result := AddSnippet(ANewKey, ANewCollectionID, Data);
 end;
 
 function TDatabase.GetCategories: TCategoryList;
