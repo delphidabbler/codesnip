@@ -209,16 +209,18 @@ type
         @param Snippet [in] Snippet for which cross referers are required.
         @return List of IDs of referring snippets.
       }
-    function UpdateSnippet(const Snippet: TSnippet;
-      const Data: TSnippetEditData; const NewKey: string = ''): TSnippet;
-      {Updates a user defined snippet's properties and references using provided
-      data.
-        @param Snippet [in] Snippet to be updated. Must be user-defined.
-        @param Data [in] Record containing revised data.
-        @param NewKey [in] New snippet's key. Set to '' or Snippet.Key if
-          key is not to change.
-        @return Reference to updated snippet. Will have changed.
-      }
+
+    ///  <summary>Updates a snippet's properties and references using the
+    ///  provided data.</summary>
+    ///  <param name="ASnippet"><c>TSnippet</c> [in] Snippet to be updated.
+    ///  </param>
+    ///  <param name="AData"><c>TSnippetEditData</c> [in] Record containing the
+    ///  revised data.</param>
+    ///  <returns><c>TSnippet</c>. Reference to the updated snippet.</returns>
+    ///  <remarks>The returned <c>TSnippet</c> object will be a different object
+    ///  to <c>ASnippet</c>.</remarks>
+    function UpdateSnippet(const ASnippet: TSnippet;
+      const AData: TSnippetEditData): TSnippet;
 
     ///  <summary>Adds a new snippet to the database.</summary>
     ///  <param name="AKey"><c>string</c> [in] New snippet's key.</param>
@@ -503,16 +505,21 @@ type
         @param Snippet [in] Snippet which is cross referenced.
         @return List of IDs of referring snippets.
       }
-    function UpdateSnippet(const Snippet: TSnippet;
-      const Data: TSnippetEditData; const NewKey: string = ''): TSnippet;
-      {Updates a user defined snippet's properties and references using provided
-      data.
-        @param Snippet [in] Snippet to be updated. Must be user-defined.
-        @param Data [in] Record containing revised data.
-        @param NewKey [in] New snippet's key. Set to '' or Snippet.Key if
-          key is not to change.
-        @return Reference to updated snippet. Will have changed.
-      }
+
+    ///  <summary>Updates a snippet's properties and references using the
+    ///  provided data.</summary>
+    ///  <param name="ASnippet"><c>TSnippet</c> [in] Snippet to be updated.
+    ///  </param>
+    ///  <param name="AData"><c>TSnippetEditData</c> [in] Record containing the
+    ///  revised data.</param>
+    ///  <returns><c>TSnippet</c>. Reference to the updated snippet.</returns>
+    ///  <remarks>
+    ///  <para>The returned <c>TSnippet</c> object will be a different object
+    ///  to <c>ASnippet</c>.</para>
+    ///  <para>Method of <c>IDatabaseEdit</c>.</para>
+    ///  </remarks>
+    function UpdateSnippet(const ASnippet: TSnippet;
+      const AData: TSnippetEditData): TSnippet;
 
     ///  <summary>Adds a new snippet to the database.</summary>
     ///  <param name="AKey"><c>string</c> [in] New snippet's key.</param>
@@ -1201,70 +1208,57 @@ begin
   Result := fUpdated;
 end;
 
-function TDatabase.UpdateSnippet(const Snippet: TSnippet;
-  const Data: TSnippetEditData; const NewKey: string): TSnippet;
-  {TODO -cCollections: Don't need NewKey parameter: key never changes. Also
-          don't pass a collection ID, since that can never change either,
-          because to do so would (1) invalidate the key because key is only
-          guaranteed unique in collection and (2) would change the snippet ID}
-  {Updates a user defined snippet's properties and references using provided
-  data.
-    @param Snippet [in] Snippet to be updated. Must be user-defined.
-    @param Data [in] Record containing revised data.
-    @param NewKey [in] New snippet's key. Set to '' or Snippet.Key if key
-      is not to change.
-    @return Reference to updated snippet. Will have changed.
-  }
+function TDatabase.UpdateSnippet(const ASnippet: TSnippet;
+  const AData: TSnippetEditData): TSnippet;
 var
-  SnippetKey: string;       // snippet key
-  Dependent: TSnippet;      // loops thru each snippetthat depends on Snippet
   Dependents: TSnippetList; // list of dependent snippets
-  Referrer: TSnippet;       // loops thru snippets that cross references Snippet
+  Dependent: TSnippet;      // each snippet that depend on ASnippet
   Referrers: TSnippetList;  // list of referencing snippets
-resourcestring
-  // Error message
-  sCantChangeKey = 'Can''t change key of snippet with key %0:s to %1:s: '
-    + 'Snippet with key %1:s already exists in user database';
+  Referrer: TSnippet;       // each snippet that cross references ASnippet
+  PreservedSnippetID: TSnippetID;
 begin
-  Result := Snippet;      // keeps compiler happy
-  Assert(Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID,
-    ClassName + '.UpdateSnippet: Snippet is not user-defined');
   Referrers := nil;
   Dependents := nil;
+
   TriggerEvent(evChangeBegin);
-  TriggerEvent(evBeforeSnippetChange, Snippet);
+  TriggerEvent(evBeforeSnippetChange, ASnippet);
+
   try
-    // Calculate new key
-    if NewKey <> '' then
-      SnippetKey := NewKey
-    else
-      SnippetKey := Snippet.Key;
-    // If key has changed then new key musn't exist in user database
-    if not StrSameText(SnippetKey, Snippet.Key) then
-      if fSnippets.Find(SnippetKey, TCollectionID.__TMP__UserDBCollectionID) <> nil then
-        raise ECodeSnip.CreateFmt(sCantChangeKey, [Snippet.Key, SnippetKey]);
     // We update by deleting old snippet and inserting new one
+
     // get lists of snippets that cross reference or depend on this snippet
     Dependents := TSnippetList.Create;
-    GetDependentList(Snippet, Dependents);
+    GetDependentList(ASnippet, Dependents);
     Referrers := TSnippetList.Create;
-    GetReferrerList(Snippet, Referrers);
-    // remove invalid references from referring snippets
+    GetReferrerList(ASnippet, Referrers);
+
+    // remove references to pre-update snippet from referring snippets
     for Referrer in Referrers do
-      (Referrer.XRef as TSnippetListEx).Delete(Snippet);
+      (Referrer.XRef as TSnippetListEx).Delete(ASnippet);
     for Dependent in Dependents do
-      (Dependent.Depends as TSnippetListEx).Delete(Snippet);
-    // delete the snippet
-    InternalDeleteSnippet(Snippet);
-    // add new snippet
-    Result := InternalAddSnippet(SnippetKey, TCollectionID.__TMP__UserDBCollectionID, Data);
-    // add new snippet to referrer list of referring snippets
+      (Dependent.Depends as TSnippetListEx).Delete(ASnippet);
+
+    // record snippet's key and collection ID for use in re-created updated
+    // snippet
+    PreservedSnippetID := ASnippet.ID;
+
+    // delete the old, pre-update snippet
+    InternalDeleteSnippet(ASnippet);
+    // add new, post-update snippet with same key & collection ID as old snippet
+    Result := InternalAddSnippet(
+      PreservedSnippetID.Key, PreservedSnippetID.CollectionID, AData
+    );
+
+    // add updated snippet to referrer lists of referring snippets
     for Referrer in Referrers do
       Referrer.XRef.Add(Result);
     for Dependent in Dependents do
       Dependent.Depends.Add(Result);
+
     Query.Update;
+
     TriggerEvent(evSnippetChanged, Result);
+
   finally
     fUpdated := True;
     Referrers.Free;
