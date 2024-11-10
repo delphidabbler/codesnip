@@ -5,8 +5,7 @@
  *
  * Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements classes that can import and export user defined snippets from and
- * to XML.
+ * Implements classes that can import and export snippets from and to XML.
 }
 
 
@@ -22,6 +21,7 @@ uses
   Classes,
   XMLIntf,
   // Project
+  DB.UCategory,
   DB.USnippet,
   UBaseObjects,
   UEncodings,
@@ -52,10 +52,16 @@ type
   ///  <summary>Imports code snippets from XML.</summary>
   TCodeImporter = class(TNoPublicConstructObject)
   strict private
-    ///  <summary>Version of file being imported.</summary>
-    fVersion: Integer;
-    ///  <summary>List of snippets read from XML.</summary>
-    fSnippetInfo: TSnippetInfoList;
+    const
+      {TODO -cVault: Let user select or create a category rather than imposing
+              this one}
+      ///  <summary>ID of category used to import snippets.</summary>
+      ImportCatID = 'imports';
+    var
+      ///  <summary>Version of file being imported.</summary>
+      fVersion: Integer;
+      ///  <summary>List of snippets read from XML.</summary>
+      fSnippetInfo: TSnippetInfoList;
     ///  <summary>Extended XML document object.</summary>
     fXMLDoc: IXMLDocumentEx;
     ///  <summary>Retrieves a list of all snippet nodes from XML document.
@@ -69,9 +75,13 @@ type
     ///  </summary>
     ///  <exception>ECodeImporter raised if XML is not valid.</exception>
     function ValidateDoc: Integer;
+    ///  <summary>Checks if the special import category exists and creates it if
+    ///  not.</summary>
+    class procedure EnsureImportCategoryExists;
     ///  <summary>Constructs and initialises object ready to perform import.
     ///  </summary>
     constructor InternalCreate;
+
   public
     ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
@@ -169,7 +179,6 @@ uses
   DB.UMain,
   DB.USnippetKind,
   UAppInfo,
-  UReservedCategories,
   USnippetExtraHelper,
   USnippetIDs,
   UStructs,
@@ -345,6 +354,20 @@ begin
   inherited;
 end;
 
+class procedure TCodeImporter.EnsureImportCategoryExists;
+resourcestring
+  ImportCatDesc = 'Imported Snippets';
+var
+  ImportCatData: TCategoryData;
+begin
+  if not Assigned(Database.Categories.Find(ImportCatID)) then
+  begin
+    ImportCatData.Init;
+    ImportCatData.Desc := ImportCatDesc;
+    (Database as IDatabaseEdit).AddCategory(ImportCatID, ImportCatData);
+  end;
+end;
+
 procedure TCodeImporter.Execute(const Data: TBytes);
 
   ///  Reads list of units from under SnippetNode into Units list.
@@ -372,7 +395,7 @@ procedure TCodeImporter.Execute(const Data: TBytes);
     Depends.Clear;
     for SnippetName in SnippetNames do
       // Note: in building snippet ID list we assume each snippet is from the
-      // standard user collection. It may not be, but there is no way of telling
+      // default collection. It may not be, but there is no way of telling
       // from XML.
       Depends.Add(TSnippetID.Create(SnippetName, TCollectionID.__TMP__UserDBCollectionID));
   end;
@@ -422,7 +445,7 @@ begin
       fSnippetInfo[Idx].Key := SnippetNode.Attributes[cSnippetNameAttr];
       fSnippetInfo[Idx].Data :=
         (Database as IDatabaseEdit).GetEditableSnippetInfo;
-      fSnippetInfo[Idx].Data.Props.Cat := TReservedCategories.ImportsCatID;
+      fSnippetInfo[Idx].Data.Props.Cat := ImportCatID;
       fSnippetInfo[Idx].Data.Props.Desc := GetDescription(SnippetNode);
       fSnippetInfo[Idx].Data.Props.DisplayName := TXMLDocHelper.GetSubTagText(
         fXMLDoc, SnippetNode, cDisplayNameNode
@@ -511,11 +534,10 @@ end;
 constructor TCodeImporter.InternalCreate;
 begin
   inherited InternalCreate;
-  // Set up XML document that will read data
   OleInitialize(nil);
   fXMLDoc := TXMLDocHelper.CreateXMLDoc;
-  // Initialise fields that receive imported data
   SetLength(fSnippetInfo, 0);
+  EnsureImportCategoryExists;
 end;
 
 function TCodeImporter.ValidateDoc: Integer;

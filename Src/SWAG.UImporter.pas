@@ -21,6 +21,7 @@ uses
   Generics.Collections,
   // Project
   ActiveText.UMain,
+  DB.UCategory,
   DB.UCollections,
   DB.USnippet,
   SWAG.UCommon;
@@ -42,6 +43,11 @@ type
       ///  </param>
       TProgressCallback = reference to procedure (
         const SWAGPacket: TSWAGPacket);
+    const
+      {TODO -cVault: Let user select or create a category rather than imposing
+              this one}
+      ///  <summary>ID of category used to import snippets.</summary>
+      SWAGCatID = '_swag_';
     var
       ///  <summary>List of SWAG packets to be imported.</summary>
       fImportList: TList<TSWAGPacket>;
@@ -60,6 +66,8 @@ type
     ///  database as a CodeSnip format snippet.</summary>
     procedure ImportPacketAsSnippet(const ACollectionID: TCollectionID;
       const SWAGPacket: TSWAGPacket);
+
+    class procedure EnsureSWAGCategoryExists;
   public
     ///  <summary>Constructs new object instance.</summary>
     constructor Create;
@@ -93,10 +101,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UCategory,
   DB.UMain,
   DB.USnippetKind,
-  UReservedCategories,
   USnippetValidator;
 
 
@@ -135,7 +141,7 @@ function TSWAGImporter.BuildSnippetInfo(const SWAGPacket: TSWAGPacket):
 begin
   Result.Init;
   Result.Props.Kind := skFreeform;
-  Result.Props.Cat := TReservedCategories.SWAGCatID;
+  Result.Props.Cat := SWAGCatID;
   Result.Props.Desc := BuildDescription;
   Result.Props.SourceCode := SWAGPacket.SourceCode;
   Result.Props.HiliteSource := not SWAGPacket.IsDocument;
@@ -148,12 +154,29 @@ constructor TSWAGImporter.Create;
 begin
   inherited Create;
   fImportList := TList<TSWAGPacket>.Create;
+  EnsureSWAGCategoryExists;
 end;
 
 destructor TSWAGImporter.Destroy;
 begin
   fImportList.Free;
   inherited;
+end;
+
+class procedure TSWAGImporter.EnsureSWAGCategoryExists;
+resourcestring
+  SWAGCatDesc = 'SWAG Imports';
+var
+  SWAGCatData: TCategoryData;
+  SWAGCat: TCategory;
+begin
+  SWAGCat := Database.Categories.Find(SWAGCatID);
+  if not Assigned(SWAGCat) then
+  begin
+    SWAGCatData.Init;
+    SWAGCatData.Desc := SWAGCatDesc;
+    (Database as IDatabaseEdit).AddCategory(SWAGCatID, SWAGCatData);
+  end;
 end;
 
 function TSWAGImporter.ExtraBoilerplate: IActiveText;
@@ -270,13 +293,9 @@ begin
 end;
 
 class function TSWAGImporter.SWAGCategoryDesc: string;
-var
-  Cat: TCategory; // reserved SWAG category in code snippets database
 begin
-  Cat := Database.Categories.Find(TReservedCategories.SWAGCatID);
-  Assert(Assigned(Cat),
-    ClassName + '.SWAGCategoryDesc: Can''t find SWAG category');
-  Result := Cat.Description;
+  EnsureSWAGCategoryExists;
+  Result := Database.Categories.Find(SWAGCatID).Description;
 end;
 
 end.
