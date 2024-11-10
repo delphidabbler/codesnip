@@ -107,7 +107,6 @@ uses
   UConsts,
   UFolderBackup,
   UIStringList,
-  UReservedCategories,
   USnippetIDs;
 
 
@@ -169,7 +168,7 @@ type
       {Returns heading to use in error messages. Should identify the database.
         @return Required heading.
       }
-    procedure LoadCategories; virtual;
+    procedure LoadCategories;
       {Loads all categories from storage.
       }
     procedure CreateCategory(const CatID: string;
@@ -247,9 +246,6 @@ type
     function ErrorMessageHeading: string; override;
       {Returns heading to use in error messages. Identifies main database.
         @return Required heading.
-      }
-    procedure LoadCategories; override;
-      {Loads all categories from storage and adds user category if not present.
       }
   end;
 
@@ -685,25 +681,6 @@ begin
   if not Assigned(Result) then
     // Not in user database: try main database
     Result := SnipList.Find(SnippetKey, TCollectionID.__TMP__MainDBCollectionID);
-end;
-
-procedure TNativeV4FormatLoader.LoadCategories;
-  {Loads all categories from storage and adds user and imports categories if not
-  present.
-  }
-var
-  ResCatIdx: Integer;                 // loops thru all reserved categories
-  ResCatInfo: TReservedCategoryInfo;  // info about a reserved category
-begin
-  // Get all categories from storage
-  inherited;
-  // Add default user-defined categories if not present
-  for ResCatIdx := 0 to Pred(TReservedCategories.Count) do
-  begin
-    ResCatInfo := TReservedCategories.Info(ResCatIdx);
-    if Categories.Find(ResCatInfo.Name) = nil then
-      CreateCategory(ResCatInfo.Name, ResCatInfo.Data);
-  end;
 end;
 
 { TFormatSaver }
