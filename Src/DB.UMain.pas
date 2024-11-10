@@ -1121,6 +1121,10 @@ begin
         Loader.Load(fSnippets, fCategories, Factory);
     end;
 
+    // Ensure that the default category is present, if it's not already loaded
+    if not Assigned(fCategories.Find(TCategory.DefaultID)) then
+      fCategories.Add(TCategoryEx.CreateDefault);
+
     fUpdated := False;
   except
     // If an exception occurs clear the database

@@ -270,9 +270,10 @@ uses
   // Delphi
   Windows {for inlining}, Graphics,
   // Project
+  DB.UCategory,
   DB.UMain, DB.USnippetKind, FmDependenciesDlg, IntfCommon, UColours, UConsts,
   UCSSUtils, UCtrlArranger, UExceptions, UFontHelper, UIStringList,
-  UReservedCategories, USnippetExtraHelper, USnippetValidator, UMessageBox,
+  USnippetExtraHelper, USnippetValidator, UMessageBox,
   USnippetIDs, UStructs, UStrUtils, UTestUnitDlgMgr, UThemesEx, UUtils;
 
 
@@ -850,7 +851,7 @@ begin
     frmDescription.DefaultEditMode := emPlainText;
     frmDescription.Clear;
     edDisplayName.Clear;
-    cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatID);
+    cbCategories.ItemIndex := fCatList.IndexOf(TCategory.DefaultID);
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
     cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);

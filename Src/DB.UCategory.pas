@@ -62,6 +62,10 @@ type
           are equal or +1 if this category's ID is greater than Cat's.
       }
   public
+    const
+      ///  <summary>ID of default category.</summary>
+      DefaultID = '__default__';
+
     ///  <summary>Object constructor. Sets up category object with given
     ///  property values.</summary>
     ///  <param name="CatID"><c>CatID</c> [in] Category ID.</param>
@@ -112,6 +116,10 @@ type
   }
   TCategoryEx = class(TCategory)
   public
+    ///  <summary>Creates the default category with its default description.
+    ///  </summary>
+    class function CreateDefault: TCategory;
+
     function GetEditData: TCategoryData;
       {Gets details of all editable data of category.
         @return Required editable data.
@@ -235,6 +243,9 @@ end;
 constructor TCategory.Create(const CatID: string;
   const ACollectionID: TCollectionID; const Data: TCategoryData);
 begin
+  {TODO -cVault: Add a simpler contructor that takes only the category ID and
+          description and creates does all the convoluted TCategoryData setting!
+  }
   Assert(ClassType <> TCategory,
     ClassName + '.Create: must only be called from descendants.');
   inherited Create;
@@ -270,6 +281,17 @@ begin
 end;
 
 { TCategoryEx }
+
+class function TCategoryEx.CreateDefault: TCategory;
+var
+  Data: TCategoryData;
+resourcestring
+  sDefCatDesc = 'My Snippets';
+begin
+  Data.Init;
+  Data.Desc := sDefCatDesc;
+  Result := Create(DefaultID, TCollectionID.__TMP__UserDBCollectionID, Data);
+end;
 
 function TCategoryEx.GetEditData: TCategoryData;
   {Gets details of all editable data of category.
