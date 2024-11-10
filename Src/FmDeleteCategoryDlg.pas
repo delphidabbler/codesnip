@@ -5,8 +5,7 @@
  *
  * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a dialogue box that permits user to select and delete a user
- * defined category.
+ * Implements a dialogue box that permits user to select and delete a category.
 }
 
 
@@ -24,13 +23,11 @@ uses
 
 
 type
-  {
-  TDeleteCategoryDlg:
-    Dialog box that permits user to select and delete a user-defined category.
-  }
+
+  ///  <summary>Dialogue box that permits the user to select and delete a
+  ///  category.</summary>
   TDeleteCategoryDlg = class(TCategoryEditDlg, INoPublicConstruct)
     frmCategories: TCategoryListFrame;
-    lblErrorMsg: TLabel;
     procedure btnOKClick(Sender: TObject);
   strict private
     fCategories: TCategoryList; // List of categories that can be deleted
@@ -39,14 +36,12 @@ type
       according to changes.
         @param Sender [in] Not used.
       }
-    procedure UpdateErrorLabelState;
-      {Shows or hides error state label depending of whether selected category
-      can be deleted.
-      }
+
+    ///  <summary>Deletes a category from the database.</summary>
+    ///  <param name="Cat"><c>TCategory</c> [in] Category to be deleted.</param>
+    ///  <remarks>The category must be empty.</remarks>
     procedure DeleteCategory(const Cat: TCategory);
-      {Deletes category and all its snippets from database.
-        @param Cat [in] Category to be deleted.
-      }
+
   strict protected
     procedure ConfigForm; override;
       {Configures form. Populates controls and supplies event handler to frame.
@@ -86,8 +81,6 @@ procedure TDeleteCategoryDlg.ArrangeForm;
   }
 begin
   frmCategories.ArrangeFrame;
-  TCtrlArranger.SetLabelHeight(lblErrorMsg);
-  lblErrorMsg.Top := TCtrlArranger.BottomOf(frmCategories, 8);
   inherited;
 end;
 
@@ -117,16 +110,11 @@ begin
   frmCategories.OnChange := SelectionChangeHandler;
   frmCategories.Prompt := sPrompt;
   frmCategories.SetCategories(fCategories);
-  TFontHelper.SetDefaultFont(lblErrorMsg.Font);
-  lblErrorMsg.Font.Color := clWarningText;
-  lblErrorMsg.Visible := False;
 end;
 
 procedure TDeleteCategoryDlg.DeleteCategory(const Cat: TCategory);
-  {Deletes category and all its snippets from database.
-    @param Cat [in] Category to be deleted.
-  }
 begin
+  Assert(Cat.CanDelete, ClassName + '.DeleteCategory: Cat can''t be deleted');
   (Database as IDatabaseEdit).DeleteCategory(Cat);
 end;
 
@@ -156,18 +144,6 @@ procedure TDeleteCategoryDlg.SelectionChangeHandler(Sender: TObject);
   }
 begin
   UpdateOKBtn;
-  UpdateErrorLabelState;
-end;
-
-procedure TDeleteCategoryDlg.UpdateErrorLabelState;
-  {Shows or hides error state label depending of whether selected category can
-  be deleted.
-  }
-begin
-  if not frmCategories.IsValidEntry then
-    lblErrorMsg.Visible := False
-  else
-    lblErrorMsg.Visible := not frmCategories.SelectedCategory.CanDelete;
 end;
 
 procedure TDeleteCategoryDlg.UpdateOKBtn;
@@ -176,6 +152,7 @@ procedure TDeleteCategoryDlg.UpdateOKBtn;
   }
 begin
   btnOK.Enabled := frmCategories.IsValidEntry
+    // following check is potentially redundant, but leaving in for safety
     and frmCategories.SelectedCategory.CanDelete;
 end;
 

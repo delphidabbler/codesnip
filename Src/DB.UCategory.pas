@@ -193,7 +193,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UReservedCategories, UStrUtils;
+  UStrUtils;
 
 
 { TCategory }
@@ -203,9 +203,7 @@ function TCategory.CanDelete: Boolean;
     @return True if deletion allowed, False if not.
   }
 begin
-  Result := (fCollectionID <> TCollectionID.__TMP__MainDBCollectionID)
-    and fSnippets.IsEmpty
-    and not TReservedCategories.IsReserved(Self);
+  Result := fSnippets.IsEmpty;
 end;
 
 function TCategory.CompareDescriptionTo(const Cat: TCategory): Integer;

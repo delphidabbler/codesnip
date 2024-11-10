@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2008-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a static class that manages user's interaction with user database.
+ * Implements a static class that manages user's interaction with the database.
 }
 
 
@@ -42,13 +42,6 @@ type
     ///  <param name="CanClose">Boolean [in/out] Set to True to permit dialogue
     ///  to close or False to inhibit closure.</param>
     class procedure CanSaveDialogClose(Sender: TObject; var CanClose: Boolean);
-    ///  <summary>Creates a list of user defined categories.</summary>
-    ///  <param name="IncludeSpecial">Boolean [in] Flag indicating whether list
-    ///  should include special, non-deletable, categories.</param>
-    ///  <returns>Required category list.</returns>
-    ///  <remarks>Caller must free the returned object.</remarks>
-    class function CreateUserCatList(
-      const IncludeSpecial: Boolean): TCategoryList;
   public
     ///  <summary>Enables user to adds a new user defined snippet to the
     ///  database using the snippets editor.</summary>
@@ -117,7 +110,7 @@ uses
   FmDeleteUserDBDlg, FmWaitDlg,
   UAppInfo,
   UConsts, UExceptions, UIStringList, UMessageBox, UOpenDialogEx,
-  UOpenDialogHelper, UReservedCategories, USaveDialogEx, USnippetIDs,
+  UOpenDialogHelper, USaveDialogEx, USnippetIDs,
   UUserDBBackup, UWaitForThreadUI;
 
 type
@@ -272,14 +265,12 @@ end;
 
 class function TUserDBMgr.CanDeleteACategory: Boolean;
 var
-  CatList: TCategoryList; // list of user deletable categories
+  Cat: TCategory;
 begin
-  CatList := CreateUserCatList(False);  // builds list of deletable user cats
-  try
-    Result := CatList.Count > 0;
-  finally
-    CatList.Free;
-  end;
+  Result := False;
+  for Cat in Database.Categories do
+    if Cat.CanDelete then
+      Exit(True);
 end;
 
 class function TUserDBMgr.CanDuplicate(ViewItem: IView): Boolean;
@@ -321,15 +312,8 @@ begin
 end;
 
 class function TUserDBMgr.CanRenameACategory: Boolean;
-var
-  CatList: TCategoryList; // list of user renamable categories
 begin
-  CatList := CreateUserCatList(True); // build list of all user categories
-  try
-    Result := CatList.Count > 0;
-  finally
-    CatList.Free;
-  end;
+  Result := True;
 end;
 
 class function TUserDBMgr.CanSave: Boolean;
@@ -355,24 +339,16 @@ begin
     );
 end;
 
-class function TUserDBMgr.CreateUserCatList(
-  const IncludeSpecial: Boolean): TCategoryList;
-var
-  Cat: TCategory; // references each category in snippets database
-begin
-  Result := TCategoryList.Create;
-  for Cat in Database.Categories do
-    if (Cat.CollectionID <> TCollectionID.__TMP__MainDBCollectionID) and
-      (IncludeSpecial or not TReservedCategories.IsReserved(Cat)) then
-      Result.Add(Cat);
-end;
-
 class procedure TUserDBMgr.DeleteACategory;
 var
   CatList: TCategoryList; // list of deletable categories
+  Cat: TCategory;
 begin
-  CatList := CreateUserCatList(False);
+  CatList := TCategoryList.Create;
   try
+    for Cat in Database.Categories do
+      if Cat.CanDelete then
+        CatList.Add(Cat);
     // all work takes place in dialog box
     TDeleteCategoryDlg.Execute(nil, CatList)
   finally
@@ -485,10 +461,13 @@ end;
 
 class procedure TUserDBMgr.RenameACategory;
 var
+  Cat: TCategory;
   CatList: TCategoryList; // list of user defined categories
 begin
-  CatList := CreateUserCatList(True);
+  CatList := TCategoryList.Create;
   try
+    for Cat in Database.Categories do
+      CatList.Add(Cat);
     // all work takes place in dialog box
     TRenameCategoryDlg.Execute(nil, CatList)
   finally
