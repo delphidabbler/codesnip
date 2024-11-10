@@ -969,14 +969,11 @@ function TOverviewFrame.TTVDraw.GetCollectionID(const Node: TTreeNode):
 var
   ViewItem: IView;              // view item represented by node
   SnippetView: ISnippetView;    // view item if node represents a snippet
-  CategoryView: ICategoryView;  // view item if node represents a category
 begin
   // TODO -cBug: Exception reported as issue #70 could have moved here
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
   if Supports(ViewItem, ISnippetView, SnippetView) then
     Result := SnippetView.Snippet.CollectionID
-  else if Supports(ViewItem, ICategoryView, CategoryView) then
-    Result := CategoryView.Category.CollectionID
   else
     Result := TCollectionID.CreateNull;
 end;

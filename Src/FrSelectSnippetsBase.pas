@@ -283,8 +283,6 @@ begin
   SnipObj := TObject(Node.Data);
   if SnipObj is TSnippet then
     Result := (SnipObj as TSnippet).CollectionID
-  else if SnipObj is TCategory then
-    Result := (SnipObj as TCategory).CollectionID
   else
     Result := TCollectionID.CreateNull
 end;
