@@ -499,7 +499,6 @@
 			<DCCReference Include="UProtocols.pas"/>
 			<DCCReference Include="UQuery.pas"/>
 			<DCCReference Include="UREMLDataIO.pas"/>
-			<DCCReference Include="UReservedCategories.pas"/>
 			<DCCReference Include="UResourceUtils.pas"/>
 			<DCCReference Include="URTFBuilder.pas"/>
 			<DCCReference Include="URTFCategoryDoc.pas"/>

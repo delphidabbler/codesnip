@@ -297,7 +297,6 @@ uses
   UProtocols in 'UProtocols.pas',
   UQuery in 'UQuery.pas',
   UREMLDataIO in 'UREMLDataIO.pas',
-  UReservedCategories in 'UReservedCategories.pas',
   UResourceUtils in 'UResourceUtils.pas',
   URTFBuilder in 'URTFBuilder.pas',
   URTFCategoryDoc in 'URTFCategoryDoc.pas',
