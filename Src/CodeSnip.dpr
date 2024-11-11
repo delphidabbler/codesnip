@@ -375,7 +375,8 @@ uses
   ClassHelpers.UGraphics in 'ClassHelpers.UGraphics.pas',
   ClassHelpers.UActions in 'ClassHelpers.UActions.pas',
   DB.UCollections in 'DB.UCollections.pas',
-  UTabSeparatedFileIO in 'UTabSeparatedFileIO.pas';
+  UTabSeparatedFileIO in 'UTabSeparatedFileIO.pas',
+  DBIO.UCategoryIO in 'DBIO.UCategoryIO.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

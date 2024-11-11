@@ -582,6 +582,7 @@
 			<DCCReference Include="ClassHelpers.UActions.pas"/>
 			<DCCReference Include="DB.UCollections.pas"/>
 			<DCCReference Include="UTabSeparatedFileIO.pas"/>
+			<DCCReference Include="DBIO.UCategoryIO.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
