@@ -79,6 +79,12 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
+
+    ///  <summary>Updates category properties.</summary>
+    ///  <param name="Data"><c>TCategoryData</c> [in] Updated category
+    ///  properties.</param>
+    procedure Update(const Data: TCategoryData);
+
     function IsEqual(const Cat: TCategory): Boolean;
       {Checks if this category is same as another category. Categories are
       considered equal if they have the same ID.
@@ -278,6 +284,11 @@ procedure TCategory.SetCollectionID(const AValue: TCollectionID);
 begin
   Assert(not AValue.IsNull, ClassName + '.SetCollectionID: Value is null');
   fCollectionID := AValue;
+end;
+
+procedure TCategory.Update(const Data: TCategoryData);
+begin
+  fDescription := Data.Desc;
 end;
 
 { TCategoryEx }
