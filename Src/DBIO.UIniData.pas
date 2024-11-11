@@ -514,16 +514,24 @@ end;
 
 function TIniDataReader.GetCatSnippets(const CatID: string): IStringList;
 var
+  CatIniFile: string;
   CatIni: TCustomIniFile; // accesses .ini file associated with category
   SnipList: TStringList;  // list of snippets in category
 begin
+  Result := TIStringList.Create;
   try
     // Snippet names are names of sections in category's .ini file
+    CatIniFile := CatToCatIni(CatID);
+    if not TFile.Exists(CatIniFile) then
+      // This is not an error since it is possible that a category exists in
+      // another collection and loader will request info from that collection
+      // too.
+      Exit;
     CatIni := fIniCache.GetIniFile(CatToCatIni(CatID));
     SnipList := TStringList.Create;
     try
       CatIni.ReadSections(SnipList);
-      Result := TIStringList.Create(SnipList);
+      Result.Add(SnipList);
     finally
       SnipList.Free;
     end;
