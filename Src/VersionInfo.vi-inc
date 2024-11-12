@@ -1,12 +1,12 @@
 # CodeSnip Version Information Macros for Including in .vi files
 
 # Version & build numbers
-version=4.24.0
-build=272
+version=4.900.0
+build=1000
 
 # String file information
 copyright=Copyright © P.D.Johnson, 2005-<YEAR>.
 description=Code Snippets Repository
 company=DelphiDabbler
-name=CodeSnip
+name=CodeSnip.Vault
 license=Released under the terms of the Mozilla Public License v2.0 (https://www.mozilla.org/MPL/2.0/)

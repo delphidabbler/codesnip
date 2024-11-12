@@ -36,9 +36,10 @@ type
     const ProgramName = 'CodeSnip-p';
     {$ENDIF}
       {Name of program}
-    const FullProgramName = CompanyName + ' CodeSnip';
+    const FullProgramName = CompanyName + ' CodeSnip.Vault';
       {Full name of program, including company name}
     const ProgramID = 'codesnip';
+      {TODO -cVault: Remove unused ProgramID const}
       {Machine readable identifier of program}
     class function UserAppDir: string;
       {Gets the CodeSnip data directory stored within the user's application
@@ -162,9 +163,9 @@ class function TAppInfo.CommonAppDir: string;
   }
 begin
   {$IFNDEF PORTABLE}
-  Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.4';
+  Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.Vault';
   {$ELSE}
-  Result := AppExeDir + '\AppData';
+  Result := AppExeDir + '\AppData.Vault';
   {$ENDIF}
 end;
 
@@ -195,7 +196,7 @@ var
 begin
   ProductVer := TVersionInfo.ProductVerNum;
   Result := Format(
-    'CodeSnip v%d.%d.%d', [ProductVer.V1, ProductVer.V2, ProductVer.V3]
+    'CodeSnip.Vault v%d.%d.%d', [ProductVer.V1, ProductVer.V2, ProductVer.V3]
   );
   {$IFDEF PORTABLE}
   Result := Result + ' (Portable Edition)'
@@ -236,7 +237,7 @@ class function TAppInfo.UserAppDir: string;
   }
 begin
   {$IFNDEF PORTABLE}
-  Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.4';
+  Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.Vault';
   {$ELSE}
   Result := CommonAppDir;
   {$ENDIF}
