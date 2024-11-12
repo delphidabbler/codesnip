@@ -69,10 +69,10 @@ type
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
     ///  <param name="Key">WideString [in] Snippet's key.</param>
-    ///  <remarks>Snippet must be user defined.</remarks>
-    procedure EditSnippet(const Key: WideString);
-      {TODO -cVault: lift restriction on being user-defined. Provide 2nd param
-              containing snippet's collection ID?}
+    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
+    ///  collection.</param>
+    procedure EditSnippet(const Key: WideString;
+      const ACollectionID: TCollectionID);
 
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     procedure NewSnippet;

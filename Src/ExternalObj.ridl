@@ -63,9 +63,11 @@ library ExternalObj
     /*
      * Edits the snippet identified by its key.
      *    @param Key [in] Key of snippet to edit. Must be user defined.
+     *    @param CollectionIDAsHex [in] Hex representation of snippet's 
+     *           collection ID.
      */
     [id(0x0000006C)]
-    HRESULT _stdcall EditSnippet([in] BSTR Key);
+    HRESULT _stdcall EditSnippet([in] BSTR Key, [in] BSTR CollectionIDAsHex);
 
     /*
      * Display identified category.

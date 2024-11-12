@@ -116,11 +116,11 @@ type
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
     ///  <param name="Key">WideString [in] Snippet's key.</param>
-    ///  <remarks>
-    ///  <para>Snippet must be user defined.</para>
-    ///  <para>Methods of INotifier.</para>
-    ///  </remarks>
-    procedure EditSnippet(const Key: WideString);
+    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
+    ///  collection.</param>
+    ///  <remarks>Method of INotifier.</remarks>
+    procedure EditSnippet(const Key: WideString;
+      const ACollectionID: TCollectionID);
 
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -216,6 +216,7 @@ uses
   UDetailTabAction,
   UEditSnippetAction,
   USnippetAction,
+  USnippetIDs,
   UViewItemAction;
 
 
@@ -266,11 +267,14 @@ begin
   end;
 end;
 
-procedure TNotifier.EditSnippet(const Key: WideString);
+procedure TNotifier.EditSnippet(const Key: WideString;
+  const ACollectionID: TCollectionID);
 begin
   if Assigned(fEditSnippetAction) then
   begin
-    (fEditSnippetAction as TEditSnippetAction).Key := Key;
+    (fEditSnippetAction as TEditSnippetAction).ID := TSnippetID.Create(
+      Key, ACollectionID
+    );
     fEditSnippetAction.Execute;
   end;
 end;

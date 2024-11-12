@@ -946,8 +946,6 @@ function TDatabase.GetEditableSnippetInfo(
     @return Required data.
   }
 begin
-  Assert(not Assigned(Snippet) or (Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID),
-    ClassName + '.GetEditableSnippetInfo: Snippet is not user-defined');
   if Assigned(Snippet) then
     Result := (Snippet as TSnippetEx).GetEditData
   else

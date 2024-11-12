@@ -71,13 +71,17 @@ type
     ///  <remarks>Method of IWBExternal15.</remarks>
     procedure ConfigCompilers; safecall;
 
-    ///  <summary>Edits the snippet identified by its key.</summary>
-    ///  <param name="Key">WideString [in] Key of snippet to edit.</param>
+    ///  <summary>Edits the snippet identified by its key and collection ID.
+    ///  </summary>
+    ///  <param name="Key">WideString [in] Snippet's key.</param>
+    ///  <param name="CollectionIDAsHex">WideString [in] Hex representation of
+    ///  snippet's collection ID.</param>
     ///  <remarks>
     ///  <para>The snippet must be user defined.</para>
     ///  <para>Method of IWBExternal15.</para>
     ///  </remarks>
-    procedure EditSnippet(const Key: WideString); safecall;
+    procedure EditSnippet(const Key: WideString;
+      const CollectionIDAsHex: WideString); safecall;
 
     ///  <summary>Displays a named category.</summary>
     ///  <param name="CatID">WideString [in] ID of category to be displayed.
@@ -168,13 +172,16 @@ begin
   end;
 end;
 
-procedure TWBExternal.EditSnippet(const Key: WideString);
+procedure TWBExternal.EditSnippet(const Key: WideString;
+  const CollectionIDAsHex: WideString);
   {TODO -cVault: change to take a collection ID as hex string as 2nd param &
           lift restriction on having to be user defined.}
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.EditSnippet(Key);
+      fNotifier.EditSnippet(
+        Key, TCollectionID.CreateFromHexString(CollectionIDAsHex)
+      );
   except
     HandleException;
   end;

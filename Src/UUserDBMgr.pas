@@ -19,7 +19,10 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCategory, UBaseObjects, UView;
+  DB.UCategory,
+  UBaseObjects,
+  USnippetIDs,
+  UView;
 
 
 type
@@ -46,10 +49,9 @@ type
     ///  <summary>Enables user to adds a new user defined snippet to the
     ///  database using the snippets editor.</summary>
     class procedure AddSnippet;
-    ///  <summary>Enables user to edit the snippet with the given key using the
+    ///  <summary>Enables user to edit the snippet with the given ID using the
     ///  snippets editor.</summary>
-    ///  <remarks>The snippet must be user defined.</remarks>
-    class procedure EditSnippet(const SnippetKey: string);
+    class procedure EditSnippet(const ASnippetID: TSnippetID);
     ///  <summary>Duplicates the snippet specified by the given view as a user
     ///  defined snippet with name specified by user.</summary>
     class procedure DuplicateSnippet(ViewItem: IView);
@@ -110,7 +112,7 @@ uses
   FmDeleteUserDBDlg, FmWaitDlg,
   UAppInfo,
   UConsts, UExceptions, UIStringList, UMessageBox, UOpenDialogEx,
-  UOpenDialogHelper, USaveDialogEx, USnippetIDs,
+  UOpenDialogHelper, USaveDialogEx,
   UUserDBBackup, UWaitForThreadUI;
 
 type
@@ -279,13 +281,9 @@ begin
 end;
 
 class function TUserDBMgr.CanEdit(ViewItem: IView): Boolean;
-var
-  SnippetView: ISnippetView;  // ViewItem as snippet view if supported
 begin
   Assert(Assigned(ViewItem), ClassName + '.CanEdit: ViewItem is nil');
-  Result := Assigned(ViewItem)
-    and Supports(ViewItem, ISnippetView, SnippetView)
-    and (SnippetView.Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID);
+  Result := Supports(ViewItem, ISnippetView);
 end;
 
 class procedure TUserDBMgr.CanOpenDialogClose(Sender: TObject;
@@ -439,15 +437,13 @@ begin
   TDuplicateSnippetDlg.Execute(nil, (ViewItem as ISnippetView).Snippet);
 end;
 
-class procedure TUserDBMgr.EditSnippet(const SnippetKey: string);
-  {TODO -cVault: lift restriction on being user defined. Change to take a
-          collection ID as 2nd param?}
+class procedure TUserDBMgr.EditSnippet(const ASnippetID: TSnippetID);
 var
   Snippet: TSnippet;    // reference to snippet to be edited
 begin
-  Snippet := Database.Snippets.Find(SnippetKey, TCollectionID.__TMP__UserDBCollectionID);
+  Snippet := Database.Snippets.Find(ASnippetID);
   if not Assigned(Snippet) then
-    raise EBug.Create(ClassName + '.EditSnippet: Snippet not in user database');
+    raise EBug.Create(ClassName + '.EditSnippet: Snippet not found');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);
 end;
 

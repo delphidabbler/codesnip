@@ -77,8 +77,17 @@ uses
   // Delphi
   Math,
   // Project
-  DB.UCategory, DB.UMain, UCtrlArranger, UExceptions, UMessageBox, USettings,
-  USnippetValidator, UStructs, UStrUtils, UUserDBMgr;
+  DB.UCategory,
+  DB.UMain,
+  UCtrlArranger,
+  UExceptions,
+  UMessageBox,
+  USettings,
+  USnippetIDs,
+  USnippetValidator,
+  UStructs,
+  UStrUtils,
+  UUserDBMgr;
 
 {$R *.dfm}
 
@@ -217,7 +226,9 @@ end;
 procedure TDuplicateSnippetDlg.FormDestroy(Sender: TObject);
 begin
   if (ModalResult = mrOK) and chkEdit.Checked then
-    TUserDBMgr.EditSnippet(fSnippetKey);
+    TUserDBMgr.EditSnippet(
+      TSnippetID.Create(fSnippetKey, SelectedCollectionID)
+    );
   fOptions.EditSnippetOnClose := chkEdit.Checked;
   inherited;
   fOptions.Free;

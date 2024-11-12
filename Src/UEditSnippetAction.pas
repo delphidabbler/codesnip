@@ -17,24 +17,22 @@ interface
 
 uses
   // Delphi
-  Classes;
+  Classes,
+  // Project
+  USnippetIDs;
 
-
-{TODO -cCollections: Add a collection ID property, or change Key property to ID of
-        type TSnippetID.}
 
 type
-  ///  <summary>
-  ///  Custom action used to request that a user defined snippet is edited.
+  ///  <summary>Custom action used to request that a snippet is edited.
   ///  </summary>
   TEditSnippetAction = class(TBasicAction)
   strict private
     var
-      ///  <summary>Value of Key property.</summary>
-      fKey: string;
+      ///  <summary>Value of ID property.</summary>
+      fID: TSnippetID;
   public
-    ///  <summary>Key of snippet to be edited.</summary>
-    property Key: string read fKey write fKey;
+    ///  <summary>ID of snippet to be edited.</summary>
+    property ID: TSnippetID read fID write fID;
   end;
 
 
