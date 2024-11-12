@@ -321,16 +321,6 @@ type
     ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
     function CreateWriter: IDataWriter; virtual; abstract;
 
-    ///  <summary>Checks if a category can be written to storage.</summary>
-    ///  <param name="ACategory"><c>TCategory</c> [in] The category being
-    ///  queried.</param>
-    ///  <param name="ASnippetsInCategory"><c>IStringList</c> [in] List of the
-    ///  keys of all snippets in the category.</param>
-    ///  <returns><c>Boolean</c>. True if category can be written, False
-    ///  otherwise.</returns>
-    function CanWriteCategory(const ACategory: TCategory;
-      const ASnippetsInCategory: IStringList): Boolean; virtual; abstract;
-
     ///  <summary>Collection being saved.</summary>
     property Collection: TCollection read fCollection;
 
@@ -375,16 +365,6 @@ type
     ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
     function CreateWriter: IDataWriter; override;
 
-    ///  <summary>Checks if a category can be written to storage.</summary>
-    ///  <param name="ACategory"><c>TCategory</c> [in] The category being
-    ///  queried.</param>
-    ///  <param name="ASnippetsInCategory"><c>IStringList</c> [in] List of the
-    ///  keys of all snippets in the category.</param>
-    ///  <returns><c>Boolean</c>. True if category contains snippets, False
-    ///  otherwise.</returns>
-    function CanWriteCategory(const ACategory: TCategory;
-      const ASnippetsInCategory: IStringList): Boolean; override;
-
   public
 
     ///  <summary>Creates object that can save the given collection.</summary>
@@ -414,16 +394,6 @@ type
     ///  CodeSnip's native v4 data format.</summary>
     ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
     function CreateWriter: IDataWriter; override;
-
-    ///  <summary>Checks if a category can be written to storage.</summary>
-    ///  <param name="ACategory"><c>TCategory</c> [in] The category being
-    ///  queried.</param>
-    ///  <param name="ASnippetsInCategory"><c>IStringList</c> [in] List of the
-    ///  keys of all snippets in the category.</param>
-    ///  <returns><c>Boolean</c>. Always True: all categories are written.
-    ///  </returns>
-    function CanWriteCategory(const ACategory: TCategory;
-      const ASnippetsInCategory: IStringList): Boolean; override;
 
   public
 
@@ -783,7 +753,8 @@ begin
   for Cat in fCategories do
   begin
     SnipList := fProvider.GetCategorySnippets(Cat);
-    if CanWriteCategory(Cat, SnipList) then
+    // only write category info when not empty
+    if SnipList.Count > 0 then
     begin
       Props := fProvider.GetCategoryProps(Cat);
       fWriter.WriteCatProps(Cat.ID, Props);
@@ -841,12 +812,6 @@ begin
   end;
 end;
 
-function TDCSCV2FormatSaver.CanWriteCategory(const ACategory: TCategory;
-  const ASnippetsInCategory: IStringList): Boolean;
-begin
-  Result := ASnippetsInCategory.Count > 0
-end;
-
 constructor TDCSCV2FormatSaver.Create(const ACollection: TCollection);
 begin
   inherited Create(ACollection);
@@ -894,12 +859,6 @@ begin
 end;
 
 { TNativeV4FormatSaver }
-
-function TNativeV4FormatSaver.CanWriteCategory(const ACategory: TCategory;
-  const ASnippetsInCategory: IStringList): Boolean;
-begin
-  Result := True;
-end;
 
 function TNativeV4FormatSaver.CreateWriter: IDataWriter;
 begin
