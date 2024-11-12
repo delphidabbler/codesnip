@@ -1,15 +1,9 @@
 inherited DeleteCategoryDlg: TDeleteCategoryDlg
   Caption = 'Delete Category'
+  ExplicitHeight = 375
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    object lblErrorMsg: TLabel
-      Left = 0
-      Top = 144
-      Width = 156
-      Height = 13
-      Caption = 'Non-empty category: can'#39't delete'
-    end
     inline frmCategories: TCategoryListFrame
       Left = 0
       Top = 0
@@ -18,10 +12,6 @@ inherited DeleteCategoryDlg: TDeleteCategoryDlg
       TabOrder = 0
       TabStop = True
       ExplicitHeight = 138
-      inherited lblCategories: TLabel
-        Width = 60
-        ExplicitWidth = 60
-      end
       inherited lbCategories: TListBox
         Height = 108
         ExplicitHeight = 108

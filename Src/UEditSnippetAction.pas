@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Custom action used to request editing of a named user-defined snippet.
+ * Custom action used to request editing of a user-defined snippet.
 }
 
 
@@ -17,22 +17,22 @@ interface
 
 uses
   // Delphi
-  Classes;
+  Classes,
+  // Project
+  USnippetIDs;
 
 
 type
-  ///  <summary>
-  ///  Custom action used to request that a named user defined snippet is
-  ///  edited.
+  ///  <summary>Custom action used to request that a snippet is edited.
   ///  </summary>
   TEditSnippetAction = class(TBasicAction)
   strict private
     var
-      ///  <summary>Value of SnippetName property.</summary>
-      fSnippetName: string;
+      ///  <summary>Value of ID property.</summary>
+      fID: TSnippetID;
   public
-    ///  <summary>Name of snippet to be edited.</summary>
-    property SnippetName: string read fSnippetName write fSnippetName;
+    ///  <summary>ID of snippet to be edited.</summary>
+    property ID: TSnippetID read fID write fID;
   end;
 
 

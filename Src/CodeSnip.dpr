@@ -70,7 +70,7 @@ uses
   DB.USnippet in 'DB.USnippet.pas',
   DB.USnippetKind in 'DB.USnippetKind.pas',
   DBIO.UFileIOIntf in 'DBIO.UFileIOIntf.pas',
-  DBIO.UIniDataReader in 'DBIO.UIniDataReader.pas',
+  DBIO.UIniData in 'DBIO.UIniData.pas',
   DBIO.UNulDataReader in 'DBIO.UNulDataReader.pas',
   DBIO.UXMLDataIO in 'DBIO.UXMLDataIO.pas',
   Favourites.UManager in 'Favourites.UManager.pas',
@@ -297,7 +297,6 @@ uses
   UProtocols in 'UProtocols.pas',
   UQuery in 'UQuery.pas',
   UREMLDataIO in 'UREMLDataIO.pas',
-  UReservedCategories in 'UReservedCategories.pas',
   UResourceUtils in 'UResourceUtils.pas',
   URTFBuilder in 'URTFBuilder.pas',
   URTFCategoryDoc in 'URTFCategoryDoc.pas',
@@ -375,7 +374,9 @@ uses
   FmRegisterCompilersDlg in 'FmRegisterCompilersDlg.pas' {RegisterCompilersDlg},
   ClassHelpers.UGraphics in 'ClassHelpers.UGraphics.pas',
   ClassHelpers.UActions in 'ClassHelpers.UActions.pas',
-  DB.UCollections in 'DB.UCollections.pas';
+  DB.UCollections in 'DB.UCollections.pas',
+  UTabSeparatedFileIO in 'UTabSeparatedFileIO.pas',
+  DBIO.UCategoryIO in 'DBIO.UCategoryIO.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

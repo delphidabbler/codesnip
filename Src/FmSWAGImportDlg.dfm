@@ -192,11 +192,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
           AutoSize = False
           Caption = 
             'You have chosen to import the following SWAG packets as CodeSnip' +
-            ' snippets. They will be imported with the given Display Names an' +
-            'd Packet IDs. You can change these if you wish using the Snippet' +
-            's Editor. To make changes go back to the previous page. When you' +
-            ' are ready to import the packets click "Import". This step can'#39't' +
-            ' be undone.'
+            ' snippets with the given Display Names. You can change these nam' +
+            'es later, if you wish, using the Snippets Editor. To modify your' +
+            ' selection go back to the previous page. When you are ready to i' +
+            'mport the packets click "Import". This step can'#39't be undone.'
           WordWrap = True
         end
         object lvImports: TListView
@@ -207,11 +206,7 @@ inherited SWAGImportDlg: TSWAGImportDlg
           Columns = <
             item
               Caption = 'Packet Title '#8594' Snippet Display Name'
-              Width = 400
-            end
-            item
-              Caption = 'Snippet Name from SWAG ID'
-              Width = 200
+              Width = 600
             end>
           ColumnClick = False
           GridLines = True

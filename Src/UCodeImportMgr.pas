@@ -18,9 +18,14 @@ interface
 
 uses
   // Delphi
-  Generics.Collections, Generics.Defaults,
+  SysUtils,
+  Generics.Collections,
+  Generics.Defaults,
   // Project
-  UCodeImportExport, UExceptions, UIStringList;
+  DB.UCollections,
+  UCodeImportExport,
+  UExceptions,
+  UIStringList;
 
 
 type
@@ -30,18 +35,17 @@ type
   TImportInfo = record
   strict private
     // Property values
-    fOrigName: string;
-    fImportAsName: string;
+    fOrigKey: string;
+    fDisplayName: string;
     fSkip: Boolean;
   public
     ///  <summary>Initialises properties to given values.</summary>
-    constructor Create(const AOrigName, AImportAsName: string;
+    constructor Create(const AOrigKey, ADisplayName: string;
       const ASkip: Boolean = False);
-    ///  <summary>Name of snippet per import file.</summary>
-    property OrigName: string read fOrigName;
-    ///  <summary>Name of snippet to be used when updating database.</summary>
-    ///  <remarks>Can be changed by user.</remarks>
-    property ImportAsName: string read fImportAsName write fImportAsName;
+    ///  <summary>Snippet key per import file.</summary>
+    property OrigKey: string read fOrigKey;
+    ///  <summary>Snippet's display name.</summary>
+    property DisplayName: string read fDisplayName;
     ///  <summary>Flag indicating if snippet is to be skipped (ignored) when
     ///  updating database.</summary>
     property Skip: Boolean read fSkip write fSkip;
@@ -68,16 +72,22 @@ type
   public
     ///  <summary>Constructs list with appropriate comparer.</summary>
     constructor Create;
-    ///  <summary>Finds a record based on its OrigName field value.</summary>
-    ///  <param name="Name">string [in] Name to be found.</param>
+    ///  <summary>Finds a record based on its OrigKey field value.</summary>
+    ///  <param name="Key">string [in] Key to be found.</param>
     ///  <param name="ImportInfo">TImportInfo [out] Found record. Undefined if
     ///  Name not found.</param>
-    ///  <returns>Boolean: True if Name found, False if not.</returns>
-    function FindByName(const Name: string; out ImportInfo: TImportInfo):
+    ///  <returns>Boolean: True if Key found, False if not.</returns>
+    function FindByKey(const Key: string; out ImportInfo: TImportInfo):
       Boolean;
-    ///  <summary>Returns index of record in list whose OrigName field matches
+    ///  <summary>Returns index of record in list whose OrigKey field matches
     ///  given name or -1 if name not found.</summary>
-    function IndexOfName(const Name: string): Integer;
+    function IndexOfKey(const Key: string): Integer;
+    ///  <summary>Updates <c>Skip</c> property of a given list item.</summary>
+    ///  <param name="AKey"><c>string</c> [in] Key that identifies list item to
+    ///  be updated.</param>
+    ///  <param name="AFlag"><c>Boolean</c> [in] Value to be stored in the given
+    ///  list item's <c>Skip</c> property.</param>
+    procedure SetSkip(const AKey: string; const AFlag: Boolean);
   end;
 
 type
@@ -94,27 +104,11 @@ type
       fSnippetInfoList: TSnippetInfoList;
       ///  <summary>Value of ImportInfo property.</summary>
       fImportInfoList: TImportInfoList;
+      ///  <summary>Value of RequestCollectionCallback property.</summary>
+      fRequestCollectionCallback: TFunc<TCollectionID>;
     ///  <summary>Initialises import information list with details of snippets
     ///  read from import file.</summary>
     procedure InitImportInfoList;
-    ///  <summary>Returns list of names that can't be used to rename an imported
-    ///  snippet.</summary>
-    ///  <param name="ExcludedName">string [in] Name of snippet to be excluded
-    ///  from import list.</param>
-    ///  <returns>IStringList: List of disallowed snippet names.</returns>
-    ///  <remarks>List is made up of all names of snippets in user database plus
-    ///  names of all imported snippets except for ExcludedName. ExcludedName
-    ///  should be the name of a snippet being renamed.</remarks>
-    function DisallowedNames(const ExcludedName: string): IStringList;
-    ///  <summary>Returns a name for snippet SnippetName that does not already
-    ///  exist in user database or imported snippet list.</summary>
-    ///  <remarks>
-    ///  <para>If SnippetName is not in user database then it is returned
-    ///  unchanged.</para>
-    ///  <para>If SnippetName is in user database then numbers are appended
-    ///  sequentially until a unique name is found.</para>
-    ///  </remarks>
-    function GetUniqueSnippetName(const SnippetName: string): string;
   public
     ///  <summary>Constructor. Sets up object.</summary>
     constructor Create;
@@ -133,6 +127,12 @@ type
     ///  <summary>List of information describing if and how to import snippets
     ///  in import file. Permits customisation of import.</summary>
     property ImportInfo: TImportInfoList read fImportInfoList;
+    ///  <summary>Callback that gets the ID of the collection that will receive
+    ///  the imported snippets.</summary>
+    ///  <remarks>Defaults to the "user" collection ID if not assigned.
+    ///  </remarks>
+    property RequestCollectionCallback: TFunc<TCollectionID>
+      read fRequestCollectionCallback write fRequestCollectionCallback;
   end;
 
 type
@@ -148,11 +148,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
   Classes,
   // Project
   ActiveText.UMain,
-  DB.UCollections,
   DB.UMain,
   DB.USnippet,
   UIOUtils,
@@ -167,6 +165,13 @@ begin
   inherited Create;
   SetLength(fSnippetInfoList, 0);
   fImportInfoList := TImportInfoList.Create;
+  // set default event handler
+  fRequestCollectionCallback := function: TCollectionID
+    begin
+      {TODO -cCollections: Require a TCollections.DefaultCollection method or
+              similar to replace the following __TMP__ method call.}
+      Result := TCollectionID.__TMP__UserDBCollectionID;
+    end;
 end;
 
 destructor TCodeImportMgr.Destroy;
@@ -174,38 +179,6 @@ begin
   fImportInfoList.Free;
   SetLength(fSnippetInfoList, 0);
   inherited;
-end;
-
-function TCodeImportMgr.DisallowedNames(const ExcludedName: string):
-  IStringList;
-var
-  Snippet: TSnippet;          // each snippet in user database
-  SnippetInfo: TSnippetInfo;  // info about each imported snippet
-begin
-  Result := TIStringList.Create;
-  Result.CaseSensitive := False;
-  for Snippet in Database.Snippets do
-    if Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
-      Result.Add(Snippet.Name);
-  for SnippetInfo in fSnippetInfoList do
-    if not StrSameText(SnippetInfo.Name, ExcludedName) then
-      Result.Add(SnippetInfo.Name);
-end;
-
-function TCodeImportMgr.GetUniqueSnippetName(
-  const SnippetName: string): string;
-var
-  UsedNames: IStringList; // list of snippet names in use
-  Postfix: Cardinal;      // number to be appended to name to make unique
-begin
-  UsedNames := DisallowedNames(SnippetName);
-  if not UsedNames.Contains(SnippetName) then
-    Exit(SnippetName);
-  Postfix := 1;
-  repeat
-    Inc(PostFix);
-    Result := SnippetName + IntToStr(PostFix);
-  until not UsedNames.Contains(Result);
 end;
 
 procedure TCodeImportMgr.Import(const FileName: string);
@@ -228,13 +201,19 @@ end;
 procedure TCodeImportMgr.InitImportInfoList;
 var
   SnippetInfo: TSnippetInfo;  // info about each snippet in import file
+
 begin
   fImportInfoList.Clear;
   for SnippetInfo in fSnippetInfoList do
   begin
     fImportInfoList.Add(
       TImportInfo.Create(
-        SnippetInfo.Name, GetUniqueSnippetName(SnippetInfo.Name)
+        SnippetInfo.Key,
+        StrIf(
+          SnippetInfo.Data.Props.DisplayName = '',
+          SnippetInfo.Key,
+          SnippetInfo.Data.Props.DisplayName
+        )
       )
     );
   end;
@@ -257,7 +236,7 @@ procedure TCodeImportMgr.UpdateDatabase;
     begin
       SnippetID := Depends[Idx];
       CollectionID := TCollectionID.__TMP__UserDBCollectionID;
-      if Database.Snippets.Find(SnippetID.Name, CollectionID) = nil then
+      if Database.Snippets.Find(SnippetID.Key, CollectionID) = nil then
         CollectionID := TCollectionID.__TMP__MainDBCollectionID;
       SnippetID.CollectionID := CollectionID;
       Depends[Idx] := SnippetID;
@@ -269,46 +248,52 @@ var
   Snippet: TSnippet;          // reference any existing snippet to overwrite
   SnippetInfo: TSnippetInfo;  // info about each snippet from import file
   ImportInfo: TImportInfo;    // info about how / whether to import a snippet
+  CollectionID: TCollectionID;
+  SnippetKey: string;
 resourcestring
   // Error message
-  sBadNameError = 'Can''t find snippet "%s" in import data';
+  sBadNameError = 'Can''t find snippet with key "%s" in import data';
 begin
   Editor := Database as IDatabaseEdit;
+  CollectionID := RequestCollectionCallback();
   for SnippetInfo in fSnippetInfoList do
   begin
-    if not fImportInfoList.FindByName(SnippetInfo.Name, ImportInfo) then
-      raise EBug.CreateFmt(sBadNameError, [SnippetInfo.Name]);
+    if not fImportInfoList.FindByKey(SnippetInfo.Key, ImportInfo) then
+      raise EBug.CreateFmt(sBadNameError, [SnippetInfo.Key]);
 
     if ImportInfo.Skip then
       Continue;
 
     AdjustDependsList(SnippetInfo.Data.Refs.Depends);
 
-    Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, TCollectionID.__TMP__UserDBCollectionID);
+    Snippet := Database.Snippets.Find(ImportInfo.OrigKey, CollectionID);
     if Assigned(Snippet) then
-      // snippet already exists: overwrite it
-      Editor.UpdateSnippet(Snippet, SnippetInfo.Data)
+      SnippetKey := (Database as IDatabaseEdit).GetUniqueSnippetKey(
+        CollectionID
+      )
     else
-      // snippet is new: add to database
-      Editor.AddSnippet(ImportInfo.ImportAsName, SnippetInfo.Data);
+      SnippetKey := ImportInfo.OrigKey;
+    Editor.AddSnippet(SnippetKey, CollectionID, SnippetInfo.Data);
+    {TODO -cVault: Reintroduce the option to overwrite a snippet with matching
+            ID, but allow user to select whether this can happen.}
   end;
 end;
 
 { TImportInfo }
 
-constructor TImportInfo.Create(const AOrigName, AImportAsName: string;
-  const ASkip: Boolean);
+constructor TImportInfo.Create(const AOrigKey, ADisplayName: string;
+  const ASkip: Boolean = False);
 begin
-  fOrigName := AOrigName;
-  fImportAsName := AImportAsName;
+  fOrigKey := AOrigKey;
   fSkip := ASkip;
+  fDisplayName := ADisplayName;
 end;
 
 { TImportInfoComparer }
 
 function TImportInfoComparer.Compare(const Left, Right: TImportInfo): Integer;
 begin
-  Result := TSnippetID.CompareNames(Left.OrigName, Right.OrigName);
+  Result := TSnippetID.CompareKeys(Left.OrigKey, Right.OrigKey);
 end;
 
 { TImportInfoList }
@@ -318,21 +303,37 @@ begin
   inherited Create(TImportInfoComparer.Create);
 end;
 
-function TImportInfoList.FindByName(const Name: string;
+function TImportInfoList.FindByKey(const Key: string;
   out ImportInfo: TImportInfo): Boolean;
 var
   Idx: Integer;   // index of named snippet in list
 begin
-  Idx := IndexOf(TImportInfo.Create(Name, ''));
+  Idx := IndexOfKey(Key);
   if Idx = -1 then
     Exit(False);
   ImportInfo := Items[Idx];
   Result := True;
 end;
 
-function TImportInfoList.IndexOfName(const Name: string): Integer;
+function TImportInfoList.IndexOfKey(const Key: string): Integer;
 begin
-  Result := IndexOf(TImportInfo.Create(Name, ''));
+  Result := IndexOf(TImportInfo.Create(Key, ''));
+end;
+
+procedure TImportInfoList.SetSkip(const AKey: string; const AFlag: Boolean);
+const
+  // Do not localise
+  sKeyNotFound = 'Snippet key "%s" not found while setting import skip flag';
+var
+  ImportInfo: TImportInfo;
+  Idx: Integer;
+begin
+  Idx := IndexOfKey(AKey);
+  if Idx < 0 then
+    raise EBug.CreateFmt(sKeyNotFound, [AKey]);
+  ImportInfo := Items[Idx];
+  ImportInfo.Skip := AFlag;
+  Items[Idx] := ImportInfo;
 end;
 
 end.

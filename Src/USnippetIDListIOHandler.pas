@@ -162,7 +162,7 @@ begin
   fBuilder.AppendLine(fWatermark);
   for SnippetID in SnippetIDs do
   begin
-    fBuilder.Append(SnippetID.Name);
+    fBuilder.Append(SnippetID.Key);
     fBuilder.Append(TAB);
     fBuilder.Append(Ord(SnippetID.CollectionID <> TCollectionID.__TMP__MainDBCollectionID));
     fBuilder.AppendLine;

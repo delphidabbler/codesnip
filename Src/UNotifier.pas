@@ -74,13 +74,13 @@ type
     procedure UpdateDbase;
 
     ///  <summary>Displays a snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of required snippet.
+    ///  <param name="Key">WideString [in] Required snippet's key.
     ///  </param>
     ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
     ///  collection.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
-    procedure DisplaySnippet(const SnippetName: WideString;
+    procedure DisplaySnippet(const Key: WideString;
       ACollectionID: TCollectionID; NewTab: WordBool);
 
     ///  <summary>Displays a category.</summary>
@@ -115,12 +115,12 @@ type
     procedure ChangeDetailPane(const Pane: Integer);
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet.</param>
-    ///  <remarks>
-    ///  <para>Snippet must be user defined.</para>
-    ///  <para>Methods of INotifier.</para>
-    ///  </remarks>
-    procedure EditSnippet(const SnippetName: WideString);
+    ///  <param name="Key">WideString [in] Snippet's key.</param>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
+    ///  collection.</param>
+    ///  <remarks>Method of INotifier.</remarks>
+    procedure EditSnippet(const Key: WideString;
+      const ACollectionID: TCollectionID);
 
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -216,6 +216,7 @@ uses
   UDetailTabAction,
   UEditSnippetAction,
   USnippetAction,
+  USnippetIDs,
   UViewItemAction;
 
 
@@ -254,23 +255,26 @@ begin
   end;
 end;
 
-procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
+procedure TNotifier.DisplaySnippet(const Key: WideString;
   ACollectionID: TCollectionID; NewTab: WordBool);
 begin
   if Assigned(fDisplaySnippetAction) then
   begin
-    (fDisplaySnippetAction as TSnippetAction).SnippetName := SnippetName;
+    (fDisplaySnippetAction as TSnippetAction).Key := Key;
     (fDisplaySnippetAction as TSnippetAction).CollectionID := ACollectionID;
     (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
     fDisplaySnippetAction.Execute;
   end;
 end;
 
-procedure TNotifier.EditSnippet(const SnippetName: WideString);
+procedure TNotifier.EditSnippet(const Key: WideString;
+  const ACollectionID: TCollectionID);
 begin
   if Assigned(fEditSnippetAction) then
   begin
-    (fEditSnippetAction as TEditSnippetAction).SnippetName := SnippetName;
+    (fEditSnippetAction as TEditSnippetAction).ID := TSnippetID.Create(
+      Key, ACollectionID
+    );
     fEditSnippetAction.Execute;
   end;
 end;

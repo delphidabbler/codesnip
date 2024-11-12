@@ -267,13 +267,9 @@ begin
     Exit(False);
   if not TPath.HasValidPathChars(fDirectory, False) then
     Exit(False);
-  if not TDirectory.Exists(fDirectory) then
-    Exit(False);
   if (fMetaDataFile <> '') then
   begin
     if not TPath.IsRelativePath(fMetaDataFile) then
-      Exit(False);
-    if not TFile.Exists(TPath.Combine(fDirectory, fMetaDataFile)) then
       Exit(False);
   end;
 end;

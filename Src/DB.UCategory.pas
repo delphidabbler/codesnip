@@ -52,8 +52,6 @@ type
     fSnippets: TSnippetList;  // List of snippet objects in category
     fID: string;              // Category id
     fDescription: string;     // Category description
-    fCollectionID: TCollectionID;
-    procedure SetCollectionID(const AValue: TCollectionID);
     function CompareIDTo(const Cat: TCategory): Integer;
       {Compares this category's ID to that of a given category. The check is not
       case sensitive.
@@ -62,19 +60,26 @@ type
           are equal or +1 if this category's ID is greater than Cat's.
       }
   public
+    const
+      ///  <summary>ID of default category.</summary>
+      DefaultID = '__default__';
+
     ///  <summary>Object constructor. Sets up category object with given
     ///  property values.</summary>
     ///  <param name="CatID"><c>CatID</c> [in] Category ID.</param>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of collection
-    ///  that defines this category. ID must not be null.</param>
     ///  <param name="Data"><c>TCategoryData</c> [in] category properties.
     ///  </param>
-    constructor Create(const CatID: string; const ACollectionID: TCollectionID;
-      const Data: TCategoryData);
+    constructor Create(const CatID: string; const Data: TCategoryData);
 
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
+
+    ///  <summary>Updates category properties.</summary>
+    ///  <param name="Data"><c>TCategoryData</c> [in] Updated category
+    ///  properties.</param>
+    procedure Update(const Data: TCategoryData);
+
     function IsEqual(const Cat: TCategory): Boolean;
       {Checks if this category is same as another category. Categories are
       considered equal if they have the same ID.
@@ -100,10 +105,6 @@ type
       {Description of category}
     property Snippets: TSnippetList read fSnippets;
       {List of snippets in this category}
-    ///  <summary>ID of collection that defines this category.</summary>
-    ///  <remarks>ID must not be null.</remarks>
-    property CollectionID: TCollectionID
-      read fCollectionID write SetCollectionID;
   end;
 
   {
@@ -112,6 +113,10 @@ type
   }
   TCategoryEx = class(TCategory)
   public
+    ///  <summary>Creates the default category with its default description.
+    ///  </summary>
+    class function CreateDefault: TCategory;
+
     function GetEditData: TCategoryData;
       {Gets details of all editable data of category.
         @return Required editable data.
@@ -193,7 +198,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UReservedCategories, UStrUtils;
+  UStrUtils;
 
 
 { TCategory }
@@ -203,9 +208,7 @@ function TCategory.CanDelete: Boolean;
     @return True if deletion allowed, False if not.
   }
 begin
-  Result := (fCollectionID <> TCollectionID.__TMP__MainDBCollectionID)
-    and fSnippets.IsEmpty
-    and not TReservedCategories.IsReserved(Self);
+  Result := fSnippets.IsEmpty;
 end;
 
 function TCategory.CompareDescriptionTo(const Cat: TCategory): Integer;
@@ -234,15 +237,16 @@ begin
   Result := StrCompareText(Self.ID, Cat.ID);
 end;
 
-constructor TCategory.Create(const CatID: string;
-  const ACollectionID: TCollectionID; const Data: TCategoryData);
+constructor TCategory.Create(const CatID: string; const Data: TCategoryData);
 begin
+  {TODO -cVault: Add a simpler contructor that takes only the category ID and
+          description and creates does all the convoluted TCategoryData setting!
+  }
   Assert(ClassType <> TCategory,
     ClassName + '.Create: must only be called from descendants.');
   inherited Create;
   fID := CatID;
   fDescription := Data.Desc;
-  SetCollectionID(ACollectionID);
   // Create list to store snippets in category
   fSnippets := TSnippetListEx.Create;
 end;
@@ -265,13 +269,23 @@ begin
   Result := CompareIDTo(Cat) = 0;
 end;
 
-procedure TCategory.SetCollectionID(const AValue: TCollectionID);
+procedure TCategory.Update(const Data: TCategoryData);
 begin
-  Assert(not AValue.IsNull, ClassName + '.SetCollectionID: Value is null');
-  fCollectionID := AValue;
+  fDescription := Data.Desc;
 end;
 
 { TCategoryEx }
+
+class function TCategoryEx.CreateDefault: TCategory;
+var
+  Data: TCategoryData;
+resourcestring
+  sDefCatDesc = 'My Snippets';
+begin
+  Data.Init;
+  Data.Desc := sDefCatDesc;
+  Result := Create(DefaultID, Data);
+end;
 
 function TCategoryEx.GetEditData: TCategoryData;
   {Gets details of all editable data of category.

@@ -34,13 +34,13 @@ type
     procedure UpdateDbase;
 
     ///  <summary>Displays a snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of required snippet.
+    ///  <param name="Key">WideString [in] Required snippet's key.
     ///  </param>
     ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
     ///  collection.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
-    procedure DisplaySnippet(const SnippetName: WideString;
+    procedure DisplaySnippet(const Key: WideString;
       ACollectionID: TCollectionID; NewTab: WordBool);
 
     ///  <summary>Displays a category.</summary>
@@ -68,9 +68,11 @@ type
     procedure ChangeDetailPane(const Pane: Integer);
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet.</param>
-    ///  <remarks>Snippet must be user defined.</remarks>
-    procedure EditSnippet(const SnippetName: WideString);
+    ///  <param name="Key">WideString [in] Snippet's key.</param>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
+    ///  collection.</param>
+    procedure EditSnippet(const Key: WideString;
+      const ACollectionID: TCollectionID);
 
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     procedure NewSnippet;

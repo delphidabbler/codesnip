@@ -132,28 +132,45 @@ type
         @param Text [in] Plain text to be converted.
         @return Converted text.
       }
-    function RenderTag(const TagElem: IActiveTextActionElem): string;
-      {Renders an active text action element as a REML tag.
-        @param TagElem [in] Active text action element to be rendered.
-        @return Required REML tag.
-      }
-    function RenderText(const TextElem: IActiveTextTextElem): string;
-      {Renders an active text text element. Illegal characters are converted to
-      REML character entities.
-        @param TextElem [in] Active text text element.
-        @return REML-safe text containing necessary character entities.
-      }
+    ///  <summary>Renders an active text action element as a REML tag.</summary>
+    ///  <param name="TagElem"><c>IActiveTextActionElem</c> [in] Active text
+    ///  action element to be rendered.</param>
+    ///  <param name="Formatted"><c>Boolean</c> [in] Optional flag that
+    ///  determines if tag is to be rendered formatted as multiple, indented
+    ///  lines of REML code (True) or with no formatting (False).</param>
+    ///  <returns><c>string</c>. Required REML tag.</returns>
+    function RenderTag(const TagElem: IActiveTextActionElem;
+      const Formatted: Boolean): string;
+
+    ///  <summary>Renders an active text text element. Illegal characters are
+    ///  converted to REML character entities.</summary>
+    ///  <param name="TextElem"><c>IActiveTextTextElem</c> [in] Active text text
+    ///  element to be rendered.</param>
+    ///  <param name="Indented"><c>Boolean</c> [in] Optional flag that
+    ///  determines if text is to be rendered indented (True) or not (False).
+    ///  </param>
+    ///  <returns><c>string</c>. REML-safe text containing necessary character
+    ///  entities.</returns>
+    function RenderText(const TextElem: IActiveTextTextElem;
+      const Indented: Boolean): string;
+
   strict protected
     constructor InternalCreate;
-      {Internal class constructor. Sets up object to render active text document
+      {Internal constructor. Sets up object to render active text document
       as REML.
       }
   public
-    class function Render(const ActiveText: IActiveText): string;
-      {Renders REML representation of an active text object.
-        @param ActiveText [in] Active text to be rendered.
-        @return String containing REML markup.
-      }
+    ///  <summary>Renders REML representation of an active text object.
+    ///  </summary>
+    ///  <param name="ActiveText"><c>IActiveText</c> [in] Active text to be
+    ///  rendered.</param>
+    ///  <param name="Formatted"><c>Boolean</c> [in] Optional flag that
+    ///  determines if REML is to be rendered formatted as multiple lines of
+    ///  indented text (True: the default) or as a single line of text with no
+    ///  formatting (False).</param>
+    ///  <returns><c>string</c> containing REML markup.</returns>
+    class function Render(const ActiveText: IActiveText;
+      const Formatted: Boolean = True): string;
   end;
 
 
@@ -719,11 +736,8 @@ begin
   inherited InternalCreate;
 end;
 
-class function TREMLWriter.Render(const ActiveText: IActiveText): string;
-  {Renders REML representation of an active text object.
-    @param ActiveText [in] Active text to be rendered.
-    @return String containing REML markup.
-  }
+class function TREMLWriter.Render(const ActiveText: IActiveText;
+  const Formatted: Boolean): string;
 var
   Elem: IActiveTextElem;          // each element in active text object
   TextElem: IActiveTextTextElem;  // an active text text element
@@ -744,30 +758,31 @@ begin
     for Elem in ActiveText do
     begin
       if Supports(Elem, IActiveTextTextElem, TextElem) then
-        Text := Text + RW.RenderText(TextElem)
+        Text := Text + RW.RenderText(TextElem, Formatted)
       else if Supports(Elem, IActiveTextActionElem, TagElem) then
-        Text := Text + RW.RenderTag(TagElem);
+        Text := Text + RW.RenderTag(TagElem, Formatted);
     end;
-    SrcLines := TIStringList.Create(Text, EOL, False);
-    DestLines := TIStringList.Create;
-    for SrcLine in SrcLines do
+    if Formatted then
     begin
-      DestLine := StrTrimRight(SrcLine);
-      if not StrIsEmpty(DestLine) then
-        DestLines.Add(DestLine);
-    end;
-    Result := DestLines.GetText(EOL, False);
+      SrcLines := TIStringList.Create(Text, EOL, False);
+      DestLines := TIStringList.Create;
+      for SrcLine in SrcLines do
+      begin
+        DestLine := StrTrimRight(SrcLine);
+        if not StrIsEmpty(DestLine) then
+          DestLines.Add(DestLine);
+      end;
+      Result := DestLines.GetText(EOL, False);
+    end
+    else
+      Result := StrTrim(Text);
   finally
     RW.Free;
   end;
 end;
 
-function TREMLWriter.RenderTag(
-  const TagElem: IActiveTextActionElem): string;
-  {Renders an active text action element as a REML tag.
-    @param TagElem [in] Active text action element to be rendered.
-    @return Required REML tag.
-  }
+function TREMLWriter.RenderTag(const TagElem: IActiveTextActionElem;
+  const Formatted: Boolean): string;
 var
   TagName: string;      // name of tag
   ParamName: string;  // name of any parameter
@@ -785,7 +800,8 @@ begin
         if TActiveTextElemCaps.DisplayStyleOf(TagElem.Kind) = dsBlock then
         begin
           Dec(fLevel);
-          Result := EOL + StrOfSpaces(IndentMult * fLevel) + Result + EOL;
+          if Formatted then
+            Result := EOL + StrOfSpaces(IndentMult * fLevel) + Result + EOL;
           fIsStartOfTextLine := True;
         end;
       end
@@ -815,7 +831,8 @@ begin
           );
         if TActiveTextElemCaps.DisplayStyleOf(TagElem.Kind) = dsBlock then
         begin
-          Result := EOL + StrOfSpaces(IndentMult * fLevel) + Result + EOL;
+          if Formatted then
+            Result := EOL + StrOfSpaces(IndentMult * fLevel) + Result + EOL;
           Inc(fLevel);
           fIsStartOfTextLine := True;
         end
@@ -823,7 +840,8 @@ begin
         begin
           if fIsStartOfTextLine then
           begin
-            Result := StrOfSpaces(IndentMult * fLevel) + Result;
+            if Formatted then
+              Result := StrOfSpaces(IndentMult * fLevel) + Result;
             fIsStartOfTextLine := False;
           end;
         end;
@@ -839,15 +857,10 @@ begin
   end;
 end;
 
-function TREMLWriter.RenderText(
-  const TextElem: IActiveTextTextElem): string;
-  {Renders an active text text element. Illegal characters are converted to
-  REML character entities.
-    @param TextElem [in] Active text text element.
-    @return REML-safe text containing necessary character entities.
-  }
+function TREMLWriter.RenderText(const TextElem: IActiveTextTextElem;
+  const Indented: Boolean): string;
 begin
-  if fIsStartOfTextLine then
+  if fIsStartOfTextLine and Indented then
   begin
     Result := StrOfSpaces(IndentMult * fLevel);
     fIsStartOfTextLine := False;

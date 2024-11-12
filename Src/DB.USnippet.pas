@@ -118,8 +118,8 @@ type
     fKind: TSnippetKind;                    // Kind of snippet this is
     fCategory: string;                      // Name of snippet's category
     fDescription: IActiveText;              // Description of snippet
-    fSourceCode: string;                    // Snippet's source code
-    fName: string;                          // Name of snippet
+    fSourceCode: string;                    // Snippet source code
+    fKey: string;                           // Snippet key: unique in collection
     fDisplayName: string;                   // Display name of snippet
     fUnits: TStringList;                    // List of required units
     fDepends: TSnippetList;                 // List of required snippets
@@ -138,9 +138,9 @@ type
         @return Required display name.
       }
   strict protected
-    procedure SetName(const Name: string);
-      {Sets Name property.
-        @param Name [in] New name.
+    procedure SetKey(const AKey: string);
+      {Sets Key property.
+        @param AKey [in] New key.
       }
     procedure SetProps(const Data: TSnippetData);
       {Sets snippet's properties.
@@ -154,12 +154,12 @@ type
 
     ///  <summary>Object constructor. Sets up snippet object with given property
     ///  values belonging to a specified collection.</summary>
-    ///  <param name="Name"><c>string</c> [in] Name of snippet.</param>
+    ///  <param name="AKey"><c>string</c> [in] Snippet's key.</param>
     ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of collection
     ///  to which the snippet belongs. ID must not be null.</param>
     ///  <param name="Props"><c>TSnippetData</c> [in] Values of snippet
     ///  properties.</param>
-    constructor Create(const Name: string; const ACollectionID: TCollectionID;
+    constructor Create(const AKey: string; const ACollectionID: TCollectionID;
       const Props: TSnippetData);
 
     destructor Destroy; override;
@@ -167,7 +167,8 @@ type
       }
     function IsEqual(const Snippet: TSnippet): Boolean;
       {Checks if this snippet is same as another snippet. Snippets are
-      considered equal if they have the same name and come from same database.
+      considered equal if they have the same key and come from the same
+      collection.
         @param Snippet [in] Snippet being compared.
         @return True if snippets are equal, False if not.
       }
@@ -179,8 +180,8 @@ type
       {Kind of snippet represented by this object}
     property ID: TSnippetID read GetID;
       {Snippet's unique ID}
-    property Name: string read fName;
-      {Name of snippet}
+    property Key: string read fKey;
+      {Snippet key}
     property DisplayName: string read GetDisplayName;
       {Displat name of snippet}
     property Category: string read fCategory;
@@ -261,16 +262,16 @@ type
         @return Snippet at specified index in list.
       }
 
-    ///  <summary>Finds a snippet in the list with whose name and collection ID
+    ///  <summary>Finds a snippet in the list with whose key and collection ID
     ///  match.</summary>
-    ///  <param name="SnippetName"><c>string</c> [in] Name of snippet.</param>
+    ///  <param name="SnippetKey"><c>string</c> [in] Snippet's key.</param>
     ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of collection
     ///  to which the snippet belongs.</param>
     ///  <param name="Index"><c>Integer</c>. [out] Set to the index of the
     ///  required snippet in the list. Valid only if the snippet was found.
     ///  </param>
     ///  <returns><c>Boolean</c>. True if snippet found, False if not.</returns>
-    function Find(const SnippetName: string; const ACollectionID: TCollectionID;
+    function Find(const SnippetKey: string; const ACollectionID: TCollectionID;
       out Index: Integer): Boolean; overload;
 
   strict protected
@@ -306,14 +307,14 @@ type
         @return Reference to required snippet or nil if not found.
       }
 
-    ///  <summary>Finds a snippet in the list with whose name and collection ID
+    ///  <summary>Finds a snippet in the list with whose key and collection ID
     ///  match.</summary>
-    ///  <param name="SnippetName"><c>string</c> [in] Name of snippet.</param>
+    ///  <param name="SnippetKey"><c>string</c> [in] Snippet's key.</param>
     ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of collection
     ///  to which the snippet belongs.</param>
     ///  <returns><c>TSnippet</c>. Reference to the required snippet or nil if
     ///  not found.</returns>
-    function Find(const SnippetName: string;
+    function Find(const SnippetKey: string;
       const ACollectionID: TCollectionID): TSnippet; overload;
 
     function Contains(const Snippet: TSnippet): Boolean;
@@ -414,7 +415,7 @@ begin
   Result := Kind <> skFreeform;
 end;
 
-constructor TSnippet.Create(const Name: string;
+constructor TSnippet.Create(const AKey: string;
   const ACollectionID: TCollectionID; const Props: TSnippetData);
 begin
   Assert(ClassType <> TSnippet,
@@ -423,7 +424,7 @@ begin
     ClassName + '.Create: ACollectionID is null');
   inherited Create;
   // Record simple property values
-  SetName(Name);
+  SetKey(AKey);
   SetProps(Props);
   // Create string list to store required units
   fUnits := TStringList.Create;
@@ -451,7 +452,7 @@ begin
   if GetDisplayNameValue <> '' then
     Result := GetDisplayNameValue
   else
-    Result := fName;
+    Result := fKey;
 end;
 
 function TSnippet.GetDisplayNameValue: string;
@@ -464,12 +465,12 @@ function TSnippet.GetID: TSnippetID;
     @return Required ID.
   }
 begin
-  Result := TSnippetID.Create(fName, fCollectionID);
+  Result := TSnippetID.Create(fKey, fCollectionID);
 end;
 
 function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
   {Checks if this snippet is same as another snippet. Snippets are considered
-  equal if they have the same name and come from same database.
+  equal if they have the same key and come from the same collection.
     @param Snippet [in] Snippet being compared.
     @return True if snippets are equal, False if not.
   }
@@ -477,12 +478,10 @@ begin
   Result := Snippet.ID = Self.ID;
 end;
 
-procedure TSnippet.SetName(const Name: string);
-  {Sets Name property.
-    @param Name [in] New name.
-  }
+procedure TSnippet.SetKey(const AKey: string);
 begin
-  fName := Name;
+  fKey := StrTrim(AKey);
+  Assert(fKey <> '', ClassName + '.SetKey: AKey is whitespace or empty');
 end;
 
 procedure TSnippet.SetProps(const Data: TSnippetData);
@@ -706,7 +705,7 @@ begin
   inherited;
 end;
 
-function TSnippetList.Find(const SnippetName: string;
+function TSnippetList.Find(const SnippetKey: string;
   const ACollectionID: TCollectionID; out Index: Integer): Boolean;
 var
   TempSnippet: TSnippet;  // temp snippet used to perform search
@@ -715,7 +714,7 @@ begin
   // We need a temporary snippet object in order to perform binary search using
   // object list's built in search
   NullData.Init;
-  TempSnippet := TTempSnippet.Create(SnippetName, ACollectionID, NullData);
+  TempSnippet := TTempSnippet.Create(SnippetKey, ACollectionID, NullData);
   try
     Result := fList.Find(TempSnippet, Index);
   finally
@@ -723,12 +722,12 @@ begin
   end;
 end;
 
-function TSnippetList.Find(const SnippetName: string;
+function TSnippetList.Find(const SnippetKey: string;
   const ACollectionID: TCollectionID): TSnippet;
 var
-  Idx: Integer; // index of snippet name in list
+  Idx: Integer; // index of snippet key in list
 begin
-  if Find(SnippetName, ACollectionID, Idx) then
+  if Find(SnippetKey, ACollectionID, Idx) then
     Result := Items[Idx]
   else
     Result := nil;
@@ -740,7 +739,7 @@ function TSnippetList.Find(const SnippetID: TSnippetID): TSnippet;
     @return Reference to required snippet or nil if not found.
   }
 begin
-  Result := Find(SnippetID.Name, SnippetID.CollectionID);
+  Result := Find(SnippetID.Key, SnippetID.CollectionID);
 end;
 
 function TSnippetList.GetEnumerator: TEnumerator<TSnippet>;
@@ -785,7 +784,7 @@ begin
   Result := Assigned(AList) and (Self.Count = AList.Count);
   if Result then
   begin
-    // Same number of snippets: scan list checking snippet names same. We can
+    // Same number of snippets: scan list checking snippet keys are same. We can
     // rely on items being in same order since lists are sorted
     for Idx := 0 to Pred(Self.Count) do
     begin

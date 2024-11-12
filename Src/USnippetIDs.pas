@@ -26,18 +26,19 @@ uses
 
 type
 
-  ///  <summary>Record that uniquely identifies a code snippet. Specifies name
-  ///  and flag indicating whether snippet is user-defined.</summary>
+  ///  <summary>Record that uniquely identifies a code snippet.</summary>
+  ///  <remarks>Comprises the snippet's key and collection.</remarks>
   TSnippetID = record
   strict private
     var
-      ///  <summary>Value of Name property.</summary>
-      fName: string;
+      ///  <summary>Value of Key property.</summary>
+      fKey: string;
       fCollectionID: TCollectionID;
+    procedure SetKey(const AValue: string);
     procedure SetCollectionID(const AValue: TCollectionID);
   public
-    ///  <summary>Name of snippet.</summary>
-    property Name: string read fName write fName;
+    ///  <summary>Snippet's key.</summary>
+    property Key: string read fKey write SetKey;
 
     ///  <summary>ID of the collection to which a snippet with this ID belongs.
     ///  </summary>
@@ -47,7 +48,7 @@ type
 
     ///  <summary>Creates a record with given property values.</summary>
     ///  <remarks><c>ACollectionID</c> must not be null.</remarks>
-    constructor Create(const AName: string; const ACollectionID: TCollectionID);
+    constructor Create(const AKey: string; const ACollectionID: TCollectionID);
 
     ///  <summary>Creates copy of given snippet ID</summary>
     constructor Clone(const Src: TSnippetID);
@@ -58,12 +59,12 @@ type
     ///  SID or +ve if this record greater than SID.</returns>
     function CompareTo(const SID: TSnippetID): Integer;
 
-    ///  <summary>Compares two snippet names.</summary>
-    ///  <param name="Left">string [in] First name.</param>
-    ///  <param name="Right">string [in] Second name.</param>
-    ///  <result>Integer. 0 if names are same, -ve if Left is less than Right or
+    ///  <summary>Compares two snippet keys.</summary>
+    ///  <param name="Left">string [in] First key.</param>
+    ///  <param name="Right">string [in] Second key.</param>
+    ///  <result>Integer. 0 if keys are same, -ve if Left is less than Right or
     ///  +ve Left is greater than Right.</result>
-    class function CompareNames(const Left, Right: string): Integer; static;
+    class function CompareKeys(const Left, Right: string): Integer; static;
 
     ///  <summary>Overload of equality operator for two TSnippetIDs.</summary>
     class operator Equal(const SID1, SID2: TSnippetID): Boolean;
@@ -162,26 +163,26 @@ uses
 
 constructor TSnippetID.Clone(const Src: TSnippetID);
 begin
-  Create(Src.Name, Src.CollectionID);
+  Create(Src.Key, Src.CollectionID);
 end;
 
-class function TSnippetID.CompareNames(const Left, Right: string): Integer;
+class function TSnippetID.CompareKeys(const Left, Right: string): Integer;
 begin
   Result := StrCompareText(Left, Right);
 end;
 
 function TSnippetID.CompareTo(const SID: TSnippetID): Integer;
 begin
-  Result := CompareNames(Name, SID.Name);
+  Result := CompareKeys(Key, SID.Key);
   if Result = 0 then
     // TODO -cNote: New comparison changes ordering (no problem tho!)
     Result := TCollectionID.Compare(CollectionID, SID.CollectionID);
 end;
 
-constructor TSnippetID.Create(const AName: string;
+constructor TSnippetID.Create(const AKey: string;
   const ACollectionID: TCollectionID);
 begin
-  fName := AName;
+  SetKey(AKey);
   SetCollectionID(ACollectionID);
 end;
 
@@ -199,6 +200,12 @@ procedure TSnippetID.SetCollectionID(const AValue: TCollectionID);
 begin
   Assert(not AValue.IsNull, 'TSnippetID.SetCollectionID: Value is null');
   fCollectionID := AValue.Clone;
+end;
+
+procedure TSnippetID.SetKey(const AValue: string);
+begin
+  fKey := StrTrim(AValue);
+  Assert(fKey <> '', 'TSnippetID.SetKey: Value is whitespace or empty');
 end;
 
 { TSnippetIDList }

@@ -216,7 +216,6 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(HeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
-  SetColour(Preferences.GetDBHeadingColour(Category.CollectionID));
   fBuilder.AddText(Category.Description);
   fBuilder.EndPara;
   fBuilder.EndGroup;

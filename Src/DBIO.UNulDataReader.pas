@@ -46,30 +46,31 @@ type
         @param Props [in/out] Empty properties passed in. Unchanged.
       }
     function GetCatSnippets(const CatID: string): IStringList;
-      {Gets names of all snippets in a category.
+      {Gets keys of all snippets in a category.
         @param CatID [in] Id of category containing snippets.
-        @return Empty list.
+        @return Empty snippet key list.
       }
-    procedure GetSnippetProps(const Snippet: string; var Props: TSnippetData);
+    procedure GetSnippetProps(const SnippetKey: string;
+      var Props: TSnippetData);
       {Gets properties of a snippet. These are the fields of the snippet's
       record in the snippets "table".
-        @param Snippet [in] Name of required snippet.
+        @param SnippetKey [in] Keys of required snippet.
         @param Props [in/out] Empty properties passed in. Unchanged.
       }
-    function GetSnippetXRefs(const Snippet: string): IStringList;
+    function GetSnippetXRefs(const SnippetKey: string): IStringList;
       {Gets list of all snippets that are cross referenced by a snippet.
-        @param Snippet [in] Name of snippet we need cross references for.
-        @return Empty list.
+        @param SnippetKey [in] Key of snippet we need cross references for.
+        @return Empty snippet key list.
       }
-    function GetSnippetDepends(const Snippet: string): IStringList;
+    function GetSnippetDepends(const SnippetKey: string): IStringList;
       {Gets list of all snippets on which a given snippet depends.
-        @param Snippet [in] Name of required snippet.
-        @return Empty list.
+        @param SnippetKey [in] Key of required snippet.
+        @return Empty snippet key list.
       }
-    function GetSnippetUnits(const Snippet: string): IStringList;
+    function GetSnippetUnits(const SnippetKey: string): IStringList;
       {Gets list of all units referenced by a snippet.
-        @param Snippet [in] Name of required snippet.
-        @return Empty list.
+        @param SnippetKey [in] Key of required snippet.
+        @return Empty unit name list.
       }
   end;
 
@@ -107,47 +108,48 @@ begin
 end;
 
 function TNulDataReader.GetCatSnippets(const CatID: string): IStringList;
-  {Gets names of all snippets in a category.
+  {Gets keys of all snippets in a category.
     @param CatID [in] Id of category containing snippets.
-    @return Empty list.
+    @return Empty snippey key list.
   }
 begin
   Result := TIStringList.Create;
 end;
 
-function TNulDataReader.GetSnippetDepends(const Snippet: string): IStringList;
+function TNulDataReader.GetSnippetDepends(const SnippetKey: string):
+  IStringList;
   {Gets list of all snippets on which a given snippet depends.
-    @param Snippet [in] Name of required snippet.
-    @return Empty list.
+    @param SnippetKey [in] Key of required snippet.
+    @return Empty snippet key list.
   }
 begin
   Result := TIStringList.Create;
 end;
 
-procedure TNulDataReader.GetSnippetProps(const Snippet: string;
+procedure TNulDataReader.GetSnippetProps(const SnippetKey: string;
   var Props: TSnippetData);
   {Gets properties of a snippet. These are the fields of the snippet's record in
   the snippets "table".
-    @param Snippet [in] Name of required snippet.
+    @param SnippetKey [in] Key of required snippet.
     @param Props [in/out] Empty properties passed in. Unchanged.
   }
 begin
   // Do nothing
 end;
 
-function TNulDataReader.GetSnippetUnits(const Snippet: string): IStringList;
+function TNulDataReader.GetSnippetUnits(const SnippetKey: string): IStringList;
   {Gets list of all units referenced by a snippet.
-    @param Snippet [in] Name of required snippet.
-    @return Empty list.
+    @param SnippetKey [in] Key of required snippet.
+    @return Empty unit name list.
   }
 begin
   Result := TIStringList.Create;
 end;
 
-function TNulDataReader.GetSnippetXRefs(const Snippet: string): IStringList;
+function TNulDataReader.GetSnippetXRefs(const SnippetKey: string): IStringList;
   {Gets list of all snippets that are cross referenced by a snippet.
-    @param Snippet [in] Name of snippet we need cross references for.
-    @return Empty list.
+    @param SnippetKey [in] Key of snippet we need cross references for.
+    @return Empty snippet key list.
   }
 begin
   Result := TIStringList.Create;

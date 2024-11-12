@@ -73,7 +73,7 @@
 			<DCCReference Include="DB.USnippet.pas"/>
 			<DCCReference Include="DB.USnippetKind.pas"/>
 			<DCCReference Include="DBIO.UFileIOIntf.pas"/>
-			<DCCReference Include="DBIO.UIniDataReader.pas"/>
+			<DCCReference Include="DBIO.UIniData.pas"/>
 			<DCCReference Include="DBIO.UNulDataReader.pas"/>
 			<DCCReference Include="DBIO.UXMLDataIO.pas"/>
 			<DCCReference Include="Favourites.UManager.pas"/>
@@ -499,7 +499,6 @@
 			<DCCReference Include="UProtocols.pas"/>
 			<DCCReference Include="UQuery.pas"/>
 			<DCCReference Include="UREMLDataIO.pas"/>
-			<DCCReference Include="UReservedCategories.pas"/>
 			<DCCReference Include="UResourceUtils.pas"/>
 			<DCCReference Include="URTFBuilder.pas"/>
 			<DCCReference Include="URTFCategoryDoc.pas"/>
@@ -582,6 +581,8 @@
 			<DCCReference Include="ClassHelpers.UGraphics.pas"/>
 			<DCCReference Include="ClassHelpers.UActions.pas"/>
 			<DCCReference Include="DB.UCollections.pas"/>
+			<DCCReference Include="UTabSeparatedFileIO.pas"/>
+			<DCCReference Include="DBIO.UCategoryIO.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

@@ -46,8 +46,8 @@ function displaySnippet(snippet, userdefined) {
 
 /*
  * Calls external object to get host application to display a named snippet.
- *  @param string snippet [in] Name of snippet to be displayed.
- *  @param boolean collectionId [in] Hex string representation of collection
+ *  @param string snippet [in] Key of snippet to be displayed.
+ *  @param string collectionId [in] Hex string representation of collection
  *    to which the snippet belongs.
  *  @return False.
  */
@@ -70,12 +70,13 @@ function displayCategory(catid) {
 
 /*
  * Calls external object to get host application to edit a named snippet.
- *  @param string snippet [in] Name of snippet to be edited. Must be user
+ *  @param string snippet [in] Key of snippet to be edited. Must be user
  *    defined.
+ *  @param string collectionId [in] Hex string representation of collection
  *  @return False.
  */
-function editSnippet(snippet) {
-  external.EditSnippet(snippet);
+function editSnippet(snippet, collectionId) {
+  external.EditSnippet(snippet, collectionId);
   return false;
 }
 

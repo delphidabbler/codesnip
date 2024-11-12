@@ -45,13 +45,13 @@ library ExternalObj
     HRESULT _stdcall UpdateDbase(void);
 
     /*
-     * Display named snippet.
-     *    @param SnippetName [in] Name of snippet to display.
+     * Display snippet identified by key and collection ID.
+     *    @param Key [in] Snippet's key.
      *    @param CollectionIDAsHex [in] Hex representation of snippet's 
      *           collection ID.
      */
     [id(0x00000080)]
-    HRESULT _stdcall DisplaySnippet([in] BSTR SnippetName,
+    HRESULT _stdcall DisplaySnippet([in] BSTR Key,
         [in] BSTR CollectionIDAsHex, [in] VARIANT_BOOL NewTab);
 
     /*
@@ -61,11 +61,13 @@ library ExternalObj
     HRESULT _stdcall ConfigCompilers(void);
 
     /*
-     * Edits the named snippet.
-     *    @param SnippetName [in] Name of snippet to edit. Must be user defined.
+     * Edits the snippet identified by its key.
+     *    @param Key [in] Key of snippet to edit. Must be user defined.
+     *    @param CollectionIDAsHex [in] Hex representation of snippet's 
+     *           collection ID.
      */
     [id(0x0000006C)]
-    HRESULT _stdcall EditSnippet([in] BSTR SnippetName);
+    HRESULT _stdcall EditSnippet([in] BSTR Key, [in] BSTR CollectionIDAsHex);
 
     /*
      * Display identified category.

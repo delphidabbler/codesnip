@@ -278,9 +278,6 @@ type
     ///  <remarks>The snippet is to be displayed if it is in the category being
     ///  displayed.</remarks>
     function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
-    ///  <summary>Returns name of CSS class to be used for page heading.
-    ///  </summary>
-    function GetH1ClassName: string; override;
     ///  <summary>Returns narrative to be used at top of any page that displays
     ///  a snippet list.</summary>
     function GetNarrative: string; override;
@@ -538,7 +535,9 @@ begin
   );
   Tplt.ResolvePlaceholderText(
     'EditEventHandler',
-    TJavaScript.LiteralFunc('editSnippet', [GetSnippet.Name])
+    TJavaScript.LiteralFunc(
+      'editSnippet', [GetSnippet.Key, GetSnippet.CollectionID.ToHexString]
+    )
   );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
@@ -663,14 +662,6 @@ resourcestring
   sNote = 'The current selection contains no snippets in this category.';
 begin
   Result := sNote;
-end;
-
-function TCategoryPageHTML.GetH1ClassName: string;
-begin
-  if (View as ICategoryView).Category.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
-    Result := 'userdb'
-  else
-    Result := inherited GetH1ClassName;
 end;
 
 function TCategoryPageHTML.GetNarrative: string;

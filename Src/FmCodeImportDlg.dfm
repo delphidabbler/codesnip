@@ -79,14 +79,6 @@ inherited CodeImportDlg: TCodeImportDlg
           Caption = 'Imported &snippets:'
           FocusControl = lvImports
         end
-        object lblSelectedSnippet: TLabel
-          Left = 0
-          Top = 217
-          Width = 83
-          Height = 13
-          Caption = 'S&elected snippet:'
-          FocusControl = edRename
-        end
         object lblModifyInstructions: TLabel
           Left = 0
           Top = 8
@@ -94,9 +86,10 @@ inherited CodeImportDlg: TCodeImportDlg
           Height = 40
           AutoSize = False
           Caption = 
-            'The functions to be imported are listed below. Select, deselect ' +
-            'and rename as required then click the "Update" button to update ' +
-            'the database. Use "Cancel" to abandon the import.'
+            'The functions to be imported are listed below. Clear the check b' +
+            'oxes next to any snippets you don'#39't want to import then click th' +
+            'e "Update" button to update the database. Use "Cancel" to abando' +
+            'n the import.'
           WordWrap = True
         end
         object lvImports: TListView
@@ -107,12 +100,8 @@ inherited CodeImportDlg: TCodeImportDlg
           Checkboxes = True
           Columns = <
             item
-              Caption = 'Snippet Name'
-              Width = 140
-            end
-            item
-              Caption = 'Import Using Name'
-              Width = 140
+              Caption = 'Snippet'
+              Width = 280
             end
             item
               Caption = 'Action'
@@ -126,23 +115,7 @@ inherited CodeImportDlg: TCodeImportDlg
           SortType = stText
           TabOrder = 0
           ViewStyle = vsReport
-          OnSelectItem = lvImportsSelectItem
           OnItemChecked = lvImportsItemChecked
-        end
-        object btnRename: TButton
-          Left = 161
-          Top = 236
-          Width = 75
-          Height = 25
-          Action = actRename
-          TabOrder = 1
-        end
-        object edRename: TEdit
-          Left = 0
-          Top = 238
-          Width = 155
-          Height = 21
-          TabOrder = 2
         end
       end
       object tsFinish: TTabSheet
@@ -174,11 +147,6 @@ inherited CodeImportDlg: TCodeImportDlg
   object alMain: TActionList
     Left = 448
     Top = 208
-    object actRename: TAction
-      Caption = '&Rename...'
-      OnExecute = actRenameExecute
-      OnUpdate = actRenameUpdate
-    end
     object actBrowse: TAction
       Caption = '...'
       Hint = 'Browse for import file'
