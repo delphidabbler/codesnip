@@ -58,6 +58,20 @@ uses
 {$R *.dfm}
 
 
+{TODO -cRefactor: TSelectUserSnippetsFrame is now identical to
+        TSelectSnippetsFrame, so both can be collapsed into base class,
+        TSelectSnippetsBaseFrame.
+
+        Add an event that the owning form can handle to filter out any unwanted
+        snippets from being displayed.
+
+        TSelectUserSnippetsFrame and TSelectSnippetsFrame should then be removed
+        and TSelectSnippetsBaseFrame should be renamed as TSelectSnippetsFrame.
+
+        Finally FrSelectUserSnippets and FrSelectSnippets units can be removed
+        and FrSelectSnippetsBase can be renamed as FrSelectSnippets.
+}
+
 { TSelectUserSnippetsFrame }
 
 function TSelectUserSnippetsFrame.CanAddCatNode(const Cat: TCategory): Boolean;
@@ -66,9 +80,7 @@ function TSelectUserSnippetsFrame.CanAddCatNode(const Cat: TCategory): Boolean;
     @return True if category contains any user-defined snippets.
   }
 begin
-  Result := not Cat.Snippets.IsEmpty(
-    TCollectionID.__TMP__UserDBCollectionID
-  );
+  Result := not Cat.Snippets.IsEmpty;
 end;
 
 function TSelectUserSnippetsFrame.CanAddSnippetNode(
@@ -78,7 +90,7 @@ function TSelectUserSnippetsFrame.CanAddSnippetNode(
     @return True if snippet is user-defined.
   }
 begin
-  Result := Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID;
+  Result := True;
 end;
 
 end.
