@@ -828,8 +828,6 @@ var
   Referrer: TSnippet;       // loops thru snippets that cross references Snippet
   Referrers: TSnippetList;  // list of referencing snippets
 begin
-  Assert(Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID,
-    ClassName + '.DeleteSnippet: Snippet is not user-defined');
   Assert(fSnippets.Contains(Snippet),
     ClassName + '.DeleteSnippet: Snippet is not in the database');
   TriggerEvent(evChangeBegin);

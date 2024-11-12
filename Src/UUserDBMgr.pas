@@ -399,8 +399,6 @@ begin
   Assert(Supports(ViewItem, ISnippetView),
     ClassName + '.Delete: Current view is not a snippet');
   Snippet := (ViewItem as ISnippetView).Snippet;
-  Assert(Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID,
-    ClassName + '.Delete: Snippet must be user defined');
   // Check if snippet has dependents: don't allow deletion if so
   Dependents := (Database as IDatabaseEdit).GetDependents(Snippet);
   if Dependents.Count > 0 then
