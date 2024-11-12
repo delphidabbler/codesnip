@@ -492,7 +492,7 @@ procedure TDatabaseLoader.CreateCategory(const CatID: string;
     @param CatData [in] Properties of category.
   }
 begin
-  fCategories.Add(fFactory.CreateCategory(CatID, Collection.UID, CatData));
+  fCategories.Add(fFactory.CreateCategory(CatID, CatData));
 end;
 
 procedure TDatabaseLoader.HandleException(const E: Exception);
@@ -890,7 +890,7 @@ begin
       if not Assigned(Cat) then
       begin
         Categories.Add(
-          DBDataItemFactory.CreateCategory(CatInfo.Key, TCollectionID.__TMP__UserDBCollectionID, CatInfo.Value)
+          DBDataItemFactory.CreateCategory(CatInfo.Key, CatInfo.Value)
         )
       end
       else

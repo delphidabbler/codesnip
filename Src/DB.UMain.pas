@@ -120,13 +120,11 @@ type
     ///  <summary>Creates a new category object.</summary>
     ///  <param name="CatID"><c>string</c> [in] ID of new category. Must be
     ///  unique.</param>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection with
-    ///  which the category is associated.</param>
     ///  <param name="Data"><c>TCategoryData</c> [in] Record describing
     ///  category's properties.</param>
     ///  <returns><c>TCategory</c>. Instance of new category object.</returns>
-    function CreateCategory(const CatID: string;
-      const ACollectionID: TCollectionID; const Data: TCategoryData): TCategory;
+    function CreateCategory(const CatID: string; const Data: TCategoryData):
+      TCategory;
 
     ///  <summary>Creates a new snippet object.</summary>
     ///  <param name="Key"><c>string</c> [in] New snippet's key. Must not
@@ -347,13 +345,11 @@ type
     ///  <summary>Creates a new category object.</summary>
     ///  <param name="CatID"><c>string</c> [in] ID of new category. Must be
     ///  unique.</param>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection with
-    ///  which the category is associated.</param>
     ///  <param name="Data"><c>TCategoryData</c> [in] Record describing
     ///  category's properties.</param>
     ///  <returns><c>TCategory</c>. Instance of new category object.</returns>
-    function CreateCategory(const CatID: string;
-      const ACollectionID: TCollectionID; const Data: TCategoryData): TCategory;
+    function CreateCategory(const CatID: string; const Data: TCategoryData):
+      TCategory;
 
     ///  <summary>Creates a new snippet object.</summary>
     ///  <param name="Key"><c>string</c> [in] New snippet's key. Must not
@@ -1031,7 +1027,7 @@ function TDatabase.InternalAddCategory(const CatID: string;
     @return Reference to new category object.
   }
 begin
-  Result := TCategoryEx.Create(CatID, TCollectionID.__TMP__UserDBCollectionID, Data);
+  Result := TCategoryEx.Create(CatID, Data);
   fCategories.Add(Result);
 end;
 
@@ -1350,9 +1346,9 @@ end;
 { TDBDataItemFactory }
 
 function TDBDataItemFactory.CreateCategory(const CatID: string;
-  const ACollectionID: TCollectionID; const Data: TCategoryData): TCategory;
+  const Data: TCategoryData): TCategory;
 begin
-  Result := TCategoryEx.Create(CatID, ACollectionID, Data);
+  Result := TCategoryEx.Create(CatID, Data);
 end;
 
 function TDBDataItemFactory.CreateSnippet(const Key: string;
