@@ -325,6 +325,7 @@ uses
   Generics.Defaults,
   // Project
   DB.UDatabaseIO,
+  DBIO.UCategoryIO,
   IntfCommon,
   UExceptions,
   UQuery,
@@ -1084,6 +1085,7 @@ var
   Loader: IDataFormatLoader;
   Collections: TCollections;
   Collection: TCollection;
+  CatLoader: IGlobalCategoryLoader;
 begin
   Clear;
 
@@ -1121,6 +1123,11 @@ begin
         Loader.Load(fSnippets, fCategories, Factory);
     end;
 
+    // Read categories from categories file to get any empty categories not
+    // created by format loaders
+    CatLoader := TDatabaseIOFactory.CreateGlobalCategoryLoader;
+    CatLoader.Load(fCategories, Factory);
+
     // Ensure that the default category is present, if it's not already loaded
     if not Assigned(fCategories.Find(TCategory.DefaultID)) then
       fCategories.Add(TCategoryEx.CreateDefault);
@@ -1145,22 +1152,24 @@ procedure TDatabase.Save;
   {Saves user defined snippets and all categories to user database.
   }
 var
-  MainProvider, UserProvider: IDBDataProvider;  // object that supplies info to writer
+  MainProvider, UserProvider: IDBDataProvider;
   MainCollectionIdx, UserCollectionIdx: Integer;
   Saver: IDataFormatSaver;
   Collections: TCollections;
   Collection: TCollection;
+  CatSaver: IGlobalCategorySaver;
 begin
+  // Save categories
+  CatSaver := TDatabaseIOFactory.CreateGlobalCategorySaver;
+  CatSaver.Save(fCategories);
+
   Collections := TCollections.Instance;
 
   {TODO: -cVault: The following code is a kludge to maintain compatibility with
           CodeSnip 4. In CodeSnip Vault we should iterate over all collections
           creating a writer for each one. }
 
-  // *** The following code is a stub for later versions. For CodeSnip 4
-  //     compatibility this code does nothing because there is no writer for
-  //     the "main" collection. TDatabaseIOFactory.CreateDBWriter will return
-  //     nil for this format, so Saver.Write will never be called.
+  // *** The following code is a stub for later versions.
   MainCollectionIdx := TCollections.Instance.IndexOfID(
     TCollectionID.__TMP__MainDBCollectionID
   );

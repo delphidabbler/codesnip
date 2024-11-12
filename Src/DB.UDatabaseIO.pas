@@ -53,15 +53,37 @@ type
   IDataFormatSaver = interface(IInterface)
     ['{F46EE2E3-68A7-4877-9E04-192D15D29BB1}']
     ///  <summary>Saves data to storage.</summary>
-    ///  <param name="SnipList"><c>TSnippetList</c> [in] Contains information 
+    ///  <param name="SnipList"><c>TSnippetList</c> [in] Contains information
     ///  about each snippet to be saved.</param>
     ///  <param name="Categories"><c>TCategoryList</c> [in] Contains information
     ///  about each category to be saved.</param>
     ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
     ///  obtain details of the data to be stored.</param>
-    ///  <remarks>Method of IDataFormatSaver.</remarks>
     procedure Save(const SnipList: TSnippetList;
       const Categories: TCategoryList; const Provider: IDBDataProvider);
+  end;
+
+  ///  <summary>Interface to object that can save global category information,
+  ///  regardless of any categories saved with collections.</summary>
+  IGlobalCategoryLoader = interface(IInterface)
+    ['{0029F641-FAC4-43C8-A412-F70554BDCF28}']
+     ///  <summary>Loads categories data from global storage.</summary>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] Receives information
+    ///  about each category loaded.</param>
+    ///  <param name="DBDataItemFactory"><c>IDBDataItemFactory</c> [in] Object
+    ///  used to create new categories.</param>
+   procedure Load(const Categories: TCategoryList;
+      const DBDataItemFactory: IDBDataItemFactory);
+  end;
+
+  ///  <summary>Interface to object that can load global category information,
+  ///  regardless of any categories loaded with collections.</summary>
+  IGlobalCategorySaver = interface(IInterface)
+    ['{D967E4FC-32FA-47F8-9BE0-4B25C7215CCA}']
+    ///  <summary>Saves category data to global storage.</summary>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] Contains information
+    ///  about each category to be saved.</param>
+    procedure Save(const Categories: TCategoryList);
   end;
 
   {
@@ -72,7 +94,7 @@ type
   TDatabaseIOFactory = class(TNoConstructObject)
   public
     ///  <summary>Creates and returns an object to be used to load the given
-    ///  collection's data in the correct format. Nil is returned if no loader 
+    ///  collection's data in the correct format. Nil is returned if no loader
     ///  object is supported.</summary>
     class function CreateDBLoader(const Collection: TCollection):
       IDataFormatLoader;
@@ -82,6 +104,15 @@ type
     ///  object is supported.</summary>
     class function CreateDBSaver(const Collection: TCollection):
       IDataFormatSaver;
+
+    ///  <summary>Creates and returns an object to be used to load a list of
+    ///  globally stored categories.</summary>
+    class function CreateGlobalCategoryLoader: IGlobalCategoryLoader;
+
+    ///  <summary>Creates and returns an object to be used to save a list of
+    ///  categories to global storage.</summary>
+    class function CreateGlobalCategorySaver: IGlobalCategorySaver;
+
   end;
 
   {
@@ -97,8 +128,10 @@ implementation
 uses
   // Delphi
   SysUtils,
+  Generics.Collections,
   IOUtils,
   // Project
+  DBIO.UCategoryIO,
   DBIO.UFileIOIntf,
   DBIO.UIniData,
   DBIO.UNulDataReader,
@@ -407,6 +440,31 @@ type
       const Provider: IDBDataProvider); override;
   end;
 
+  ///  <summary>Class used to save global category information, regardless of
+  ///  any categories saved with collections.</summary>
+  TGlobalCategoryLoader = class(TInterfacedObject, IGlobalCategoryLoader)
+  public
+    ///  <summary>Loads categories data from global storage.</summary>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] Receives information
+    ///  about each category loaded.</param>
+    ///  <param name="DBDataItemFactory"><c>IDBDataItemFactory</c> [in] Object
+    ///  used to create new categories.</param>
+    ///  <remarks>Method of <c>IGlobalCategoryLoader</c>.</remarks>
+    procedure Load(const Categories: TCategoryList;
+      const DBDataItemFactory: IDBDataItemFactory);
+  end;
+
+  ///  <summary>Class used to save global category information, regardless of
+  ///  any categories saved with collections.</summary>
+  TGlobalCategorySaver = class(TInterfacedObject, IGlobalCategorySaver)
+  public
+    ///  <summary>Saves category data to global storage.</summary>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] Contains information
+    ///  about each category to be saved.</param>
+    ///  <remarks>Method of <c>IGlobalCategorySaver</c>.</remarks>
+    procedure Save(const Categories: TCategoryList);
+  end;
+
 { TDatabaseIOFactory }
 
 class function TDatabaseIOFactory.CreateDBLoader(const Collection: TCollection):
@@ -435,6 +493,18 @@ begin
     else
       Result := nil;
   end;
+end;
+
+class function TDatabaseIOFactory.CreateGlobalCategoryLoader:
+  IGlobalCategoryLoader;
+begin
+  Result := TGlobalCategoryLoader.Create;
+end;
+
+class function TDatabaseIOFactory.CreateGlobalCategorySaver:
+  IGlobalCategorySaver;
+begin
+  Result := TGlobalCategorySaver.Create;
 end;
 
 { TDatabaseLoader }
@@ -840,6 +910,53 @@ procedure TNativeV4FormatSaver.Save(const SnipList: TSnippetList;
   const Categories: TCategoryList; const Provider: IDBDataProvider);
 begin
   DoSave(SnipList, Categories, Provider);
+end;
+
+{ TGlobalCategoryLoader }
+
+procedure TGlobalCategoryLoader.Load(const Categories: TCategoryList;
+  const DBDataItemFactory: IDBDataItemFactory);
+var
+  Reader: TCategoryReader;
+  CatInfo: TCategoryReader.TCategoryIDAndData;
+  Cat: TCategory;
+begin
+  if not TFile.Exists(TAppInfo.UserCategoriesFileName) then
+    Exit;
+  Reader := TCategoryReader.Create(TAppInfo.UserCategoriesFileName);
+  try
+    for CatInfo in Reader.Read do
+    begin
+      Cat := Categories.Find(CatInfo.Key);
+      if not Assigned(Cat) then
+      begin
+        Categories.Add(
+          DBDataItemFactory.CreateCategory(CatInfo.Key, TCollectionID.__TMP__UserDBCollectionID, CatInfo.Value)
+        )
+      end
+      else
+      begin
+        if Cat.Description <> CatInfo.Value.Desc then
+          Cat.Update(CatInfo.Value);
+      end;
+    end;
+  finally
+    Reader.Free;
+  end;
+end;
+
+{ TGlobalCategorySaver }
+
+procedure TGlobalCategorySaver.Save(const Categories: TCategoryList);
+var
+  Writer: TCategoryWriter;
+begin
+  Writer := TCategoryWriter.Create(TAppInfo.UserCategoriesFileName);
+  try
+    Writer.Write(Categories);
+  finally
+    Writer.Free;
+  end;
 end;
 
 end.

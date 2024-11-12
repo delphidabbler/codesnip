@@ -81,6 +81,11 @@ type
     class function UserConfigFileName: string;
       {Returns fully specified name of per-user config file.
       }
+
+    ///  <summary>Returns fully specified name of the current user's global
+    ///  categories file.</summary>
+    class function UserCategoriesFileName: string;
+
     class function ProgramReleaseInfo: string;
       {Gets information about the current program release. Includes any special
       build information if present in version information.
@@ -235,6 +240,11 @@ begin
   {$ELSE}
   Result := CommonAppDir;
   {$ENDIF}
+end;
+
+class function TAppInfo.UserCategoriesFileName: string;
+begin
+  Result := UserAppDir + '\Categories';
 end;
 
 class function TAppInfo.UserConfigFileName: string;
