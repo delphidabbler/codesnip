@@ -376,7 +376,8 @@ uses
   ClassHelpers.UActions in 'ClassHelpers.UActions.pas',
   DB.UCollections in 'DB.UCollections.pas',
   UTabSeparatedFileIO in 'UTabSeparatedFileIO.pas',
-  DBIO.UCategoryIO in 'DBIO.UCategoryIO.pas';
+  DBIO.UCategoryIO in 'DBIO.UCategoryIO.pas',
+  UCollectionListAdapter in 'UCollectionListAdapter.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
