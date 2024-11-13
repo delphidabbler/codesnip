@@ -1398,7 +1398,6 @@ begin
     // note that actions created on fly are automatically freed
     fNotifier := TNotifier.Create;
     ActionSetter := fNotifier as ISetActions;
-    ActionSetter.SetUpdateDbaseAction(actUpdateDbase);
     ActionSetter.SetDisplaySnippetAction(
       TActionFactory.CreateSnippetAction(Self)
     );
@@ -1418,7 +1417,6 @@ begin
     ActionSetter.SetEditSnippetAction(
       TActionFactory.CreateEditSnippetAction(Self, ActEditSnippetByIDExecute)
     );
-    ActionSetter.SetNewSnippetAction(actAddSnippet);
     ActionSetter.SetNewsAction(actBlog);
     ActionSetter.SetAboutBoxAction(actAbout);
 

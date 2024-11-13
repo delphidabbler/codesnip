@@ -38,11 +38,6 @@ library ExternalObj
   ]
   interface IWBExternal15: IDispatch
   {
-    /*
-     * Update database from internet.
-     */
-    [id(0x00000065)]
-    HRESULT _stdcall UpdateDbase(void);
 
     /*
      * Display snippet identified by key and collection ID.
@@ -75,12 +70,6 @@ library ExternalObj
      */
     [id(0x0000006E)]
     HRESULT _stdcall DisplayCategory([in] BSTR CatID, [in] VARIANT_BOOL NewTab);
-
-    /*
-     * Open Snippets Editor ready to create a new snippet.
-     */
-    [id(0x0000006F)]
-    HRESULT _stdcall NewSnippet(void);
 
     /*
      * Show news items from CodeSnip news feed.

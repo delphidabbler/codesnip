@@ -53,10 +53,6 @@ type
     ///  library.</summary>
     constructor Create;
 
-    ///  <summary>Updates database from internet.</summary>
-    ///  <remarks>Method of IWBExternal15.</remarks>
-    procedure UpdateDbase; safecall;
-
     ///  <summary>Display snippet identified by key and collection ID.</summary>
     ///  <param name="Key">WideString [in] Snippet's key.</param>
     ///  <param name="CollectionIDAsHex">WideString [in] Hex representation of
@@ -91,10 +87,6 @@ type
     ///  <remarks>Method of IWBExternal15.</remarks>
     procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
       safecall;
-
-    ///  <summary>Opens Snippet Editor ready to create a new snippet.</summary>
-    ///  <remarks>Method of IWBExternal15.</remarks>
-    procedure NewSnippet; safecall;
 
     ///  <summary>Shows latest news items from CodeSnip news feed.</summary>
     ///  <remarks>Method of IWBExternal15.</remarks>
@@ -192,16 +184,6 @@ begin
   Application.HandleException(ExceptObject);
 end;
 
-procedure TWBExternal.NewSnippet;
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.NewSnippet;
-  except
-    HandleException;
-  end;
-end;
-
 procedure TWBExternal.SetNotifier(const Notifier: INotifier);
 begin
   fNotifier := Notifier;
@@ -222,16 +204,6 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.ShowNews;
-  except
-    HandleException;
-  end;
-end;
-
-procedure TWBExternal.UpdateDbase;
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.UpdateDbase;
   except
     HandleException;
   end;

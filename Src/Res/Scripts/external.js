@@ -22,29 +22,6 @@ function configCompilers() {
 }
 
 /*
- * Calls external object to get host application to display Update Database
- * dialog box.
- *  @return False.
- */
-function updateDbase() {
-  external.UpdateDbase();
-  return false;
-}
-
-/*
- * Calls external object to get host application to display a named snippet.
- *  @param string snippet [in] Name of snippet to be displayed.
- *  @param boolean userdefined [in] Whether snippet is user defined.
- *  @return False.
- *
-function displaySnippet(snippet, userdefined) {
-  var e = window.event;
-  external.DisplaySnippet(snippet, userdefined, e.ctrlKey);
-  return false;
-}
-*/
-
-/*
  * Calls external object to get host application to display a named snippet.
  *  @param string snippet [in] Key of snippet to be displayed.
  *  @param string collectionId [in] Hex string representation of collection
@@ -77,16 +54,6 @@ function displayCategory(catid) {
  */
 function editSnippet(snippet, collectionId) {
   external.EditSnippet(snippet, collectionId);
-  return false;
-}
-
-/*
- * Calls external object to get host application to start Snippets Editor ready
- * for a new snippet to be entered.
- *  @return False.
- */
-function newSnippet() {
-  external.NewSnippet();
   return false;
 }
 
