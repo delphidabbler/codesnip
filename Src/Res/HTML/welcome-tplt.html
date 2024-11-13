@@ -27,72 +27,25 @@
   <body>
 
     <h1>
-      <em>CodeSnip 4</em> by DelphiDabbler
+      <em>CodeSnip Vault</em> by DelphiDabbler (<span class="warning">experimental</span>)
     </h1>
 
     <div class="details">
 
-      <div id="user-db" class="box">
+      <div id="collections" class="box">
         <div class="caption">
-          Local User database
+          Collections
         </div>
-        <div style="<%HaveUserDB%>">
+        <div style="display: block;">
           <div class="content">
-            There are <em><%UserDBCount%></em> snippets in the local user
-            database.
+            There are <em><%CollectionCount%></em> collections in the database:
           </div>
           <div class="content">
-            <a
-              href="#"
-              class="command-link"
-              onclick="newSnippet();return false;"
-            >Add another snippet</a>
+            <ul>
+              <%CollectionList%>
+            </ul>
           </div>
         </div>
-        <div style="<%NoUserDB%>">
-          <div class="content">
-            <em>No user defined snippets have been created yet.</em>
-          </div>
-          <div class="content">
-            <a
-            href="help:TaskAddSnippets"
-            class="help-link"
-          >Learn how to create your own snippets</a>
-          </div>
-        </div>
-      </div>
-
-      <div id="main-db" class="box">
-        <div class="caption">
-          DelphiDabbler Code Snippets database
-        </div>
-        <div style="<%HaveMainDB%>">
-          <div class="content">
-            There are <em><%MainDBCount%></em> snippets in the DelphiDabbler
-            Code Snippets database.
-          </div>
-        </div>
-        <div style="<%NoMainDB%>">
-          <div class="content">
-            <em>The <a
-              href="https://github.com/delphidabbler/code-snippets"
-              class="external-link"
-            >DelphiDabbler Code Snippets Database</a> has not been
-            installed.</em>
-            <a
-              href="help:TaskUpdateCSDB"
-              class="help-link"
-            >Learn more</a>
-          </div>
-          <div class="content">
-            <a
-              href="#"
-              class="command-link"
-              onclick="updateDbase();return false;"
-            >Install it now</a>
-          </div>
-        </div>
-
       </div>
 
       <div id="compilers" class="box">

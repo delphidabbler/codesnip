@@ -130,11 +130,7 @@ pre {
   border-bottom: 1px solid silver;
 }
 
-#user-db .caption {
-  background-color: #D5E0FF;
-}
-
-#main-db .caption {
+#collections .caption {
   background-color: #DBD1FF;
 }
 
