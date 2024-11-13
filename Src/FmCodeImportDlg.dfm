@@ -67,6 +67,31 @@ inherited CodeImportDlg: TCodeImportDlg
           TabOrder = 1
         end
       end
+      object tsCollection: TTabSheet
+        Caption = 'tsCollection'
+        ImageIndex = 4
+        TabVisible = False
+        DesignSize = (
+          369
+          278)
+        object lblCollection: TLabel
+          Left = 0
+          Top = 8
+          Width = 254
+          Height = 13
+          Caption = 'Choose a &collection to receive the imported snippets:'
+          FocusControl = cbCollection
+        end
+        object cbCollection: TComboBox
+          Left = 0
+          Top = 38
+          Width = 369
+          Height = 21
+          Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 0
+        end
+      end
       object tsUpdate: TTabSheet
         Caption = 'tsUpdate'
         ImageIndex = 3
