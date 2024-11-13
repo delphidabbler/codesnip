@@ -17,8 +17,11 @@ interface
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
-  Favourites.UFavourites, UExceptions;
+  Favourites.UFavourites,
+  UExceptions;
 
 
 type
@@ -33,10 +36,10 @@ type
     const
       ///  <summary>Watermark that is present one the first line of a valid
       ///  favourites file.</summary>
-      Watermark = #$25BA + ' CodeSnip Favourites v1 ' + #$25C4;
-  strict private
-    ///  <summary>Returns fully specified name of the favourites file.</summary>
-    class function FavouritesFileName: string; static;
+      Watermark = #$25BA + ' CodeSnip Favourites v2 ' + #$25C4;
+    ///  <summary>Returns date format settings to be used when writing and
+    ///  reading the Favourites file.</summary>
+    class function DateFormatSettings: TFormatSettings; static;
   public
     ///  <summary>Saves all favourites from given favourites list to file.
     ///  </summary>
@@ -52,7 +55,6 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
   IOUtils,
   Classes,
   /// Project
@@ -63,97 +65,99 @@ uses
   UIOUtils,
   UIStringList,
   USnippetIDs,
-  UStrUtils;
+  UStrUtils,
+  UTabSeparatedFileIO;
 
 
 { TFavouritesPersist }
 
-class function TFavouritesPersist.FavouritesFileName: string;
+class function TFavouritesPersist.DateFormatSettings: TFormatSettings;
 begin
-  Result := IncludeTrailingPathDelimiter(TAppInfo.UserAppDir)
-    + 'Favourites';
+  // We use YYYY-MM-DD HH:MM:SS date format in Favourites file
+  Result := TFormatSettings.Create;
+  Result.DateSeparator := '-';
+  Result.TimeSeparator := ':';
+  Result.ShortDateFormat := 'yyyy/mm/dd';
+  Result.ShortTimeFormat := 'hh:nn:ss';
 end;
 
 class procedure TFavouritesPersist.Load(Favourites: TFavourites);
 var
-  Lines: IStringList;
-  Line: string;
-  Fields: IStringList;
-  SnippetName: string;
-  LastAccess: TDateTime;
-  CollectionID: TCollectionID;
+  TSVReader: TTabSeparatedReader;
 resourcestring
-  sBadFormat = 'Invalid favourites file format';
+  sBadFormat = 'Invalid favourites file format (v2)';
 begin
-  if not TFile.Exists(FavouritesFileName, False) then
+  if not TFile.Exists(TAppInfo.UserFavouritesFileName, False) then
     Exit;
+
   try
-    Lines := TIStringList.Create(
-      TFileIO.ReadAllLines(FavouritesFileName, TEncoding.UTF8, True)
+    TSVReader := TTabSeparatedReader.Create(
+      TAppInfo.UserFavouritesFileName, Watermark
     );
+    try
+      TSVReader.Read(
+        procedure (AFields: TArray<string>)
+        var
+          Key: string;
+          CollectionID: TCollectionID;
+          LastAccess: TDateTime;
+        begin
+          if Length(AFields) <> 3 then
+            raise EFavouritesPersist.Create(sBadFormat);
+          Key := StrTrim(AFields[0]);
+          CollectionID := TCollectionID.CreateFromHexString(
+            StrTrim(AFields[1])
+          );
+          LastAccess := StrToDateTime(StrTrim(AFields[2]), DateFormatSettings);
+          if Database.Snippets.Find(Key, CollectionID) <> nil then
+            Favourites.Add(TSnippetID.Create(Key, CollectionID), LastAccess);
+        end
+      );
+    finally
+      TSVReader.Free;
+    end;
+
   except
-    on E: EStreamError do
+    on E: EConvertError do
       raise EFavouritesPersist.Create(E);
-    on E: EIOUtils do
+    on E: ETabSeparatedReader do
       raise EFavouritesPersist.Create(E);
     else
       raise;
-  end;
-  Line := Lines[0];
-  if Line <> Watermark then
-    raise EFavouritesPersist.Create(sBadFormat);
-  Lines.Delete(0);
-  for Line in Lines do
-  begin
-    if StrTrim(Line) = '' then
-      Continue;
-    Fields := TIStringList.Create(Line, TAB, False, True);
-    if Fields.Count <> 3 then
-      raise EFavouritesPersist.Create(sBadFormat);
-    SnippetName := Fields[0];
-    // accept any text as user collection, except "false"
-    CollectionID := TCollectionID.__TMP__UserDBCollectionID;
-    if StrSameText(Fields[1], 'false') then
-      // we have "false" so main collection
-      CollectionID := TCollectionID.__TMP__MainDBCollectionID;
-    if not TryStrToDateTime(Fields[2], LastAccess) then
-      raise EFavouritesPersist.Create(sBadFormat);
-    // only add to favourites if snippet in database
-    if Database.Snippets.Find(SnippetName, CollectionID) <> nil then
-      Favourites.Add(TSnippetID.Create(SnippetName, CollectionID), LastAccess);
   end;
 end;
 
 class procedure TFavouritesPersist.Save(Favourites: TFavourites);
 var
-  SB: TStringBuilder;
   Fav: TFavourite;
+  TSVWriter: TTabSeparatedFileWriter;
 begin
-  SB := TStringBuilder.Create;
+  TDirectory.CreateDirectory(
+    TPath.GetDirectoryName(TAppInfo.UserFavouritesFileName)
+  );
   try
-    SB.AppendLine(Watermark);
-    for Fav in Favourites do
-    begin
-      SB.Append(Fav.SnippetID.Key);
-      SB.Append(TAB);
-      SB.Append(BoolToStr(Fav.SnippetID.CollectionID <> TCollectionID.__TMP__MainDBCollectionID, True));
-      SB.Append(TAB);
-      SB.Append(DateTimeToStr(Fav.LastAccessed));
-      SB.AppendLine;
-    end;
-    TDirectory.CreateDirectory(TPath.GetDirectoryName(FavouritesFileName));
+    TSVWriter := TTabSeparatedFileWriter.Create(
+      TAppInfo.UserFavouritesFileName, Watermark
+    );
     try
-      TFileIO.WriteAllText(
-        FavouritesFileName, SB.ToString, TEncoding.UTF8, True
-      );
-    except
-      on E: EStreamError do
-        raise EFavouritesPersist.Create(E);
-      else
-        raise;
+      for Fav in Favourites do
+      begin
+        TSVWriter.WriteLine(
+          [
+            Fav.SnippetID.Key,
+            Fav.SnippetID.CollectionID.ToHexString,
+            DateTimeToStr(Fav.LastAccessed, DateFormatSettings)
+          ]
+        );
+      end;
+    finally
+      TSVWriter.Free;
     end;
-  finally
-    SB.Free;
+  except
+    on E: EStreamError do
+      raise EFavouritesPersist.Create(E);
+    else
+      raise;
   end;
 end;
 
