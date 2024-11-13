@@ -16,8 +16,11 @@ interface
 
 
 uses
+  // Delphi
   SysUtils,
-  UExceptions, UIStringList, USnippetIDs;
+  // Project
+  UExceptions,
+  USnippetIDs;
 
 
 type
@@ -27,10 +30,7 @@ type
     var
       fWatermark: string;
       fSnippetIDs: ISnippetIDList;
-      ///  <summary>Lines of text from file.</summary>
-      ///  <remarks>Must be stripped of blank lines.</remarks>
-      fLines: IStringList;
-    procedure Parse;
+    procedure ParseLine(AFields: TArray<string>);
   public
     constructor Create(const Watermark: string);
     function ReadFile(const FileName: string): ISnippetIDLIst;
@@ -47,7 +47,6 @@ type
     var
       fWatermark: string;
       fBuilder: TStringBuilder;
-    procedure CreateContent(const SnippetIDs: ISnippetIDList);
   public
     constructor Create(const Watermark: string);
     destructor Destroy; override;
@@ -67,9 +66,8 @@ uses
   Classes,
   // Project
   DB.UCollections,
-  UConsts,
-  UIOUtils,
-  UStrUtils;
+  UStrUtils,
+  UTabSeparatedFileIO;
 
 
 { TSnippetIDListFileReader }
@@ -78,69 +76,48 @@ constructor TSnippetIDListFileReader.Create(const Watermark: string);
 begin
   inherited Create;
   fSnippetIDs := TSnippetIDList.Create;
-  fLines := TIStringList.Create;
   fWatermark := Watermark;
 end;
 
-procedure TSnippetIDListFileReader.Parse;
+procedure TSnippetIDListFileReader.ParseLine(AFields: TArray<string>);
 resourcestring
   sBadFileFormat = 'Invalid snippet ID list file format';
-  sMissingName = 'Snippet name missing on line' + EOL2 + '"%s"';
-  sMissingUserDef = 'Snippet database specifier missing on line'
-    + EOL2 + '"%s"';
-  sBadUserDef = 'Unknown snippet database specifier on line'
-    + EOL2 + '"%s"';
 var
-  Line: string;         // each line in fLines
-  Name: string;         // name of each snippet
-  UserDefStr: string;   // user defined value of each snippet as string
-  UserDefInt: Integer;  // user defined value of each snippet as integer
+  Key: string;
+  CollectionHex: string;
   CollectionID: TCollectionID;
 begin
-  fSnippetIDs.Clear;
-  if (fLines.Count <= 1) or (fLines[0] <> fWatermark) then
+  Key := StrTrim(AFields[0]);
+  if Key = '' then
     raise ESnippetIDListFileReader.Create(sBadFileFormat);
-  fLines.Delete(0);
-  for Line in fLines do
-  begin
-    StrSplit(Line, TAB, Name, UserDefStr);
-    Name := StrTrim(Name);
-    UserDefStr := StrTrim(UserDefStr);
-    if Name = '' then
-      raise ESnippetIDListFileReader.CreateFmt(sMissingName, [Line]);
-    if UserDefStr = '' then
-      raise ESnippetIDListFileReader.CreateFmt(sMissingUserDef, [Line]);
-    if not TryStrToInt(UserDefStr, UserDefInt) then
-      raise ESnippetIDListFileReader.CreateFmt(sBadUserDef, [Line]);
-    case UserDefInt of
-      0: CollectionID := TCollectionID.__TMP__MainDBCollectionID;
-      1: CollectionID := TCollectionID.__TMP__UserDBCollectionID;
-      else
-        raise ESnippetIDListFileReader.CreateFmt(sBadUserDef, [Line]);
-    end;
-    fSnippetIDs.Add(TSnippetID.Create(Name, CollectionID));
-  end;
+  CollectionHex := StrTrim(AFields[1]);
+  if CollectionHex = '' then
+    raise ESnippetIDListFileReader.Create(sBadFileFormat);
+  CollectionID := TCollectionID.CreateFromHexString(CollectionHex);
+  fSnippetIDs.Add(TSnippetID.Create(Key, CollectionID));
 end;
 
 function TSnippetIDListFileReader.ReadFile(const FileName: string):
   ISnippetIDLIst;
+var
+  TSVReader: TTabSeparatedReader;
 begin
+  fSnippetIDs.Clear;
+  TSVReader := TTabSeparatedReader.Create(FileName, fWatermark);
   try
-    fLines.SetText(
-      TFileIO.ReadAllText(FileName, TEncoding.UTF8, True),
-      CRLF,
-      False,
-      True
-    );
-  except
-    on E: EStreamError do
-      raise ESnippetIDListFileReader.Create(E);
-    on E: EIOUtils do
-      raise ESnippetIDListFileReader.Create(E);
-    else
-      raise;
+    try
+      TSVReader.Read(ParseLine);
+    except
+      on E: ETabSeparatedReader do
+        raise ESnippetIDListFileReader.Create(E);
+      on E: ECollectionID do
+        raise ESnippetIDListFileReader.Create(E);
+      else
+        raise;
+    end;
+  finally
+    TSVReader.Free;
   end;
-  Parse;
   Result := fSnippetIDs;
 end;
 
@@ -149,24 +126,7 @@ end;
 constructor TSnippetIDListFileWriter.Create(const Watermark: string);
 begin
   inherited Create;
-  fBuilder := TStringBuilder.Create;
   fWatermark := Watermark;
-end;
-
-procedure TSnippetIDListFileWriter.CreateContent(
-  const SnippetIDs: ISnippetIDList);
-var
-  SnippetID: TSnippetID;
-begin
-  fBuilder.Clear;
-  fBuilder.AppendLine(fWatermark);
-  for SnippetID in SnippetIDs do
-  begin
-    fBuilder.Append(SnippetID.Key);
-    fBuilder.Append(TAB);
-    fBuilder.Append(Ord(SnippetID.CollectionID <> TCollectionID.__TMP__MainDBCollectionID));
-    fBuilder.AppendLine;
-  end;
 end;
 
 destructor TSnippetIDListFileWriter.Destroy;
@@ -177,10 +137,18 @@ end;
 
 procedure TSnippetIDListFileWriter.WriteFile(const FileName: string;
   SnippetIDs: ISnippetIDList);
+var
+  TSVWriter: TTabSeparatedFileWriter;
+  SnippetID: TSnippetID;
 begin
-  CreateContent(SnippetIDs);
+  TSVWriter := TTabSeparatedFileWriter.Create(FileName, fWaterMark);
   try
-    TFileIO.WriteAllText(FileName, fBuilder.ToString, TEncoding.UTF8, True);
+    try
+      for SnippetID in SnippetIDs do
+        TSVWriter.WriteLine([SnippetID.Key, SnippetID.CollectionID.ToHexString]);
+    finally
+      TSVWriter.Free;
+    end;
   except
     on E: EStreamError do
       raise ESnippetIDListFileWriter.Create(E);
