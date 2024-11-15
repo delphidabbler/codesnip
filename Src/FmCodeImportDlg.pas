@@ -339,13 +339,9 @@ procedure TCodeImportDlg.InitForm;
 begin
   fCollList.ToStrings(cbCollection.Items);
   Assert(cbCollection.Items.Count > 0, ClassName + '.InitForm: no collections');
-  {TODO -cCollections: Replace following __TMP__ method calls with a calls to
-          TCollections.DefaultCollection or similar.}
-  Assert(TCollections.Instance.ContainsID(TCollectionID.__TMP__UserDBCollectionID),
+  Assert(TCollections.Instance.ContainsID(TCollectionID.Default),
     ClassName + '.InitForm: default collection not found');
-  cbCollection.ItemIndex := cbCollection.Items.IndexOf(
-    TCollections.Instance.GetCollection(TCollectionID.__TMP__UserDBCollectionID).Name
-  );
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
   Assert(cbCollection.ItemIndex >= 0,
     ClassName + '.InitForm: default collection name not in cbCollection');
 

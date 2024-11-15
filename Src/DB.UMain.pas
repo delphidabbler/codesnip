@@ -1073,7 +1073,7 @@ procedure TDatabase.Load;
   }
 var
   Factory: IDBDataItemFactory;  // object reader uses to create snippets objects
-  MainCollectionIdx, UserCollectionIdx: Integer;
+  MainCollectionIdx: Integer;
   Loader: IDataFormatLoader;
   Collections: TCollections;
   Collection: TCollection;
@@ -1104,16 +1104,12 @@ begin
         Loader.Load(fSnippets, fCategories, Factory);
     end;
 
-    UserCollectionIdx := TCollections.Instance.IndexOfID(
-      TCollectionID.__TMP__UserDBCollectionID
-    );
-    if UserCollectionIdx >= 0 then
-    begin
-      Collection := Collections[UserCollectionIdx];
-      Loader := TDatabaseIOFactory.CreateDBLoader(Collection);
-      if Assigned(Loader) then
-        Loader.Load(fSnippets, fCategories, Factory);
-    end;
+    // Load default collection
+    Collection := Collections.Default;
+    Loader := TDatabaseIOFactory.CreateDBLoader(Collection);
+    Assert(Assigned(Loader),
+      ClassName + '.Load: No loader for default collection');
+    Loader.Load(fSnippets, fCategories, Factory);
 
     // Read categories from categories file to get any empty categories not
     // created by format loaders
@@ -1144,8 +1140,8 @@ procedure TDatabase.Save;
   {Saves user defined snippets and all categories to user database.
   }
 var
-  MainProvider, UserProvider: IDBDataProvider;
-  MainCollectionIdx, UserCollectionIdx: Integer;
+  MainProvider, DefaultProvider: IDBDataProvider;
+  MainCollectionIdx: Integer;
   Saver: IDataFormatSaver;
   Collections: TCollections;
   Collection: TCollection;
@@ -1169,26 +1165,21 @@ begin
   begin
     Collection := Collections[MainCollectionIdx];
     MainProvider := TCollectionDataProvider.Create(
-      TCollectionID.__TMP__MainDBCollectionID, fSnippets, fCategories
+      Collection.UID, fSnippets, fCategories
     );
     Saver := TDatabaseIOFactory.CreateDBSaver(Collection);
     if Assigned(Saver) then
       Saver.Save(fSnippets, fCategories, MainProvider);
   end;
 
-  UserCollectionIdx := TCollections.Instance.IndexOfID(
-    TCollectionID.__TMP__UserDBCollectionID
+  Collection := Collections.Default;
+  DefaultProvider := TCollectionDataProvider.Create(
+    Collection.UID, fSnippets, fCategories
   );
-  if UserCollectionIdx >= 0 then
-  begin
-    Collection := Collections[UserCollectionIdx];
-    UserProvider := TCollectionDataProvider.Create(
-      TCollectionID.__TMP__UserDBCollectionID, fSnippets, fCategories
-    );
-    Saver := TDatabaseIOFactory.CreateDBSaver(Collection);
-    if Assigned(Saver) then
-      Saver.Save(fSnippets, fCategories, UserProvider);
-  end;
+  Saver := TDatabaseIOFactory.CreateDBSaver(Collection);
+  Assert(Assigned(Saver),
+    ClassName + '.Save: No saver for default collection');
+  Saver.Save(fSnippets, fCategories, DefaultProvider);
 
   fUpdated := False;
 end;

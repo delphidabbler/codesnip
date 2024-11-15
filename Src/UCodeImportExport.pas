@@ -295,18 +295,12 @@ var
 begin
   // Create snippet node with attribute that specifies snippet key
   SnippetNode := fXMLDoc.CreateElement(ParentNode, cSnippetNode);
-  (Database as IDatabaseEdit).GetUniqueSnippetKey(TCollectionID.__TMP__UserDBCollectionID);
   // Export snippet under a new unique key within the default collection
   // we use default collection because code importer assumes snippet id from
   // that collection. We create new unique key because more than one snippet
   // could be exported that have the same key but are in different collections.
   SnippetNode.Attributes[cSnippetNameAttr] :=
-    (Database as IDatabaseEdit).GetUniqueSnippetKey(
-      {TODO -cVault: Replace following __TMP__ method call with a call to get
-              default collection, which should be common to databases used by
-              every user}
-      TCollectionID.__TMP__UserDBCollectionID
-    );
+    (Database as IDatabaseEdit).GetUniqueSnippetKey(TCollectionID.Default);
   // Add nodes for properties: (ignore category and xrefs)
   // description node is written even if empty (which it shouldn't be)
   fXMLDoc.CreateElement(
@@ -412,7 +406,7 @@ procedure TCodeImporter.Execute(const Data: TBytes);
       // Note: in building snippet ID list we assume each snippet is from the
       // default collection. It may not be, but there is no way of telling
       // from XML.
-      Depends.Add(TSnippetID.Create(SnippetName, TCollectionID.__TMP__UserDBCollectionID));
+      Depends.Add(TSnippetID.Create(SnippetName, TCollectionID.Default));
   end;
 
   // Reads description node and converts to active text.

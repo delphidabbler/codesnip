@@ -535,15 +535,11 @@ begin
   fCollList.ToStrings(cbCollection.Items);
   Assert(cbCollection.Items.Count > 0,
     ClassName + '.ConfigForm: no collections');
-  {TODO -cCollections: Replace following __TMP__ method calls with a calls to
-          TCollections.DefaultCollection or similar.}
-  Assert(TCollections.Instance.ContainsID(TCollectionID.__TMP__UserDBCollectionID),
+  Assert(TCollections.Instance.ContainsID(TCollectionID.Default),
     ClassName + '.ConfigForm: default collection not found');
-  cbCollection.ItemIndex := cbCollection.Items.IndexOf(
-    TCollections.Instance.GetCollection(TCollectionID.__TMP__UserDBCollectionID).Name
-  );
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
   Assert(cbCollection.ItemIndex >= 0,
-    ClassName + '.ConfigForm: default collection name not in cbCollection');
+    ClassName + '.ConfigForm: default collection not in cbCollection');
 end;
 
 destructor TSWAGImportDlg.Destroy;

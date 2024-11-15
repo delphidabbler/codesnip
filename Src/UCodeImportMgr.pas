@@ -168,9 +168,7 @@ begin
   // set default event handler
   fRequestCollectionCallback := function: TCollectionID
     begin
-      {TODO -cCollections: Require a TCollections.DefaultCollection method or
-              similar to replace the following __TMP__ method call.}
-      Result := TCollectionID.__TMP__UserDBCollectionID;
+      Result := TCollectionID.Default;
     end;
 end;
 
