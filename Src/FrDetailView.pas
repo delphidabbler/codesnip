@@ -17,7 +17,7 @@ interface
 
 uses
   // Delphi
-  OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, Windows, ActiveX,
+  OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, Windows, ActiveX, Graphics,
   // Project
   FrBrowserBase, IntfFrameMgrs, UCommandBars, UCSSBuilder, UDetailPageLoader,
   USearch, UView, UWBPopupMenus;
@@ -44,6 +44,14 @@ type
       ///  <summary>Generates and loads HTML representing a view into browser
       ///  control.</summary>
       fPageLoader: TDetailPageLoader;
+      ///  <summary>Records colour to be defined when defining CSS classes to
+      ///  display page heading.</summary>
+      fHeadingColour: TColor;
+    ///  <summary>Calculates colour of page heading, according to the type of
+    ///  view being displayed.</summary>
+    ///  <param name="AView"><c>IView</c> [in] View for which heading colour is
+    ///  required.</param>
+    function GetHeadingColour(AView: IView): TColor;
     ///  <summary>Handles web browser UI manager's OnMenuPopup event. Pops up
     ///  relevant menu if appropriate.</summary>
     ///  <param name="Sender">TObject [in] Not used.</param>
@@ -107,7 +115,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, Menus, Math,
+  SysUtils, Menus, Math,
   // Project
   ActiveText.UHTMLRenderer, Browser.UHighlighter,
   DB.UCollections,
@@ -228,10 +236,13 @@ begin
       .AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
 
     // Heading colours for user & main databases
+    {TODO -vault: replace all following classes with single ".heading" class}
     CSSBuilder.AddSelector('.userdb')
-      .AddProperty(TCSS.ColorProp(Preferences.GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID)));
+      .AddProperty(TCSS.ColorProp(fHeadingColour));
     CSSBuilder.AddSelector('.maindb')
-      .AddProperty(TCSS.ColorProp(Preferences.GetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID)));
+      .AddProperty(TCSS.ColorProp(fHeadingColour));
+    CSSBuilder.AddSelector('.group-heading')
+      .AddProperty(TCSS.ColorProp(fHeadingColour));
 
     // Sets CSS for style of New Tab text
     CSSFont.Assign(ContentFont);
@@ -356,6 +367,8 @@ procedure TDetailViewFrame.Display(View: IView);
 var
   Filter: ITextSearchFilter;  // text search filter containing criteria
 begin
+  fHeadingColour := GetHeadingColour(View);
+
   // Load view's HTML into browser control
   fPageLoader.LoadPage(View);
   // Clear any existing text selection
@@ -366,6 +379,19 @@ begin
     Supports(Query.LatestSearch.Filter, ITextSearchFilter, Filter)
     then
     HighlightSearchResults(Filter);
+
+end;
+
+function TDetailViewFrame.GetHeadingColour(AView: IView): TColor;
+var
+  SnippetView: ISnippetView;
+begin
+  if Supports(AView, ISnippetView, SnippetView) then
+    Result := Preferences.GetSnippetHeadingColour(
+      SnippetView.Snippet.CollectionID
+    )
+  else
+    Result := Preferences.GroupHeadingColour;
 end;
 
 procedure TDetailViewFrame.HighlightSearchResults(

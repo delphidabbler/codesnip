@@ -87,6 +87,10 @@ type
     ///  categories file.</summary>
     class function UserCategoriesFileName: string;
 
+    ///  <summary>Returns fully specified name of the current user's favourites
+    ///  file.</summary>
+    class function UserFavouritesFileName: string;
+
     class function ProgramReleaseInfo: string;
       {Gets information about the current program release. Includes any special
       build information if present in version information.
@@ -272,6 +276,11 @@ begin
   {$ELSE}
   Result := DefaultUserDataDir;
   {$ENDIF}
+end;
+
+class function TAppInfo.UserFavouritesFileName: string;
+begin
+  Result := UserAppDir + '\Favourites';
 end;
 
 end.

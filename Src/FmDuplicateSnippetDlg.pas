@@ -21,6 +21,7 @@ uses
   // Project
   DB.UCollections,
   DB.USnippet, FmGenericOKDlg, UBaseObjects, UCategoryListAdapter,
+  UCollectionListAdapter,
   UIStringList;
 
 
@@ -31,6 +32,8 @@ type
     edDisplayName: TEdit;
     lblCategory: TLabel;
     lblDisplayName: TLabel;
+    lblCollection: TLabel;
+    cbCollection: TComboBox;
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -50,10 +53,14 @@ type
     var
       fSnippet: TSnippet;
       fCatList: TCategoryListAdapter;
+      fCollList: TCollectionListAdapter;
       fOptions: TPersistentOptions;
       fSnippetKey: string;
-    ///  <summary>ID of collection to receive the duplicated snippet.</summary>
+    ///  <summary>Returns the ID of the collection selected in the collections
+    ///  drop down list, or the null collection ID if no collection is selected.
+    ///  </summary>
     function SelectedCollectionID: TCollectionID;
+    function SelectedCategoryID: string;
     procedure ValidateData;
     procedure HandleException(const E: Exception);
     procedure UpdateDatabase;
@@ -101,7 +108,12 @@ begin
   TCtrlArranger.SetLabelHeights(Self);
 
   TCtrlArranger.AlignLefts(
-    [lblDisplayName, lblCategory, edDisplayName, cbCategory, chkEdit],
+    [
+      lblDisplayName, edDisplayName,
+      lblCategory, cbCategory,
+      lblCollection, cbCollection,
+      chkEdit
+    ],
     0
   );
 
@@ -109,7 +121,9 @@ begin
   TCtrlArranger.MoveBelow(lblDisplayName, edDisplayName, 4);
   TCtrlArranger.MoveBelow(edDisplayName, lblCategory, 8);
   TCtrlArranger.MoveBelow(lblCategory, cbCategory, 4);
-  TCtrlArranger.MoveBelow(cbCategory, chkEdit, 20);
+  TCtrlArranger.MoveBelow(cbCategory, lblCollection, 8);
+  TCtrlArranger.MoveBelow(lblCollection, cbCollection, 4);
+  TCtrlArranger.MoveBelow(cbCollection, chkEdit, 20);
 
   pnlBody.ClientWidth := Max(
     TCtrlArranger.TotalControlWidth(pnlBody) + 8,
@@ -123,10 +137,10 @@ end;
 procedure TDuplicateSnippetDlg.btnOKClick(Sender: TObject);
 begin
   try
+    ValidateData;
     fSnippetKey := (Database as IDatabaseEdit).GetUniqueSnippetKey(
       SelectedCollectionID
     );
-    ValidateData;
     UpdateDatabase;
   except
     on E: Exception do
@@ -175,23 +189,38 @@ end;
 procedure TDuplicateSnippetDlg.InitForm;
 var
   SnippetCat: TCategory;
+  SnippetColl: TCollection;
 begin
   inherited;
   edDisplayName.Text := fSnippet.DisplayName;
+
   fCatList.ToStrings(cbCategory.Items);
+  fCollList.ToStrings(cbCollection.Items);
+  Assert(cbCategory.Items.Count > 0, ClassName + '.InitForm: no categories');
+  Assert(cbCollection.Items.Count > 0, ClassName + '.InitForm: no collections');
+
   SnippetCat := Database.Categories.Find(fSnippet.Category);
-  if Assigned(SnippetCat) then
-    cbCategory.ItemIndex := cbCategory.Items.IndexOf(SnippetCat.Description)
-  else
-    cbCategory.ItemIndex := -1;
+  Assert(Assigned(SnippetCat), ClassName + '.InitForm: invalid category');
+  cbCategory.ItemIndex := cbCategory.Items.IndexOf(SnippetCat.Description);
+
+  SnippetColl := TCollections.Instance.GetCollection(fSnippet.CollectionID);
+  cbCollection.ItemIndex := cbCollection.Items.IndexOf(SnippetColl.Name);
+
   chkEdit.Checked := fOptions.EditSnippetOnClose;
+end;
+
+function TDuplicateSnippetDlg.SelectedCategoryID: string;
+begin
+  Assert(cbCategory.ItemIndex >= 0,
+    ClassName + '.SelectedCategoryID: no category selected');
+  Result := fCatList.CatID(cbCategory.ItemIndex);
 end;
 
 function TDuplicateSnippetDlg.SelectedCollectionID: TCollectionID;
 begin
-  {TODO -cCollections: change the following to return the ID of a collection
-  chosen by the user.}
-  Result := TCollectionID.__TMP__UserDBCollectionID;
+  Assert(cbCollection.ItemIndex >= 0,
+    ClassName + '.SelectedCollectionID: no collection selected');
+  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
 end;
 
 procedure TDuplicateSnippetDlg.UpdateDatabase;
@@ -201,25 +230,29 @@ begin
     fSnippetKey,
     SelectedCollectionID,
     StrTrim(edDisplayName.Text),
-    fCatList.CatID(cbCategory.ItemIndex)
+    SelectedCategoryID
   );
 end;
 
 procedure TDuplicateSnippetDlg.ValidateData;
 resourcestring
   sNoCategory = 'You must choose a category';
+  sNoCollection = 'You must choose a collection';
   sNoDisplayName = 'You must provide a display name';
 begin
   if StrTrim(edDisplayName.Text) = '' then
     raise EDataEntry.Create(sNoDisplayName, edDisplayName);
   if cbCategory.ItemIndex = -1 then
     raise EDataEntry.Create(sNoCategory, cbCategory);
+  if cbCollection.ItemIndex = -1 then
+    raise EDataEntry.Create(sNoCollection, cbCollection);
 end;
 
 procedure TDuplicateSnippetDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fCatList := TCategoryListAdapter.Create(Database.Categories);
+  fCollList := TCollectionListAdapter.Create;
   fOptions := TPersistentOptions.Create;
 end;
 
@@ -232,6 +265,7 @@ begin
   fOptions.EditSnippetOnClose := chkEdit.Checked;
   inherited;
   fOptions.Free;
+  fCollList.Free;
   fCatList.Free;
 end;
 

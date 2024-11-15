@@ -19,7 +19,7 @@ inherited SWAGImportDlg: TSWAGImportDlg
     inherited pcWizard: TPageControl
       Width = 671
       Height = 456
-      ActivePage = tsFinish
+      ActivePage = tsIntro
       ExplicitWidth = 671
       ExplicitHeight = 456
       object tsIntro: TTabSheet
@@ -184,7 +184,7 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsUpdate'
         ImageIndex = 2
         TabVisible = False
-        object lblUpdateDesc: TLabel
+        object lblUpdateDesc1: TLabel
           Left = 0
           Top = 3
           Width = 649
@@ -194,15 +194,33 @@ inherited SWAGImportDlg: TSWAGImportDlg
             'You have chosen to import the following SWAG packets as CodeSnip' +
             ' snippets with the given Display Names. You can change these nam' +
             'es later, if you wish, using the Snippets Editor. To modify your' +
-            ' selection go back to the previous page. When you are ready to i' +
-            'mport the packets click "Import". This step can'#39't be undone.'
+            ' selection go back to the previous page.'
           WordWrap = True
+        end
+        object lblUpdateDesc2: TLabel
+          Left = 0
+          Top = 41
+          Width = 649
+          Height = 36
+          AutoSize = False
+          Caption = 
+            'When you are ready to import the packets select the collection i' +
+            'nto which you want to import them then click "Import". This step' +
+            ' can'#39't be undone.'
+          WordWrap = True
+        end
+        object lblCollection: TLabel
+          Left = 0
+          Top = 83
+          Width = 80
+          Height = 13
+          Caption = 'Select &collection:'
         end
         object lvImports: TListView
           Left = 0
-          Top = 51
+          Top = 107
           Width = 660
-          Height = 317
+          Height = 288
           Columns = <
             item
               Caption = 'Packet Title '#8594' Snippet Display Name'
@@ -214,8 +232,16 @@ inherited SWAGImportDlg: TSWAGImportDlg
           ReadOnly = True
           RowSelect = True
           SortType = stText
-          TabOrder = 0
+          TabOrder = 1
           ViewStyle = vsReport
+        end
+        object cbCollection: TComboBox
+          Left = 86
+          Top = 80
+          Width = 289
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 0
         end
       end
       object tsFinish: TTabSheet
@@ -257,8 +283,8 @@ inherited SWAGImportDlg: TSWAGImportDlg
     end
   end
   object alWizard: TActionList
-    Left = 336
-    Top = 256
+    Left = 224
+    Top = 248
     object actDisplayCategory: TAction
       Caption = 'S&how Packets In Category'
       OnExecute = actDisplayCategoryExecute

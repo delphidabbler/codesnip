@@ -176,8 +176,8 @@ begin
   { TODO -cCollections: Replace following two statements with iteration over all
            supported collections when support for multiple collections is added.
   }
-  fBuilder.ColourTable.Add(Preferences.GetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID));
-  fBuilder.ColourTable.Add(Preferences.GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID));
+  fBuilder.ColourTable.Add(Preferences.GetSnippetHeadingColour(TCollectionID.__TMP__MainDBCollectionID));
+  fBuilder.ColourTable.Add(Preferences.GetSnippetHeadingColour(TCollectionID.__TMP__UserDBCollectionID));
 end;
 
 procedure TRTFSnippetDoc.InitStyles;
@@ -426,7 +426,7 @@ begin
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.SetFontSize(HeadingFontSize);
   if fUseColour then
-    fBuilder.SetColour(Preferences.GetDBHeadingColour(ACollectionID));
+    fBuilder.SetColour(Preferences.GetSnippetHeadingColour(ACollectionID));
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(0.0, ParaSpacing));
   fBuilder.AddText(Heading);
   fBuilder.EndPara;

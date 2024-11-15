@@ -35,6 +35,7 @@ uses
   FrHTMLDlg,
   FrHTMLTpltDlg,
   UBaseObjects,
+  UCollectionListAdapter,
   UContainers,
   UCSSBuilder,
   SWAG.UCommon,
@@ -56,7 +57,7 @@ type
     clbSelectPackets: TCheckListBox;
     tsUpdate: TTabSheet;
     lvImports: TListView;
-    lblUpdateDesc: TLabel;
+    lblUpdateDesc1: TLabel;
     tsFinish: TTabSheet;
     frmOutro: THTMLTpltDlgFrame;
     btnDisplayCategory: TButton;
@@ -73,6 +74,9 @@ type
     frmIntro: THTMLTpltDlgFrame;
     lblVersionNumber: TLabel;
     lblFolderPageInfo1: TLabel;
+    lblUpdateDesc2: TLabel;
+    lblCollection: TLabel;
+    cbCollection: TComboBox;
     ///  <summary>Handles clicks on the check boxes next to packets in the
     ///  packet selection list box by selecting and deselecting packets for
     ///  inclusion in the import.</summary>
@@ -106,6 +110,8 @@ type
     procedure actDisplayPacketExecute(Sender: TObject);
     ///  <summary>Updates enabled state of display packet category.</summary>
     procedure actDisplayPacketUpdate(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   strict private
     const
       {TODO -cCollections: Add combo box to select collection into which to add
@@ -142,6 +148,10 @@ type
       ///  <summary>ID of currently selected category.</summary>
       ///  <remarks>Set to zero if no category is selected.</remarks>
       fCurrentCatID: Cardinal;
+      ///  <summary>Object that populates <c>cbCollection</c> with an
+      ///  alphabetical list of collection names and manages interaction with
+      ///  it.</summary>
+      fCollList: TCollectionListAdapter;
     ///  <summary>Retrieves import directory name from edit control where it is
     ///  entered.</summary>
     function GetDirNameFromEditCtrl: string;
@@ -359,11 +369,19 @@ begin
   TCtrlArranger.AlignHCentresTo([clbSelectPackets], [btnDisplayPacket]);
 
   // tsUpdate
-  lblUpdateDesc.Width := tsUpdate.ClientWidth;
-  lblUpdateDesc.Top := 3;
+  TCtrlArranger.AlignLefts(
+    [lblUpdateDesc1, lblUpdateDesc2, lblCollection, lvImports], 0
+  );
+  lblUpdateDesc1.Width := tsUpdate.ClientWidth;
+  lblUpdateDesc2.Width := tsUpdate.ClientWidth;
   lvImports.Width := tsUpdate.ClientWidth;
-  TCtrlArranger.AlignLefts([lblUpdateDesc, lvImports], 0);
-  TCtrlArranger.MoveBelow(lblUpdateDesc, lvImports, 12);
+  lblUpdateDesc1.Top := 3;
+  TCtrlArranger.MoveBelow(lblUpdateDesc1, lblUpdateDesc2, 4);
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(lblUpdateDesc2, 8), [lblCollection, cbCollection]
+  );
+  TCtrlArranger.MoveToRightOf(lblCollection, cbCollection, 4);
+  TCtrlArranger.MoveBelow([lblCollection, cbCollection], lvImports, 12);
 
   // tsFinish
   frmOutro.Height := frmOutro.DocHeight;
@@ -512,6 +530,20 @@ begin
       );
     end
   );
+
+  // Set up collection list
+  fCollList.ToStrings(cbCollection.Items);
+  Assert(cbCollection.Items.Count > 0,
+    ClassName + '.ConfigForm: no collections');
+  {TODO -cCollections: Replace following __TMP__ method calls with a calls to
+          TCollections.DefaultCollection or similar.}
+  Assert(TCollections.Instance.ContainsID(TCollectionID.__TMP__UserDBCollectionID),
+    ClassName + '.ConfigForm: default collection not found');
+  cbCollection.ItemIndex := cbCollection.Items.IndexOf(
+    TCollections.Instance.GetCollection(TCollectionID.__TMP__UserDBCollectionID).Name
+  );
+  Assert(cbCollection.ItemIndex >= 0,
+    ClassName + '.ConfigForm: default collection name not in cbCollection');
 end;
 
 destructor TSWAGImportDlg.Destroy;
@@ -586,6 +618,18 @@ begin
   finally
     Dlg.Free;
   end;
+end;
+
+procedure TSWAGImportDlg.FormCreate(Sender: TObject);
+begin
+  inherited;
+  fCollList := TCollectionListAdapter.Create;
+end;
+
+procedure TSWAGImportDlg.FormDestroy(Sender: TObject);
+begin
+  fCollList.Free;
+  inherited;
 end;
 
 function TSWAGImportDlg.GetDirNameFromEditCtrl: string;
@@ -833,10 +877,9 @@ end;
 
 function TSWAGImportDlg.SelectedCollectionID: TCollectionID;
 begin
-  {TODO -cCollections: Replace the following __TMP__ method with collection ID
-          selected by user from a combo box. DO NOT permit this choice when
-          editing an existing snippet.}
-  Result := TCollectionID.__TMP__UserDBCollectionID;
+  Assert(cbCollection.ItemIndex >= 0,
+    ClassName + '.SelectedCollectionID: no collection selected');
+  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
 end;
 
 procedure TSWAGImportDlg.UpdateButtons(const PageIdx: Integer);

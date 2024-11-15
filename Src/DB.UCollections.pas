@@ -18,6 +18,7 @@ interface
 uses
   SysUtils,
   Generics.Collections,
+  Generics.Defaults,
   UEncodings,
   UExceptions,
   USettings,
@@ -81,6 +82,17 @@ type
     var
       fID: TBytes;
   public
+    type
+      TComparer = class(TInterfacedObject,
+        IComparer<TCollectionID>, IEqualityComparer<TCollectionID>
+      )
+      public
+        function Compare(const Left, Right: TCollectionID): Integer;
+        function Equals(const Left, Right: TCollectionID): Boolean;
+          reintroduce;
+        function GetHashCode(const Value: TCollectionID): Integer;
+          reintroduce;
+      end;
     const
       DCSC_v2_ID: TGUID = '{9F3A4A8A-0A2B-4088-B7C9-AE1D32D3FF9A}';
       SWAG_v1_ID: TGUID = '{ADA985E0-0929-4986-A3FE-B2C981D430F1}';
@@ -96,6 +108,7 @@ type
     function ToHexString: string;
     function IsBuiltInID: Boolean;
     function IsNull: Boolean;
+    function Hash: Integer;
     class function Compare(Left, Right: TCollectionID): Integer; static;
     class operator Equal(Left, Right: TCollectionID): Boolean;
     class operator NotEqual(Left, Right: TCollectionID): Boolean;
@@ -239,9 +252,11 @@ type
 implementation
 
 uses
+  // Delphi
   RTLConsts,
   IOUtils,
   Math,
+  // Project
   UAppInfo,   // TODO -cVault: needed only for v4 emulation
   UStrUtils,
   UUtils;
@@ -528,6 +543,11 @@ begin
   Result := IsEqualBytes(Left.fID, Right.fID);
 end;
 
+function TCollectionID.Hash: Integer;
+begin
+  Result := BobJenkinsHash(fID[0], Length(fID), 0);
+end;
+
 function TCollectionID.IsBuiltInID: Boolean;
 begin
   Result := (TCollectionID.Create(DCSC_v2_ID) = Self)
@@ -563,6 +583,26 @@ end;
 class function TCollectionID.__TMP__UserDBCollectionID: TCollectionID;
 begin
   Result := TCollectionID.Create(Native_v4_ID);
+end;
+
+{ TCollectionID.TComparer }
+
+function TCollectionID.TComparer.Compare(const Left,
+  Right: TCollectionID): Integer;
+begin
+  Result := TCollectionID.Compare(Left, Right);
+end;
+
+function TCollectionID.TComparer.Equals(const Left,
+  Right: TCollectionID): Boolean;
+begin
+  Result := Left = Right;
+end;
+
+function TCollectionID.TComparer.GetHashCode(
+  const Value: TCollectionID): Integer;
+begin
+  Result := Value.Hash;
 end;
 
 { TCollectionsPersist }

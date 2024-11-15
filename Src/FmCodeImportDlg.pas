@@ -28,7 +28,8 @@ uses
   DB.UCollections,
   FmWizardDlg,
   UBaseObjects,
-  UCodeImportMgr;
+  UCodeImportMgr,
+  UCollectionListAdapter;
 
 type
   ///  <summary>
@@ -53,31 +54,37 @@ type
     lblModifyInstructions: TLabel;
     lblFinish: TLabel;
     sbFinish: TScrollBox;
+    tsCollection: TTabSheet;
+    lblCollection: TLabel;
+    cbCollection: TComboBox;
     ///  <summary>Handles clicks on list view check boxes.</summary>
     procedure lvImportsItemChecked(Sender: TObject; Item: TListItem);
     ///  <summary>Handles request to display open file dialog box to get import
     ///  file name.</summary>
     procedure actBrowseExecute(Sender: TObject);
-    ///  <summary>Frees objects stored in list view items' Data properties.
-    ///  </summary>
+    ///  <summary>Frees field objects and objects stored in list view items'
+    ///  Data properties.</summary>
     procedure FormDestroy(Sender: TObject);
+    ///  <summary>Creates field objects.</summary>
+    procedure FormCreate(Sender: TObject);
   strict private
     const
-      {TODO -cCollections: Insert a new page to get collection to receive
-              imports from user after cFilePage and before cUpdatePage. That way
-              we can be sure that the collection won't change after selecting
-              snippets.}
       // Indices of wizard pages
-      cIntroPage    = 0;
-      cFilePage     = 1;
-      cUpdatePage   = 2;
-      cFinishPage   = 3;
+      cIntroPage      = 0;
+      cFilePage       = 1;
+      cCollectionPage = 2;
+      cUpdatePage     = 3;
+      cFinishPage     = 4;
       // Index of subitems in list view
       cLVActionIdx  = 0;
     var
       ///  <summary>Reference to import manager object used to perform import
       ///  operations.</summary>
       fImportMgr: TCodeImportMgr;
+      ///  <summary>Object that populates <c>cbCollection</c> with an
+      ///  alphabetical list of collection names and manages interaction with
+      ///  it.</summary>
+      fCollList: TCollectionListAdapter;
     ///  <summary>Validates entries on wizard pages indetified by the page
     ///  index.</summary>
     procedure ValidatePage(const PageIdx: Integer);
@@ -118,6 +125,9 @@ type
     ///  manager object.</summary>
     constructor InternalCreate(AOwner: TComponent;
       const ImportMgr: TCodeImportMgr); reintroduce;
+    ///  <summary>Initialises form fields and controls.</summary>
+    ///  <remarks>Overridden method called from ancestor class.</remarks>
+    procedure InitForm; override;
     ///  <summary>Aligns and arranges controls in each tab sheet and sizes
     ///  dialog box to accomodate controls.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
@@ -211,6 +221,10 @@ begin
   );
   lblLoadFile.Top := TCtrlArranger.BottomOf([edFile, btnBrowse], 12);
 
+  // tsCollection
+  cbCollection.Top := TCtrlArranger.BottomOf(lblCollection, 6);
+  cbCollection.Width := tsCollection.Width;
+
   // tsUpdate
   lblImportList.Top := TCtrlArranger.BottomOf(lblModifyInstructions, 8);
   lvImports.Top := TCtrlArranger.BottomOf(lblImportList, 6);
@@ -274,11 +288,18 @@ begin
   end;
 end;
 
+procedure TCodeImportDlg.FormCreate(Sender: TObject);
+begin
+  inherited;
+  fCollList := TCollectionListAdapter.Create;
+end;
+
 procedure TCodeImportDlg.FormDestroy(Sender: TObject);
 var
   Idx: Integer;
 begin
   inherited;
+  fCollList.Free;
   // Free the TBox<> objects stored in list item data pointer
   for Idx := Pred(lvImports.Items.Count) downto 0 do
     TObject(lvImports.Items[Idx].Data).Free;
@@ -286,11 +307,9 @@ end;
 
 function TCodeImportDlg.GetCollectionID: TCollectionID;
 begin
-  {TODO -cCollections: Add code to get user's choice of collection into which
-          snippets are to be imported. Will need a drop down list of available
-          collections. At present, only the "user" collection is permitted.
-  }
-  Result := TCollectionID.__TMP__UserDBCollectionID;
+  Assert(cbCollection.ItemIndex >= 0,
+    ClassName + '.GetCollectionID: no collection selected');
+  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
 end;
 
 function TCodeImportDlg.GetFileNameFromEditCtrl: string;
@@ -303,15 +322,34 @@ resourcestring
   // Page headings
   sIntroPageheading = 'Import snippets from a file';
   sFilePage = 'Choose import file';
+  sCollectionPage = 'Choose a collection';
   sUpdatePage = 'Edit import and update database';
   sFinishPage = 'Import complete';
 begin
   case PageIdx of
-    cIntroPage:     Result := sIntroPageheading;
-    cFilePage:      Result := sFilePage;
-    cUpdatePage:    Result := sUpdatePage;
-    cFinishPage:    Result := sFinishPage;
+    cIntroPage:       Result := sIntroPageheading;
+    cFilePage:        Result := sFilePage;
+    cCollectionPage:  Result := sCollectionPage;
+    cUpdatePage:      Result := sUpdatePage;
+    cFinishPage:      Result := sFinishPage;
   end;
+end;
+
+procedure TCodeImportDlg.InitForm;
+begin
+  fCollList.ToStrings(cbCollection.Items);
+  Assert(cbCollection.Items.Count > 0, ClassName + '.InitForm: no collections');
+  {TODO -cCollections: Replace following __TMP__ method calls with a calls to
+          TCollections.DefaultCollection or similar.}
+  Assert(TCollections.Instance.ContainsID(TCollectionID.__TMP__UserDBCollectionID),
+    ClassName + '.InitForm: default collection not found');
+  cbCollection.ItemIndex := cbCollection.Items.IndexOf(
+    TCollections.Instance.GetCollection(TCollectionID.__TMP__UserDBCollectionID).Name
+  );
+  Assert(cbCollection.ItemIndex >= 0,
+    ClassName + '.InitForm: default collection name not in cbCollection');
+
+  inherited;
 end;
 
 procedure TCodeImportDlg.InitImportInfo;

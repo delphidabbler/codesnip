@@ -24,6 +24,7 @@ uses
   ActiveText.UMain, Compilers.UGlobals,
   DB.UCollections, DB.USnippet, FmGenericOKDlg,
   FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UBaseObjects, UCategoryListAdapter,
+  UCollectionListAdapter,
   UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, UMemoCaretPosDisplayMgr,
   UMemoHelper, USnipKindListAdapter, USnippetsChkListMgr, UUnitsChkListMgr,
   FmSnippetsEditorDlg.FrActiveTextEditor;
@@ -117,6 +118,9 @@ type
     actClearUnits: TAction;
     miClearUnits: TMenuItem;
     miSpacer3: TMenuItem;
+    lblCollection: TLabel;
+    cbCollection: TComboBox;
+    lblCollectionInfo: TLabel;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -157,6 +161,8 @@ type
   strict private
     fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
+    fCollList:
+      TCollectionListAdapter;       // Accesses sorted list of collections
     fSnipKindList:
       TSnipKindListAdapter;         // Accesses sorted list of snippet kinds
     fEditData: TSnippetEditData;    // Record storing a snippet's editable data
@@ -441,7 +447,7 @@ begin
     fDependsCLBMgr.GetCheckedSnippets(DependsList);
     TDependenciesDlg.Execute(
       Self,
-      TSnippetID.Create(UniqueSnippetKey, TCollectionID.__TMP__UserDBCollectionID),
+      TSnippetID.Create(UniqueSnippetKey, SelectedCollectionID),
       StrTrim(edDisplayName.Text),
       DependsList,
       [tiDependsUpon],
@@ -569,39 +575,65 @@ procedure TSnippetsEditorDlg.ArrangeForm;
 begin
   // tsCode
   edSourceCode.Width := tsCode.ClientWidth - 8;
+  // Column 1
   TCtrlArranger.AlignLefts(
     [
-      lblDisplayName, lblDescription, lblKind, lblCategories,
+      lblCollection, lblDisplayName, lblDescription, lblKind, lblCategories,
       lblSourceCode, edSourceCode
     ],
     3
   );
+  // Column 2
+  TCtrlArranger.AlignLefts(
+    [
+      cbCollection, lblCollectionInfo, edDisplayName, frmDescription, cbKind,
+      cbCategories
+    ],
+    TCtrlArranger.RightOf(
+      [lblCollection, lblDisplayName, lblDescription, lblKind, lblCategories],
+      12
+    )
+  );
+  // Right hand sides
   TCtrlArranger.AlignRights(
     [edSourceCode, lblSourceCaretPos, btnViewDescription]
   );
   frmDescription.Width := btnViewDescription.Left - frmDescription.Left - 8;
-  TCtrlArranger.AlignVCentres(3, [lblDisplayName, edDisplayName]
+  // Row 1
+  TCtrlArranger.AlignVCentres(
+    3, [lblCollection, cbCollection, lblCollectionInfo]
   );
+  // Row 2
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf([lblCollection, cbCollection], 8),
+    [lblDisplayName, edDisplayName]
+  );
+  // Row 3
   TCtrlArranger.AlignTops(
     [lblDescription, frmDescription, btnViewDescription],
     TCtrlArranger.BottomOf([lblDisplayName, edDisplayName], 8)
   );
+  // Row 4
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(
       [lblDescription, frmDescription, btnViewDescription], 8
     ),
     [lblKind, cbKind, lblSnippetKindHelp]
   );
+  // Row 5
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf([lblKind, cbKind, lblSnippetKindHelp], 8),
     [lblCategories, cbCategories]
   );
+  // Row 6
   TCtrlArranger.MoveToRightOf(cbKind, lblSnippetKindHelp, 12);
   TCtrlArranger.AlignTops(
     [lblSourceCode, lblSourceCaretPos],
     TCtrlArranger.BottomOf([lblCategories, cbCategories], 8)
   );
+  // Row 7
   TCtrlArranger.MoveBelow([lblSourceCode, lblSourceCaretPos], edSourceCode, 4);
+  // Row 8
   TCtrlArranger.MoveBelow(edSourceCode, chkUseHiliter, 8);
 
   // tsReferences
@@ -766,6 +798,7 @@ procedure TSnippetsEditorDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fCatList := TCategoryListAdapter.Create(Database.Categories);
+  fCollList := TCollectionListAdapter.Create;
   fSnipKindList := TSnipKindListAdapter.Create;
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fMemoCaretPosDisplayMgr := TMemoCaretPosDisplayMgr.Create;
@@ -790,6 +823,7 @@ begin
   FreeAndNil(fXRefsCLBMgr);
   FreeAndNil(fDependsCLBMgr);
   FreeAndNil(fSnipKindList);
+  FreeAndNil(fCollList);
   FreeAndNil(fCatList);
   fMemoCaretPosDisplayMgr.Free;
 end;
@@ -833,6 +867,10 @@ begin
     frmDescription.ActiveText := fSnippet.Description;
     edDisplayName.Text := fSnippet.DisplayName;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
+    cbCollection.ItemIndex := fCollList.IndexOfUID(fSnippet.CollectionID);
+    cbCollection.Visible := False;  // can't change existing snippet collection
+    lblCollectionInfo.Caption := cbCollection.Text;
+    lblCollectionInfo.Visible := True;
     frmExtra.DefaultEditMode := emAuto;
     frmExtra.ActiveText := fSnippet.Extra;
     cbKind.ItemIndex := fSnipKindList.IndexOf(fSnippet.Kind);
@@ -854,6 +892,13 @@ begin
     cbCategories.ItemIndex := fCatList.IndexOf(TCategory.DefaultID);
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
+    {TODO -cCollections: Replace following __TMP__ method call with call to new
+            TCollections.Default method or similar.}
+    cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.__TMP__UserDBCollectionID);
+    if cbCollection.ItemIndex = -1 then
+      cbCollection.ItemIndex := 0;
+    cbCollection.Visible := True; // can select collection of new snippet
+    lblCollectionInfo.Visible := False;
     cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
     frmExtra.DefaultEditMode := emPlainText;
     frmExtra.Clear;
@@ -931,17 +976,19 @@ begin
   fSnipKindList.ToStrings(cbKind.Items);
   // Display all available categories in drop down list
   fCatList.ToStrings(cbCategories.Items);
+  // Display all available collections in drop down list
+  fCollList.ToStrings(cbCollection.Items);
 end;
 
 function TSnippetsEditorDlg.SelectedCollectionID: TCollectionID;
 begin
+  // If editing existing snippet ID then the collection cannot be edited
   if Assigned(fSnippet) then
+    // Editing existing snippet: can't change collection
     Result := fSnippet.CollectionID
   else
-    {TODO -cCollections: Replace the following __TMP__ method with collection ID
-            selected by user from a combo box. DO NOT permit this choice when
-            editing an existing snippet.}
-    Result := TCollectionID.__TMP__UserDBCollectionID;
+    // Editing new snippet: chosing collection is permitted
+    Result := fCollList.Collection(cbCollection.ItemIndex).UID;
 end;
 
 procedure TSnippetsEditorDlg.SetAllCompilerResults(
@@ -999,15 +1046,17 @@ begin
 
   EditSnippetID := TSnippetID.Create(UniqueSnippetKey, SelectedCollectionID);
   EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
+
+  {TODO -cVault: We do following kind of filtering of Database.Snippets so
+          often it would be useful to have a Filter or Select method of
+          TSnippetList that can be passed a predicate to do this and return a
+          filtered snippet list.
+  }
   for Snippet in Database.Snippets do
   begin
-    // We ignore snippet being edited and main database snippets if there is
-    // a user-defined one with same key
-    if (Snippet.ID <> EditSnippetID) and
-      (
-        (Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID) or
-        not Assigned(Database.Snippets.Find(Snippet.Key, TCollectionID.__TMP__UserDBCollectionID))
-      ) then
+    if Snippet.CollectionID <> SelectedCollectionID then
+      Continue;
+    if Snippet.ID <> EditSnippetID then
     begin
       // Decide if snippet can be added to depends list: must be correct kind
       if Snippet.Kind in
@@ -1017,6 +1066,25 @@ begin
       fXRefsCLBMgr.AddSnippet(Snippet);
     end;
   end;
+
+//  for Snippet in Database.Snippets do
+//  begin
+//    // We ignore snippet being edited and main database snippets if there is
+//    // a user-defined one with same key
+//    if (Snippet.ID <> EditSnippetID) and
+//      (
+//        (Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID) or
+//        not Assigned(Database.Snippets.Find(Snippet.Key, TCollectionID.__TMP__UserDBCollectionID))
+//      ) then
+//    begin
+//      // Decide if snippet can be added to depends list: must be correct kind
+//      if Snippet.Kind in
+//        TSnippetValidator.ValidDependsKinds(EditSnippetKind) then
+//        fDependsCLBMgr.AddSnippet(Snippet);
+//      // Anything can be in XRefs list
+//      fXRefsCLBMgr.AddSnippet(Snippet);
+//    end;
+//  end;
   // Restore checks to any saved checked item that still exist in new list
   fDependsCLBMgr.Restore;
   fXRefsCLBMgr.Restore;

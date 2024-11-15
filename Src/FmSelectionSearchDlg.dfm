@@ -5,15 +5,15 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 371
+    Width = 379
     Height = 293
-    ExplicitWidth = 371
+    ExplicitWidth = 379
     ExplicitHeight = 293
     object lblOverwriteSearch: TLabel
       AlignWithMargins = True
       Left = 0
       Top = 280
-      Width = 371
+      Width = 379
       Height = 13
       Margins.Left = 0
       Margins.Top = 8
@@ -45,7 +45,7 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
     object btnSelectAll: TButton
       Left = 287
       Top = 1
-      Width = 83
+      Width = 91
       Height = 25
       Caption = '&Select All'
       TabOrder = 1
@@ -54,50 +54,57 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
     object btnClearAll: TButton
       Left = 287
       Top = 32
-      Width = 83
+      Width = 91
       Height = 25
       Caption = '&Clear All'
       TabOrder = 2
       OnClick = btnClearAllClick
     end
-    object btnUserDB: TButton
-      Left = 287
-      Top = 63
-      Width = 83
-      Height = 25
-      Caption = '&User Defined'
-      TabOrder = 3
-      OnClick = btnUserDBClick
-    end
-    object btnMainDB: TButton
-      Left = 287
-      Top = 94
-      Width = 83
-      Height = 25
-      Caption = '&Main'
-      TabOrder = 4
-      OnClick = btnMainDBClick
-    end
     object btnExpandAll: TButton
       Left = 287
       Top = 174
-      Width = 82
+      Width = 91
       Height = 25
       Caption = 'E&xpand All'
-      TabOrder = 5
+      TabOrder = 4
       OnClick = btnExpandAllClick
     end
     object btnCollapseAll: TButton
       Left = 287
       Top = 205
-      Width = 82
+      Width = 91
       Height = 25
       Caption = 'C&ollapse All'
-      TabOrder = 6
+      TabOrder = 5
       OnClick = btnCollapseAllClick
+    end
+    object btnCollection: TBitBtn
+      Left = 287
+      Top = 63
+      Width = 91
+      Height = 25
+      Caption = 'Collectio&n'
+      DoubleBuffered = True
+      Glyph.Data = {
+        F6000000424DF600000000000000760000002800000010000000100000000100
+        0400000000008000000000000000000000001000000010000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFF
+        FFFFFFFFFF0000FFFFFFFFFFF000000FFFFFFFFF00000000FFFFFFF000000000
+        0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+      Layout = blGlyphRight
+      ParentDoubleBuffered = False
+      TabOrder = 3
+      OnClick = btnCollectionClick
     end
   end
   inherited btnOK: TButton
     OnClick = btnOKClick
+  end
+  object mnuCollections: TPopupMenu
+    Left = 72
+    Top = 72
   end
 end

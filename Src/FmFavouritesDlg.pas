@@ -583,7 +583,9 @@ var
   CollectionID: TCollectionID;
 begin
   CollectionID := (Item as TFavouriteListItem).Favourite.SnippetID.CollectionID;
-  fLVFavs.Canvas.Font.Color := Preferences.GetDBHeadingColour(CollectionID);
+  fLVFavs.Canvas.Font.Color := Preferences.GetSnippetHeadingColour(
+    CollectionID
+  );
 end;
 
 procedure TFavouritesDlg.LVCustomDrawSubItem(Sender: TCustomListView;

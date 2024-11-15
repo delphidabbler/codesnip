@@ -419,8 +419,9 @@ end;
 
 procedure TWelcomePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 var
-  UserDBCount: Integer;
-  MainDBCount: Integer;
+  Collection: TCollection;
+  CollectionCount: Integer;
+  CollectionList: TStringBuilder;
   Compilers: ICompilers;
   Compiler: ICompiler;
   CompilerList: TStringBuilder;
@@ -430,31 +431,24 @@ begin
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
-  UserDBCount := Database.Snippets.Count(
-    TCollectionID.__TMP__UserDBCollectionID
-  );
+  CollectionCount := TCollections.Instance.Count;
   Tplt.ResolvePlaceholderHTML(
-    'HaveUserDB', TCSS.BlockDisplayProp(UserDBCount > 0)
-  );
-  Tplt.ResolvePlaceholderHTML(
-    'NoUserDB', TCSS.BlockDisplayProp(UserDBCount <= 0)
-  );
-  Tplt.ResolvePlaceholderText(
-    'UserDBCount', IntToStr(UserDBCount)
+    'CollectionCount', IntToStr(CollectionCount)
   );
 
-  MainDBCount := Database.Snippets.Count(
-    TCollectionID.__TMP__MainDBCollectionID
-  );
-  Tplt.ResolvePlaceholderHTML(
-    'HaveMainDB', TCSS.BlockDisplayProp(MainDBCount > 0)
-  );
-  Tplt.ResolvePlaceholderHTML(
-    'NoMainDB', TCSS.BlockDisplayProp(MainDBCount <= 0)
-  );
-  Tplt.ResolvePlaceholderText(
-    'MainDBCount', IntToStr(MainDBCount)
-  );
+  CollectionList := TStringBuilder.Create;
+  try
+    for Collection in TCollections.Instance do
+      CollectionList.AppendLine(
+        THTML.CompoundTag(
+          'li',
+          THTML.Entities(Collection.Name)
+        )
+      );
+    Tplt.ResolvePlaceholderHTML('CollectionList', CollectionList.ToString);
+  finally
+    CollectionList.Free;
+  end;
 
   Compilers := TCompilersFactory.CreateAndLoadCompilers;
   Tplt.ResolvePlaceholderHTML(
@@ -584,7 +578,7 @@ end;
 
 function TSnippetListPageHTML.GetH1ClassName: string;
 begin
-  Result := 'maindb';
+  Result := 'group-heading';
 end;
 
 function TSnippetListPageHTML.GetHeading: string;

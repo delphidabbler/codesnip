@@ -18,7 +18,7 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes,
+  Forms, StdCtrls, Controls, ExtCtrls, Classes, Buttons, Menus,
   // Project
   DB.UCollections,
   DB.USnippet, FmGenericOKDlg, FrCheckedTV, FrSelectSnippets,
@@ -35,18 +35,17 @@ type
   }
   TSelectionSearchDlg = class(TGenericOKDlg, INoPublicConstruct)
     btnClearAll: TButton;
-    btnMainDB: TButton;
     btnSelectAll: TButton;
-    btnUserDB: TButton;
     frmSelect: TSelectSnippetsFrame;
     btnExpandAll: TButton;
     btnCollapseAll: TButton;
     lblOverwriteSearch: TLabel;
+    btnCollection: TBitBtn;
+    mnuCollections: TPopupMenu;
     procedure btnClearAllClick(Sender: TObject);
-    procedure btnMainDBClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
-    procedure btnUserDBClick(Sender: TObject);
+    procedure btnCollectionClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnExpandAllClick(Sender: TObject);
     procedure btnCollapseAllClick(Sender: TObject);
@@ -68,13 +67,21 @@ type
     ///  collection.</param>
     procedure SelectDB(const ACollectionID: TCollectionID);
 
+    ///  <summary>Populates collections pop-up menu with menu items.</summary>
+    procedure PopulateCollectionsMenu;
+
+    ///  <summary>Handles clicks on collection menu items. Selects snippets
+    ///  belonging to the selected collection.</summary>
+    procedure CollectionMenuClick(Sender: TObject);
+
   strict protected
 
     procedure ConfigForm; override;
+
+    ///  <summary>Initialises form. Populates collections menu and collapses
+    ///  treeview.</summary>
     procedure InitForm; override;
-      {Initialises form. Disables User Defined button if there are no user
-      defined snippets in database.
-      }
+
     procedure AfterShowForm; override;
       {Restores default cursor after form shown.
       }
@@ -98,6 +105,7 @@ implementation
 uses
   // Delphi
   SysUtils,
+  Types,
   // Project
   DB.UMain,
   UCtrlArranger,
@@ -106,6 +114,29 @@ uses
 
 {$R *.dfm}
 
+
+type
+  ///  <summary>Custom menu item with additional property to store a compiler
+  ///  version.</summary>
+  TCollectionMenuItem = class(TMenuItem)
+  strict private
+    var
+      ///  <summary>Value of CompilerVer property</summary>
+      fCollection: TCollection;
+  public
+    ///  <summary>Constructs a menu item with all required properties and event
+    ///  handlers.</summary>
+    ///  <param name="AOwner">TComponent [in] Menu item's owner.</param>
+    ///  <param name="ACollection"><c>TCollection</c> [in] Collection whose name
+    ///  is displayed in menu item.</param>
+    ///  <param name="AClickHandler">TNotifyEvent [in] Reference to an event
+    ///  handler for menu item's OnClick event.</param>
+    constructor Create(AOwner: TComponent;  const ACollection: TCollection;
+      const AClickHandler: TNotifyEvent); reintroduce;
+    ///  <summary>Version number of compiler whose name is displayed in menu
+    ///  item's caption.</summary>
+    property Collection: TCollection read fCollection write fCollection;
+  end;
 
 { TSelectionSearchDlg }
 
@@ -132,17 +163,19 @@ begin
   frmSelect.CollapseTree;
 end;
 
+procedure TSelectionSearchDlg.btnCollectionClick(Sender: TObject);
+var
+  PopupPos: TPoint; // place where menu pops up
+begin
+  PopupPos := ClientToScreen(
+    Point(btnCollection.Left, btnCollection.Top + btnCollection.Height)
+  );
+  mnuCollections.Popup(PopupPos.X, PopupPos.Y);
+end;
+
 procedure TSelectionSearchDlg.btnExpandAllClick(Sender: TObject);
 begin
   frmSelect.ExpandTree;
-end;
-
-procedure TSelectionSearchDlg.btnMainDBClick(Sender: TObject);
-  {Main button click handler. Selects all snippets in main database.
-    @param Sender [in] Not used.
-  }
-begin
-  SelectDB(TCollectionID.__TMP__MainDBCollectionID);
 end;
 
 procedure TSelectionSearchDlg.btnOKClick(Sender: TObject);
@@ -171,13 +204,9 @@ begin
   frmSelect.SelectedSnippets := Database.Snippets;
 end;
 
-procedure TSelectionSearchDlg.btnUserDBClick(Sender: TObject);
-  {User Defined button click handler. Selects all user defined snippets in
-  database.
-    @param Sender [in] Not used.
-  }
+procedure TSelectionSearchDlg.CollectionMenuClick(Sender: TObject);
 begin
-  SelectDB(TCollectionID.__TMP__UserDBCollectionID);
+  SelectDB((Sender as TCollectionMenuItem).Collection.UID);
 end;
 
 procedure TSelectionSearchDlg.ConfigForm;
@@ -224,15 +253,29 @@ begin
 end;
 
 procedure TSelectionSearchDlg.InitForm;
-  {Initialises form. Disables User Defined button if there are no user defined
-  snippets in database.
-  }
 begin
   inherited;
   frmSelect.CollapseTree;
-  btnUserDB.Enabled := not Database.Snippets.IsEmpty(
-    TCollectionID.__TMP__UserDBCollectionID
-  );
+  PopulateCollectionsMenu;
+end;
+
+procedure TSelectionSearchDlg.PopulateCollectionsMenu;
+
+  ///  Adds a menu item for given collection to the pop-up menu.
+  procedure AddMenuItem(const ACollection: TCollection);
+  begin
+    mnuCollections.Items.Add(
+      TCollectionMenuItem.Create(
+        mnuCollections, ACollection, CollectionMenuClick
+      )
+    );
+  end;
+
+var
+  Collection: TCollection;
+begin
+  for Collection in TCollections.Instance do
+    AddMenuItem(Collection);
 end;
 
 procedure TSelectionSearchDlg.SelectDB(const ACollectionID: TCollectionID);
@@ -267,6 +310,17 @@ procedure TSelectionSearchDlg.SetSelectedSnippets(const Value: TSnippetList);
   }
 begin
   frmSelect.SelectedSnippets := Value;
+end;
+
+{ TCollectionMenuItem }
+
+constructor TCollectionMenuItem.Create(AOwner: TComponent;
+  const ACollection: TCollection; const AClickHandler: TNotifyEvent);
+begin
+  inherited Create(AOwner);
+  Caption := ACollection.Name;
+  Collection := ACollection;
+  OnClick := AClickHandler;
 end;
 
 end.

@@ -235,7 +235,7 @@ begin
   // Set label font styles and colours
   lblSnippetName.Font.Style := [fsBold];
   lblSnippetName.Font.Color :=
-    Preferences.GetDBHeadingColour(fSnippet.CollectionID);
+    Preferences.GetSnippetHeadingColour(fSnippet.CollectionID);
   // Display selected snippet name in appropriate controls
   lblSnippetName.Caption := fSnippet.DisplayName;
   chkIncludeSnippet.Caption := Format(

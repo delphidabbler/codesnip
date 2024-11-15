@@ -419,7 +419,9 @@ begin
   LB := Control as TListBox;
   Canvas := LB.Canvas;
   if not (odSelected in State) then
-    Canvas.Font.Color := Preferences.GetDBHeadingColour(ExtractCollectionItem);
+    Canvas.Font.Color := Preferences.GetSnippetHeadingColour(
+      ExtractCollectionItem
+    );
   Canvas.TextRect(
     Rect,
     Rect.Left + 2,

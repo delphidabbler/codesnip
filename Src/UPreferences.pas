@@ -137,35 +137,61 @@ type
     property ShowNewSnippetsInNewTabs: Boolean
       read GetShowNewSnippetsInNewTabs write SetShowNewSnippetsInNewTabs;
 
-    ///  <summary>Gets heading colour used for snippets from a specified
-    ///  collection.</summary>
-    ///  <param name="ACollectionID">TCollectionID [in] ID of required
+    ///  <summary>Gets colour used for group heading / tree nodes.</summary>
+    ///  <returns><c>TColor</c> [in] Required colour.</returns>
+    function GetGroupHeadingColour: TColor;
+    ///  <summary>Sets colour to be used for group heading / tree nodes.
+    ///  </summary>
+    ///  <param name="AColour"><c>TColor</c> [in] Colour to be used.</param>
+    procedure SetGroupHeadingColour(const AColour: TColor);
+    ///  <summary>Colour to be used for group headings / tree nodes.</summary>
+    property GroupHeadingColour: TColor
+      read GetGroupHeadingColour write SetGroupHeadingColour;
+
+    ///  <summary>Gets custom colours available for use for group headings /
+    ///  tree nodes.</summary>
+    ///  <returns><c>IStringList</c>. List of hex representations of custom
+    ///  colours.</returns>
+    function GetGroupHeadingCustomColours: IStringList;
+    ///  <summary>Sets custom colours available for use for group headings /
+    ///  tree nodes.</summary>
+    ///  <param name="AColours"><c>IStringList</c>. List of hex representations
+    ///  of custom colours.</param>
+    procedure SetGroupHeadingCustomColours(const AColours: IStringList);
+    ///  <summary>Custom colours available for use for group headings /
+    ///  tree nodes.</summary>
+    property GroupHeadingCustomColours: IStringList
+      read GetGroupHeadingCustomColours write SetGroupHeadingCustomColours;
+
+    ///  <summary>Gets the heading / tree node colour used for snippets from a
+    ///  specified collection.</summary>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of required
     ///  collection.</param>
     ///  <returns>TColor. Required colour.</returns>
-    function GetDBHeadingColour(const ACollectionID: TCollectionID): TColor;
-    ///  <summary>Sets heading colour used for snippets from a specified
-    ///  collection.</summary>
-    ///  <param name="ACollectionID">TCollectionID [in] ID of required
+    function GetSnippetHeadingColour(const ACollectionID: TCollectionID):
+      TColor;
+    ///  <summary>Sets heading / tree node colour used for snippets from a
+    ///  specified collection.</summary>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of required
     ///  collection.</param>
-    ///  <returns>TColor. Required colour.</returns>
-    procedure SetDBHeadingColour(const ACollectionID: TCollectionID;
+    ///  <param name="Value"><c>TColor</c>. Required colour.</param>
+    procedure SetSnippetHeadingColour(const ACollectionID: TCollectionID;
       const Value: TColor);
 
-    ///  <summary>Gets custom colours available for headings for specified
-    ///  collection.</summary>
-    ///  <param name="ACollectionID">TCollectionID [in] ID of required
-    ///  collection.</param>
-    ///  <returns>IStringList. String list containing custom colours.</returns>
-    function GetDBHeadingCustomColours(const ACollectionID: TCollectionID):
-      IStringList;
-    ///  <summary>Sets custom colours available for headings for specified
-    ///  collection.</summary>
-    ///  <param name="ACollectionID">TCollectionID [in] ID of required
-    ///  collection.</param>
-    ///  <param name="Value">IStringList [in] String list containing custom
-    ///  colours.</param>
-    procedure SetDBHeadingCustomColours(const ACollectionID: TCollectionID;
-      Value: IStringList);
+    ///  <summary>Gets custom colours available for snippet headings / tree
+    ///  nodes.</summary>
+    ///  <returns><c>IStringList</c>. String list containing custom colours.
+    ///  </returns>
+    function GetSnippetHeadingCustomColours: IStringList;
+    ///  <summary>Sets custom colours available for snippet headings / tree
+    ///  nodes.</summary>
+    ///  <param name="AColours"><c>IStringList</c> [in] String list containing
+    ///  custom colours.</param>
+    procedure SetSnippetHeadingCustomColours(const AColours: IStringList);
+    ///  <summary>Custom colours available for snippet headings / tree nodes.
+    ///  </summary>
+    property SnippetHeadingCustomColours: IStringList
+      read GetSnippetHeadingCustomColours write SetSnippetHeadingCustomColours;
 
     ///  <summary>Gets size of font used in overview pane tree view.</summary>
     function GetOverviewFontSize: Integer;
@@ -287,6 +313,8 @@ implementation
 uses
   // Delphi
   SysUtils,
+  Generics.Collections,
+  Generics.Defaults,
   // Project
   Hiliter.UAttrs, Hiliter.UPersist, IntfCommon, UExceptions, UColours,
   UFontHelper, USettings;
@@ -328,21 +356,20 @@ type
       ///  <summary>Indicates whether empty sections are displayed in overview
       ///  pane.</summary>
       fShowEmptySections: Boolean;
-      ///  <summary>Indicates whether new snippets and ca-tegories are displayed
+      ///  <summary>Indicates whether new snippets and categories are displayed
       ///  in new tabs in details pane.</summary>
       fShowNewSnippetsInNewTabs: Boolean;
-      ///  <summary>Records colour to be used for headings of items from either
-      ///  main (False) or user (True) collections.</summary>
-      fDBHeadingColours: array[Boolean] of TColor;
-        {TODO -cCollections: WARNING. The fDBHeadingColours field only supports
-                the two original main & user collections. This MUST be changed
-                once more than two snippet collections are supported}
-      ///  <summary>Records custom colours available for headings of items from
-      ///  either main (False) or user (True) collections.</summary>
-      fDBHeadingCustomColours: array[Boolean] of IStringList;
-        {TODO -cCollections: WARNING. The fDBHeadingCustomColours field only
-                supports the two original main & user collections. This MUST be
-                changed once more than two snippet collections are supported}
+      ///  <summary>Records colour to be used for group headings.</summary>
+      fGroupHeadingColour: TColor;
+      ///  <summary>Records custom colours available for group headings.
+      ///  </summary>
+      fGroupHeadingCustomColours: IStringList;
+      ///  <summary>Records colour to be used for snippet headings and tree
+      ///  nodes for each collection.</summary>
+      fSnippetHeadingColours: TDictionary<TCollectionID,TColor>;
+      ///  <summary>Records custom colours available for snippet heading and
+      ///  tree nodes.</summary>
+      fSnippetHeadingCustomColours: IStringList;
       ///  <summary>Records size of font used in overview pane tree view.
       ///  </summary>
       fOverviewFontSize: Integer;
@@ -377,9 +404,6 @@ type
     function DefaultOverviewFontSize: Integer;
     ///  <summary>Returns default font size for details pane.</summary>
     function DefaultDetailFontSize: Integer;
-
-    function __TMP__UseUserDBHeadingColour(const ACollectionID: TCollectionID):
-      Boolean;
   public
     ///  <summary>Constructs a new object instance.</summary>
     constructor Create;
@@ -481,41 +505,68 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
 
-    ///  <summary>Gets heading colour used for snippets from a specified
-    ///  collection.</summary>
-    ///  <param name="ACollectionID">TCollectionID [in] ID of required
-    ///  collection.</param>
-    ///  <returns>TColor. Required colour.</returns>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetDBHeadingColour(const ACollectionID: TCollectionID): TColor;
+    ///  <summary>Gets colour used for group heading / tree nodes.</summary>
+    ///  <returns><c>TColor</c> [in] Required colour.</returns>
+    ///  <remarks>Method of <c>IPreferences</c>.</remarks>
+    function GetGroupHeadingColour: TColor;
 
-    ///  <summary>Sets heading colour used for snippets from a specified
-    ///  collection.</summary>
-    ///  <param name="ACollectionID">TCollectionID [in] ID of required
+    ///  <summary>Sets colour to be used for group heading / tree nodes.
+    ///  </summary>
+    ///  <param name="AColour"><c>TColor</c> [in] Colour to be used.</param>
+    ///  <remarks>Method of <c>IPreferences</c>.</remarks>
+    procedure SetGroupHeadingColour(const AColour: TColor);
+
+    ///  <summary>Gets custom colours available for use for group headings /
+    ///  tree nodes.</summary>
+    ///  <returns><c>IStringList</c>. List of hex representations of custom
+    ///  colours.</returns>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetGroupHeadingCustomColours: IStringList;
+
+    ///  <summary>Sets custom colours available for use for group headings /
+    ///  tree nodes.</summary>
+    ///  <param name="AColours"><c>IStringList</c>. List of hex representations
+    ///  of custom colours.</param>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetGroupHeadingCustomColours(const AColours: IStringList);
+
+    ///  <summary>Gets the heading / tree node colour used for snippets from a
+    ///  specified collection.</summary>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of required
     ///  collection.</param>
     ///  <returns>TColor. Required colour.</returns>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetDBHeadingColour(const ACollectionID: TCollectionID;
+    ///  <remarks>Method of <c>IPreferences</c>.</remarks>
+    function GetSnippetHeadingColour(const ACollectionID: TCollectionID):
+      TColor;
+
+    ///  <summary>Sets heading / tree node colour used for snippets from a
+    ///  specified collection.</summary>
+    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of required
+    ///  collection.</param>
+    ///  <param name="Value"><c>TColor</c>. Required colour.</param>
+    ///  <remarks>Method of <c>IPreferences</c>.</remarks>
+    procedure SetSnippetHeadingColour(const ACollectionID: TCollectionID;
       const Value: TColor);
 
-    ///  <summary>Gets custom colours available for headings for specified
-    ///  collection.</summary>
-    ///  <param name="ACollectionID">TCollectionID [in] ID of required
-    ///  collection.</param>
-    ///  <returns>IStringList. String list containing custom colours.</returns>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetDBHeadingCustomColours(const ACollectionID: TCollectionID):
-      IStringList;
+    ///  <summary>Gets custom colours available for snippet headings / tree
+    ///  nodes.</summary>
+    ///  <returns><c>IStringList</c>. String list containing custom colours.
+    ///  </returns>
+    ///  <remarks>
+    ///  <para>All collections share this one custom colour list.</para>
+    ///  <para>Method of <c>IPreferences</c>.</para>
+    ///  </remarks>
+    function GetSnippetHeadingCustomColours: IStringList;
 
-    ///  <summary>Sets custom colours available for headings for specified
-    ///  collection.</summary>
-    ///  <param name="ACollectionID">TCollectionID [in] ID of required
-    ///  collection.</param>
-    ///  <param name="Value">IStringList [in] String list containing custom
-    ///  colours.</param>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetDBHeadingCustomColours(const ACollectionID: TCollectionID;
-      Value: IStringList);
+    ///  <summary>Sets custom colours available for snippet headings / tree
+    ///  nodes.</summary>
+    ///  <param name="AColours"><c>IStringList</c> [in] String list containing
+    ///  custom colours.</param>
+    ///  <remarks>
+    ///  <para>All collections share this one custom colour list.</para>
+    ///  <para>Method of <c>IPreferences</c>.</para>
+    ///  </remarks>
+    procedure SetSnippetHeadingCustomColours(const AColours: IStringList);
 
     ///  <summary>Gets size of font used in overview pane tree view.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
@@ -681,6 +732,7 @@ end;
 procedure TPreferences.Assign(const Src: IInterface);
 var
   SrcPref: IPreferences;  // IPreferences interface of Src
+  Collection: TCollection;
 begin
   // Get IPreferences interface of given object
   if not Supports(Src, IPreferences, SrcPref) then
@@ -695,10 +747,13 @@ begin
   Self.fOverviewStartState := SrcPref.OverviewStartState;
   Self.fShowEmptySections := SrcPref.ShowEmptySections;
   Self.fShowNewSnippetsInNewTabs := SrcPref.ShowNewSnippetsInNewTabs;
-  Self.SetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID, SrcPref.GetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID));
-  Self.SetDBHeadingCustomColours(TCollectionID.__TMP__MainDBCollectionID, SrcPref.GetDBHeadingCustomColours(TCollectionID.__TMP__MainDBCollectionID));
-  Self.SetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID, SrcPref.GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID));
-  Self.SetDBHeadingCustomColours(TCollectionID.__TMP__UserDBCollectionID, SrcPref.GetDBHeadingCustomColours(TCollectionID.__TMP__UserDBCollectionID));
+  Self.fGroupHeadingColour := SrcPref.GetGroupHeadingColour;
+  Self.fGroupHeadingCustomColours := SrcPref.GetGroupHeadingCustomColours;
+  for Collection in TCollections.Instance do
+    Self.SetSnippetHeadingColour(
+      Collection.UID, SrcPref.GetSnippetHeadingColour(Collection.UID)
+    );
+  Self.fSnippetHeadingCustomColours := SrcPref.GetSnippetHeadingCustomColours;
   Self.fOverviewFontSize := SrcPref.OverviewFontSize;
   Self.fDetailFontSize := SrcPref.DetailFontSize;
   Self.fSourceCodeBGColour := SrcPref.SourceCodeBGColour;
@@ -719,8 +774,9 @@ begin
   fNamedHiliteAttrs := THiliteAttrsFactory.CreateNamedAttrs;
   fHiliteCustomColours := TIStringList.Create;
   fWarnings := TWarnings.Create;
-  fDBHeadingCustomColours[False] := TIStringList.Create;
-  fDBHeadingCustomColours[True] := TIStringList.Create;
+  fSnippetHeadingColours := TDictionary<TCollectionID,TColor>.Create(
+    TCollectionID.TComparer.Create
+  );
   fPageStructures := TSnippetPageStructures.Create;
   TDefaultPageStructures.SetDefaults(fPageStructures);
 end;
@@ -738,6 +794,7 @@ end;
 destructor TPreferences.Destroy;
 begin
   fPageStructures.Free;
+  fSnippetHeadingColours.Free;
   inherited;
 end;
 
@@ -746,31 +803,19 @@ begin
   Result := fHiliteCustomColours;
 end;
 
-function TPreferences.GetDBHeadingColour(
-  const ACollectionID: TCollectionID): TColor;
-begin
-  {TODO -cCollections: WARNING: This implementation of GetDBHeadingColour only
-          supports the old main and user collections. It will break when further
-          collections are added.
-  }
-  Result := fDBHeadingColours[__TMP__UseUserDBHeadingColour(ACollectionID)];
-end;
-
-function TPreferences.GetDBHeadingCustomColours(
-  const ACollectionID: TCollectionID): IStringList;
-begin
-  {TODO -cCollections: WARNING: This implementation of GetDBHeadingCustomColours
-          only supports the old main and user collections. It will break when
-          further collections are added.
-  }
-  Result := fDBHeadingCustomColours[
-    __TMP__UseUserDBHeadingColour(ACollectionID)
-  ];
-end;
-
 function TPreferences.GetDetailFontSize: Integer;
 begin
   Result := fDetailFontSize;
+end;
+
+function TPreferences.GetGroupHeadingColour: TColor;
+begin
+  Result := fGroupHeadingColour;
+end;
+
+function TPreferences.GetGroupHeadingCustomColours: IStringList;
+begin
+  Result := fGroupHeadingCustomColours;
 end;
 
 function TPreferences.GetHiliteAttrs: IHiliteAttrs;
@@ -828,6 +873,20 @@ begin
   Result := fShowNewSnippetsInNewTabs;
 end;
 
+function TPreferences.GetSnippetHeadingColour(
+  const ACollectionID: TCollectionID): TColor;
+begin
+  if fSnippetHeadingColours.ContainsKey(ACollectionID) then
+    Result := fSnippetHeadingColours[ACollectionID]
+  else
+    Result := clDefSnippetHeading;
+end;
+
+function TPreferences.GetSnippetHeadingCustomColours: IStringList;
+begin
+  Result := fSnippetHeadingCustomColours;
+end;
+
 function TPreferences.GetSourceCodeBGColour: TColor;
 begin
   Result := fSourceCodeBGColour;
@@ -868,34 +927,23 @@ begin
   fHiliteCustomColours := Colours;
 end;
 
-procedure TPreferences.SetDBHeadingColour(const ACollectionID: TCollectionID;
-  const Value: TColor);
-begin
-  {TODO -cCollections: WARNING: This implementation of SetDBHeadingColour only
-          supports the old main and user collections. It will break when further
-          collections are added.
-  }
-  fDBHeadingColours[__TMP__UseUserDBHeadingColour(ACollectionID)] := Value;
-end;
-
-procedure TPreferences.SetDBHeadingCustomColours(
-  const ACollectionID: TCollectionID; Value: IStringList);
-begin
-  {TODO -cCollections: WARNING: This implementation of SetDBHeadingCustomColours
-          only supports the old main and user collections. It will break when
-          further collections are added.
-  }
-  fDBHeadingCustomColours[
-    __TMP__UseUserDBHeadingColour(ACollectionID)
-  ] := Value;
-end;
-
 procedure TPreferences.SetDetailFontSize(const Value: Integer);
 begin
   if TFontHelper.IsInCommonFontSizeRange(Value) then
     fDetailFontSize := Value
   else
     fDetailFontSize := DefaultDetailFontSize;
+end;
+
+procedure TPreferences.SetGroupHeadingColour(const AColour: TColor);
+begin
+  fGroupHeadingColour := AColour;
+end;
+
+procedure TPreferences.SetGroupHeadingCustomColours(
+  const AColours: IStringList);
+begin
+  fGroupHeadingCustomColours := AColours;
 end;
 
 procedure TPreferences.SetHiliteAttrs(const Attrs: IHiliteAttrs);
@@ -957,6 +1005,18 @@ begin
   fShowNewSnippetsInNewTabs := Value;
 end;
 
+procedure TPreferences.SetSnippetHeadingColour(
+  const ACollectionID: TCollectionID; const Value: TColor);
+begin
+  fSnippetHeadingColours.AddOrSetValue(ACollectionID, Value);
+end;
+
+procedure TPreferences.SetSnippetHeadingCustomColours(
+  const AColours: IStringList);
+begin
+  fSnippetHeadingCustomColours := AColours;
+end;
+
 procedure TPreferences.SetSourceCodeBGColour(const Value: TColor);
 begin
   fSourceCodeBGColour := Value;
@@ -992,18 +1052,12 @@ begin
   (fWarnings as IAssignable).Assign(Warnings);
 end;
 
-function TPreferences.__TMP__UseUserDBHeadingColour(
-  const ACollectionID: TCollectionID): Boolean;
-begin
-  Result := (ACollectionID <> TCollectionID.__TMP__MainDBCollectionID)
-    and not ACollectionID.IsNull;
-end;
-
 { TPreferencesPersist }
 
 function TPreferencesPersist.Clone: IInterface;
 var
   NewPref: IPreferences;  // reference to new object's IPreferences interface
+  Collection: TCollection;
 begin
   // Create new object
   Result := TPreferences.Create;
@@ -1018,10 +1072,13 @@ begin
   NewPref.OverviewStartState := Self.fOverviewStartState;
   NewPref.ShowEmptySections := Self.fShowEmptySections;
   NewPref.ShowNewSnippetsInNewTabs := Self.fShowNewSnippetsInNewTabs;
-  NewPref.SetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID, Self.GetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID));
-  NewPref.SetDBHeadingCustomColours(TCollectionID.__TMP__MainDBCollectionID, Self.GetDBHeadingCustomColours(TCollectionID.__TMP__MainDBCollectionID));
-  NewPref.SetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID, Self.GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID));
-  NewPref.SetDBHeadingCustomColours(TCollectionID.__TMP__UserDBCollectionID, Self.GetDBHeadingCustomColours(TCollectionID.__TMP__UserDBCollectionID));
+  NewPref.GroupHeadingColour := Self.fGroupHeadingColour;
+  NewPref.GroupHeadingCustomColours := Self.fGroupHeadingCustomColours;
+  for Collection in TCollections.Instance do
+    NewPref.SetSnippetHeadingColour(
+      Collection.UID, Self.GetSnippetHeadingColour(Collection.UID)
+    );
+  NewPref.SnippetHeadingCustomColours := Self.fSnippetHeadingCustomColours;
   NewPref.OverviewFontSize := Self.fOverviewFontSize;
   NewPref.DetailFontSize := Self.fDetailFontSize;
   NewPref.SourceCodeBGColour := Self.fSourceCodeBGColour;
@@ -1038,6 +1095,7 @@ end;
 constructor TPreferencesPersist.Create;
 var
   Storage: ISettingsSection;  // object used to access persistent storage
+  Collection: TCollection;
 const
   // Default margin size in millimeters
   cPrintPageMarginSizeMM = 25.0;
@@ -1063,22 +1121,32 @@ begin
   fShowNewSnippetsInNewTabs := Storage.GetBoolean(
     'ShowNewSnippetsInNewTabs', False
   );
-  SetDBHeadingColour(
-    TCollectionID.__TMP__MainDBCollectionID,
-    TColor(Storage.GetInteger('MainDBHeadingColour', clMainSnippet))
-  );
-  SetDBHeadingColour(
-    TCollectionID.__TMP__UserDBCollectionID,
-    TColor(Storage.GetInteger('UserDBHeadingColour', clUserSnippet))
-  );
   fSourceCodeBGColour := TColor(
     Storage.GetInteger('SourceCodeBGColour', clSourceBg)
   );
-  fDBHeadingCustomColours[False] := Storage.GetStrings(
-    'MainDBHeadingCustomColourCount', 'MainDBHeadingCustomColour%d'
+  fGroupHeadingColour := TColor(
+    Storage.GetInteger('GroupHeadingColour', clDefGroupHeading)
   );
-  fDBHeadingCustomColours[True] := Storage.GetStrings(
-    'UserDBHeadingCustomColourCount', 'UserDBHeadingCustomColour%d'
+  fGroupHeadingCustomColours := Storage.GetStrings(
+    'GroupHeadingCustomColourCount', 'GroupHeadingCustomColour%d'
+  );
+
+  fSnippetHeadingColours.Clear;
+  for Collection in TCollections.Instance do
+  begin
+    fSnippetHeadingColours.AddOrSetValue(
+      Collection.UID,
+      TColor(
+        Storage.GetInteger(
+          'SnippetHeadingColour:' + Collection.UID.ToHexString,
+          clDefSnippetHeading
+        )
+      )
+    );
+  end;
+
+  fSnippetHeadingCustomColours := Storage.GetStrings(
+    'SnippetHeadingCustomColourCount', 'SnippetHeadingCustomColour%d'
   );
   fOverviewFontSize := Storage.GetInteger(
     'OverviewFontSize', DefaultOverviewFontSize
@@ -1138,6 +1206,7 @@ end;
 destructor TPreferencesPersist.Destroy;
 var
   Storage: ISettingsSection;  // object used to access persistent storage
+  Collection: TCollection;
 begin
   // Wreite meta section (no sub-section name)
   Storage := Settings.EmptySection(ssPreferences);
@@ -1154,27 +1223,33 @@ begin
   Storage.SetInteger('OverviewStartState', Ord(fOverviewStartState));
   Storage.SetBoolean('ShowEmptySections', fShowEmptySections);
   Storage.SetBoolean('ShowNewSnippetsInNewTabs', fShowNewSnippetsInNewTabs);
-  Storage.SetInteger(
-    'MainDBHeadingColour',
-    GetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID)
+  Storage.SetInteger('GroupHeadingColour', fGroupHeadingColour);
+  Storage.SetStrings(
+    'GroupHeadingCustomColourCount',
+    'GroupHeadingCustomColour%d',
+    fGroupHeadingCustomColours
   );
-  Storage.SetInteger(
-    'UserDBHeadingColour',
-    GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID)
+  for Collection in TCollections.Instance do
+  begin
+    if fSnippetHeadingColours.ContainsKey(Collection.UID) then
+      Storage.SetInteger(
+        'SnippetHeadingColour:' + Collection.UID.ToHexString,
+        fSnippetHeadingColours[Collection.UID]
+      )
+    else
+      Storage.SetInteger(
+        'SnippetHeadingColour:' + Collection.UID.ToHexString,
+        clDefSnippetHeading
+      )
+  end;
+  Storage.SetStrings(
+    'SnippetHeadingCustomColourCount',
+    'SnippetHeadingCustomColour%d',
+    fSnippetHeadingCustomColours
   );
   Storage.SetInteger('OverviewFontSize', fOverviewFontSize);
   Storage.SetInteger('DetailFontSize', fDetailFontSize);
   Storage.SetInteger('SourceCodeBGColour', fSourceCodeBGColour);
-  Storage.SetStrings(
-    'MainDBHeadingCustomColourCount',
-    'MainDBHeadingCustomColour%d',
-    fDBHeadingCustomColours[False]
-  );
-  Storage.SetStrings(
-    'UserDBHeadingCustomColourCount',
-    'UserDBHeadingCustomColour%d',
-    fDBHeadingCustomColours[True]
-  );
   Storage.SetStrings(
     'SourceCodeBGCustomColourCount',
     'SourceCodeBGCustomColour%d',

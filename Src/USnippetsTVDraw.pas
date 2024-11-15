@@ -122,9 +122,11 @@ begin
       if IsErrorNode(Node) then
         // colour unselected error nodes differently
         TV.Canvas.Font.Color := clWarningText
+      else if IsSectionHeadNode(Node) then
+        TV.Canvas.Font.Color := Preferences.GroupHeadingColour
       else
         TV.Canvas.Font.Color :=
-          Preferences.GetDBHeadingColour(GetCollectionID(Node));
+          Preferences.GetSnippetHeadingColour(GetCollectionID(Node));
       TV.Canvas.Brush.Color := TV.Color;
     end;
     if IsSectionHeadNode(Node) then

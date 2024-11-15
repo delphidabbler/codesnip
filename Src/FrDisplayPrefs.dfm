@@ -1,8 +1,8 @@
 inherited DisplayPrefsFrame: TDisplayPrefsFrame
-  Width = 397
-  Height = 311
-  ExplicitWidth = 397
-  ExplicitHeight = 311
+  Width = 438
+  Height = 347
+  ExplicitWidth = 438
+  ExplicitHeight = 347
   object lblOverviewTree: TLabel
     Left = 16
     Top = 6
@@ -11,30 +11,31 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
     Caption = 'Start &overview pane treeview as:'
     FocusControl = cbOverviewTree
   end
-  object lblMainColour: TLabel
+  object lblGroupHeadingColour: TLabel
     Left = 16
-    Top = 96
-    Width = 193
+    Top = 112
+    Width = 191
     Height = 13
-    Caption = 'Heading colour for &main database items:'
+    Caption = '&Group heading colour in overview pane:'
   end
-  object lblUserColour: TLabel
+  object lblCollectionColours: TLabel
     Left = 16
-    Top = 115
-    Width = 192
+    Top = 139
+    Width = 240
     Height = 13
-    Caption = 'Heading colour for &user database items:'
+    Caption = 'Heading colour snippets from different &collections:'
+    FocusControl = cbCollection
   end
   object lblSourceBGColour: TLabel
     Left = 16
-    Top = 134
+    Top = 200
     Width = 170
     Height = 13
     Caption = 'Background colour for &source code:'
   end
   object lblOverviewFontSize: TLabel
     Left = 16
-    Top = 200
+    Top = 253
     Width = 145
     Height = 13
     Caption = 'Overview tree view &font size: '
@@ -42,7 +43,7 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
   end
   object lblDetailFontSize: TLabel
     Left = 16
-    Top = 232
+    Top = 280
     Width = 105
     Height = 13
     Caption = 'Detail pane font si&ze: '
@@ -50,9 +51,9 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
   end
   object lblHiliterInfo: TLabel
     Left = 16
-    Top = 256
-    Width = 370
-    Height = 36
+    Top = 304
+    Width = 358
+    Height = 26
     Caption = 
       'To change the size of the source code font use the the Syntax Hi' +
       'ghlighter options page.'
@@ -88,16 +89,16 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
   end
   object btnDefColours: TButton
     Left = 16
-    Top = 156
+    Top = 219
     Width = 192
     Height = 25
-    Caption = 'Use Default &Colours'
+    Caption = 'Use &Default Colours'
     TabOrder = 3
     OnClick = btnDefColoursClick
   end
   object cbOverviewFontSize: TComboBox
     Left = 192
-    Top = 197
+    Top = 250
     Width = 57
     Height = 21
     TabOrder = 4
@@ -105,10 +106,19 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
   end
   object cbDetailFontSize: TComboBox
     Left = 192
-    Top = 229
+    Top = 277
     Width = 57
     Height = 21
     TabOrder = 5
     OnChange = FontSizeChange
+  end
+  object cbCollection: TComboBox
+    Left = 16
+    Top = 158
+    Width = 170
+    Height = 21
+    Style = csDropDownList
+    TabOrder = 6
+    OnChange = cbCollectionChange
   end
 end
