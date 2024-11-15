@@ -106,8 +106,8 @@ begin
   // Set up colour table
   {TODO -cCollection: Replace following 2 statements with loop that iterates
           over all collections.}
-  fBuilder.ColourTable.Add(Preferences.GetDBHeadingColour(TCollectionID.__TMP__MainDBCollectionID));
-  fBuilder.ColourTable.Add(Preferences.GetDBHeadingColour(TCollectionID.__TMP__UserDBCollectionID));
+  fBuilder.ColourTable.Add(Preferences.GetSnippetHeadingColour(TCollectionID.__TMP__MainDBCollectionID));
+  fBuilder.ColourTable.Add(Preferences.GetSnippetHeadingColour(TCollectionID.__TMP__UserDBCollectionID));
   fBuilder.ColourTable.Add(clExternalLink);
   fDescStyles := TActiveTextRTFStyleMap.Create;
   InitStyles;
@@ -228,7 +228,7 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(SubHeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
-  SetColour(Preferences.GetDBHeadingColour(Snippet.CollectionID));
+  SetColour(Preferences.GetSnippetHeadingColour(Snippet.CollectionID));
   fBuilder.AddText(Snippet.DisplayName);
   fBuilder.EndPara;
   fBuilder.EndGroup;

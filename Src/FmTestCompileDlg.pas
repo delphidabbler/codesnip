@@ -289,7 +289,7 @@ begin
   // Set required label fonts and captions
   TFontHelper.SetDefaultBaseFont(lblSnippetName.Font);
   lblSnippetName.Font.Color :=
-    Preferences.GetDBHeadingColour(fSnippet.CollectionID);
+    Preferences.GetSnippetHeadingColour(fSnippet.CollectionID);
   lblSnippetName.Caption := fSnippet.DisplayName;
 end;
 

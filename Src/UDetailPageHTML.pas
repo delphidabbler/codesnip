@@ -578,7 +578,7 @@ end;
 
 function TSnippetListPageHTML.GetH1ClassName: string;
 begin
-  Result := 'maindb';
+  Result := 'group-heading';
 end;
 
 function TSnippetListPageHTML.GetHeading: string;
