@@ -163,6 +163,8 @@ begin
 end;
 
 procedure TRTFSnippetDoc.InitialiseDoc;
+var
+  Collection: TCollection;
 begin
   // Create object used to build main rich text document
   fBuilder := TRTFBuilder.Create(0);  // Use default code page
@@ -173,11 +175,10 @@ begin
   fBuilder.ColourTable.Add(clWarningText);
   fBuilder.ColourTable.Add(clVarText);
   fBuilder.ColourTable.Add(clExternalLink);
-  { TODO -cCollections: Replace following two statements with iteration over all
-           supported collections when support for multiple collections is added.
-  }
-  fBuilder.ColourTable.Add(Preferences.GetSnippetHeadingColour(TCollectionID.__TMP__MainDBCollectionID));
-  fBuilder.ColourTable.Add(Preferences.GetSnippetHeadingColour(TCollectionID.__TMP__UserDBCollectionID));
+  for Collection in TCollections.Instance do
+    fBuilder.ColourTable.Add(
+      Preferences.GetSnippetHeadingColour(Collection.UID)
+    );
 end;
 
 procedure TRTFSnippetDoc.InitStyles;
