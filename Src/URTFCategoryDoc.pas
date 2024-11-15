@@ -96,6 +96,8 @@ uses
 { TRTFCategoryDoc }
 
 constructor TRTFCategoryDoc.Create(const UseColour: Boolean);
+var
+  Collection: TCollection;
 begin
   inherited Create;
   fUseColour := UseColour;
@@ -104,10 +106,11 @@ begin
   fBuilder.FontTable.Add(MainFontName, rgfSwiss, 0);
   fBuilder.FontTable.Add(MonoFontName, rgfModern, 0);
   // Set up colour table
-  {TODO -cCollection: Replace following 2 statements with loop that iterates
-          over all collections.}
-  fBuilder.ColourTable.Add(Preferences.GetSnippetHeadingColour(TCollectionID.__TMP__MainDBCollectionID));
-  fBuilder.ColourTable.Add(Preferences.GetSnippetHeadingColour(TCollectionID.__TMP__UserDBCollectionID));
+  for Collection in TCollections.Instance do
+    fBuilder.ColourTable.Add(
+      Preferences.GetSnippetHeadingColour(Collection.UID)
+    );
+  fBuilder.ColourTable.Add(Preferences.GroupHeadingColour);
   fBuilder.ColourTable.Add(clExternalLink);
   fDescStyles := TActiveTextRTFStyleMap.Create;
   InitStyles;
@@ -216,6 +219,7 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(HeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
+  SetColour(Preferences.GroupHeadingColour);
   fBuilder.AddText(Category.Description);
   fBuilder.EndPara;
   fBuilder.EndGroup;
