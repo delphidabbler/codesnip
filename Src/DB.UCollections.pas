@@ -94,19 +94,20 @@ type
           reintroduce;
       end;
     const
+      {TODO -cCollections: remove DCSC_v2_ID and SWAG_v1_ID once there are no
+              built-in collections except Default}
       DCSC_v2_ID: TGUID = '{9F3A4A8A-0A2B-4088-B7C9-AE1D32D3FF9A}';
       SWAG_v1_ID: TGUID = '{ADA985E0-0929-4986-A3FE-B2C981D430F1}';
-      Native_v4_ID: TGUID = '{E63E7160-2389-45F2-B712-EA0449D30B1F}';
     constructor Create(const ABytes: TBytes); overload;
     constructor Create(const AStr: string); overload;
     constructor Create(const AGUID: TGUID); overload;
     class function CreateFromHexString(const AHexStr: string): TCollectionID;
       static;
     class function CreateNull: TCollectionID; static;
+    class function Default: TCollectionID; static;
     function Clone: TCollectionID;
     function ToArray: TBytes;
     function ToHexString: string;
-    function IsBuiltInID: Boolean;
     function IsNull: Boolean;
     function Hash: Integer;
     class function Compare(Left, Right: TCollectionID): Integer; static;
@@ -200,6 +201,8 @@ type
       read fCollectionFormatKind;
     ///  <summary>Checks if this record's fields are valid.</summary>
     function IsValid: Boolean;
+    ///  <summary>Checks if this record is the default collection.</summary>
+    function IsDefault: Boolean;
   end;
 
   TCollections = class sealed(TSingleton)
@@ -218,6 +221,7 @@ type
     function ContainsID(const AUID: TCollectionID): Boolean;
     function ContainsName(const AName: string): Boolean;
     function GetCollection(const AUID: TCollectionID): TCollection;
+    function Default: TCollection;
     procedure Add(const ACollection: TCollection);
     procedure Update(const ACollection: TCollection);
     procedure AddOrUpdate(const ACollection: TCollection);
@@ -315,6 +319,11 @@ begin
   fCollectionFormatKind := ACollectionFormatKind;
 end;
 
+function TCollection.IsDefault: Boolean;
+begin
+  Result := UID = TCollectionID.Default;
+end;
+
 function TCollection.IsValid: Boolean;
 begin
   {TODO: Constructor enforces all these requirements, so #TCollection.IsValid
@@ -370,10 +379,19 @@ begin
   Result := fItems.Count;
 end;
 
+function TCollections.Default: TCollection;
+begin
+  Result := GetCollection(TCollectionID.Default);
+end;
+
 procedure TCollections.Delete(const AUID: TCollectionID);
+resourcestring
+  sCantDelete = 'Cannot delete the default collection';
 var
   Idx: Integer;
 begin
+  if TCollectionID.Default = AUID then
+    raise EArgumentException.Create(sCantDelete);
   Idx := IndexOfID(AUID);
   if Idx >= 0 then
     fItems.Delete(Idx);
@@ -433,8 +451,18 @@ procedure TCollections.Initialize;
 begin
   fItems := TList<TCollection>.Create;
   TCollectionsPersist.Load(Self);
-  { TODO -cCollections: following lines are for v4 compatibility
-            Remove if not required in v5 }
+  // Ensure there is always at least the default collection present
+  if not ContainsID(TCollectionID.Default) then
+    Add(
+      TCollection.Create(
+        TCollectionID.Default,
+        'Default',
+        TCollectionLocation.Create(TAppInfo.DefaultUserDataDir, '', etUTF8),
+        TCollectionFormatKind.Native_v4
+      )
+    );
+  { TODO -cCollections: following line is for v4 main database compatibility
+            Remove when reduce to only one compulsory collection }
   if not ContainsID(TCollectionID.__TMP__MainDBCollectionID) then
     Add(
       TCollection.Create(
@@ -444,17 +472,6 @@ begin
         'DelphiDabbler Code Snippets Database',
         TCollectionLocation.Create(TAppInfo.AppDataDir),
         TCollectionFormatKind.DCSC_v2
-      )
-    );
-  if not ContainsID(TCollectionID.__TMP__UserDBCollectionID) then
-    Add(
-      TCollection.Create(
-        TCollectionID.__TMP__UserDBCollectionID,
-        { TODO -cVault: change name - this text matches name used in CodeSnip
-                  v4}
-        'User Database',
-        TCollectionLocation.Create(TAppInfo.DefaultUserDataDir, '', etUTF8),
-        TCollectionFormatKind.Native_v4
       )
     );
 end;
@@ -537,6 +554,12 @@ begin
   Result := TCollectionID.Create(NullID);
 end;
 
+class function TCollectionID.Default: TCollectionID;
+begin
+  // Default collection is an empty GUID = 16 zero bytes
+  Result := TCollectionID.Create(TGUID.Empty);
+end;
+
 class operator TCollectionID.Equal(Left, Right: TCollectionID):
   Boolean;
 begin
@@ -546,12 +569,6 @@ end;
 function TCollectionID.Hash: Integer;
 begin
   Result := BobJenkinsHash(fID[0], Length(fID), 0);
-end;
-
-function TCollectionID.IsBuiltInID: Boolean;
-begin
-  Result := (TCollectionID.Create(DCSC_v2_ID) = Self)
-    or (TCollectionID.Create(SWAG_v1_ID) = Self);
 end;
 
 function TCollectionID.IsNull: Boolean;
@@ -582,7 +599,7 @@ end;
 
 class function TCollectionID.__TMP__UserDBCollectionID: TCollectionID;
 begin
-  Result := TCollectionID.Create(Native_v4_ID);
+  Result := TCollectionID.Default;
 end;
 
 { TCollectionID.TComparer }
@@ -632,6 +649,9 @@ var
 begin
   Storage := Settings.ReadSection(ssCollection, IntToStr(AOrdinal));
   UID := TCollectionID.Create(Storage.GetBytes(UIDKey));
+  if ACollections.ContainsID(UID) then
+    // Don't load a duplicate collection
+    Exit;
   Name := Storage.GetString(NameKey, '');
   Location := TCollectionLocation.Create(
     Storage.GetString(LocationDirectoryKey, ''),

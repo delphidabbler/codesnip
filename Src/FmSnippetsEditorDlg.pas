@@ -892,11 +892,9 @@ begin
     cbCategories.ItemIndex := fCatList.IndexOf(TCategory.DefaultID);
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
-    {TODO -cCollections: Replace following __TMP__ method call with call to new
-            TCollections.Default method or similar.}
-    cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.__TMP__UserDBCollectionID);
-    if cbCollection.ItemIndex = -1 then
-      cbCollection.ItemIndex := 0;
+    cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+    Assert(cbCollection.ItemIndex >= 0,
+      ClassName + '.InitControls: No default collection in cbCollection');
     cbCollection.Visible := True; // can select collection of new snippet
     lblCollectionInfo.Visible := False;
     cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
@@ -1067,24 +1065,6 @@ begin
     end;
   end;
 
-//  for Snippet in Database.Snippets do
-//  begin
-//    // We ignore snippet being edited and main database snippets if there is
-//    // a user-defined one with same key
-//    if (Snippet.ID <> EditSnippetID) and
-//      (
-//        (Snippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID) or
-//        not Assigned(Database.Snippets.Find(Snippet.Key, TCollectionID.__TMP__UserDBCollectionID))
-//      ) then
-//    begin
-//      // Decide if snippet can be added to depends list: must be correct kind
-//      if Snippet.Kind in
-//        TSnippetValidator.ValidDependsKinds(EditSnippetKind) then
-//        fDependsCLBMgr.AddSnippet(Snippet);
-//      // Anything can be in XRefs list
-//      fXRefsCLBMgr.AddSnippet(Snippet);
-//    end;
-//  end;
   // Restore checks to any saved checked item that still exist in new list
   fDependsCLBMgr.Restore;
   fXRefsCLBMgr.Restore;

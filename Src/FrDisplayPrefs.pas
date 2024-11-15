@@ -164,12 +164,9 @@ procedure TDisplayPrefsFrame.Activate(const Prefs: IPreferences;
 var
   Collection: TCollection;
 begin
-  {TODO -cCollections: Replace __TMP__ method below with call to a new
-          TCollections.Default method or similar.}
-  cbCollection.ItemIndex := TCollections.Instance.IndexOfID(TCollectionID.__TMP__UserDBCollectionID);
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
   Assert(cbCollection.ItemIndex >= 0,
-    ClassName + '.Activate: no default collection found');
-
+    ClassName + '.Activate: no default collection found in cbCollection');
   SelectOverviewTreeState(Prefs.OverviewStartState);
   chkHideEmptySections.OnClick := nil;  // prevent OnClick when Checked set
   chkHideEmptySections.Checked := not Prefs.ShowEmptySections;
