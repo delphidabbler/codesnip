@@ -91,6 +91,7 @@ uses
   DB.UMetaData,
   DB.USnippet,
   DB.USnippetKind,
+  DBIO.MetaData.DCSC,
   UConsts,
   UAppInfo,
   UQuery,

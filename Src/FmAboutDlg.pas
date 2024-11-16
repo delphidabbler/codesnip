@@ -181,6 +181,7 @@ uses
   // Project
   DB.UCollections,
   DB.UMain,
+  DBIO.MetaData.DCSC,
   FmEasterEgg,
   FmPreviewDlg,
   UAppInfo,

@@ -121,6 +121,7 @@ uses
   DB.UMain,
   DB.UMetaData,
   DB.USnippetKind,
+  DBIO.MetaData.DCSC,
   UStrUtils,
   UUrl;
 

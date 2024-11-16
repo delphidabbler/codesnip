@@ -98,6 +98,7 @@ uses
   // Project
   DB.UCollections,
   DB.UMetaData,
+  DBIO.MetaData.DCSC,
   UAppInfo,
   UConsts,
   UUrl,

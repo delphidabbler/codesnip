@@ -584,6 +584,7 @@
 			<DCCReference Include="UTabSeparatedFileIO.pas"/>
 			<DCCReference Include="DBIO.UCategoryIO.pas"/>
 			<DCCReference Include="UCollectionListAdapter.pas"/>
+			<DCCReference Include="DBIO.MetaData.DCSC.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

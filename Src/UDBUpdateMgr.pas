@@ -100,6 +100,7 @@ uses
   IOUtils,
   // Project
   DB.UMetaData,
+  DBIO.MetaData.DCSC,
   UAppInfo,
   UFileUpdater,
   UStrUtils,
