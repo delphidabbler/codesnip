@@ -17,7 +17,10 @@ interface
 
 
 uses
+  // Delphi
+  Generics.Collections,
   // Project
+  DB.UCollections,
   UIStringList,
   UVersionInfo;
 
@@ -138,9 +141,99 @@ type
     procedure Refresh;
   end;
 
+  ///  <summary>Base class for all classes that implement <c>IDBMetaData</c>
+  ///  and can also be registered with <c>TMetaDataFactory</c>.</summary>
+  TRegisterableMetaData = class abstract(TInterfacedObject)
+  public
+    ///  <summary>Creates an instance of a concrete descendant of this class.
+    ///  </summary>
+    ///  <param name="ACollection"><c>TCollection</c> [in] Collection associated
+    ///  with the meta data being created.</param>
+    ///  <returns><c>IDBMetaData</c>. Required meta data object.</returns>
+    class function Instance(ACollection: TCollection): IDBMetaData;
+      virtual; abstract;
+  end;
+
+  TRegisterableMetaDataClass = class of TRegisterableMetaData;
+
+  ///  <summary>Advanced record manages the registration and creation of meta
+  ///  data objects for different collection data formats.</summary>
+  TMetaDataFactory = record
+  strict private
+    class var
+      ///  <summary>Map of collection format kinds to functions that create
+      ///  meta data objects of the required type.</summary>
+      fCallbackMap: TDictionary<
+        TCollectionFormatKind, TRegisterableMetaDataClass
+      >;
+  public
+    class constructor Create;
+    class destructor Destroy;
+    ///  <summary>Registers a class type that can create a meta data object for
+    ///  a given collection data format kind.</summary>
+    ///  <param name="AFormat"><c>TCollectionFormatKind</c> [in] Collection data
+    ///  format for which the meta data class is being registered.</param>
+    ///  <param name="AClass"><c>TRegisterableMetaDataClass</c> [in] Type of
+    ///  class to create.</param>
+    class procedure RegisterCreator(AFormat: TCollectionFormatKind;
+      AClass: TRegisterableMetaDataClass); static;
+    ///  <summary>Creates a meta data object instance that can read a given
+    ///  collection data format.</summary>
+    ///  <param name="ACollection"><c>TCollection</c> [in] Collection for which
+    ///  meta data reader object is required.</param>
+    ///  <returns><c>IDBMetaData</c>. Requested object. May be a null object if
+    ///  no meta data class was registered for the data format associated with
+    ///  <c>ACollection</c>.</returns>
+    class function CreateInstance(const ACollection: TCollection):
+      IDBMetaData; static;
+  end;
 
 implementation
 
+type
+  ///  <summary>Implements a null, do nothing, meta data object.</summary>
+  ///  <remarks>Instance of this class are used when a collection format does
+  ///  not support meta data.</remarks>
+  TNullMetaData = class(TInterfacedObject, IDBMetaData)
+  public
+    ///  <summary>Returns information about what, if any, meta data is supported
+    ///  by a collection.</summary>
+    function GetCapabilities: TMetaDataCapabilities;
+    ///  <summary>Returns the collection's version number.</summary>
+    ///  <remarks>A null version number is returned if the collection does not
+    ///  include <c>Version</c> in its capabilities.</remarks>
+    function GetVersion: TVersionNumber;
+    ///  <summary>Returns the collection's license information.</summary>
+    ///  <remarks>Return value is meaningless if the collection does not include
+    ///  <c>License</c> in its capabilities.</remarks>
+    function GetLicenseInfo: TDBLicenseInfo;
+    ///  <summary>Returns the collection's copyright informatiom.</summary>
+    ///  <remarks>Return value is meaningless if the collection does not include
+    ///  <c>Copyright</c> in its capabilities.</remarks>
+    function GetCopyrightInfo: TDBCopyrightInfo;
+    ///  <summary>Returns a list of contributors to the collection.</summary>
+    ///  <remarks>Return value is meaningless if the collection does not include
+    ///  <c>Contributors</c> in its capabilities.</remarks>
+    function GetContributors: IStringList;
+    ///  <summary>Returns a list of testers of the collection.</summary>
+    ///  <remarks>Return value is meaningless if the collection does not include
+    ///  <c>Testers</c> in its capabilities.</remarks>
+    function GetTesters: IStringList;
+    ///  <summary>Checks if meta data is recognised as belonging to a valid
+    ///  collection, whether supported or not.</summary>
+    function IsRecognised: Boolean;
+    ///  <summary>Checks if meta data is recognised as belonging to a supported
+    ///  collection version.</summary>
+    function IsSupportedVersion: Boolean;
+    ///  <summary>Checks if meta data is corrupt.</summary>
+    ///  <summary>Should only be called if meta data belongs to a supported
+    ///  collection. An exception should be raised if called on unsupported
+    ///  versions.</summary>
+    function IsCorrupt: Boolean;
+    ///  <summary>Refreshes the meta information by re-reading from collection
+    ///  meta files.</summary>
+    procedure Refresh;
+  end;
 
 { TDBLicenseInfo }
 
@@ -199,6 +292,91 @@ begin
   end;
   if Result <> '' then
     Result := sCopyright + ' ' + Result;
+end;
+
+{ TMetaDataFactory }
+
+class constructor TMetaDataFactory.Create;
+begin
+  fCallbackMap := TDictionary<
+    TCollectionFormatKind, TRegisterableMetaDataClass
+  >.Create;
+end;
+
+class function TMetaDataFactory.CreateInstance(const ACollection: TCollection):
+  IDBMetaData;
+begin
+  if fCallbackMap.ContainsKey(ACollection.CollectionFormatKind) then
+    Result := fCallbackMap[ACollection.CollectionFormatKind].Instance(
+      ACollection
+    )
+  else
+    Result := TNullMetaData.Create;
+end;
+
+class destructor TMetaDataFactory.Destroy;
+begin
+  fCallBackMap.Free;
+end;
+
+class procedure TMetaDataFactory.RegisterCreator(
+  AFormat: TCollectionFormatKind; AClass: TRegisterableMetaDataClass);
+begin
+  fCallbackMap.AddOrSetValue(AFormat, AClass);
+end;
+
+{ TNullMetaData }
+
+function TNullMetaData.GetCapabilities: TMetaDataCapabilities;
+begin
+  Result := [];
+end;
+
+function TNullMetaData.GetContributors: IStringList;
+begin
+  Result := TIStringList.Create;
+end;
+
+function TNullMetaData.GetCopyrightInfo: TDBCopyrightInfo;
+begin
+  Result := TDBCopyrightInfo.CreateNull;
+end;
+
+function TNullMetaData.GetLicenseInfo: TDBLicenseInfo;
+begin
+  Result := TDBLicenseInfo.CreateNull;
+end;
+
+function TNullMetaData.GetTesters: IStringList;
+begin
+  Result := TIStringList.Create;
+end;
+
+function TNullMetaData.GetVersion: TVersionNumber;
+begin
+  Result := TVersionNumber.Nul;
+end;
+
+function TNullMetaData.IsCorrupt: Boolean;
+resourcestring
+  sNotSupportedError = 'Can''t call IDBMetaData.IsCorrupt for null meta data';
+begin
+  raise ENotSupportedException.Create(sNotSupportedError);
+end;
+
+function TNullMetaData.IsRecognised: Boolean;
+begin
+  Result := False;
+end;
+
+function TNullMetaData.IsSupportedVersion: Boolean;
+begin
+  Result := False;
+end;
+
+procedure TNullMetaData.Refresh;
+begin
+  // Do nothing
 end;
 
 end.

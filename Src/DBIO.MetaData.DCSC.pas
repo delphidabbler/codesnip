@@ -98,6 +98,7 @@ uses
   SysUtils,
   Types,
   // VCL
+  DB.UCollections,
   DB.UMetaData,
   UIStringList,
   UStructs,
@@ -314,7 +315,7 @@ type
 
   ///  <summary>Abstract base class for classes that provide main database meta
   ///  data.</summary>
-  TAbstractMainDBMetaData = class abstract(TInterfacedObject)
+  TAbstractMainDBMetaData = class abstract(TRegisterableMetaData)
   strict private
     var
       fMetaFiles: TDBMetaFiles;
@@ -331,6 +332,10 @@ type
   strict protected
     function GetDBDir: string; virtual; abstract;
   public
+    ///  <summary>Creates an instance of meta data object that can read this
+    ///  collection's format.</summary>
+    ///  <remarks>Must be called from a concrete descendant class.</remarks>
+    class function Instance(ACollection: TCollection): IDBMetaData; override;
     procedure AfterConstruction; override;
     destructor Destroy; override;
     ///  <summary>Returns information about what, if any, meta data is supported
@@ -510,6 +515,12 @@ begin
   end;
   fIsVersionLoaded := True;
   Result := fVersion;
+end;
+
+class function TAbstractMainDBMetaData.Instance(
+  ACollection: DB.UCollections.TCollection): IDBMetaData;
+begin
+  Result := TMainDBMetaDataFactory.MainDBMetaDataInstance;
 end;
 
 function TAbstractMainDBMetaData.IsCorrupt: Boolean;
@@ -836,5 +847,11 @@ begin
       Result := TUnknownOrMissingMetaFiles.Create(DBDir);
   end;
 end;
+
+initialization
+
+TMetaDataFactory.RegisterCreator(
+  TCollectionFormatKind.DCSC_v2, TMainDBMetaData
+);
 
 end.
