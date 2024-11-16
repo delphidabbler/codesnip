@@ -24,6 +24,16 @@ uses
 
 type
 
+  TMetaDataCapability = (
+    mdcVersion,
+    mdcLicense,
+    mdcCopyright,
+    mdcContributors,
+    mdcTesters
+  );
+
+  TMetaDataCapabilities = set of TMetaDataCapability;
+
   ///  <summary>Record providing information about a collection's license.
   ///  </summary>
   TDBLicenseInfo = record
@@ -80,6 +90,9 @@ type
   ///  <summary>Interface that provides information about any meta data
   ///  supported by a collection.</summary>
   IDBMetaData = interface(IInterface)
+    ///  <summary>Returns information about what, if any, meta data is supported
+    ///  by a collection.</summary>
+    function GetCapabilities: TMetaDataCapabilities;
     ///  <summary>Returns the collection's version number.</summary>
     ///  <remarks>A null version number is returned if the collection does not
     ///  include <c>Version</c> in its capabilities.</remarks>

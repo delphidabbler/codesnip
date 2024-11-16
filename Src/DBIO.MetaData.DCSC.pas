@@ -14,6 +14,8 @@ unit DBIO.MetaData.DCSC;
 
 interface
 
+{TODO -cVault: Remove support for main database v1 (and perhaps v>2)}
+
 {
   Notes About Database Versions And Meta Files.
   =============================================
@@ -331,6 +333,9 @@ type
   public
     procedure AfterConstruction; override;
     destructor Destroy; override;
+    ///  <summary>Returns information about what, if any, meta data is supported
+    ///  by a collection.</summary>
+    function GetCapabilities: TMetaDataCapabilities;
     ///  <summary>Returns database version number.</summary>
     ///  <remarks>
     ///  <para>A null version number is returned if the meta data does not come
@@ -459,6 +464,11 @@ destructor TAbstractMainDBMetaData.Destroy;
 begin
   fMetaFiles.Free;
   inherited;
+end;
+
+function TAbstractMainDBMetaData.GetCapabilities: TMetaDataCapabilities;
+begin
+  Result := [mdcVersion, mdcLicense, mdcCopyright, mdcContributors, mdcTesters];
 end;
 
 function TAbstractMainDBMetaData.GetContributors: IStringList;
