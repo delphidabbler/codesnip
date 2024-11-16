@@ -46,6 +46,9 @@ type
     ///  <summary>Record constructor: sets all fields of record.</summary>
     ///  <remarks>Any or all parameters may be the empty string</remarks>
     constructor Create(const AName, ASPDX, AURL, AText: string);
+    ///  <summary>Creates and returns a null record with all fields set to the
+    ///  empty string.</summary>
+    class function CreateNull: TDBLicenseInfo; static;
     ///  <summary>Name of license.</summary>
     property Name: string read fName;
     ///  <summary>Open Source Initiative SPDX short idenitifier for licenses.
@@ -76,6 +79,9 @@ type
     ///  <summary>Record constructor: sets all fields of record.</summary>
     ///  <remarks>Any or all parameters may be the empty string</remarks>
     constructor Create(const ADate, AHolder, AHolderURL: string);
+    ///  <summary>Creates and returns a null record with all fields set to the
+    ///  empty string.</summary>
+    class function CreateNull: TDBCopyrightInfo; static;
     ///  <summary>Copyright date.</summary>
     ///  <remarks>May be a single year or a range: e.g. 2020 or 2012-2016.
     ///  </remarks>
@@ -85,6 +91,9 @@ type
     ///  <summary>URL of main copyright holder.</summary>
     ///  <remarks>Optional.</remarks>
     property HolderURL: string read fHolderURL;
+    ///  <summary>Creates and returns a string representation of all the
+    ///  non-empty fields of the record.</summary>
+    function ToString: string;
   end;
 
   ///  <summary>Interface that provides information about any meta data
@@ -143,6 +152,11 @@ begin
   fText := AText;
 end;
 
+class function TDBLicenseInfo.CreateNull: TDBLicenseInfo;
+begin
+  Result := TDBLicenseInfo.Create('', '', '', '');
+end;
+
 function TDBLicenseInfo.NameWithURL: string;
 begin
   Result := fName;
@@ -157,6 +171,34 @@ begin
   fDate := ADate;
   fHolder := AHolder;
   fHolderURL := AHolderURL;
+end;
+
+class function TDBCopyrightInfo.CreateNull: TDBCopyrightInfo;
+begin
+  Result := TDBCopyrightInfo.Create('', '', '');
+end;
+
+function TDBCopyrightInfo.ToString: string;
+resourcestring
+  sCopyright = 'Copyright';
+begin
+  Result := '';
+  if Date <> '' then
+    Result := Result + '(C) ' + Date;
+  if Holder <> '' then
+  begin
+    if Result <> '' then
+      Result := Result + ', ';
+    Result := Result + Holder;
+  end;
+  if HolderURL <> '' then
+  begin
+    if Result <> '' then
+      Result := Result + ', ';
+    Result := Result + HolderURL;
+  end;
+  if Result <> '' then
+    Result := sCopyright + ' ' + Result;
 end;
 
 end.
