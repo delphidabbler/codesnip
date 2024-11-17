@@ -63,37 +63,42 @@ inherited AboutDlg: TAboutDlg
           end
         end
       end
-      object tsDatabase: TTabSheet
-        Caption = 'About The Database'
+      object tsCollections: TTabSheet
+        Caption = 'About Collections'
         ImageIndex = 1
-        inline frmDatabase: THTMLTpltDlgFrame
-          Left = 0
+        DesignSize = (
+          401
+          190)
+        object lblCollection: TLabel
+          Left = 3
+          Top = 3
+          Width = 80
+          Height = 13
+          Caption = '&Select collection:'
+          FocusControl = cbCollection
+        end
+        object cbCollection: TComboBox
+          Left = 112
           Top = 0
-          Width = 401
-          Height = 190
-          Align = alClient
+          Width = 286
+          Height = 21
+          Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
-          TabStop = True
-          ExplicitWidth = 401
-          ExplicitHeight = 190
-          inherited pnlBrowser: TPanel
-            Width = 401
-            Height = 190
-            ExplicitWidth = 401
-            ExplicitHeight = 190
-            inherited wbBrowser: TWebBrowser
-              Width = 401
-              Height = 190
-              ExplicitWidth = 345
-              ExplicitHeight = 133
-              ControlData = {
-                4C00000072290000A31300000000000000000000000000000000000000000000
-                000000004C000000000000000000000001000000E0D057007335CF11AE690800
-                2B2E126208000000000000004C0000000114020000000000C000000000000046
-                8000000000000000000000000000000000000000000000000000000000000000
-                00000000000000000100000000000000000000000000000000000000}
-            end
-          end
+          OnChange = cbCollectionChange
+        end
+        object tvCollectionInfo: TTreeView
+          Left = 0
+          Top = 27
+          Width = 401
+          Height = 163
+          Anchors = [akLeft, akTop, akRight, akBottom]
+          BorderStyle = bsNone
+          Indent = 19
+          ParentColor = True
+          ReadOnly = True
+          ShowRoot = False
+          TabOrder = 1
         end
       end
       object tsPaths: TTabSheet
