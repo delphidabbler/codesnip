@@ -24,6 +24,7 @@ uses
   ExtCtrls,
   Classes,
   Messages,
+  Generics.Collections,
   // Project
   Browser.UHTMLEvents,
   DB.UCollections,
@@ -77,9 +78,9 @@ type
     property Path: string read GetPath write SetPath;
   end;
 
-  ///  <summary>Implements program&#39; about dialogue box.</summary>
-  ///  <remarks>Displays information about the program, the main database and
-  ///  the program's user and application folders and config files. Also
+  ///  <summary>Implements program's about dialogue box.</summary>
+  ///  <remarks>Displays information about the program, the collections in use
+  ///  and the program's user and application folders and config files. Also
   ///  provides access to the program's easter egg.</remarks>
   TAboutDlg = class(TGenericViewDlg)
     bvlSeparator: TBevel;
@@ -95,12 +96,13 @@ type
     cbCollection: TComboBox;
     lblCollection: TLabel;
     tvCollectionInfo: TTreeView;
+    sbPaths: TScrollBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    ///  <summary>Handles event triggered when user clicks on one of page
-    ///  control tabs. Ensures page control has focus.</summary>
-    ///  <remarks>Without this fix, page control does not always get focus when
-    ///  a tab is clicked.</remarks>
+    ///  <summary>Handles event triggered when user clicks on one of the page
+    ///  control tabs. Ensures the page control has focus.</summary>
+    ///  <remarks>Without this fix, the page control does not always get focus #
+    ///  when a tab is clicked.</remarks>
     procedure pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     ///  <summary>Handles button click event to display application config file.
@@ -109,16 +111,18 @@ type
     ///  <summary>Handles button click event to display per-user config file.
     ///  </summary>
     procedure btnViewUserConfigClick(Sender: TObject);
+    ///  <summary>Handles the change event triggered when the user selects a
+    ///  collection in the collections combo box. Updates the display of
+    ///  information about the selected collection.</summary>
     procedure cbCollectionChange(Sender: TObject);
   strict private
     var
+      ///  <summary>List of dynamically created path information group boxes.
+      ///  </summary>
+      fPathInfoBoxes: TList<TPathInfoBox>;
+      ///  <summary>Provides a sorted list of collection names for display in
+      ///  the collections combo box.</summary>
       fCollList: TCollectionListAdapter;
-      ///  <summary>Control that displays main database folder.</summary>
-      fMainDBPathGp: TPathInfoBox;
-      ///  <summary>Control that displays user database folder.</summary>
-      fUserDBPathGp: TPathInfoBox;
-      ///  <summary>Control that displays program install path.</summary>
-      fInstallPathGp: TPathInfoBox;
     ///  <summary>Handles title frame's OnHTMLEvent event. Checks for mouse
     ///  events relating to display of the easter egg and acts accordingly.
     ///  </summary>
@@ -162,7 +166,7 @@ type
       const CSSBuilder: TCSSBuilder);
   public
     ///  <summary>Displays dialog box.</summary>
-    ///  <param name="AOwner">TComponent [in] Component that owns this dialogus
+    ///  <param name="AOwner">TComponent [in] Component that owns this dialogue
     ///   box.</param>
     class procedure Execute(AOwner: TComponent);
   end;
@@ -183,7 +187,6 @@ uses
   FmEasterEgg,
   FmPreviewDlg,
   UAppInfo,
-  UColours,
   UConsts,
   UCSSUtils,
   UCtrlArranger,
@@ -216,7 +219,8 @@ end;
 
 procedure TAboutDlg.ArrangeForm;
 var
-  PathTabHeight: Integer;
+  PathInfoBox: TPathInfoBox;
+  NextPathInfoBoxTop: Integer;
 begin
   // Collections tab
   TCtrlArranger.AlignVCentres(8, [lblCollection, cbCollection]);
@@ -224,27 +228,35 @@ begin
   TCtrlArranger.MoveBelow([lblCollection, cbCollection], tvCollectionInfo, 8);
 
   // Paths tab
-  fMainDBPathGp.Top := TCtrlArranger.BottomOf(fInstallPathGp, 8);
-  fUserDBPathGp.Top := TCtrlArranger.BottomOf(fMainDBPathGp, 8);
-  TCtrlArranger.AlignTops(
-    [btnViewAppConfig, btnViewUserConfig],
-    TCtrlArranger.BottomOf(fUserDBPathGp, 8)
-  );
-  PathTabHeight := TCtrlArranger.BottomOf(
-    [btnViewUserConfig, btnViewAppConfig]
-  );
-  TCtrlArranger.AlignLefts([fUserDBPathGp, btnViewAppConfig]);
-  TCtrlArranger.AlignRights([fUserDBPathGp, btnViewUserConfig]);
+  TCtrlArranger.AlignTops([btnViewAppConfig, btnViewUserConfig], 8);
+  TCtrlArranger.MoveBelow([btnViewAppConfig, btnViewUserConfig], sbPaths, 8);
+  // stack path group boxes vertically
+  NextPathInfoBoxTop := 8;
+  for PathInfoBox in fPathInfoBoxes do
+  begin
+    PathInfoBox.Top := NextPathInfoBoxTop;
+    Inc(NextPathInfoBoxTop, PathInfoBox.Height + 8);
+  end;
+  // align ctrl left & right sides
+  TCtrlArranger.AlignLefts([sbPaths, btnViewAppConfig]);
+  TCtrlArranger.AlignRights([sbPaths, btnViewUserConfig]);
+
   // Set height of title frame and page control
   pnlTitle.Height := frmTitle.DocHeight;
-  pcDetail.ClientHeight :=
-    pcDetail.Height - tsProgram.ClientHeight +
-    Max(
-      PathTabHeight,
-      frmProgram.DocHeight
-    ) + 8;
+  pcDetail.ClientHeight := pcDetail.Height - tsProgram.ClientHeight
+    + frmProgram.DocHeight + 8;
   pnlBody.ClientHeight := pnlTitle.Height + bvlSeparator.Height +
     pcDetail.Height;
+
+  // Set path scroll box height
+  sbPaths.ClientHeight := tsPaths.ClientHeight - sbPaths.Top - 28;
+
+  // Set path controls' widths: must do this after all path box tops are set
+  // and after scroll box height is set so any vertical scroll bar will have
+  // been created.
+  for PathInfoBox in fPathInfoBoxes do
+    PathInfoBox.Width := sbPaths.ClientWidth - 2 * PathInfoBox.Left;
+
   inherited;
 end;
 
@@ -273,40 +285,49 @@ procedure TAboutDlg.ConfigForm;
   //  caption, path and tab order.</summary>
   function CreatePathInfoBox(const Caption, Path: string;
     const TabOrder: Integer): TPathInfoBox;
+  const
+    MarginWidth = 8;
   begin
-    Result := TPathInfoBox.CreateParented(tsPaths.Handle);
-    Result.Parent := tsPaths;
-    Result.SetBounds(8, 8, tsPaths.ClientWidth - 16, 0);
+    Result := TPathInfoBox.CreateParented(sbPaths.Handle);
+    Result.Parent := sbPaths;
+    Result.SetBounds(MarginWidth, MarginWidth, sbPaths.ClientWidth - 2 * MarginWidth, 0);
     Result.Caption := Caption;
     Result.Path := Path;
     Result.TabOrder := TabOrder;
   end;
 
+var
+  Collection: TCollection;
+  TabIdx: Integer;
 resourcestring
   // Captions for custom controls
   sInstallPathGpCaption = 'Install Directory';
-  sMainDBPathGpCaption = 'Main Database Directory';
-  sUserDBPathGpCaption = 'User Database Directory';
+  sCollectionPathGpCaption = '%s Collection Directory';
 begin
   inherited;
   // Creates required custom controls
-  fInstallPathGp := CreatePathInfoBox(
-    sInstallPathGpCaption, TAppInfo.AppExeDir, 0
+  TabIdx := 0;
+  fPathInfoBoxes.Add(
+    CreatePathInfoBox(sInstallPathGpCaption, TAppInfo.AppExeDir, 1)
   );
-  fMainDBPathGp := CreatePathInfoBox(
-    sMainDBPathGpCaption, TAppInfo.AppDataDir, 1
-  );
-  fUserDBPathGp := CreatePathInfoBox(
-    sUserDBPathGpCaption, TAppInfo.UserDataDir, 2
-  );
-  btnViewAppConfig.TabOrder := fUserDBPathGp.TabOrder + 1;
-  btnViewUserConfig.TabOrder := btnViewAppConfig.TabOrder + 1;
+  for Collection in TCollections.Instance do
+  begin
+    Inc(TabIdx);
+    fPathInfoBoxes.Add(
+      CreatePathInfoBox(
+        Format(sCollectionPathGpCaption, [Collection.Name]),
+        Collection.Location.Directory,
+        TabIdx
+      )
+    );
+  end;
   // Load collections into combo box & select default collection
   fCollList.ToStrings(cbCollection.Items);
   cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
   DisplayCollectionInfo(fCollList.Collection(cbCollection.ItemIndex));
-  // Set collections treeview background colour
+  // Set collections treeview and paths scrollbox background colours
   tvCollectionInfo.Color := ThemeServicesEx.GetTabBodyColour;
+  sbPaths.Color := ThemeServicesEx.GetTabBodyColour;
   // Load content into HTML frames
   InitHTMLFrames;
 end;
@@ -416,6 +437,7 @@ procedure TAboutDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fCollList := TCollectionListAdapter.Create;
+  fPathInfoBoxes := TList<TPathInfoBox>.Create;
   frmTitle.OnBuildCSS := UpdateTitleCSS;
   frmProgram.OnBuildCSS := UpdateProgramTabCSS;
 end;
@@ -423,9 +445,7 @@ end;
 procedure TAboutDlg.FormDestroy(Sender: TObject);
 begin
   inherited;
-  fInstallPathGp.Free;
-  fMainDBPathGp.Free;
-  fUserDBPathGp.Free;
+  fPathInfoBoxes.Free;
   fCollList.Free;
 end;
 
@@ -524,13 +544,12 @@ begin
   end;
   // Put border round scroll box
   CSSBuilder.AddSelector('.scrollbox')
-    .AddProperty(UCSSUtils.TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
+    .AddProperty(UCSSUtils.TCSS.BorderProp(cssAll, 1, cbsSolid, clBtnShadow));
 end;
 
 procedure TAboutDlg.UpdateTitleCSS(Sender: TObject;
   const CSSBuilder: TCSSBuilder);
 begin
-  // Set body colour, and put border round it
   CSSBuilder.Selectors['body']
     .AddProperty(TCSS.BackgroundColorProp(clWindow))
     .AddProperty(TCSS.PaddingProp(4));

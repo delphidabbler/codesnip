@@ -104,23 +104,43 @@ inherited AboutDlg: TAboutDlg
       object tsPaths: TTabSheet
         Caption = 'Paths && Files'
         ImageIndex = 2
+        DesignSize = (
+          401
+          190)
         object btnViewAppConfig: TButton
           Left = 3
-          Top = 144
+          Top = 3
           Width = 170
           Height = 25
           Caption = 'View Application Config File...'
-          TabOrder = 1
+          TabOrder = 0
           OnClick = btnViewAppConfigClick
         end
         object btnViewUserConfig: TButton
-          Left = 192
-          Top = 144
+          Left = 228
+          Top = 3
           Width = 170
           Height = 25
+          Anchors = [akTop, akRight]
           Caption = 'View Per-User Config File...'
-          TabOrder = 0
+          TabOrder = 1
           OnClick = btnViewUserConfigClick
+        end
+        object sbPaths: TScrollBox
+          Left = 3
+          Top = 34
+          Width = 395
+          Height = 153
+          BevelInner = bvLowered
+          BevelOuter = bvRaised
+          BevelKind = bkFlat
+          BorderStyle = bsNone
+          Padding.Left = 3
+          Padding.Top = 3
+          Padding.Right = 3
+          Padding.Bottom = 3
+          TabOrder = 2
+          TabStop = True
         end
       end
     end
