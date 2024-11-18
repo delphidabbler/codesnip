@@ -417,19 +417,6 @@ type
     constructor Create(const UpdateDir: string);
   end;
 
-  ///  <summary>Factory that creates instances of objects that provide
-  ///  information about the main database and database updates.</summary>
-  TMainDBMetaDataFactory = record
-  public
-    ///  <summary>Returns instance of class that provides meta data for the
-    ///  main database.</summary>
-    class function MainDBMetaDataInstance: IDBMetaData; static;
-    ///  <summary>Returns instance of class that provides meta data for the
-    ///  database update stored in the given folder.</summary>
-    class function UpdateMetaDataInstance(const UpdateDir: string):
-      IDBMetaData; static;
-  end;
-
 implementation
 
 uses
@@ -442,20 +429,6 @@ uses
   UIOUtils,
   UResourceUtils,
   UStrUtils;
-
-{ TMainDBMetaDataFactory }
-
-class function TMainDBMetaDataFactory.MainDBMetaDataInstance:
-  IDBMetaData;
-begin
-  Result := TMainDBMetaData.Create;
-end;
-
-class function TMainDBMetaDataFactory.UpdateMetaDataInstance(
-  const UpdateDir: string): IDBMetaData;
-begin
-  Result := TUpdateDBMetaData.Create(UpdateDir);
-end;
 
 { TAbstractMainDBMetaData }
 
@@ -520,7 +493,7 @@ end;
 class function TAbstractMainDBMetaData.Instance(
   ACollection: DB.UCollections.TCollection): IDBMetaData;
 begin
-  Result := TMainDBMetaDataFactory.MainDBMetaDataInstance;
+  Result := TMainDBMetaData.Create;
 end;
 
 function TAbstractMainDBMetaData.IsCorrupt: Boolean;
