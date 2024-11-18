@@ -512,12 +512,6 @@ begin
       'overflowXFixScript',
       'window.onload = null;'
     );
-  Tplt.ResolvePlaceholderHTML(
-    'TestingInfo', TCSS.BlockDisplayProp(GetSnippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID)
-  );
-  Tplt.ResolvePlaceholderHTML(
-    'EditLink', TCSS.BlockDisplayProp(GetSnippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID)
-  );
   Tplt.ResolvePlaceholderText(
     'EditEventHandler',
     TJavaScript.LiteralFunc(
@@ -526,8 +520,7 @@ begin
   );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
-    if GetSnippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID then
-      Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
+    Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
     Tplt.ResolvePlaceholderHTML('SnippetName', SnippetHTML.SnippetName);
   finally
     SnippetHTML.Free;
