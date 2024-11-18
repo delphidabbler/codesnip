@@ -845,10 +845,10 @@ inherited MainForm: TMainForm
     end
     object actMoveUserDatabase: TAction
       Category = 'Database'
-      Caption = 'Move User Database...'
+      Caption = 'Move Collection Data Files...'
       Hint = 
-        'Move user database|Move the user-defined snippet database to a n' +
-        'ew directory'
+        'Move a collection|Move a collection'#39's data files to a new direct' +
+        'ory'
       OnExecute = actMoveUserDatabaseExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
