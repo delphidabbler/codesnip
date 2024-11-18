@@ -238,11 +238,6 @@ type
     ///  snippets to be displayed.</summary>
     function IsSnippetRequired(const Snippet: TSnippet): Boolean; virtual;
       abstract;
-    ///  <summary>Returns name of CSS class to be used for page heading.
-    ///  </summary>
-    ///  <remarks>Provides default class name. Descendant classes should
-    ///  override as necessary.</remarks>
-    function GetH1ClassName: string; virtual;
     ///  <summary>Returns page's heading text.</summary>
     ///  <remarks>Returns view's description by default. Descendants can
     ///  override if different behaviour is required.</remarks>
@@ -517,10 +512,6 @@ begin
       'overflowXFixScript',
       'window.onload = null;'
     );
-  if GetSnippet.CollectionID <> TCollectionID.__TMP__MainDBCollectionID then
-    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
-  else
-    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
   Tplt.ResolvePlaceholderHTML(
     'TestingInfo', TCSS.BlockDisplayProp(GetSnippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID)
   );
@@ -576,11 +567,6 @@ begin
   inherited;
 end;
 
-function TSnippetListPageHTML.GetH1ClassName: string;
-begin
-  Result := 'group-heading';
-end;
-
 function TSnippetListPageHTML.GetHeading: string;
 begin
   Result := View.Description;
@@ -602,7 +588,6 @@ end;
 procedure TSnippetListPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 begin
   inherited;
-  Tplt.ResolvePlaceholderHTML('H1Class', GetH1ClassName);
   Tplt.ResolvePlaceholderText('Heading', GetHeading);
   if HaveSnippets then
   begin

@@ -235,13 +235,8 @@ begin
     CSSBuilder.AddSelector('.optionbox')
       .AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
 
-    // Heading colours for user & main databases
-    {TODO -vault: replace all following classes with single ".heading" class}
-    CSSBuilder.AddSelector('.userdb')
-      .AddProperty(TCSS.ColorProp(fHeadingColour));
-    CSSBuilder.AddSelector('.maindb')
-      .AddProperty(TCSS.ColorProp(fHeadingColour));
-    CSSBuilder.AddSelector('.group-heading')
+    // Heading colour
+    CSSBuilder.AddSelector('.heading')
       .AddProperty(TCSS.ColorProp(fHeadingColour));
 
     // Sets CSS for style of New Tab text
