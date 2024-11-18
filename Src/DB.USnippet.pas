@@ -107,13 +107,24 @@ type
   TSnippet = class(TObject)
   public
     ///  <summary>Comparer for snippets by display name.</summary>
-    type TDisplayNameComparer = class(TComparer<TSnippet>)
-    public
-      ///  <summary>Compares snippets Left and Right. Returns -ve if Left's
-      ///  display name sorts before Right's, 0 if the same or +ve if Left's
-      ///  display name is greater than Right's.</summary>
-      function Compare(const Left, Right: TSnippet): Integer; override;
-    end;
+    type
+      TComparer = class(TInterfacedObject,
+        IComparer<TSnippet>, IEqualityComparer<TSnippet>
+      )
+      public
+        function Compare(const Left, Right: TSnippet): Integer;
+        function Equals(const Left, Right: TSnippet): Boolean;
+          reintroduce;
+        function GetHashCode(const Value: TSnippet): Integer;
+          reintroduce;
+      end;
+      TDisplayNameComparer = class(TComparer<TSnippet>)
+      public
+        ///  <summary>Compares snippets Left and Right. Returns -ve if Left's
+        ///  display name sorts before Right's, 0 if the same or +ve if Left's
+        ///  display name is greater than Right's.</summary>
+        function Compare(const Left, Right: TSnippet): Integer; override;
+      end;
   strict private
     fKind: TSnippetKind;                    // Kind of snippet this is
     fCategory: string;                      // Name of snippet's category
@@ -165,6 +176,13 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
+    ///  <summary>Compares this snippet with another.</summary>
+    ///  <param name="Snippet"><c>TSnippet</c> [in] Snippet to compare with.
+    ///  </param>
+    ///  <returns><c>Integer</c>. <c>0</c> if the snippets are the same, -ve if
+    ///  this snippet is less than <c>Snippets</c> or +ve if this snippet is
+    ///  greater than <c>Snippet</c>.</returns>
+    function CompareTo(const Snippet: TSnippet): Integer;
     function IsEqual(const Snippet: TSnippet): Boolean;
       {Checks if this snippet is same as another snippet. Snippets are
       considered equal if they have the same key and come from the same
@@ -176,6 +194,8 @@ type
       {Checks if snippet can be compiled.
         @return True if compilation supported and False if not.
       }
+    ///  <summary>Returns the snippets hash code.</summary>
+    function Hash: Integer;
     property Kind: TSnippetKind read fKind;
       {Kind of snippet represented by this object}
     property ID: TSnippetID read GetID;
@@ -415,6 +435,11 @@ begin
   Result := Kind <> skFreeform;
 end;
 
+function TSnippet.CompareTo(const Snippet: TSnippet): Integer;
+begin
+  Result := Self.ID.CompareTo(Snippet.ID);
+end;
+
 constructor TSnippet.Create(const AKey: string;
   const ACollectionID: TCollectionID; const Props: TSnippetData);
 begin
@@ -468,6 +493,12 @@ begin
   Result := TSnippetID.Create(fKey, fCollectionID);
 end;
 
+function TSnippet.Hash: Integer;
+begin
+  // Snippet's hash code is the same as the snippet ID's hash code
+  Result := GetID.Hash;
+end;
+
 function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
   {Checks if this snippet is same as another snippet. Snippets are considered
   equal if they have the same key and come from the same collection.
@@ -475,7 +506,7 @@ function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
     @return True if snippets are equal, False if not.
   }
 begin
-  Result := Snippet.ID = Self.ID;
+  Result := CompareTo(Snippet) = 0;
 end;
 
 procedure TSnippet.SetKey(const AKey: string);
@@ -498,6 +529,23 @@ begin
   fExtra := TActiveTextFactory.CloneActiveText(Data.Extra);
   fCompatibility := Data.CompilerResults;
   fTestInfo := Data.TestInfo;
+end;
+
+{ TSnippet.TComparer }
+
+function TSnippet.TComparer.Compare(const Left, Right: TSnippet): Integer;
+begin
+  Result := Left.CompareTo(Right);
+end;
+
+function TSnippet.TComparer.Equals(const Left, Right: TSnippet): Boolean;
+begin
+  Result := Left.IsEqual(Right);
+end;
+
+function TSnippet.TComparer.GetHashCode(const Value: TSnippet): Integer;
+begin
+  Result := Value.Hash;
 end;
 
 { TSnippet.TDisplayNameComparer }
@@ -686,13 +734,7 @@ constructor TSnippetList.Create(const OwnsObjects: Boolean = False);
 begin
   inherited Create;
   fList := TSortedObjectList<TSnippet>.Create(
-    TDelegatedComparer<TSnippet>.Create(
-      function (const Left, Right: TSnippet): Integer
-      begin
-        Result := Left.ID.CompareTo(Right.ID);
-      end
-    ),
-    OwnsObjects
+    TSnippet.TComparer.Create, OwnsObjects
   );
   fList.PermitDuplicates := False;
 end;
