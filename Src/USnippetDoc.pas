@@ -54,8 +54,10 @@ type
     ///  information for given snippet.</summary>
     function CompilerInfo(const Snippet: TSnippet): TCompileDocInfoArray;
     ///  <summary>Generates and returns a string containing information about
-    ///  the main database.</summary>
-    function MainDBInfo: string;
+    ///  the given collection.</summary>
+    ///  <remarks>Information includes license and copyright information if
+    ///  the collection's data format supports it.</remarks>
+    function CollectionInfo(const ACollectionID: TCollectionID): string;
   strict protected
     ///  <summary>Initialise document.</summary>
     ///  <remarks>Does nothing. Descendant classes should perform any required
@@ -90,9 +92,8 @@ type
     ///  <remarks>Active text must be interpreted in a manner that makes sense
     ///  for document format.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); virtual; abstract;
-    ///  <summary>Output given information about code snippets database.
-    ///  </summary>
-    procedure RenderDBInfo(const Text: string); virtual; abstract;
+    ///  <summary>Output given information about a collection.</summary>
+    procedure RenderCollectionInfo(const Text: string); virtual; abstract;
     ///  <summary>Finalise document and return content as encoded data.
     ///  </summary>
     ///  <remarks>Descendant classes should perform any required finalisation
@@ -121,11 +122,30 @@ uses
   DB.UMain,
   DB.UMetaData,
   DB.USnippetKind,
+  DBIO.MetaData.DCSC,
   UStrUtils,
   UUrl;
 
 
 { TSnippetDoc }
+
+function TSnippetDoc.CollectionInfo(const ACollectionID: TCollectionID): string;
+resourcestring
+  sCollectionInfo = 'A snippet from the "%s" collection.';
+var
+  MetaData: IDBMetaData;
+  Collection: TCollection;
+begin
+  Collection := TCollections.Instance.GetCollection(ACollectionID);
+  Result := Format(sCollectionInfo, [Collection.Name]);
+  MetaData := TMetaDataFactory.CreateInstance(Collection);
+  if mdcLicense in MetaData.GetCapabilities then
+  begin
+    Result := Result + ' ' + MetaData.GetLicenseInfo.NameWithURL + '.';
+    if (mdcCopyright in MetaData.GetCapabilities) then
+      Result := Result + ' ' + MetaData.GetCopyrightInfo.ToString + '.';
+  end;
+end;
 
 function TSnippetDoc.CommaList(const List: IStringList): string;
 resourcestring
@@ -202,32 +222,13 @@ begin
   end;
   if Snippet.Extra.HasContent then
     RenderExtra(Snippet.Extra);
-  if Snippet.CollectionID = TCollectionID.__TMP__MainDBCollectionID then
-    // database info written only if snippet is from main database
-    RenderDBInfo(MainDBInfo);
+  RenderCollectionInfo(CollectionInfo(Snippet.CollectionID));
   Result := FinaliseDoc;
 end;
 
 procedure TSnippetDoc.InitialiseDoc;
 begin
   // Do nothing
-end;
-
-function TSnippetDoc.MainDBInfo: string;
-resourcestring
-  sMainDBInfo = 'A snippet from the DelphiDabbler Code Snippets Database '
-   + '(%0:s), licensed under the %1:s.';
-var
-  DBMetaData: IDBMetaData;
-begin
-  DBMetaData := TMainDBMetaDataFactory.MainDBMetaDataInstance;
-  Result := Format(
-    sMainDBInfo,
-    [
-      TURL.CodeSnipRepo,
-      DBMetaData.GetLicenseInfo.NameWithURL
-    ]
-  );
 end;
 
 function TSnippetDoc.SnippetsToStrings(const SnippetList: TSnippetList):

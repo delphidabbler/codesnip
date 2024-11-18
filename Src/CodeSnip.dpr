@@ -377,7 +377,8 @@ uses
   DB.UCollections in 'DB.UCollections.pas',
   UTabSeparatedFileIO in 'UTabSeparatedFileIO.pas',
   DBIO.UCategoryIO in 'DBIO.UCategoryIO.pas',
-  UCollectionListAdapter in 'UCollectionListAdapter.pas';
+  UCollectionListAdapter in 'UCollectionListAdapter.pas',
+  DBIO.MetaData.DCSC in 'DBIO.MetaData.DCSC.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

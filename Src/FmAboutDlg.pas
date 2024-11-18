@@ -24,13 +24,16 @@ uses
   ExtCtrls,
   Classes,
   Messages,
+  Generics.Collections,
   // Project
   Browser.UHTMLEvents,
+  DB.UCollections,
   DB.UMetaData,
   FmGenericViewDlg,
   FrBrowserBase,
   FrHTMLDlg,
   FrHTMLTpltDlg,
+  UCollectionListAdapter,
   UCSSBuilder,
   UIStringList;
 
@@ -75,28 +78,31 @@ type
     property Path: string read GetPath write SetPath;
   end;
 
-  ///  <summary>Implements program&#39; about dialogue box.</summary>
-  ///  <remarks>Displays information about the program, the main database and
-  ///  the program's user and application folders and config files. Also
+  ///  <summary>Implements program's about dialogue box.</summary>
+  ///  <remarks>Displays information about the program, the collections in use
+  ///  and the program's user and application folders and config files. Also
   ///  provides access to the program's easter egg.</remarks>
   TAboutDlg = class(TGenericViewDlg)
     bvlSeparator: TBevel;
-    frmDatabase: THTMLTpltDlgFrame;
     frmProgram: THTMLTpltDlgFrame;
     pcDetail: TPageControl;
-    tsDatabase: TTabSheet;
+    tsCollections: TTabSheet;
     tsProgram: TTabSheet;
     pnlTitle: TPanel;
     frmTitle: THTMLTpltDlgFrame;
     tsPaths: TTabSheet;
     btnViewAppConfig: TButton;
     btnViewUserConfig: TButton;
+    cbCollection: TComboBox;
+    lblCollection: TLabel;
+    tvCollectionInfo: TTreeView;
+    sbPaths: TScrollBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    ///  <summary>Handles event triggered when user clicks on one of page
-    ///  control tabs. Ensures page control has focus.</summary>
-    ///  <remarks>Without this fix, page control does not always get focus when
-    ///  a tab is clicked.</remarks>
+    ///  <summary>Handles event triggered when user clicks on one of the page
+    ///  control tabs. Ensures the page control has focus.</summary>
+    ///  <remarks>Without this fix, the page control does not always get focus #
+    ///  when a tab is clicked.</remarks>
     procedure pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     ///  <summary>Handles button click event to display application config file.
@@ -105,16 +111,18 @@ type
     ///  <summary>Handles button click event to display per-user config file.
     ///  </summary>
     procedure btnViewUserConfigClick(Sender: TObject);
+    ///  <summary>Handles the change event triggered when the user selects a
+    ///  collection in the collections combo box. Updates the display of
+    ///  information about the selected collection.</summary>
+    procedure cbCollectionChange(Sender: TObject);
   strict private
     var
-      ///  <summary>Control that displays main database folder.</summary>
-      fMainDBPathGp: TPathInfoBox;
-      ///  <summary>Control that displays user database folder.</summary>
-      fUserDBPathGp: TPathInfoBox;
-      ///  <summary>Control that displays program install path.</summary>
-      fInstallPathGp: TPathInfoBox;
-      ///  <summary>Provides access to main database meta data.</summary>
-      fMetaData: IDBMetaData;
+      ///  <summary>List of dynamically created path information group boxes.
+      ///  </summary>
+      fPathInfoBoxes: TList<TPathInfoBox>;
+      ///  <summary>Provides a sorted list of collection names for display in
+      ///  the collections combo box.</summary>
+      fCollList: TCollectionListAdapter;
     ///  <summary>Handles title frame's OnHTMLEvent event. Checks for mouse
     ///  events relating to display of the easter egg and acts accordingly.
     ///  </summary>
@@ -123,12 +131,10 @@ type
     ///  information about the event.</param>
     procedure HTMLEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo);
-    ///  <summary>Builds HTML used to display list of contributors or an error
-    ///  message if the list is empty.</summary>
-    ///  <param name="ContribList">IStringList [in] List of contributors to
-    ///  display.</param>
-    ///  <returns>string. Required HTML.</returns>
-    function ContribListHTML(ContribList: IStringList): string;
+    ///  <summary>Displays any meta data associated with a collection.</summary>
+    ///  <param name="ACollection"><c>TCollection</c> [in] Collection for which
+    ///  meta data is to be displayed.</param>
+    procedure DisplayCollectionInfo(ACollection: TCollection);
     ///  <summary>Displays content of a config file in a dialogue box or an
     ///  error message if the file does not exist.</summary>
     ///  <param name="FileName">string [in] Name of config file to display.
@@ -151,17 +157,16 @@ type
     ///  <param name="CSSBuilder">TCSSBuilder [in] Object used to update CSS.
     ///  </param>
     procedure UpdateTitleCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
-    ///  <summary>Updates CSS used for HTML displayed in detail frames.
-    ///  </summary>
+    ///  <summary>Updates CSS used for HTML displayed in About The Program
+    ///  tab frame.</summary>
     ///  <param name="Sender">TObject [in] Not used.</param>
     ///  <param name="CSSBuilder">TCSSBuilder [in] Object used to update CSS.
     ///  </param>
-    ///  <remarks>Details frames form the body of the About Box on the Program
-    ///  and Database tabs.</remarks>
-    procedure UpdateDetailCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
+    procedure UpdateProgramTabCSS(Sender: TObject;
+      const CSSBuilder: TCSSBuilder);
   public
     ///  <summary>Displays dialog box.</summary>
-    ///  <param name="AOwner">TComponent [in] Component that owns this dialogus
+    ///  <param name="AOwner">TComponent [in] Component that owns this dialogue
     ///   box.</param>
     class procedure Execute(AOwner: TComponent);
   end;
@@ -179,26 +184,21 @@ uses
   ShellAPI,
   IOUtils,
   // Project
-  DB.UCollections,
-  DB.UMain,
   FmEasterEgg,
   FmPreviewDlg,
   UAppInfo,
-  UColours,
   UConsts,
   UCSSUtils,
   UCtrlArranger,
   UEncodings,
   UFontHelper,
   UGraphicUtils,
-  UHTMLUtils,
   UHTMLTemplate,
   UIOUtils,
   UMessageBox,
   UResourceUtils,
   UStrUtils,
-  UThemesEx,
-  UVersionInfo;
+  UThemesEx;
 
 {$R *.dfm}
 
@@ -219,29 +219,44 @@ end;
 
 procedure TAboutDlg.ArrangeForm;
 var
-  PathTabHeight: Integer;
+  PathInfoBox: TPathInfoBox;
+  NextPathInfoBoxTop: Integer;
 begin
-  fMainDBPathGp.Top := TCtrlArranger.BottomOf(fInstallPathGp, 8);
-  fUserDBPathGp.Top := TCtrlArranger.BottomOf(fMainDBPathGp, 8);
-  TCtrlArranger.AlignTops(
-    [btnViewAppConfig, btnViewUserConfig],
-    TCtrlArranger.BottomOf(fUserDBPathGp, 8)
-  );
-  PathTabHeight := TCtrlArranger.BottomOf(
-    [btnViewUserConfig, btnViewAppConfig]
-  );
-  TCtrlArranger.AlignLefts([fUserDBPathGp, btnViewAppConfig]);
-  TCtrlArranger.AlignRights([fUserDBPathGp, btnViewUserConfig]);
+  // Collections tab
+  TCtrlArranger.AlignVCentres(8, [lblCollection, cbCollection]);
+  TCtrlArranger.MoveToRightOf(lblCollection, cbCollection, 12);
+  TCtrlArranger.MoveBelow([lblCollection, cbCollection], tvCollectionInfo, 8);
+
+  // Paths tab
+  TCtrlArranger.AlignTops([btnViewAppConfig, btnViewUserConfig], 8);
+  TCtrlArranger.MoveBelow([btnViewAppConfig, btnViewUserConfig], sbPaths, 8);
+  // stack path group boxes vertically
+  NextPathInfoBoxTop := 8;
+  for PathInfoBox in fPathInfoBoxes do
+  begin
+    PathInfoBox.Top := NextPathInfoBoxTop;
+    Inc(NextPathInfoBoxTop, PathInfoBox.Height + 8);
+  end;
+  // align ctrl left & right sides
+  TCtrlArranger.AlignLefts([sbPaths, btnViewAppConfig]);
+  TCtrlArranger.AlignRights([sbPaths, btnViewUserConfig]);
+
   // Set height of title frame and page control
   pnlTitle.Height := frmTitle.DocHeight;
-  pcDetail.ClientHeight :=
-    pcDetail.Height - tsProgram.ClientHeight +
-    Max(
-      PathTabHeight,
-      Max(frmProgram.DocHeight, frmDatabase.DocHeight)
-    ) + 8;
+  pcDetail.ClientHeight := pcDetail.Height - tsProgram.ClientHeight
+    + frmProgram.DocHeight + 8;
   pnlBody.ClientHeight := pnlTitle.Height + bvlSeparator.Height +
     pcDetail.Height;
+
+  // Set path scroll box height
+  sbPaths.ClientHeight := tsPaths.ClientHeight - sbPaths.Top - 28;
+
+  // Set path controls' widths: must do this after all path box tops are set
+  // and after scroll box height is set so any vertical scroll bar will have
+  // been created.
+  for PathInfoBox in fPathInfoBoxes do
+    PathInfoBox.Width := sbPaths.ClientWidth - 2 * PathInfoBox.Left;
+
   inherited;
 end;
 
@@ -259,70 +274,150 @@ begin
   ViewConfigFile(TAppInfo.UserConfigFileName, sTitle);
 end;
 
+procedure TAboutDlg.cbCollectionChange(Sender: TObject);
+begin
+  DisplayCollectionInfo(fCollList.Collection(cbCollection.ItemIndex));
+end;
+
 procedure TAboutDlg.ConfigForm;
 
   //  Creates and initialises a custom path information control with given
   //  caption, path and tab order.</summary>
   function CreatePathInfoBox(const Caption, Path: string;
     const TabOrder: Integer): TPathInfoBox;
+  const
+    MarginWidth = 8;
   begin
-    Result := TPathInfoBox.CreateParented(tsPaths.Handle);
-    Result.Parent := tsPaths;
-    Result.SetBounds(8, 8, tsPaths.ClientWidth - 16, 0);
+    Result := TPathInfoBox.CreateParented(sbPaths.Handle);
+    Result.Parent := sbPaths;
+    Result.SetBounds(MarginWidth, MarginWidth, sbPaths.ClientWidth - 2 * MarginWidth, 0);
     Result.Caption := Caption;
     Result.Path := Path;
     Result.TabOrder := TabOrder;
   end;
 
+var
+  Collection: TCollection;
+  TabIdx: Integer;
 resourcestring
   // Captions for custom controls
   sInstallPathGpCaption = 'Install Directory';
-  sMainDBPathGpCaption = 'Main Database Directory';
-  sUserDBPathGpCaption = 'User Database Directory';
+  sCollectionPathGpCaption = '%s Collection Directory';
 begin
   inherited;
-  // Create meta data object for main database
-  fMetaData := TMainDBMetaDataFactory.MainDBMetaDataInstance;
   // Creates required custom controls
-  fInstallPathGp := CreatePathInfoBox(
-    sInstallPathGpCaption, TAppInfo.AppExeDir, 0
+  TabIdx := 0;
+  fPathInfoBoxes.Add(
+    CreatePathInfoBox(sInstallPathGpCaption, TAppInfo.AppExeDir, 1)
   );
-  fMainDBPathGp := CreatePathInfoBox(
-    sMainDBPathGpCaption, TAppInfo.AppDataDir, 1
-  );
-  fUserDBPathGp := CreatePathInfoBox(
-    sUserDBPathGpCaption, TAppInfo.UserDataDir, 2
-  );
-  btnViewAppConfig.TabOrder := fUserDBPathGp.TabOrder + 1;
-  btnViewUserConfig.TabOrder := btnViewAppConfig.TabOrder + 1;
+  for Collection in TCollections.Instance do
+  begin
+    Inc(TabIdx);
+    fPathInfoBoxes.Add(
+      CreatePathInfoBox(
+        Format(sCollectionPathGpCaption, [Collection.Name]),
+        Collection.Location.Directory,
+        TabIdx
+      )
+    );
+  end;
+  // Load collections into combo box & select default collection
+  fCollList.ToStrings(cbCollection.Items);
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  DisplayCollectionInfo(fCollList.Collection(cbCollection.ItemIndex));
+  // Set collections treeview and paths scrollbox background colours
+  tvCollectionInfo.Color := ThemeServicesEx.GetTabBodyColour;
+  sbPaths.Color := ThemeServicesEx.GetTabBodyColour;
   // Load content into HTML frames
   InitHTMLFrames;
 end;
 
-function TAboutDlg.ContribListHTML(ContribList: IStringList):
-  string;
-resourcestring
-  // Error string used when contributor file not available
-  sNoContributors = 'No contributors list available. Database may be corrupt';
+procedure TAboutDlg.DisplayCollectionInfo(ACollection: TCollection);
+
+  function AddHeading(const AHeading: string): TTreeNode;
+  begin
+    Result := tvCollectionInfo.Items.AddChild(nil, AHeading);
+  end;
+
+  procedure AddChild(const AParentNode: TTreeNode; const AData: string);
+  begin
+    tvCollectionInfo.Items.AddChild(AParentNode, AData);
+  end;
+
+  procedure AddItem(const AHeading, AData: string);
+  var
+    HeadingNode: TTreeNode;
+  begin
+    HeadingNode := AddHeading(AHeading);
+    AddChild(HeadingNode, AData);
+  end;
+
+  procedure AddItems(const AHeading: string; const AData: IStringList);
+  var
+    HeadingNode: TTreeNode;
+    DataItem: string;
+  begin
+    HeadingNode := AddHeading(AHeading);
+    for DataItem in AData do
+      AddChild(HeadingNode, DataItem);
+  end;
+
 var
-  Contributor: string;          // name of a contributor
-  DivAttrs: IHTMLAttributes;    // attributes of div tag
+  MetaData: IDBMetaData;
+  Capabilities: TMetaDataCapabilities;
+  HeadingNode: TTreeNode;
+resourcestring
+  sVersionHeading = 'Version';
+  sLicenseHeading = 'License';
+  sCopyrightHeading = 'Copyright';
+  sContributorsHeading = 'Contributors';
+  sTestersHeading = 'Testers';
+  sNoMetaData = 'No information available for this collection.';
 begin
-  Result := '';
-  if ContribList.Count > 0 then
-  begin
-    for Contributor in ContribList do
-      Result := Result
-        + THTML.CompoundTag('div', THTML.Entities(Contributor))
-        + EOL;
-  end
-  else
-  begin
-    // List couldn't be found: display warning message
-    DivAttrs := THTMLAttributes.Create('class', 'warning');
-    Result := THTML.CompoundTag(
-      'div', DivAttrs, THTML.Entities(sNoContributors)
-    );
+  tvCollectionInfo.Items.BeginUpdate;
+  try
+    tvCollectionInfo.Items.Clear;
+    MetaData := TMetaDataFactory.CreateInstance(ACollection);
+    Capabilities := MetaData.GetCapabilities;
+    if Capabilities <> [] then
+    begin
+      if mdcVersion in Capabilities then
+        AddItem(sVersionHeading, MetaData.GetVersion);
+      if mdcLicense in Capabilities then
+      begin
+        HeadingNode := AddHeading(sLicenseHeading);
+        AddChild(
+          HeadingNode,
+          StrIf(
+            MetaData.GetLicenseInfo.Name <> '',
+            MetaData.GetLicenseInfo.Name,
+            MetaData.GetLicenseInfo.SPDX
+          )
+        );
+        AddChild(HeadingNode, MetaData.GetLicenseInfo.URL);
+      end;
+      if mdcCopyright in Capabilities then
+      begin
+        HeadingNode := AddHeading(sCopyrightHeading);
+        AddChild(HeadingNode, MetaData.GetCopyrightInfo.Date);
+        AddChild(HeadingNode, MetaData.GetCopyrightInfo.Holder);
+        AddChild(HeadingNode, MetaData.GetCopyrightInfo.HolderURL);
+      end;
+      if mdcContributors in Capabilities then
+      begin
+        AddItems(sContributorsHeading, MetaData.GetContributors);
+      end;
+      if mdcTesters in Capabilities then
+        AddItems(sTestersHeading, MetaData.GetTesters);
+    end
+    else
+    begin
+      AddHeading(sNoMetaData);
+    end;
+    tvCollectionInfo.FullExpand;
+    tvCollectionInfo.Items[0].MakeVisible;
+  finally
+    tvCollectionInfo.Items.EndUpdate;
   end;
 end;
 
@@ -341,17 +436,17 @@ end;
 procedure TAboutDlg.FormCreate(Sender: TObject);
 begin
   inherited;
+  fCollList := TCollectionListAdapter.Create;
+  fPathInfoBoxes := TList<TPathInfoBox>.Create;
   frmTitle.OnBuildCSS := UpdateTitleCSS;
-  frmProgram.OnBuildCSS := UpdateDetailCSS;
-  frmDatabase.OnBuildCSS := UpdateDetailCSS;
+  frmProgram.OnBuildCSS := UpdateProgramTabCSS;
 end;
 
 procedure TAboutDlg.FormDestroy(Sender: TObject);
 begin
   inherited;
-  fInstallPathGp.Free;
-  fMainDBPathGp.Free;
-  fUserDBPathGp.Free;
+  fPathInfoBoxes.Free;
+  fCollList.Free;
 end;
 
 procedure TAboutDlg.HTMLEventHandler(Sender: TObject;
@@ -416,105 +511,8 @@ procedure TAboutDlg.InitHTMLFrames;
     );
   end;
 
-  // Initialises and loads HTML into database frame.
-  procedure InitDatabaseFrame;
-  begin
-    // Ensure browser loads page so we can process it
-    pcDetail.ActivePage := tsDatabase;
-
-    frmDatabase.Initialise(
-      'dlg-about-database-tplt.html',
-      procedure(Tplt: THTMLTemplate)
-      var
-        IsDBAvalable: Boolean;
-        IsMetaDataAvailable: Boolean;
-        IsLicenseInfoAvailable: Boolean;
-
-        function DBVersion: string;
-        var
-          Ver: TVersionNumber;
-        begin
-          Ver := fMetaData.GetVersion;
-          if Ver.V1 = 1 then
-            Result := '1'
-          else
-            Result := Ver;
-        end;
-
-      begin
-        // Resolve conditionally displayed block placeholders
-//        IsDBAvalable := Database.Snippets.Count(False) > 0;
-        // check if DelphiDabbler Code Snippets Collection is in use
-        IsDBAvalable := not Database.Snippets.IsEmpty(
-          TCollectionID.__TMP__MainDBCollectionID
-        );
-        IsMetaDataAvailable := fMetaData.IsSupportedVersion
-          and not fMetaData.IsCorrupt;
-        IsLicenseInfoAvailable := IsMetaDataAvailable
-          and (fMetaData.GetLicenseInfo.Name <> '')
-          and (fMetaData.GetCopyrightInfo.Date <> '')
-          and (fMetaData.GetCopyrightInfo.Holder <> '');
-        Tplt.ResolvePlaceholderHTML(
-          'DBAvailable', TCSS.BlockDisplayProp(IsDBAvalable)
-        );
-        Tplt.ResolvePlaceholderHTML(
-          'DBNotAvailable', TCSS.BlockDisplayProp(not IsDBAvalable)
-        );
-        Tplt.ResolvePlaceholderHTML(
-          'MetaDataAvailable', TCSS.BlockDisplayProp(IsMetaDataAvailable)
-        );
-        Tplt.ResolvePlaceholderHTML(
-          'MetaDataNotAvailable', TCSS.BlockDisplayProp(not IsMetaDataAvailable)
-        );
-        Tplt.ResolvePlaceholderHTML(
-          'LicenseInfoAvailable', TCSS.BlockDisplayProp(IsLicenseInfoAvailable)
-        );
-        Tplt.ResolvePlaceholderHTML(
-          'LicenseInfoAvailableInline',
-          TCSS.InlineDisplayProp(IsLicenseInfoAvailable)
-        );
-        Tplt.ResolvePlaceholderHTML(
-          'LicenseInfoNotAvailable',
-          TCSS.BlockDisplayProp(not IsLicenseInfoAvailable)
-        );
-
-        // Resolve content placeholders
-        Tplt.ResolvePlaceholderText(
-          'CopyrightYear', fMetaData.GetCopyrightInfo.Date
-        );
-        Tplt.ResolvePlaceholderText(
-          'CopyrightHolders', fMetaData.GetCopyrightInfo.Holder
-        );
-        Tplt.ResolvePlaceholderHTML(
-          'DBLicense',
-          StrIf(
-            fMetaData.GetLicenseInfo.URL <> '',
-            THTML.CompoundTag(
-              'a',
-              THTMLAttributes.Create([
-                THTMLAttribute.Create('href', fMetaData.GetLicenseInfo.URL),
-                THTMLAttribute.Create('class', 'external-link')
-              ]),
-              THTML.Entities(fMetaData.GetLicenseInfo.Name)
-            ),
-            THTML.Entities(fMetaData.GetLicenseInfo.Name)
-          )
-        );
-        Tplt.ResolvePlaceholderHTML(
-          'ContribList', ContribListHTML(fMetaData.GetContributors)
-        );
-        Tplt.ResolvePlaceholderHTML(
-          'TesterList', ContribListHTML(fMetaData.GetTesters)
-        );
-        Tplt.ResolvePlaceholderText('Version', DBVersion);
-      end
-    );
-  end;
-  // ---------------------------------------------------------------------------
-
 begin
   InitTitleFrame;
-  InitDatabaseFrame;
   InitProgramFrame;
 end;
 
@@ -525,7 +523,7 @@ begin
     pcDetail.SetFocus;
 end;
 
-procedure TAboutDlg.UpdateDetailCSS(Sender: TObject;
+procedure TAboutDlg.UpdateProgramTabCSS(Sender: TObject;
   const CSSBuilder: TCSSBuilder);
 var
   ContentFont: TFont; // font used for content
@@ -546,18 +544,12 @@ begin
   end;
   // Put border round scroll box
   CSSBuilder.AddSelector('.scrollbox')
-    .AddProperty(UCSSUtils.TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
-  // Set colours and font style of contributors and testers headings
-  CSSBuilder.AddSelector('.contrib-head, .tester-head')
-    .AddProperty(TCSS.BackgroundColorProp(clBtnFace))
-    .AddProperty(TCSS.ColorProp(clBtnText))
-    .AddProperty(TCSS.FontWeightProp(cfwBold));
+    .AddProperty(UCSSUtils.TCSS.BorderProp(cssAll, 1, cbsSolid, clBtnShadow));
 end;
 
 procedure TAboutDlg.UpdateTitleCSS(Sender: TObject;
   const CSSBuilder: TCSSBuilder);
 begin
-  // Set body colour, and put border round it
   CSSBuilder.Selectors['body']
     .AddProperty(TCSS.BackgroundColorProp(clWindow))
     .AddProperty(TCSS.PaddingProp(4));

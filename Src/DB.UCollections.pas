@@ -178,6 +178,17 @@ type
       fLocation: TCollectionLocation;
       fCollectionFormatKind: TCollectionFormatKind;
   public
+    type
+      TComparer = class(TInterfacedObject,
+        IComparer<TCollection>, IEqualityComparer<TCollection>
+      )
+      public
+        function Compare(const Left, Right: TCollection): Integer;
+        function Equals(const Left, Right: TCollection): Boolean;
+          reintroduce;
+        function GetHashCode(const Value: TCollection): Integer;
+          reintroduce;
+      end;
     ///  <summary>Creates a collection record.</summary>
     ///  <param name="AUID"><c>TCollectionID</c> [in] Unique ID of the
     ///  collection. Must not be null.</param>
@@ -724,6 +735,23 @@ begin
   for Idx := Low(LookupTable) to High(LookupTable) do
     if LookupTable[Idx].Kind = AKind then
       Exit(Idx);
+end;
+
+{ TCollection.TComparer }
+
+function TCollection.TComparer.Compare(const Left, Right: TCollection): Integer;
+begin
+  Result := TCollectionID.Compare(Left.UID, Right.UID);
+end;
+
+function TCollection.TComparer.Equals(const Left, Right: TCollection): Boolean;
+begin
+  Result := Left.UID = Right.UID;
+end;
+
+function TCollection.TComparer.GetHashCode(const Value: TCollection): Integer;
+begin
+  Result := Value.UID.Hash;
 end;
 
 end.
