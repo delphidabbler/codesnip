@@ -500,7 +500,6 @@ type
     ///  position is permitted and blocks the move if not.</summary>
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
-    procedure ActNonEmptyUserDBUpdate(Sender: TObject);
   strict private
     var
       ///  <summary>Object that notifies user-initiated events by triggering
@@ -939,13 +938,6 @@ end;
 procedure TMainForm.ActNonEmptyDBUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := not Database.Snippets.IsEmpty;
-end;
-
-procedure TMainForm.ActNonEmptyUserDBUpdate(Sender: TObject);
-begin
-  (Sender as TAction).Enabled := not Database.Snippets.IsEmpty(
-    TCollectionID.__TMP__UserDBCollectionID
-  );
 end;
 
 procedure TMainForm.ActOverviewTabExecute(Sender: TObject);

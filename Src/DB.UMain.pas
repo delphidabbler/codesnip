@@ -478,9 +478,10 @@ type
       {Gets list of all snippets in database.
         @return Required list.
       }
+
+    ///  <summary>Load database from all available collections.</summary>
     procedure Load;
-      {Loads object's data from main and user defined databases.
-      }
+
     procedure Clear;
       {Clears the object's data.
       }
@@ -623,9 +624,11 @@ type
       {Checks if user database has been updated since last save.
         @return True if database has been updated, False otherwise.
       }
+
+    ///  <summary>Saves snippets from database to their respective collections.
+    ///  </summary>
     procedure Save;
-      {Saves user defined snippets and all categories to user database.
-      }
+
   end;
 
   ///  <summary>Class that provides data about the categories and snippets in
@@ -1072,54 +1075,32 @@ procedure TDatabase.Load;
   {Loads object's data from main and user defined databases.
   }
 var
-  Factory: IDBDataItemFactory;  // object reader uses to create snippets objects
-  MainCollectionIdx: Integer;
-  Loader: IDataFormatLoader;
-  Collections: TCollections;
+  DataItemFactory: IDBDataItemFactory;
+  CollectionLoader: IDataFormatLoader;
   Collection: TCollection;
   CatLoader: IGlobalCategoryLoader;
 begin
+  // Clear the database
   Clear;
-
   // Create factory that reader calls into to create category and snippet
   // objects. This is done to keep updating of snippet and categories private
   // to this unit
-  Factory := TDBDataItemFactory.Create;
-
-  Collections := TCollections.Instance;
-
-  {TODO: -cVault: The following code is a kludge to maintain compatibility with
-          CodeSnip 4. In CodeSnip Vault we should iterate over all collections
-          creating a loader for each one. }
-
+  DataItemFactory := TDBDataItemFactory.Create;
   try
-    MainCollectionIdx := TCollections.Instance.IndexOfID(
-      TCollectionID.__TMP__MainDBCollectionID
-    );
-    if MainCollectionIdx >= 0 then
+    // Load all collections
+    for Collection in TCollections.Instance do
     begin
-      Collection := Collections[MainCollectionIdx];
-      Loader := TDatabaseIOFactory.CreateDBLoader(Collection);
-      if Assigned(Loader) then
-        Loader.Load(fSnippets, fCategories, Factory);
+      CollectionLoader := TDatabaseIOFactory.CreateDBLoader(Collection);
+      if Assigned(CollectionLoader) then
+        CollectionLoader.Load(fSnippets, fCategories, DataItemFactory);
     end;
-
-    // Load default collection
-    Collection := Collections.Default;
-    Loader := TDatabaseIOFactory.CreateDBLoader(Collection);
-    Assert(Assigned(Loader),
-      ClassName + '.Load: No loader for default collection');
-    Loader.Load(fSnippets, fCategories, Factory);
-
     // Read categories from categories file to get any empty categories not
     // created by format loaders
     CatLoader := TDatabaseIOFactory.CreateGlobalCategoryLoader;
-    CatLoader.Load(fCategories, Factory);
-
+    CatLoader.Load(fCategories, DataItemFactory);
     // Ensure that the default category is present, if it's not already loaded
     if not Assigned(fCategories.Find(TCategory.DefaultID)) then
       fCategories.Add(TCategoryEx.CreateDefault);
-
     fUpdated := False;
   except
     // If an exception occurs clear the database
@@ -1140,47 +1121,24 @@ procedure TDatabase.Save;
   {Saves user defined snippets and all categories to user database.
   }
 var
-  MainProvider, DefaultProvider: IDBDataProvider;
-  MainCollectionIdx: Integer;
-  Saver: IDataFormatSaver;
-  Collections: TCollections;
+  Provider: IDBDataProvider;
+  CollectionSaver: IDataFormatSaver;
   Collection: TCollection;
   CatSaver: IGlobalCategorySaver;
 begin
   // Save categories
   CatSaver := TDatabaseIOFactory.CreateGlobalCategorySaver;
   CatSaver.Save(fCategories);
-
-  Collections := TCollections.Instance;
-
-  {TODO: -cVault: The following code is a kludge to maintain compatibility with
-          CodeSnip 4. In CodeSnip Vault we should iterate over all collections
-          creating a writer for each one. }
-
-  // *** The following code is a stub for later versions.
-  MainCollectionIdx := TCollections.Instance.IndexOfID(
-    TCollectionID.__TMP__MainDBCollectionID
-  );
-  if MainCollectionIdx >= 0 then
+  // Save all collections
+  for Collection in TCollections.Instance do
   begin
-    Collection := Collections[MainCollectionIdx];
-    MainProvider := TCollectionDataProvider.Create(
+    Provider := TCollectionDataProvider.Create(
       Collection.UID, fSnippets, fCategories
     );
-    Saver := TDatabaseIOFactory.CreateDBSaver(Collection);
-    if Assigned(Saver) then
-      Saver.Save(fSnippets, fCategories, MainProvider);
+    CollectionSaver := TDatabaseIOFactory.CreateDBSaver(Collection);
+    if Assigned(CollectionSaver) then
+      CollectionSaver.Save(fSnippets, fCategories, Provider);
   end;
-
-  Collection := Collections.Default;
-  DefaultProvider := TCollectionDataProvider.Create(
-    Collection.UID, fSnippets, fCategories
-  );
-  Saver := TDatabaseIOFactory.CreateDBSaver(Collection);
-  Assert(Assigned(Saver),
-    ClassName + '.Save: No saver for default collection');
-  Saver.Save(fSnippets, fCategories, DefaultProvider);
-
   fUpdated := False;
 end;
 

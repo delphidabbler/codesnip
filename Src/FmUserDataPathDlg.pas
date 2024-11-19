@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2013-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a dialogue box that can be used to move the user database to a
+ * Implements a dialogue box that can be used to move collection data to a
  * different directory.
 }
 
@@ -18,66 +18,67 @@ interface
 
 uses
   // Delphi
-  SysUtils, Forms, Classes, ActnList, StdCtrls, Controls, ExtCtrls,
+  SysUtils,
+  Forms,
+  Classes,
+  ActnList,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
   // Project
-  FmGenericViewDlg, FrProgress, UBaseObjects,
-  UControlStateMgr, UUserDBMove;
+  FmGenericViewDlg,
+  FrProgress,
+  UBaseObjects,
+  UCollectionListAdapter,
+  UControlStateMgr,
+  UUserDBMove;
 
 type
-  ///  <summary>Dialogue box that is used to move the user database to a new
-  ///  directory or to restore a previously moved database to its default
+  ///  <summary>Dialogue box that is used to move the collection data to a new
   ///  directory.</summary>
   ///  <remarks>IMPORTANT: This dialogue box is for use only with the standard
   ///  edition of CodeSnip. It MUST NOT be displayed from the portable edition.
   ///  </remarks>
   TUserDataPathDlg = class(TGenericViewDlg, INoPublicConstruct)
     actBrowse: TAction;
-    actDefaultPath: TAction;
     actMove: TAction;
     alDlg: TActionList;
-    btnBrowse: TButton;
-    btnDefaultPath: TButton;
-    btnMove: TButton;
-    gbMove: TGroupBox;
-    gbRestore: TGroupBox;
-    lblExplainDefaultPath: TLabel;
-    lblExplainMove: TLabel;
     lblInstructions: TLabel;
-    lblPath: TLabel;
     lblWarning: TLabel;
-    edPath: TEdit;
     frmProgress: TProgressFrame;
+    lblPath: TLabel;
+    lblExplainMove: TLabel;
+    btnMove: TButton;
+    edPath: TEdit;
+    btnBrowse: TButton;
+    lblCollection: TLabel;
+    cbCollection: TComboBox;
     ///  <summary>Dispays Browse For Folder dialogue box and copies any chosen
     ///  folder to the edPath edit control.</summary>
     procedure actBrowseExecute(Sender: TObject);
-    ///  <summary>Moves user database back to default directory and records the
-    ///  changed path.</summary>
-    ///  <exception>Raises exception if default path can't be used for any
-    ///  reason or if there was an error copying the database.</exception>
-    procedure actDefaultPathExecute(Sender: TObject);
-    ///  <summary>Enables / disables Default Path action according to whether
-    ///  database is already in default path.</summary>
-    procedure actDefaultPathUpdate(Sender: TObject);
-    ///  <summary>Moves user database to path entered by user and records the
-    ///  changed path.</summary>
-    ///  <exception>Raises exception given path can't be used for any reason or
-    ///  if there was an error copying the database.</exception>
+    ///  <summary>Moves the chosen collection to the path entered by the user
+    ///  and records the changed path.</summary>
+    ///  <exception>Raises exception if the given path can't be used for any
+    ///  reason or if there was an error copying the collection.</exception>
     procedure actMoveExecute(Sender: TObject);
     ///  <summary>Enables / disables Move action according to whether a suitable
     ///  path has been entered by user.</summary>
     procedure actMoveUpdate(Sender: TObject);
-    ///  <summary>Constructs and initialises form's owned object.</summary>
+    ///  <summary>Constructs and initialises form's owned objects.</summary>
     procedure FormCreate(Sender: TObject);
     ///  <summary>Destroys form's owned objects.</summary>
     procedure FormDestroy(Sender: TObject);
   strict private
     var
-      ///  <summary>Object that moves the user database to a new location.
+      ///  <summary>Object that moves a collection's data to a new location.
       ///  </summary>
       fMover: TUserDBMove;
       ///  <summary>Object used to disable and enable all controls on the form.
       ///  </summary>
       fControlStateMgr: TControlStateMgr;
+      ///  <summary>Object used to provide and interogate a sorted list of
+      ///  collection names displated in <c>cbCollection</c>.</summary>
+      fCollList: TCollectionListAdapter;
     ///  <summary>Sets visibility of all child controls of a parent control.
     ///  </summary>
     ///  <param name="ParentCtrl">TWinControl [in] Parent of affected controls.
@@ -85,31 +86,33 @@ type
     ///  <param name="Show">Boolean [in] Flag indicating required visibility.
     ///  Pass True to show the controls and False to hide them.</param>
     procedure SetVisibility(const ParentCtrl: TWinControl; const Show: Boolean);
-    ///  <summary>Performs the database move to the directory given by NewDir,
-    ///  displaying a progress base located over the given host window.
-    ///  </summary>
+    ///  <summary>Move the chosen collection data to the directory given by
+    ///  <c>NewDir</c>, displaying a progress base located over the given host
+    ///  window.</summary>
     ///  <remarks>The new directory is checked to be empty and the user is asked
     ///  for confirmation.</remarks>
     procedure DoMove(const NewDir: string; const ProgressHostCtrl: TWinControl);
-    ///  <summary>Handles the database mover object's OnCopyFile event by
-    ///  updating the progress frame.</summary>
+    ///  <summary>Handles the collection data mover object's <c>OnCopyFile</c>
+    ///  event by updating the progress frame.</summary>
     procedure CopyFileHandler(Sender: TObject; const Percent: Byte);
-    ///  <summary>Handles the database mover object's OnDeleteFile event by
-    ///  updating the progress frame.</summary>
+    ///  <summary>Handles the collectio data mover object's <c>OnDeleteFile</c>
+    ///  event by updating the progress frame.</summary>
     procedure DeleteFileHandler(Sender: TObject; const Percent: Byte);
-    ///  <summary>Gets directory entered in edPath edit control.</summary>
-    ///  <remarks>Edit control contents are trimmed of spaces and any trailing
-    ///  path delimiter.</remarks>
+    ///  <summary>Gets the directory entered in the <c>edPath</c> edit control.
+    ///  </summary>
+    ///  <remarks>The edit control contents are trimmed of spaces and any
+    ///  trailing path delimiter.</remarks>
     function NewDirFromEditCtrl: string;
-    ///  <summary>Handles given exception, converting expected exceptions into
-    ///  ECodeSnip and re-raising all other unchanged.</summary>
+    ///  <summary>Handles the given exception <c>E</c>, converting expected
+    ///  exceptions into <c>ECodeSnip</c> exceptions and re-raising all other
+    ///  exceptions unchanged.</summary>
     ///  <exception>Always raises a new exception.</exception>
     ///  <remarks>This method is designed to handle exceptions raised when the
-    ///  user database is moved.</remarks>
+    ///  collection data is moved.</remarks>
     procedure HandleException(const E: Exception);
   strict protected
-    ///  <summary>Sets controls with ParentFont=False to use system default
-    ///  fonts, preserving font styles for those fonts that need them.</summary>
+    ///  <summary>Initialises the form's controls and associated objects.
+    ///  </summary>
     procedure ConfigForm; override;
     ///  <summary>Arranges form's controls and sizes the dialogue box to fit.
     ///  </summary>
@@ -117,8 +120,8 @@ type
   public
     ///  <summary>Displays the dialogue box aligned over the given owner
     ///  control.</summary>
-    ///  <exception>Raises EBug if called by the portable edition of CodeSnip.
-    ///  </exception>
+    ///  <exception>Raises <c>EBug</c> if called from the portable edition of
+    ///  CodeSnip.</exception>
     class procedure Execute(AOwner: TComponent);
   end;
 
@@ -128,10 +131,17 @@ implementation
 
 uses
   // Delphi
-  IOUtils, 
+  IOUtils,
   // Project
-  UAppInfo, UBrowseForFolderDlg, UCtrlArranger, UExceptions, UFontHelper, 
-  UMessageBox, UStrUtils, UStructs;
+  DB.UCollections,
+  UAppInfo,
+  UBrowseForFolderDlg,
+  UCtrlArranger,
+  UExceptions,
+  UFontHelper,
+  UMessageBox,
+  UStrUtils,
+  UStructs;
 
 {$R *.dfm}
 
@@ -141,7 +151,7 @@ procedure TUserDataPathDlg.actBrowseExecute(Sender: TObject);
 var
   Dlg: TBrowseForFolderDlg; // browse for folder standard dialogue box
 resourcestring
-  sDlgTitle = 'Choose Database Directory';
+  sDlgTitle = 'Choose Collection Data Directory';
   sDlgHeading = 'Choose an empty directory or create a new one';
 begin
   Dlg := TBrowseForFolderDlg.Create(nil);
@@ -156,27 +166,18 @@ begin
   end;
 end;
 
-procedure TUserDataPathDlg.actDefaultPathExecute(Sender: TObject);
-begin
-  DoMove(TAppInfo.DefaultUserDataDir, gbRestore);
-end;
-
-procedure TUserDataPathDlg.actDefaultPathUpdate(Sender: TObject);
-begin
-  actDefaultPath.Enabled :=
-    not StrSameText(TAppInfo.UserDataDir, TAppInfo.DefaultUserDataDir)
-    and Self.Enabled;
-end;
-
 procedure TUserDataPathDlg.actMoveExecute(Sender: TObject);
 begin
-  DoMove(NewDirFromEditCtrl, gbMove);
+  DoMove(NewDirFromEditCtrl, Self);
 end;
 
 procedure TUserDataPathDlg.actMoveUpdate(Sender: TObject);
 begin
   actMove.Enabled := (NewDirFromEditCtrl <> '')
-    and not StrSameText(NewDirFromEditCtrl, TAppInfo.UserDataDir)
+    and not StrSameText(
+      NewDirFromEditCtrl,
+      fCollList.Collection(cbCollection.ItemIndex).Location.Directory
+    )
     and Self.Enabled;
 end;
 
@@ -186,37 +187,56 @@ begin
 
   pnlBody.ClientWidth := TCtrlArranger.TotalControlWidth(pnlBody);
 
-  TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(lblPath, 4), [edPath, btnBrowse]
+  TCtrlArranger.AlignLefts(
+    [
+      lblInstructions, lblWarning, lblCollection, cbCollection, lblPath, edPath,
+      lblExplainMove
+    ],
+    0
   );
-  TCtrlArranger.MoveBelow([edPath, btnBrowse], lblExplainMove, 8);
-  TCtrlArranger.MoveBelow(lblExplainMove, btnMove, 8);
-  gbMove.ClientHeight := TCtrlArranger.TotalControlHeight(gbMove) + 8;
-
-  TCtrlArranger.MoveBelow(lblExplainDefaultPath, btnDefaultPath, 12);
-  gbRestore.ClientHeight := TCtrlArranger.TotalControlHeight(gbRestore) + 12;
-
+  // Row 1
+  lblInstructions.Top := 0;
+  lblInstructions.Width := pnlBody.ClientWidth;
+  // Row 2
   TCtrlArranger.MoveBelow(lblInstructions, lblWarning, 8);
-  TCtrlArranger.MoveBelow(lblWarning, gbMove, 12);
-  TCtrlArranger.MoveBelow(gbMove, gbRestore, 12);
+  lblWarning.Width := pnlBody.ClientWidth;
+  // Row 3
+  TCtrlArranger.MoveBelow(lblWarning, lblCollection, 12);
+  // Row 4
+  TCtrlArranger.MoveBelow(lblCollection, cbCollection, 6);
+  cbCollection.Width := pnlBody.ClientWidth;
+  // Row 5
+  TCtrlArranger.MoveBelow(cbCollection, lblPath, 12);
+  // Row 6
+  TCtrlArranger.AlignRights([btnBrowse], pnlBody.ClientWidth);
+  edPath.Width := btnBrowse.Left - 6 - edPath.Left;
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(lblPath, 6), [edPath, btnBrowse]
+  );
+  // Row 7
+  TCtrlArranger.MoveBelow([edPath, btnBrowse], lblExplainMove, 12);
+  lblExplainMove.Width := pnlBody.ClientWidth;
+  // Row 8
+  TCtrlArranger.MoveBelow(lblExplainMove, btnMove, 12);
+  btnMove.Left := (pnlBody.Width - btnMove.Width) div 2;
 
   pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 8;
+
   inherited;
 end;
 
 procedure TUserDataPathDlg.ConfigForm;
 begin
   inherited;
-  TFontHelper.SetDefaultBaseFonts([
-    gbMove.Font, gbRestore.Font, lblWarning.Font]
-  );
+  TFontHelper.SetDefaultBaseFonts([lblWarning.Font]);
   TFontHelper.SetDefaultFonts([
     lblPath.Font, edPath.Font, lblExplainMove.Font,
-    btnBrowse.Font, btnMove.Font, lblExplainDefaultPath.Font,
-    btnDefaultPath.Font
+    btnBrowse.Font, btnMove.Font
   ]);
   frmProgress.Visible := False;
   frmProgress.Range := TRange.Create(0, 100);
+  fCollList.ToStrings(cbCollection.Items);
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
 end;
 
 procedure TUserDataPathDlg.CopyFileHandler(Sender: TObject;
@@ -245,7 +265,7 @@ procedure TUserDataPathDlg.DoMove(const NewDir: string;
   const ProgressHostCtrl: TWinControl);
 resourcestring
   sNonEmptyDir = 'The specified directory is not empty.';
-  sConfirmMsg = 'Are you sure you want to move the database?';
+  sConfirmMsg = 'Are you sure you want to move the collection data?';
 begin
   if TDirectory.Exists(NewDir)
     and not TDirectory.IsEmpty(NewDir) then
@@ -258,7 +278,9 @@ begin
     SetVisibility(ProgressHostCtrl, False);
     frmProgress.Show(ProgressHostCtrl);
     try
-      fMover.MoveTo(NewDir);
+      fMover.MoveTo(
+        fCollList.Collection(cbCollection.ItemIndex), NewDir
+      );
     except
       on E: Exception do
         HandleException(E);
@@ -278,6 +300,7 @@ var
 {$ENDIF}
 begin
   {$IFDEF PORTABLE}
+  {TODO -cVault: Permit this, but restrict to sub-dirs of install dir}
   raise EBug.Create(ClassName + '.Execute: Call forbidden in portable edition');
   {$ELSE}
   Dlg := InternalCreate(AOwner);
@@ -296,10 +319,12 @@ begin
   fMover.OnCopyFile := CopyFileHandler;
   fMover.OnDeleteFile := DeleteFileHandler;
   fControlStateMgr := TControlStateMgr.Create(Self);
+  fCollList := TCollectionListAdapter.Create;
 end;
 
 procedure TUserDataPathDlg.FormDestroy(Sender: TObject);
 begin
+  fCollList.Free;
   fControlStateMgr.Free;
   fMover.Free;
   inherited;

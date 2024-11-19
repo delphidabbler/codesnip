@@ -12,11 +12,15 @@
 unit UUserDBBackup;
 
 
+{TODO -cRefactoring: Rename this unit/classes/methods: the names refer to the
+        CodeSnip 4 database structure but the code now works with collections}
+
 interface
 
 
 uses
   // Project
+  DB.UCollections,
   UFolderBackup;
 
 
@@ -29,9 +33,10 @@ type
   }
   TUserDBBackup = class sealed(TFolderBackup)
   strict private
-    const cFileID = SmallInt($DBAC);  // User database backup file ID
+    class function MakeFileID(const ACollection: TCollection): SmallInt;
   public
-    constructor Create(const BackupFile: string);
+    constructor Create(const BackupFile: string;
+      const ACollection: TCollection);
       {Class constructor. Sets up object to backup user database to a specified
       file.
         @param BackupFile [in] Name of backup file.
@@ -43,19 +48,35 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   UAppInfo;
 
 
 { TUserDBBackup }
 
-constructor TUserDBBackup.Create(const BackupFile: string);
+constructor TUserDBBackup.Create(const BackupFile: string;
+  const ACollection: TCollection);
   {Class constructor. Sets up object to backup user database to a specified
   file.
     @param BackupFile [in] Name of backup file.
   }
 begin
-  inherited Create(TAppInfo.UserDataDir, BackupFile, cFileID);
+  inherited Create(
+    ACollection.Location.Directory,
+    BackupFile,
+    MakeFileID(ACollection),
+    ACollection.UID.ToArray
+  );
+end;
+
+class function TUserDBBackup.MakeFileID(const ACollection: TCollection):
+  SmallInt;
+begin
+  // Backup file ID is $Fxxx where xxx is ordinal value of format kind.
+  // The $F indicates that the file is a backup of a collection data format.
+  Result := SmallInt($F000 or UInt16(Ord(ACollection.CollectionFormatKind)));
 end;
 
 end.

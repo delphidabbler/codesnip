@@ -19,6 +19,7 @@ interface
 uses
   // Delphi
   Generics.Collections,
+  Generics.Defaults,
   // Project
   IntfCommon,
   DB.UCollections;
@@ -37,6 +38,18 @@ type
     procedure SetKey(const AValue: string);
     procedure SetCollectionID(const AValue: TCollectionID);
   public
+    type
+      TComparer = class(TInterfacedObject,
+        IComparer<TSnippetID>, IEqualityComparer<TSnippetID>
+      )
+      public
+        function Compare(const Left, Right: TSnippetID): Integer;
+        function Equals(const Left, Right: TSnippetID): Boolean;
+          reintroduce;
+        function GetHashCode(const Value: TSnippetID): Integer;
+          reintroduce;
+      end;
+
     ///  <summary>Snippet's key.</summary>
     property Key: string read fKey write SetKey;
 
@@ -58,6 +71,9 @@ type
     ///  <returns>Integer. 0 if records are same, -ve if this record less than
     ///  SID or +ve if this record greater than SID.</returns>
     function CompareTo(const SID: TSnippetID): Integer;
+
+    ///  <summary>Returns the snippet ID's hash code.</summary>
+    function Hash: Integer;
 
     ///  <summary>Compares two snippet keys.</summary>
     ///  <param name="Left">string [in] First key.</param>
@@ -154,7 +170,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
+  SysUtils,
   // Project
   UStrUtils;
 
@@ -175,7 +191,6 @@ function TSnippetID.CompareTo(const SID: TSnippetID): Integer;
 begin
   Result := CompareKeys(Key, SID.Key);
   if Result = 0 then
-    // TODO -cNote: New comparison changes ordering (no problem tho!)
     Result := TCollectionID.Compare(CollectionID, SID.CollectionID);
 end;
 
@@ -189,6 +204,18 @@ end;
 class operator TSnippetID.Equal(const SID1, SID2: TSnippetID): Boolean;
 begin
   Result := SID1.CompareTo(SID2) = 0;
+end;
+
+function TSnippetID.Hash: Integer;
+var
+  PartialHash: Integer;
+  KeyBytes: TBytes;
+begin
+  // Hash is created from hash of CollectionID property combined with hash of
+  // Key property after converting to a byte array in UTF8 format.
+  PartialHash := fCollectionID.Hash;
+  KeyBytes := TEncoding.UTF8.GetBytes(fKey);
+  Result := BobJenkinsHash(KeyBytes[0], Length(KeyBytes), PartialHash);
 end;
 
 class operator TSnippetID.NotEqual(const SID1, SID2: TSnippetID): Boolean;
@@ -206,6 +233,23 @@ procedure TSnippetID.SetKey(const AValue: string);
 begin
   fKey := StrTrim(AValue);
   Assert(fKey <> '', 'TSnippetID.SetKey: Value is whitespace or empty');
+end;
+
+{ TSnippetID.TComparer }
+
+function TSnippetID.TComparer.Compare(const Left, Right: TSnippetID): Integer;
+begin
+  Result := Left.CompareTo(Right);
+end;
+
+function TSnippetID.TComparer.Equals(const Left, Right: TSnippetID): Boolean;
+begin
+  Result := Left = Right;
+end;
+
+function TSnippetID.TComparer.GetHashCode(const Value: TSnippetID): Integer;
+begin
+  Result := Value.Hash;
 end;
 
 { TSnippetIDList }
@@ -244,14 +288,7 @@ end;
 constructor TSnippetIDList.Create;
 begin
   inherited;
-  fList := TList<TSnippetID>.Create(
-    TDelegatedComparer<TSnippetID>.Create(
-      function(const Left, Right: TSnippetID): Integer
-      begin
-        Result := Left.CompareTo(Right);
-      end
-    )
-  );
+  fList := TList<TSnippetID>.Create(TSnippetID.TComparer.Create);
 end;
 
 destructor TSnippetIDList.Destroy;

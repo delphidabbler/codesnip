@@ -34,15 +34,9 @@
 
       <div>
 
-        <div style="<%TestingInfo%>">
-          <%TestingInfoImg%>
-        </div>
-
-        <div
+        <span
           id="editlink"
           class="option"
-          style="<%EditLink%>
-            padding:0;margin:0 0 0 8px;position:relative;float:right;"
         >
           <a
             id="editimglink"
@@ -55,17 +49,10 @@
             style="width:16px;height:16px;vertical-align:middle;"
             title="Edit Snippet"
           ></a>
-          <a
-            id="edittextlink"
-            class="command-link menu-item"
-            style="line-height: 150%;";
-            href="#"
-            onclick="<%EditEventHandler%>;return false;"
-          >Edit Snippet</a>
-        </div>
+        </span>
 
-        <h1 id="snippetname" class="<%SnippetCSSClass%>">
-          <%SnippetName%>
+        <h1 id="snippetname" class="heading">
+          <%SnippetName%><%TestingInfoImg%>
         </h1>
 
       </div>

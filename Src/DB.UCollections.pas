@@ -93,11 +93,6 @@ type
         function GetHashCode(const Value: TCollectionID): Integer;
           reintroduce;
       end;
-    const
-      {TODO -cCollections: remove DCSC_v2_ID and SWAG_v1_ID once there are no
-              built-in collections except Default}
-      DCSC_v2_ID: TGUID = '{9F3A4A8A-0A2B-4088-B7C9-AE1D32D3FF9A}';
-      SWAG_v1_ID: TGUID = '{ADA985E0-0929-4986-A3FE-B2C981D430F1}';
     constructor Create(const ABytes: TBytes); overload;
     constructor Create(const AStr: string); overload;
     constructor Create(const AGUID: TGUID); overload;
@@ -113,9 +108,6 @@ type
     class function Compare(Left, Right: TCollectionID): Integer; static;
     class operator Equal(Left, Right: TCollectionID): Boolean;
     class operator NotEqual(Left, Right: TCollectionID): Boolean;
-    {TODO -c__TMP__: remove following __TMP__*** methods}
-    class function __TMP__MainDBCollectionID: TCollectionID; static;
-    class function __TMP__UserDBCollectionID: TCollectionID; static;
   end;
 
   ECollectionID = class(ECodeSnip);
@@ -272,7 +264,7 @@ uses
   IOUtils,
   Math,
   // Project
-  UAppInfo,   // TODO -cVault: needed only for v4 emulation
+  UAppInfo,
   UStrUtils,
   UUtils;
 
@@ -472,19 +464,6 @@ begin
         TCollectionFormatKind.Native_v4
       )
     );
-  { TODO -cCollections: following line is for v4 main database compatibility
-            Remove when reduce to only one compulsory collection }
-  if not ContainsID(TCollectionID.__TMP__MainDBCollectionID) then
-    Add(
-      TCollection.Create(
-        TCollectionID.__TMP__MainDBCollectionID,
-        { TODO -cVault: change name - this text matches name used in CodeSnip
-                  v4}
-        'DelphiDabbler Code Snippets Database',
-        TCollectionLocation.Create(TAppInfo.AppDataDir),
-        TCollectionFormatKind.DCSC_v2
-      )
-    );
 end;
 
 procedure TCollections.Save;
@@ -601,16 +580,6 @@ end;
 function TCollectionID.ToHexString: string;
 begin
   Result := BytesToHexString(fID);
-end;
-
-class function TCollectionID.__TMP__MainDBCollectionID: TCollectionID;
-begin
-  Result := TCollectionID.Create(DCSC_v2_ID);
-end;
-
-class function TCollectionID.__TMP__UserDBCollectionID: TCollectionID;
-begin
-  Result := TCollectionID.Default;
 end;
 
 { TCollectionID.TComparer }

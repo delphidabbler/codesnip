@@ -170,10 +170,17 @@ pre {
 }
 
 .testing-img {
-  float: right;
   width: 16px;
   height: 16px;
   padding: 0;
-  margin: 2px 0 0 8px;
+  margin: 0 0 0 8px;
+  vertical-align: middle;
 }
 
+#editlink {
+  padding-top: 2px;
+  margin: 0;
+  float: right;
+  vertical-align: baseline;
+  text-align: right;
+}

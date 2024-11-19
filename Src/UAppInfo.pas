@@ -55,10 +55,6 @@ type
       {Returns the directory where CodeSnip stores the "database" files.
         @return Full path to database sub directory.
       }
-    class function UserDataDir: string;
-      {Returns the directory where CodeSnip stores the user's "database" files.
-        @return Full path to database sub directory.
-      }
     class function DefaultUserDataDir: string;
       {Returns the default directory where CodeSnip stores the uer's "database"
       files.
@@ -255,27 +251,6 @@ end;
 class function TAppInfo.UserConfigFileName: string;
 begin
   Result := UserAppDir + '\User.config';
-end;
-
-class function TAppInfo.UserDataDir: string;
-  {Returns the directory where CodeSnip stores the user's "database" files.
-    @return Full path to database sub directory.
-  }
-{$IFNDEF PORTABLE}
-var
-  Collections: TCollections;
-  Collection: TCollection;
-{$ENDIF}
-begin
-  {$IFNDEF PORTABLE}
-  Collections := TCollections.Instance;
-  Collection := Collections.GetCollection(TCollectionID.__TMP__UserDBCollectionID);
-  Result := Collection.Location.Directory;
-  if Result = '' then
-    Result := DefaultUserDataDir;
-  {$ELSE}
-  Result := DefaultUserDataDir;
-  {$ENDIF}
 end;
 
 class function TAppInfo.UserFavouritesFileName: string;

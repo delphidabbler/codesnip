@@ -20,12 +20,14 @@ uses
   SysUtils,
   Classes,
   XMLIntf,
+  Generics.Collections,
   // Project
   DB.UCategory,
   DB.USnippet,
   UBaseObjects,
   UEncodings,
   UIStringList,
+  USnippetIDs,
   UXMLDocHelper,
   UXMLDocumentEx;
 
@@ -103,6 +105,7 @@ type
   TCodeExporter = class(TNoPublicConstructObject)
   strict private
     var
+      fSnippetKeyMap: TDictionary<TSnippetID,string>;
       ///  <summary>List of snippets to be exported.</summary>
       fSnippets: TSnippetList;
       ///  <summary>Extended XML document object.</summary>
@@ -112,8 +115,11 @@ type
     ///  </summary>
     ///  <exception>An exception is always raised.</exception>
     procedure HandleException(const EObj: TObject);
-    ///  <summary>Returns a list of snippet names from snippets list.</summary>
-    function SnippetNames(const SnipList: TSnippetList): IStringList;
+    ///  <summary>Returns a list of snippet keys for each snippet in
+    ///  <c>SnipList</c>. Returned keys are found by looking up the new key
+    ///  corresponding to the snippet's original key in <c>fSnippetKeyMap</c>.
+    ///  </summary>
+    function SnippetKeys(const SnipList: TSnippetList): IStringList;
     ///  <summary>Writes a XML node that contains a list of pascal names.
     ///  </summary>
     ///  <param name="ParentNode">IXMLNode [in] Node under which this name list
@@ -180,7 +186,6 @@ uses
   DB.USnippetKind,
   UAppInfo,
   USnippetExtraHelper,
-  USnippetIDs,
   UStructs,
   UStrUtils,
   UXMLDocConsts;
@@ -198,6 +203,7 @@ const
 
 destructor TCodeExporter.Destroy;
 begin
+  fSnippetKeyMap.Free;
   fXMLDoc := nil;
   inherited;
 end;
@@ -254,19 +260,30 @@ begin
 end;
 
 constructor TCodeExporter.InternalCreate(const SnipList: TSnippetList);
+var
+  Snippet: TSnippet;
 begin
   inherited InternalCreate;
   fSnippets := SnipList;
+  fSnippetKeyMap := TDictionary<TSnippetID,string>.Create(
+    TSnippetID.TComparer.Create
+  );
+  // Create map of actual snippet ID to new unique key with default collection
+  for Snippet in SnipList do
+    fSnippetKeyMap.Add(
+      Snippet.ID,
+      (Database as IDatabaseEdit).GetUniqueSnippetKey(TCollectionID.Default)
+    );
 end;
 
-function TCodeExporter.SnippetNames(
-  const SnipList: TSnippetList): IStringList;
+function TCodeExporter.SnippetKeys(const SnipList: TSnippetList): IStringList;
 var
   Snippet: TSnippet;  // references each snippet in list
 begin
   Result := TIStringList.Create;
   for Snippet in SnipList do
-    Result.Add(Snippet.Key);
+    if fSnippetKeyMap.ContainsKey(Snippet.ID) then
+      Result.Add(fSnippetKeyMap[Snippet.ID]);
 end;
 
 procedure TCodeExporter.WriteProgInfo(const ParentNode: IXMLNode);
@@ -293,14 +310,13 @@ procedure TCodeExporter.WriteSnippet(const ParentNode: IXMLNode;
 var
   SnippetNode: IXMLNode; // new snippet node
 begin
-  // Create snippet node with attribute that specifies snippet key
+  // Create snippet node with attribute that specifies snippet key.
+  // Snippet is exported under a new, unique key within the Default collection.
+  // Since no collection information is saved, we need choose one collection in
+  // order to generate the key, and the Default collection is the only one
+  // guaranteed to be present.
   SnippetNode := fXMLDoc.CreateElement(ParentNode, cSnippetNode);
-  // Export snippet under a new unique key within the default collection
-  // we use default collection because code importer assumes snippet id from
-  // that collection. We create new unique key because more than one snippet
-  // could be exported that have the same key but are in different collections.
-  SnippetNode.Attributes[cSnippetNameAttr] :=
-    (Database as IDatabaseEdit).GetUniqueSnippetKey(TCollectionID.Default);
+  SnippetNode.Attributes[cSnippetNameAttr] := fSnippetKeyMap[Snippet.ID];
   // Add nodes for properties: (ignore category and xrefs)
   // description node is written even if empty (which it shouldn't be)
   fXMLDoc.CreateElement(
@@ -335,7 +351,7 @@ begin
   );
   // depends and units lists
   WriteReferenceList(
-    SnippetNode, cDependsNode, SnippetNames(Snippet.Depends)
+    SnippetNode, cDependsNode, SnippetKeys(Snippet.Depends)
   );
   WriteReferenceList(
     SnippetNode, cUnitsNode, TIStringList.Create(Snippet.Units)

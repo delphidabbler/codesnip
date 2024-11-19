@@ -138,9 +138,9 @@ uses
   DBIO.UXMLDataIO,
   UAppInfo,
   UConsts,
-  UFolderBackup,
   UIStringList,
-  USnippetIDs;
+  USnippetIDs,
+  UUserDBBackup;
 
 
 type
@@ -184,7 +184,7 @@ type
         @return Reader object instance.
       }
     function FindSnippet(const SnippetKey: string;
-      const SnipList: TSnippetList): TSnippet; virtual; abstract;
+      const SnipList: TSnippetList): TSnippet; virtual;
       {Finds the snippet object with a specified key.
         @param SnippetKey [in] Key of required snippet.
         @param SnipList [in] List of snippets to search.
@@ -240,15 +240,6 @@ type
       created.
         @return Reader object instance.
       }
-    function FindSnippet(const SnippetKey: string;
-      const SnipList: TSnippetList): TSnippet; override;
-      {Finds the snippet object with a specified key in the main database.
-        @param SnippetKey [in] Key of required snippet.
-        @param SnipList [in] List of snippets to search.
-        @return Reference to required snippet object or nil if snippet is not
-          found.
-      }
-
     function ErrorMessageHeading: string; override;
       {Returns heading to use in error messages. Identifies main database.
         @return Required heading.
@@ -266,16 +257,6 @@ type
       created.
         @return Reader object instance.
       }
-    function FindSnippet(const SnippetKey: string;
-      const SnipList: TSnippetList): TSnippet; override;
-      {Finds the snippet object with a specified key. If snippet is not in this
-      (user) database the main database is searched.
-        @param SnippetKey [in] Key of required snippet.
-        @param SnipList [in] List of snippets to search.
-        @return Reference to required snippet object or nil if snippet is not
-          found.
-      }
-
     function ErrorMessageHeading: string; override;
       {Returns heading to use in error messages. Identifies main database.
         @return Required heading.
@@ -347,8 +328,6 @@ type
     IDataFormatSaver
   )
   strict private
-    const
-      BakFileID = SmallInt($DC52);
     var
       fBakFile: string;                 // Backup file used in case of failure
 
@@ -493,6 +472,12 @@ procedure TDatabaseLoader.CreateCategory(const CatID: string;
   }
 begin
   fCategories.Add(fFactory.CreateCategory(CatID, CatData));
+end;
+
+function TDatabaseLoader.FindSnippet(const SnippetKey: string;
+  const SnipList: TSnippetList): TSnippet;
+begin
+  Result := SnipList.Find(SnippetKey, Collection.UID);
 end;
 
 procedure TDatabaseLoader.HandleException(const E: Exception);
@@ -670,18 +655,6 @@ begin
   Result := sError;
 end;
 
-function TDCSCV2FormatLoader.FindSnippet(const SnippetKey: string;
-  const SnipList: TSnippetList): TSnippet;
-  {Finds the snippet object with a specified key in the main database.
-    @param SnippetKey [in] Key of required snippet.
-    @param SnipList [in] List of snippets to search.
-    @return Reference to required snippet object or nil if snippet is not found.
-  }
-begin
-  // We only search main database
-  Result := SnipList.Find(SnippetKey, Collection.UID);
-end;
-
 { TNativeV4FormatLoader }
 
 function TNativeV4FormatLoader.CreateReader: IDataReader;
@@ -703,24 +676,6 @@ resourcestring
   sError = 'Error loading the user defined database:';
 begin
   Result := sError;
-end;
-
-function TNativeV4FormatLoader.FindSnippet(const SnippetKey: string;
-  const SnipList: TSnippetList): TSnippet;
-  {Finds the snippet object with a specified key. If snippet is not in this
-  (user) database the main database is searched.
-    @param SnippetKey [in] Key of required snippet.
-    @param SnipList [in] List of snippets to search.
-    @return Reference to required snippet object or nil if snippet is not found.
-  }
-begin
-  // Search in user database
-  Result := SnipList.Find(SnippetKey, Collection.UID);
-  {TODO -cVault: Delete the following - only allow references in same collection
-  }
-  if not Assigned(Result) then
-    // Not in user database: try main database
-    Result := SnipList.Find(SnippetKey, TCollectionID.__TMP__MainDBCollectionID);
 end;
 
 { TFormatSaver }
@@ -800,11 +755,9 @@ end;
 
 procedure TDCSCV2FormatSaver.Backup;
 var
-  FB: TFolderBackup;
+  FB: TUserDBBackup;  // TODO -cRefactoring: this is correct class (will change)
 begin
-  FB := TFolderBackup.Create(
-    Collection.Location.Directory, fBakFile, BakFileID
-  );
+  FB := TUserDBBackup.Create(fBakFile, Collection);
   try
     FB.Backup;
   finally
@@ -830,11 +783,9 @@ end;
 
 procedure TDCSCV2FormatSaver.Restore;
 var
-  FB: TFolderBackup;
+  FB: TUserDBBackup;
 begin
-  FB := TFolderBackup.Create(
-    Collection.Location.Directory, fBakFile, BakFileID
-  );
+  FB := TUserDBBackup.Create(fBakFile, Collection);
   try
     FB.Restore;
   finally

@@ -5,8 +5,8 @@
  *
  * Copyright (C) 2022-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a dialogue box that asks user to confirm deletion of user-defined
- * snippets database.
+ * Implements a dialogue box that enables the user to choose a collection from
+ * which to delete all snippets.
 }
 
 
@@ -16,30 +16,46 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes,
+  Forms,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
   // Project
+  DB.UCollections,
   FmGenericOKDlg,
-  FrBrowserBase, FrHTMLDlg, FrFixedHTMLDlg,
-  UBaseObjects;
+  FrBrowserBase,
+  FrHTMLDlg,
+  FrFixedHTMLDlg,
+  UBaseObjects,
+  UCollectionListAdapter;
 
 type
   TDeleteUserDBDlg = class(TGenericOKDlg, INoPublicConstruct)
     edConfirm: TEdit;
     frmWarning: TFixedHTMLDlgFrame;
+    lblConfirm: TLabel;
+    lblCollection: TLabel;
+    cbCollection: TComboBox;
     procedure btnOKClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   strict private
     const
       cConfirmText = 'DELETE MY SNIPPETS';
     var
       fPermissionGranted: Boolean;
+      fCollection: TCollection;
+      fCollList: TCollectionListAdapter;
+    function SelectedCollection: TCollection;
+    function IsValidPassword: Boolean;
   strict protected
     ///  <summary>Protected constructor that sets up form.</summary>
     constructor InternalCreate(AOwner: TComponent); override;
     procedure ConfigForm; override;
     procedure ArrangeForm; override;
-    function IsValidPassword: Boolean;
   public
-    class function Execute(AOwner: TComponent): Boolean;
+    class function Execute(AOwner: TComponent; out ACollection: TCollection): Boolean;
   end;
 
 implementation
@@ -48,16 +64,24 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UCtrlArranger, UMessageBox;
+  UCtrlArranger,
+  UMessageBox;
 
 {$R *.dfm}
 
 procedure TDeleteUserDBDlg.ArrangeForm;
 begin
   frmWarning.Height := frmWarning.DocHeight;
-  edConfirm.Left := 0;
-  TCtrlArranger.MoveBelow(frmWarning, edConfirm, 12);
-  TCtrlArranger.AlignHCentresTo([frmWarning], [edConfirm]);
+  TCtrlArranger.AlignLefts([frmWarning, lblConfirm, lblCollection], 0);
+  TCtrlArranger.AlignRights([frmWarning, cbCollection, edConfirm]);
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(frmWarning, 12),
+    [lblCollection, cbCollection]
+  );
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf([lblCollection, cbCollection], 12),
+    [lblConfirm, edConfirm]
+  );
   pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 8;
   inherited;
 end;
@@ -68,6 +92,7 @@ resourcestring
 begin
   inherited;
   fPermissionGranted := IsValidPassword;
+  fCollection := SelectedCollection;
   if not fPermissionGranted then
   begin
     TMessageBox.Error(Self, sBadPassword);
@@ -79,11 +104,13 @@ end;
 procedure TDeleteUserDBDlg.ConfigForm;
 begin
   inherited;
-//  frmWarning.OnBuildCSS := BuildCSS;
   frmWarning.Initialise('dlg-dbdelete.html');
+  fCollList.ToStrings(cbCollection.Items);
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
 end;
 
-class function TDeleteUserDBDlg.Execute(AOwner: TComponent): Boolean;
+class function TDeleteUserDBDlg.Execute(AOwner: TComponent;
+  out ACollection: TCollection): Boolean;
 var
   Dlg: TDeleteUserDBDlg;
 begin
@@ -91,9 +118,23 @@ begin
   try
     Dlg.ShowModal;
     Result := Dlg.fPermissionGranted;
+    if Result then
+      ACollection := Dlg.fCollection;
   finally
     Dlg.Free;
   end;
+end;
+
+procedure TDeleteUserDBDlg.FormCreate(Sender: TObject);
+begin
+  inherited;
+  fCollList := TCollectionListAdapter.Create;
+end;
+
+procedure TDeleteUserDBDlg.FormDestroy(Sender: TObject);
+begin
+  fCollList.Free;
+  inherited;
 end;
 
 constructor TDeleteUserDBDlg.InternalCreate(AOwner: TComponent);
@@ -106,6 +147,11 @@ end;
 function TDeleteUserDBDlg.IsValidPassword: Boolean;
 begin
   Result := edConfirm.Text = cConfirmText;
+end;
+
+function TDeleteUserDBDlg.SelectedCollection: TCollection;
+begin
+  Result := fCollList.Collection(cbCollection.ItemIndex);
 end;
 
 end.

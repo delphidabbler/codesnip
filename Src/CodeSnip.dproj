@@ -585,6 +585,9 @@
 			<DCCReference Include="DBIO.UCategoryIO.pas"/>
 			<DCCReference Include="UCollectionListAdapter.pas"/>
 			<DCCReference Include="DBIO.MetaData.DCSC.pas"/>
+			<DCCReference Include="FmCollectionBackup.pas">
+				<Form>CollectionBackupDlg</Form>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

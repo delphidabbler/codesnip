@@ -36,14 +36,18 @@ type
   strict private
     // Property values
     fOrigKey: string;
+    fNewKey: string;
     fDisplayName: string;
     fSkip: Boolean;
   public
     ///  <summary>Initialises properties to given values.</summary>
-    constructor Create(const AOrigKey, ADisplayName: string;
+    constructor Create(const AOrigKey, ANewKey, ADisplayName: string;
       const ASkip: Boolean = False);
     ///  <summary>Snippet key per import file.</summary>
     property OrigKey: string read fOrigKey;
+    ///  <sumamry>New, unique snippet key under which the snippet will be
+    ///  imported.</summary>
+    property NewKey: string read fNewKey;
     ///  <summary>Snippet's display name.</summary>
     property DisplayName: string read fDisplayName;
     ///  <summary>Flag indicating if snippet is to be skipped (ignored) when
@@ -120,9 +124,12 @@ type
     ///  customisation.</remarks>
     procedure Import(const FileName: string);
     ///  <summary>Updates database based on imported snippets and customisation
-    ///  described by ImportInfo property.</summary>
-    ///  <remarks>Any existing snippets with same name as imported snippets are
-    ///  overwritten.</remarks>
+    ///  described by ImportInfo property, using collection specified in
+    ///  <c>RequestCollectionCallback</c>.</summary>
+    ///  <remarks>Any snippets referenced in the an imported snippet's
+    ///  <c>Depends</c> or <c>XRefs</c> property must also be included in the
+    ///  import otherwise the snippet is stripped from the dependency list.
+    ///  </remarks>
     procedure UpdateDatabase;
     ///  <summary>List of information describing if and how to import snippets
     ///  in import file. Permits customisation of import.</summary>
@@ -153,6 +160,7 @@ uses
   ActiveText.UMain,
   DB.UMain,
   DB.USnippet,
+  IntfCommon,
   UIOUtils,
   USnippetIDs,
   UStrUtils;
@@ -207,6 +215,9 @@ begin
     fImportInfoList.Add(
       TImportInfo.Create(
         SnippetInfo.Key,
+        (Database as IDatabaseEdit).GetUniqueSnippetKey(
+          RequestCollectionCallback
+        ),
         StrIf(
           SnippetInfo.Data.Props.DisplayName = '',
           SnippetInfo.Key,
@@ -219,70 +230,108 @@ end;
 
 procedure TCodeImportMgr.UpdateDatabase;
 
-  // Adjusts a snippet's dependency list so that main database is searched for a
-  // required snippet if it is not in the user database.
-  procedure AdjustDependsList(const Depends: ISnippetIDList);
+  // Adjusts a snippet's references list to exclude snippets not included in the
+  // import.
+  function AdjustRefsList(const ARefs: ISnippetIDList): ISnippetIDList;
   var
-    Idx: Integer;           // loops through dependencies
     SnippetID: TSnippetID;  // each snippet ID in dependency list
-    CollectionID: TCollectionID;
+    Info: TImportInfo;
   begin
-    // NOTE: The data file format does not record which database a required
-    // snippet belongs to, so we first look in the user database and if it's
-    // not there, we assume the main database
-    for Idx := 0 to Pred(Depends.Count) do
+    // We only include snippets in depends list if it is included in the import
+    Result := TSnippetIDList.Create;
+    for SnippetID in ARefs do
     begin
-      SnippetID := Depends[Idx];
-      CollectionID := TCollectionID.__TMP__UserDBCollectionID;
-      if Database.Snippets.Find(SnippetID.Key, CollectionID) = nil then
-        CollectionID := TCollectionID.__TMP__MainDBCollectionID;
-      SnippetID.CollectionID := CollectionID;
-      Depends[Idx] := SnippetID;
+      if fImportInfoList.FindByKey(SnippetID.Key, Info) and not Info.Skip then
+        Result.Add(TSnippetID.Create(Info.NewKey, SnippetID.CollectionID));
     end;
   end;
 
+type
+  // Record used to save a snippet's references
+  TSavedReferences = record
+    Snippet: TSnippet;
+    Data: TSnippetEditData;
+  end;
+
 var
-  Editor: IDatabaseEdit;      // object used to update user database
-  Snippet: TSnippet;          // reference any existing snippet to overwrite
-  SnippetInfo: TSnippetInfo;  // info about each snippet from import file
-  ImportInfo: TImportInfo;    // info about how / whether to import a snippet
-  CollectionID: TCollectionID;
-  SnippetKey: string;
+  Editor: IDatabaseEdit;                  // object used to update user database
+  SnippetInfo: TSnippetInfo;         // info about each snippet from import file
+  ImportInfo: TImportInfo;       // info about how / whether to import a snippet
+  CollectionID: TCollectionID;          // collection into which we're importing
+  SavedRefs: TList<TSavedReferences>;   // preserved references for each snippet
+  SavedRef: TSavedReferences;                        // each record in Refs list
+  SnippetDataNoRefs: TSnippetEditData;   // snippet data with references cleared
 resourcestring
   // Error message
   sBadNameError = 'Can''t find snippet with key "%s" in import data';
 begin
+  {TODO -cRefactor: Tidy up messy use of both fSnippetInfoList and
+          fImportInfoList: include all required info in fImportInfoList?
+  }
+
   Editor := Database as IDatabaseEdit;
   CollectionID := RequestCollectionCallback();
-  for SnippetInfo in fSnippetInfoList do
-  begin
-    if not fImportInfoList.FindByKey(SnippetInfo.Key, ImportInfo) then
-      raise EBug.CreateFmt(sBadNameError, [SnippetInfo.Key]);
 
-    if ImportInfo.Skip then
-      Continue;
+  SavedRefs := TList<TSavedReferences>.Create(
+    TDelegatedComparer<TSavedReferences>.Create(
+      function (const Left, Right: TSavedReferences): Integer
+      begin
+        Result := Left.Snippet.CompareTo(Right.Snippet);
+      end
+    )
+  );
+  try
+    for SnippetInfo in fSnippetInfoList do
+    begin
+      if not fImportInfoList.FindByKey(SnippetInfo.Key, ImportInfo) then
+        raise EBug.CreateFmt(sBadNameError, [SnippetInfo.Key]);
 
-    AdjustDependsList(SnippetInfo.Data.Refs.Depends);
+      if ImportInfo.Skip then
+        Continue;
 
-    Snippet := Database.Snippets.Find(ImportInfo.OrigKey, CollectionID);
-    if Assigned(Snippet) then
-      SnippetKey := (Database as IDatabaseEdit).GetUniqueSnippetKey(
-        CollectionID
-      )
-    else
-      SnippetKey := ImportInfo.OrigKey;
-    Editor.AddSnippet(SnippetKey, CollectionID, SnippetInfo.Data);
-    {TODO -cVault: Reintroduce the option to overwrite a snippet with matching
-            ID, but allow user to select whether this can happen.}
+      // Exclude snippet from depends list if snippet not included in import.
+      (SnippetInfo.Data.Refs.Depends as IAssignable).Assign(
+        AdjustRefsList(SnippetInfo.Data.Refs.Depends)
+      );
+
+      // store snippet data with references
+      SavedRef.Data.Assign(SnippetInfo.Data);
+
+      // clear references before adding snippet: it will probably delete most
+      // anyway if reference is to a snippet after this one in the import list
+      SnippetDataNoRefs.Assign(SnippetInfo.Data);
+      // .. XRef should be clear regardless, because XRefs not included in
+      //    export files.
+      SnippetDataNoRefs.Refs.XRef.Clear;
+      SnippetDataNoRefs.Refs.Depends.Clear;
+
+      // add snippet without any dependency
+      SavedRef.Snippet := Editor.AddSnippet(
+        ImportInfo.NewKey, CollectionID, SnippetDataNoRefs
+      );
+
+      // save snippet with its dependencies
+      SavedRefs.Add(SavedRef);
+    end;
+
+    // Add back the saved snippet references
+    for SavedRef in SavedRefs do
+      if SavedRef.Data.Refs.Depends.Count > 0 then
+        Editor.UpdateSnippet(SavedRef.Snippet, SavedRef.Data);
+
+  finally
+    SavedRefs.Free;
   end;
+
 end;
 
 { TImportInfo }
 
-constructor TImportInfo.Create(const AOrigKey, ADisplayName: string;
+constructor TImportInfo.Create(const AOrigKey, ANewKey, ADisplayName: string;
   const ASkip: Boolean = False);
 begin
   fOrigKey := AOrigKey;
+  fNewKey := ANewKey;
   fSkip := ASkip;
   fDisplayName := ADisplayName;
 end;
@@ -315,7 +364,7 @@ end;
 
 function TImportInfoList.IndexOfKey(const Key: string): Integer;
 begin
-  Result := IndexOf(TImportInfo.Create(Key, ''));
+  Result := IndexOf(TImportInfo.Create(Key, '', ''));
 end;
 
 procedure TImportInfoList.SetSkip(const AKey: string; const AFlag: Boolean);

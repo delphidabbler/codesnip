@@ -1,16 +1,32 @@
 inherited DeleteUserDBDlg: TDeleteUserDBDlg
-  Caption = 'Delete User Database'
+  Caption = 'Delete All Snippets From Collection'
   ExplicitWidth = 474
   ExplicitHeight = 375
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    object edConfirm: TEdit
+    object lblConfirm: TLabel
       Left = 0
-      Top = 216
-      Width = 201
+      Top = 256
+      Width = 82
+      Height = 13
+      Caption = 'Confirm &deletion:'
+      FocusControl = edConfirm
+    end
+    object lblCollection: TLabel
+      Left = 0
+      Top = 224
+      Width = 87
+      Height = 13
+      Caption = 'Choose &collection:'
+      FocusControl = cbCollection
+    end
+    object edConfirm: TEdit
+      Left = 120
+      Top = 248
+      Width = 249
       Height = 21
-      TabOrder = 0
+      TabOrder = 2
     end
     inline frmWarning: TFixedHTMLDlgFrame
       Left = 0
@@ -18,8 +34,7 @@ inherited DeleteUserDBDlg: TDeleteUserDBDlg
       Width = 369
       Height = 210
       Align = alTop
-      TabOrder = 1
-      TabStop = True
+      TabOrder = 0
       ExplicitWidth = 369
       ExplicitHeight = 210
       inherited pnlBrowser: TPanel
@@ -40,6 +55,14 @@ inherited DeleteUserDBDlg: TDeleteUserDBDlg
             00000000000000000100000000000000000000000000000000000000}
         end
       end
+    end
+    object cbCollection: TComboBox
+      Left = 120
+      Top = 221
+      Width = 249
+      Height = 21
+      Style = csDropDownList
+      TabOrder = 1
     end
   end
   inherited btnOK: TButton
