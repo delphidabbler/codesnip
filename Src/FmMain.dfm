@@ -870,10 +870,10 @@ inherited MainForm: TMainForm
     end
     object actDeleteUserDatabase: TAction
       Category = 'Database'
-      Caption = 'Delete User Database...'
+      Caption = 'Delete All Snippets From Collection'
       Hint = 
-        'Delete User Database|Deletes the user'#39's snippets database - USE ' +
-        'WITH CAUTION'
+        'Delete All Snippets From A Collection|Deletes all the snippets f' +
+        'rom a selected collection - USE WITH CAUTION'
       OnExecute = actDeleteUserDatabaseExecute
       OnUpdate = ActNonEmptyDBUpdate
     end

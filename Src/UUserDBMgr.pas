@@ -78,7 +78,10 @@ type
     ///  <summary>Moves the user database to a new location specified by the
     ///  user.</summary>
     class procedure MoveDatabase;
-    ///  <summary>Deletes the user database, with permission.</summary>
+    ///  <summary>Deletes all the snippets in a collection specified by the
+    ///  user.</summary>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the collection's data was
+    ///  deleted, <c>False</c> otherwise.</returns>
     class function DeleteDatabase: Boolean;
   end;
 
@@ -318,12 +321,14 @@ begin
 end;
 
 class function TUserDBMgr.DeleteDatabase: Boolean;
+var
+  CollectionToDelete: TCollection;
 begin
-  if not TDeleteUserDBDlg.Execute(nil) then
+  if not TDeleteUserDBDlg.Execute(nil, CollectionToDelete) then
     Exit(False);
-  if not TDirectory.Exists(TAppInfo.UserDataDir) then
+  if not TDirectory.Exists(CollectionToDelete.Location.Directory) then
     Exit(False);
-  TDirectory.Delete(TAppInfo.UserDataDir, True);
+  TDirectory.Delete(CollectionToDelete.Location.Directory, True);
   Result := True;
 end;
 
