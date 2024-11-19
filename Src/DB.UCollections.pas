@@ -472,19 +472,6 @@ begin
         TCollectionFormatKind.Native_v4
       )
     );
-  { TODO -cCollections: following line is for v4 main database compatibility
-            Remove when reduce to only one compulsory collection }
-  if not ContainsID(TCollectionID.__TMP__MainDBCollectionID) then
-    Add(
-      TCollection.Create(
-        TCollectionID.__TMP__MainDBCollectionID,
-        { TODO -cVault: change name - this text matches name used in CodeSnip
-                  v4}
-        'DelphiDabbler Code Snippets Database',
-        TCollectionLocation.Create(TAppInfo.AppDataDir),
-        TCollectionFormatKind.DCSC_v2
-      )
-    );
 end;
 
 procedure TCollections.Save;
