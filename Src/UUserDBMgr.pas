@@ -14,6 +14,8 @@ unit UUserDBMgr;
 
 interface
 
+{TODO -cRefactoring: Rename this unit/classes/methods: the names refer to the
+        CodeSnip 4 database structure but the code now works with collections}
 
 uses
   // Delphi
@@ -30,21 +32,6 @@ type
   ///  <summary>Static class that manages user's interaction with user database
   ///  and performs move and backup operations on it.</summary>
   TUserDBMgr = class(TNoConstructObject)
-  strict private
-    ///  <summary>OnClose event handler for open dialogue box. Checks if
-    ///  dialogue box can close.</summary>
-    ///  <param name="Sender">TObject [in] Reference to dialogue box in
-    ///  question.</param>
-    ///  <param name="CanClose">Boolean [in/out] Set to True to permit dialogue
-    ///  to close or False to inhibit closure.</param>
-    class procedure CanOpenDialogClose(Sender: TObject; var CanClose: Boolean);
-    ///  <summary>OnClose event handler for save dialogue box. Checks if
-    ///  dialogue box can close.</summary>
-    ///  <param name="Sender">TObject [in] Reference to dialogue box in
-    ///  question.</param>
-    ///  <param name="CanClose">Boolean [in/out] Set to True to permit dialogue
-    ///  to close or False to inhibit closure.</param>
-    class procedure CanSaveDialogClose(Sender: TObject; var CanClose: Boolean);
   public
     ///  <summary>Enables user to adds a new user defined snippet to the
     ///  database using the snippets editor.</summary>
@@ -101,19 +88,32 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Dialogs, Windows {for inlining}, IOUtils,
+  SysUtils,
+  Dialogs,
+  Windows {for inlining},
+  IOUtils,
   // Project
-  DB.UCollections, DB.UMain, DB.USnippet,
-  FmAddCategoryDlg, FmDeleteCategoryDlg, FmDuplicateSnippetDlg,
-  FmRenameCategoryDlg, FmSnippetsEditorDlg,
+  DB.UCollections,
+  DB.UMain,
+  DB.USnippet,
+  FmAddCategoryDlg,
+  FmCollectionBackup,
+  FmDeleteCategoryDlg,
+  FmDeleteUserDBDlg,
+  FmDuplicateSnippetDlg,
+  FmRenameCategoryDlg,
+  FmSnippetsEditorDlg,
   {$IFNDEF PORTABLE}
   FmUserDataPathDlg,
   {$ENDIF}
-  FmDeleteUserDBDlg, FmWaitDlg,
+  FmWaitDlg,
   UAppInfo,
-  UConsts, UExceptions, UIStringList, UMessageBox, UOpenDialogEx,
-  UOpenDialogHelper, USaveDialogEx,
-  UUserDBBackup, UWaitForThreadUI;
+  UConsts,
+  UExceptions,
+  UIStringList,
+  UMessageBox,
+  UUserDBBackup,
+  UWaitForThreadUI;
 
 type
   ///  <summary>Base class for classes that execute a user database management
@@ -177,13 +177,16 @@ type
         var
           ///  <summary>Name of backup file to be restored.</summary>
           fBakFileName: string;
+
+          fCollection: TCollection;
       strict protected
         ///  <summary>Restores the user database from a backup.</summary>
         procedure Execute; override;
       public
         ///  <summary>Constructs a new, suspended, thread that can restore the
         ///  database from the given backup file.</summary>
-        constructor Create(const BakFileName: string);
+        constructor Create(const BakFileName: string;
+          const ACollection: TCollection);
       end;
   public
     ///  <summary>Performs a user database restoration operation from in a
@@ -194,7 +197,8 @@ type
     ///  box, over which it is aligned.</param>
     ///  <param name="BakFileName">string [in] Name of backup file to be
     ///  restored.</param>
-    class procedure Execute(AOwner: TComponent; const BakFileName: string);
+    class procedure Execute(AOwner: TComponent; const BakFileName: string;
+      const ACollection: TCollection);
   end;
 
 type
@@ -209,13 +213,16 @@ type
         var
           ///  <summary>Name of backup file to be created.</summary>
           fBakFileName: string;
+
+          fCollection: TCollection;
       strict protected
         ///  <summary>Backs up the user database.</summary>
         procedure Execute; override;
       public
         ///  <summary>Constructs a new, suspended, thread that can backup the
         ///  database to the given backup file.</summary>
-        constructor Create(const BakFileName: string);
+        constructor Create(const BakFileName: string;
+          const ACollection: TCollection);
       end;
   public
     ///  <summary>Performs a user database backup operation from in a background
@@ -225,7 +232,8 @@ type
     ///  box, over which it is aligned.</param>
     ///  <param name="BakFileName">string [in] Name of backup file to be
     ///  created.</param>
-    class procedure Execute(AOwner: TComponent; const BakFileName: string);
+    class procedure Execute(AOwner: TComponent; const BakFileName: string;
+      const ACollection: TCollection);
   end;
 
 { TUserDBMgr }
@@ -244,24 +252,19 @@ end;
 
 class procedure TUserDBMgr.BackupDatabase(ParentCtrl: TComponent);
 var
-  SaveDlg: TSaveDialogEx;       // save dialog box used to name backup file
+  FileName: string;
+  Collection: TCollection;
 resourcestring
-  // Dialog box caption
-  sCaption = 'Save Backup';
+  sOverwritePrompt = '"%s" already exists. OK to overwrite?';
 begin
-  // Get backup file name from user via standard save dialog box
-  SaveDlg := TSaveDialogEx.Create(nil);
-  try
-    SaveDlg.OnCanClose := CanSaveDialogClose;
-    SaveDlg.Title := sCaption;
-    SaveDlg.Options := [ofShowHelp, ofExtensionDifferent, ofPathMustExist,
-      ofNoTestFileCreate, ofEnableSizing];
-    SaveDlg.HelpKeyword := 'SaveBackupDlg';
-    if SaveDlg.Execute then
-      // Perform backup
-      TUserDBBackupUI.Execute(ParentCtrl, SaveDlg.FileName);
-  finally
-    SaveDlg.Free;
+  if TCollectionBackupDlg.Execute(ParentCtrl, FileName, Collection) then
+  begin
+    if TFile.Exists(FileName)
+      and not TMessageBox.Confirm(
+        ParentCtrl, Format(sOverwritePrompt, [FileName])
+      ) then
+      Exit;
+    TUserDBBackupUI.Execute(ParentCtrl, FileName, Collection);
   end;
 end;
 
@@ -286,29 +289,6 @@ begin
   Result := Supports(ViewItem, ISnippetView);
 end;
 
-class procedure TUserDBMgr.CanOpenDialogClose(Sender: TObject;
-  var CanClose: Boolean);
-var
-  FileName: string;     // name of file entered in dialog box
-resourcestring
-  // Error message
-  sFileDoesNotExist = '"%s" does not exist.';
-begin
-  CanClose := False;
-  FileName := FileOpenEditedFileName(Sender as TOpenDialogEx);
-  if not FileExists(FileName) then
-  begin
-    // Specified file doesn't exist: inhibit closure
-    TMessageBox.Error(
-      Sender as TOpenDialogEx,
-      Format(sFileDoesNotExist, [FileName])
-    );
-    Exit;
-  end;
-  // All OK: allow closure
-  CanClose := True;
-end;
-
 class function TUserDBMgr.CanRenameACategory: Boolean;
 begin
   Result := True;
@@ -318,23 +298,6 @@ class function TUserDBMgr.CanSave: Boolean;
 begin
   // We can save database if it's been changed
   Result := (Database as IDatabaseEdit).Updated;
-end;
-
-class procedure TUserDBMgr.CanSaveDialogClose(Sender: TObject;
-  var CanClose: Boolean);
-var
-  FileName: string;   // name of file entered in dialog box
-resourcestring
-  // Error message
-  sOverwritePrompt = '"%s" already exists. OK to overwrite?';
-begin
-  FileName := FileOpenEditedFileName(Sender as TSaveDialogEx);
-  if FileExists(FileName) then
-    // File exists: allow closure if user permits file to be overwritten
-    CanClose := TMessageBox.Confirm(
-      Sender as TSaveDialogEx,
-      Format(sOverwritePrompt, [FileName])
-    );
 end;
 
 class procedure TUserDBMgr.DeleteACategory;
@@ -471,24 +434,23 @@ end;
 
 class function TUserDBMgr.RestoreDatabase(ParentCtrl: TComponent): Boolean;
 var
-  Dlg: TOpenDialogEx;             // open dialog box used to select backup file
+  FileName: string;
+  Collection: TCollection;
 resourcestring
-  sCaption = 'Open Backup File';  // dialog box caption
+  sFileDoesNotExist = '"%s" does not exist.';
 begin
-  // Get name of backup file from user via standard open dialog box
-  Dlg := TOpenDialogEx.Create(nil);
-  try
-    Dlg.OnCanClose := CanOpenDialogClose;
-    Dlg.Title := sCaption;
-    Dlg.Options := [ofShowHelp, ofPathMustExist, ofHideReadOnly,
-      ofEnableSizing];
-    Dlg.HelpKeyword := 'RestoreBackupDlg';
-    Result := Dlg.Execute;
-    if Result then
-      // Perform restoration
-      TUserDBRestoreUI.Execute(ParentCtrl, Dlg.FileName);
-  finally
-    Dlg.Free;
+  Result := TCollectionBackupDlg.Execute(ParentCtrl, FileName, Collection);
+  if Result then
+  begin
+    if not TFile.Exists(FileName) then
+    begin
+      // Specified file doesn't exist: inhibit closure
+      TMessageBox.Error(
+        ParentCtrl, Format(sFileDoesNotExist, [FileName])
+      );
+      Exit;
+    end;
+    TUserDBRestoreUI.Execute(ParentCtrl, FileName, Collection);
   end;
 end;
 
@@ -546,14 +508,14 @@ end;
 { TUserDBRestoreUI }
 
 class procedure TUserDBRestoreUI.Execute(AOwner: TComponent;
-  const BakFileName: string);
+  const BakFileName: string; const ACollection: TCollection);
 resourcestring
   // Caption for wait dialog
   sWaitCaption = 'Restoring database files...';
 var
   Thread: TRestoreThread;   // thread that performs restore operation
 begin
-  Thread := TRestoreThread.Create(BakFileName);
+  Thread := TRestoreThread.Create(BakFileName, ACollection);
   try
     RunThreadWithWaitDlg(Thread, AOwner, sWaitCaption);
   finally
@@ -563,17 +525,19 @@ end;
 
 { TUserDBRestoreUI.TRestoreThread }
 
-constructor TUserDBRestoreUI.TRestoreThread.Create(const BakFileName: string);
+constructor TUserDBRestoreUI.TRestoreThread.Create(const BakFileName: string;
+  const ACollection: TCollection);
 begin
   inherited Create(True);
   fBakFileName := BakFileName;
+  fCollection := ACollection;
 end;
 
 procedure TUserDBRestoreUI.TRestoreThread.Execute;
 var
   UserDBBackup: TUserDBBackup;
 begin
-  UserDBBackup := TUserDBBackup.Create(fBakFileName);
+  UserDBBackup := TUserDBBackup.Create(fBakFileName, fCollection);
   try
     UserDBBackup.Restore;
   finally
@@ -584,14 +548,14 @@ end;
 { TUserDBBackupUI }
 
 class procedure TUserDBBackupUI.Execute(AOwner: TComponent;
-  const BakFileName: string);
+  const BakFileName: string; const ACollection: TCollection);
 resourcestring
   // Caption for wait dialog
   sWaitCaption = 'Backing up database...';
 var
   Thread: TBackupThread;   // thread that performs restore operation
 begin
-  Thread := TBackupThread.Create(BakFileName);
+  Thread := TBackupThread.Create(BakFileName, ACollection);
   try
     RunThreadWithWaitDlg(Thread, AOwner, sWaitCaption);
   finally
@@ -601,10 +565,12 @@ end;
 
 { TUserDBBackupUI.TBackupThread }
 
-constructor TUserDBBackupUI.TBackupThread.Create(const BakFileName: string);
+constructor TUserDBBackupUI.TBackupThread.Create(const BakFileName: string;
+  const ACollection: TCollection);
 begin
   inherited Create(True);
   fBakFileName := BakFileName;
+  fCollection := ACollection;
 end;
 
 procedure TUserDBBackupUI.TBackupThread.Execute;
@@ -614,7 +580,7 @@ resourcestring
   // Dialog box caption
   sCaption = 'Save Backup';
 begin
-  UserDBBackup := TUserDBBackup.Create(fBakFileName);
+  UserDBBackup := TUserDBBackup.Create(fBakFileName, fCollection);
   try
     UserDBBackup.Backup;
   finally

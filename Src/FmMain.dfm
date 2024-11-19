@@ -615,18 +615,18 @@ inherited MainForm: TMainForm
     end
     object actBackupDatabase: TAction
       Category = 'Database'
-      Caption = 'Backup User Database...'
-      Hint = 'Backup user database|Backup the user-defined snippet database'
+      Caption = 'Backup Collection Data...'
+      Hint = 'Backup a collection|Backup a collection'#39's data files'
       ImageIndex = 33
       OnExecute = actBackupDatabaseExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
     object actRestoreDatabase: TAction
       Category = 'Database'
-      Caption = 'Restore User Database...'
+      Caption = 'Restore Collection Data...'
       Hint = 
-        'Restore user database|Restore the user-defined snippet database ' +
-        'from a backup'
+        'Restore a collection|Restore a collection'#39's data files from a ba' +
+        'ckup'
       ImageIndex = 32
       OnExecute = actRestoreDatabaseExecute
     end
