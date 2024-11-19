@@ -138,9 +138,9 @@ uses
   DBIO.UXMLDataIO,
   UAppInfo,
   UConsts,
-  UFolderBackup,
   UIStringList,
-  USnippetIDs;
+  USnippetIDs,
+  UUserDBBackup;
 
 
 type
@@ -347,8 +347,6 @@ type
     IDataFormatSaver
   )
   strict private
-    const
-      BakFileID = SmallInt($DC52);
     var
       fBakFile: string;                 // Backup file used in case of failure
 
@@ -800,11 +798,9 @@ end;
 
 procedure TDCSCV2FormatSaver.Backup;
 var
-  FB: TFolderBackup;
+  FB: TUserDBBackup;  // TODO -cRefactoring: this is correct class (will change)
 begin
-  FB := TFolderBackup.Create(
-    Collection.Location.Directory, fBakFile, BakFileID
-  );
+  FB := TUserDBBackup.Create(fBakFile, Collection);
   try
     FB.Backup;
   finally
@@ -830,11 +826,9 @@ end;
 
 procedure TDCSCV2FormatSaver.Restore;
 var
-  FB: TFolderBackup;
+  FB: TUserDBBackup;
 begin
-  FB := TFolderBackup.Create(
-    Collection.Location.Directory, fBakFile, BakFileID
-  );
+  FB := TUserDBBackup.Create(fBakFile, Collection);
   try
     FB.Restore;
   finally
