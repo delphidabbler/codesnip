@@ -401,8 +401,13 @@ type
 
   ///  <summary>Class that provides meta data for the main database.</summary>
   TMainDBMetaData = class sealed(TAbstractMainDBMetaData, IDBMetaData)
+  strict private
+    var
+      fCollection: TCollection;
   strict protected
     function GetDBDir: string; override;
+  public
+    constructor Create(const ACollection: TCollection);
   end;
 
   ///  <summary>Class that provides meta data for update database directories.
@@ -424,7 +429,6 @@ uses
   Classes,
   IOUtils,
   // VCL
-  UAppInfo,
   UEncodings,
   UIOUtils,
   UResourceUtils,
@@ -493,7 +497,7 @@ end;
 class function TAbstractMainDBMetaData.Instance(
   ACollection: DB.UCollections.TCollection): IDBMetaData;
 begin
-  Result := TMainDBMetaData.Create;
+  Result := TMainDBMetaData.Create(ACollection);
 end;
 
 function TAbstractMainDBMetaData.IsCorrupt: Boolean;
@@ -557,9 +561,16 @@ end;
 
 { TMainDBMetaData }
 
+constructor TMainDBMetaData.Create(
+  const ACollection: DB.UCollections.TCollection);
+begin
+  inherited Create;
+  fCollection := ACollection;
+end;
+
 function TMainDBMetaData.GetDBDir: string;
 begin
-  Result := TAppInfo.AppDataDir;
+  Result := fCollection.Location.Directory;
 end;
 
 { TUpdateDBMetaData }
