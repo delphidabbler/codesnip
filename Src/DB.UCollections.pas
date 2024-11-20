@@ -460,7 +460,9 @@ begin
       TCollection.Create(
         TCollectionID.Default,
         'Default',
-        TCollectionLocation.Create(TAppInfo.DefaultUserDataDir, '', etUTF8),
+        TCollectionLocation.Create(
+          TAppInfo.UserDefaultCollectionDir, '', etUTF8
+        ),
         TCollectionFormatKind.Native_v4
       )
     );
