@@ -189,7 +189,7 @@ var
   Idx: Integer;
 begin
   // check for watermark in 1st line
-  if (fLines.Count <= 1) or (fLines[0] <> fWatermark) then
+  if (fLines.Count < 1) or (fLines[0] <> fWatermark) then
     raise ETabSeparatedReader.Create(sBadFileFormat);
   // delete watermark line
   fLines.Delete(0);
