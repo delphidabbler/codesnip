@@ -336,11 +336,15 @@ type
     ///  collection's format.</summary>
     ///  <remarks>Must be called from a concrete descendant class.</remarks>
     class function Instance(ACollection: TCollection): IDBMetaData; override;
+    ///  <summary>Gets the meta data capabilities for the collection data
+    ///  format.</summary>
+    ///  <returns><c>TMetaDataCapabilities</c>. Required meta data capabilities.
+    ///  </returns>
+    ///  <remarks>This method enables meta data capabilities to be obtained
+    ///  without creating an instance of the object.</remarks>
+    class function Capabilities: TMetaDataCapabilities; override;
     procedure AfterConstruction; override;
     destructor Destroy; override;
-    ///  <summary>Returns information about what, if any, meta data is supported
-    ///  by a collection.</summary>
-    function GetCapabilities: TMetaDataCapabilities;
     ///  <summary>Returns database version number.</summary>
     ///  <remarks>
     ///  <para>A null version number is returned if the meta data does not come
@@ -442,15 +446,15 @@ begin
   Refresh;
 end;
 
+class function TAbstractMainDBMetaData.Capabilities: TMetaDataCapabilities;
+begin
+  Result := [mdcVersion, mdcLicense, mdcCopyright, mdcContributors, mdcTesters];
+end;
+
 destructor TAbstractMainDBMetaData.Destroy;
 begin
   fMetaFiles.Free;
   inherited;
-end;
-
-function TAbstractMainDBMetaData.GetCapabilities: TMetaDataCapabilities;
-begin
-  Result := [mdcVersion, mdcLicense, mdcCopyright, mdcContributors, mdcTesters];
 end;
 
 function TAbstractMainDBMetaData.GetContributors: IStringList;

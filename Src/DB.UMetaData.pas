@@ -152,6 +152,19 @@ type
     ///  <returns><c>IDBMetaData</c>. Required meta data object.</returns>
     class function Instance(ACollection: TCollection): IDBMetaData;
       virtual; abstract;
+    ///  <summary>Gets the meta data capabilities for the collection data
+    ///  format.</summary>
+    ///  <returns><c>TMetaDataCapabilities</c>. Required meta data capabilities.
+    ///  </returns>
+    ///  <remarks>This method enables meta data capabilities to be obtained
+    ///  without creating an instance of the object.</remarks>
+    class function Capabilities: TMetaDataCapabilities; virtual; abstract;
+    ///  <summary>Returns information about what, if any, meta data is supported
+    ///  by a collection.</summary>
+    ///  <remarks>This method provides a means of accessing the data returned by
+    ///  the <c>Capabilities</c> class method from <c>IDBMetaData</c> instances.
+    ///  </remarks>
+    function GetCapabilities: TMetaDataCapabilities; virtual;
   end;
 
   TRegisterableMetaDataClass = class of TRegisterableMetaData;
@@ -161,8 +174,10 @@ type
   TMetaDataFactory = record
   strict private
     class var
-      ///  <summary>Map of collection format kinds to functions that create
-      ///  meta data objects of the required type.</summary>
+      {TODO -Refactor: rename fCallbackMap since it does not contain callback,
+            but does contain class types.}
+      ///  <summary>Map of collection format kinds to classes that implement the
+      ///  format's meta data.</summary>
       fCallbackMap: TDictionary<
         TCollectionFormatKind, TRegisterableMetaDataClass
       >;
@@ -186,6 +201,14 @@ type
     ///  <c>ACollection</c>.</returns>
     class function CreateInstance(const ACollection: TCollection):
       IDBMetaData; static;
+    ///  <summary>Gets the meta data capabilities for a collection data format.
+    ///  </summary>
+    ///  <param name="AFormat"><c>TCollectionFormatKind</c> [in] Collection data
+    ///  format for which meta data capabilities are required.</param>
+    ///  <returns><c>TMetaDataCapabilities</c>. Required meta data capabilities.
+    ///  </returns>
+    class function CapabilitiesOf(const AFormat: TCollectionFormatKind):
+      TMetaDataCapabilities; static;
   end;
 
 implementation
@@ -294,7 +317,23 @@ begin
     Result := sCopyright + ' ' + Result;
 end;
 
+{ TRegisterableMetaData }
+
+function TRegisterableMetaData.GetCapabilities: TMetaDataCapabilities;
+begin
+  Result := Capabilities;
+end;
+
 { TMetaDataFactory }
+
+class function TMetaDataFactory.CapabilitiesOf(
+  const AFormat: TCollectionFormatKind): TMetaDataCapabilities;
+begin
+  if fCallbackMap.ContainsKey(AFormat) then
+    Result := fCallbackMap[AFormat].Capabilities
+  else
+    Result := [];
+end;
 
 class constructor TMetaDataFactory.Create;
 begin
