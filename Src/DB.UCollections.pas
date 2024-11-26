@@ -62,17 +62,26 @@ type
       // There are so few entries in this table it's not worth the overhead
       // of using a dicitionary for the lookup.
       LookupTable: array[0..1] of TMapRecord = (
-        (Kind: TCollectionFormatKind.DCSC_v2;
-          Name: 'DelphiDabbler Code Snippets Collection format v2'),
         (Kind: TCollectionFormatKind.Native_v4;
-          Name: 'CodeSnip v4 native snippet collection format')
+          Name: 'CodeSnip Native Snippet Collection v4'),
+        (Kind: TCollectionFormatKind.DCSC_v2;
+          Name: 'DelphiDabbler Code Snippets Collection v2')
       );
     class function IndexOf(const AKind: TCollectionFormatKind): Integer; static;
+  public
+    const
+      ///  <summary>Specifies the data format used for the default collection.
+      ///  </summary>
+      DefaultFormat = TCollectionFormatKind.Native_v4;
   public
     ///  <summary>Gets the name of the data format specified by
     ///  <c>AKind</c>. Returns an empty string if no name is associated with
     ///  <c>AKind</c>.</summary>
     class function GetName(const AKind: TCollectionFormatKind): string; static;
+    ///  <summary>Returns an array of all supported data formats.</summary>
+    ///  <returns><c>TArray&lt;TCollectionFormatKind&gt;</c>. Array of values
+    ///  that identify the supported data formats.</returns>
+    class function GetSupportedFormats: TArray<TCollectionFormatKind>; static;
   end;
 
 type
@@ -695,6 +704,21 @@ begin
   if Idx < 0 then
     Exit('');
   Result := LookupTable[Idx].Name;
+end;
+
+class function TCollectionFormatInfo.GetSupportedFormats:
+  TArray<TCollectionFormatKind>;
+var
+  Idx: Integer;
+  Item: TMapRecord;
+begin
+  SetLength(Result, Length(LookupTable));
+  Idx := 0;
+  for Item in LookupTable do
+  begin
+    Result[Idx] := Item.Kind;
+    Inc(Idx);
+  end;
 end;
 
 class function TCollectionFormatInfo.IndexOf(
