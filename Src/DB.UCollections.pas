@@ -413,7 +413,7 @@ begin
         TCollectionLocation.Create(
           TAppInfo.UserDefaultCollectionDir, '', etUTF8
         ),
-        TDataFormatKind.Native_v4
+        TDataFormatInfo.DefaultFormat
       )
     );
 end;
