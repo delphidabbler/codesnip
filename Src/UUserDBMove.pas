@@ -120,7 +120,7 @@ procedure TUserDBMove.MoveTo(const ACollection: TCollection;
   const ADirectory: string);
 begin
   fCollection := ACollection;
-  fSourceDir := ExcludeTrailingPathDelimiter(ACollection.Location.Directory);
+  fSourceDir := ExcludeTrailingPathDelimiter(ACollection.Storage.Directory);
   fDestDir := ExcludeTrailingPathDelimiter(ADirectory);
   ValidateDirectories;
   fDirCopier.Move(fSourceDir, fDestDir);
@@ -146,7 +146,7 @@ var
 begin
   Collections := TCollections.Instance;
   // record new location BEFORE deleting old directory
-  fCollection.Location.Directory := fDestDir;
+  fCollection.Storage.Directory := fDestDir;
   Collections.Update(fCollection);
   // Persist collections immediately to save new directory ASAP to prevent
   // directory change being lost following a program crash.
@@ -177,7 +177,7 @@ begin
     raise EInOutError.Create(sSameNames);
 
   if StrStartsText(
-    IncludeTrailingPathDelimiter(fCollection.Location.Directory), fDestDir
+    IncludeTrailingPathDelimiter(fCollection.Storage.Directory), fDestDir
   ) then
     raise EInOutError.Create(sCantMoveToSubDir);
 end;

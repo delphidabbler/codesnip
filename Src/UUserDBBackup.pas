@@ -64,7 +64,7 @@ constructor TUserDBBackup.Create(const BackupFile: string;
   }
 begin
   inherited Create(
-    ACollection.Location.Directory,
+    ACollection.Storage.Directory,
     BackupFile,
     MakeFileID(ACollection),
     ACollection.UID.ToArray
@@ -76,7 +76,7 @@ class function TUserDBBackup.MakeFileID(const ACollection: TCollection):
 begin
   // Backup file ID is $Fxxx where xxx is ordinal value of format kind.
   // The $F indicates that the file is a backup of a collection data format.
-  Result := SmallInt($F000 or UInt16(Ord(ACollection.CollectionFormatKind)));
+  Result := SmallInt($F000 or UInt16(Ord(ACollection.Storage.Format)));
 end;
 
 end.

@@ -94,6 +94,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  DB.DataFormats,
   DB.USnippet,
   DB.USnippetKind,
   DBIO.MetaData.DCSC,
@@ -123,7 +124,7 @@ resourcestring
 
   function CreditsLine(const ACollection: TCollection): string;
   begin
-    DBMetaData := TMetaDataFactory.CreateInstance(ACollection);
+    DBMetaData := TMetaDataFactory.CreateInstance(ACollection.Storage);
     Result := '';
     if mdcLicense in DBMetaData.GetCapabilities then
     begin

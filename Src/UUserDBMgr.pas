@@ -326,9 +326,9 @@ var
 begin
   if not TDeleteUserDBDlg.Execute(nil, CollectionToDelete) then
     Exit(False);
-  if not TDirectory.Exists(CollectionToDelete.Location.Directory) then
+  if not TDirectory.Exists(CollectionToDelete.Storage.Directory) then
     Exit(False);
-  TDirectory.Delete(CollectionToDelete.Location.Directory, True);
+  TDirectory.Delete(CollectionToDelete.Storage.Directory, True);
   Result := True;
 end;
 

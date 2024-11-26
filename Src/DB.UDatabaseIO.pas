@@ -422,7 +422,7 @@ class function TDatabaseIOFactory.CreateDBLoader(const Collection: TCollection):
 begin
   {TODO -cUDatabaseIO: Revise database loaders to get file path and other
           info from collection instead of hard wiring it.}
-  case Collection.CollectionFormatKind of
+  case Collection.Storage.Format of
     TDataFormatKind.DCSC_v2:
       Result := TDCSCV2FormatLoader.Create(Collection);
     TDataFormatKind.Native_v4:
@@ -435,7 +435,7 @@ end;
 class function TDatabaseIOFactory.CreateDBSaver(
   const Collection: TCollection): IDataFormatSaver;
 begin
-  case Collection.CollectionFormatKind of
+  case Collection.Storage.Format of
     TDataFormatKind.DCSC_v2:
       Result := TDCSCV2FormatSaver.Create(Collection);
     TDataFormatKind.Native_v4:
@@ -641,7 +641,7 @@ function TDCSCV2FormatLoader.CreateReader: IDataReader;
     @return Reader object instance.
   }
 begin
-  Result := TIniDataReader.Create(Collection.Location.Directory);
+  Result := TIniDataReader.Create(Collection.Storage.Directory);
   if not Result.DatabaseExists then
     Result := TNulDataReader.Create;
 end;
@@ -664,7 +664,7 @@ function TNativeV4FormatLoader.CreateReader: IDataReader;
     @return Reader object instance.
   }
 begin
-  Result := TXMLDataReader.Create(Collection.Location.Directory);
+  Result := TXMLDataReader.Create(Collection.Storage.Directory);
   if not Result.DatabaseExists then
     Result := TNulDataReader.Create;
 end;
@@ -779,7 +779,7 @@ end;
 
 function TDCSCV2FormatSaver.CreateWriter: IDataWriter;
 begin
-  Result := TIniDataWriter.Create(Collection.Location.Directory);
+  Result := TIniDataWriter.Create(Collection.Storage.Directory);
 end;
 
 procedure TDCSCV2FormatSaver.Restore;
@@ -814,7 +814,7 @@ end;
 
 function TNativeV4FormatSaver.CreateWriter: IDataWriter;
 begin
-  Result := TXMLDataWriter.Create(Collection.Location.Directory);
+  Result := TXMLDataWriter.Create(Collection.Storage.Directory);
 end;
 
 procedure TNativeV4FormatSaver.Save(const SnipList: TSnippetList;

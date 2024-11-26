@@ -184,6 +184,7 @@ uses
   ShellAPI,
   IOUtils,
   // Project
+  DB.DataFormats,
   FmEasterEgg,
   FmPreviewDlg,
   UAppInfo,
@@ -316,7 +317,7 @@ begin
     fPathInfoBoxes.Add(
       CreatePathInfoBox(
         Format(sCollectionPathGpCaption, [Collection.Name]),
-        Collection.Location.Directory,
+        Collection.Storage.Directory,
         TabIdx
       )
     );
@@ -377,7 +378,7 @@ begin
   tvCollectionInfo.Items.BeginUpdate;
   try
     tvCollectionInfo.Items.Clear;
-    MetaData := TMetaDataFactory.CreateInstance(ACollection);
+    MetaData := TMetaDataFactory.CreateInstance(ACollection.Storage);
     Capabilities := MetaData.GetCapabilities;
     if Capabilities <> [] then
     begin

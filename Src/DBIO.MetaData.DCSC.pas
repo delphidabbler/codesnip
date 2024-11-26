@@ -98,7 +98,7 @@ uses
   SysUtils,
   Types,
   // VCL
-  DB.UCollections,
+  DB.DataFormats,
   DB.UMetaData,
   UIStringList,
   UStructs,
@@ -335,7 +335,8 @@ type
     ///  <summary>Creates an instance of meta data object that can read this
     ///  collection's format.</summary>
     ///  <remarks>Must be called from a concrete descendant class.</remarks>
-    class function Instance(ACollection: TCollection): IDBMetaData; override;
+    class function Instance(const AStorageDetails: TDataStorageDetails):
+      IDBMetaData; override;
     ///  <summary>Gets the meta data capabilities for the collection data
     ///  format.</summary>
     ///  <returns><c>TMetaDataCapabilities</c>. Required meta data capabilities.
@@ -407,11 +408,11 @@ type
   TMainDBMetaData = class sealed(TAbstractMainDBMetaData, IDBMetaData)
   strict private
     var
-      fCollection: TCollection;
+      fDirectory: string;
   strict protected
     function GetDBDir: string; override;
   public
-    constructor Create(const ACollection: TCollection);
+    constructor Create(const ADirectory: string);
   end;
 
   ///  <summary>Class that provides meta data for update database directories.
@@ -433,7 +434,6 @@ uses
   Classes,
   IOUtils,
   // Project
-  DB.DataFormats,
   UEncodings,
   UIOUtils,
   UResourceUtils,
@@ -500,9 +500,9 @@ begin
 end;
 
 class function TAbstractMainDBMetaData.Instance(
-  ACollection: DB.UCollections.TCollection): IDBMetaData;
+  const AStorageDetails: TDataStorageDetails): IDBMetaData;
 begin
-  Result := TMainDBMetaData.Create(ACollection);
+  Result := TMainDBMetaData.Create(AStorageDetails.Directory);
 end;
 
 function TAbstractMainDBMetaData.IsCorrupt: Boolean;
@@ -566,16 +566,15 @@ end;
 
 { TMainDBMetaData }
 
-constructor TMainDBMetaData.Create(
-  const ACollection: DB.UCollections.TCollection);
+constructor TMainDBMetaData.Create(const ADirectory: string);
 begin
   inherited Create;
-  fCollection := ACollection;
+  fDirectory := ADirectory;
 end;
 
 function TMainDBMetaData.GetDBDir: string;
 begin
-  Result := fCollection.Location.Directory;
+  Result := fDirectory;
 end;
 
 { TUpdateDBMetaData }

@@ -26,14 +26,35 @@ type
     Native_v4
   );
 
+  ///  <summary>Record containing details of the data format and location in
+  ///  which a collection is stored.</summary>
+  TDataStorageDetails = record
+  strict private
+    var
+      ///  <summary>Value of the <c>Directory</c> property.</summary>
+      fDirectory: string;
+      ///  <summary>Value of the <c>Format</c> property.</summary>
+      fFormat: TDataFormatKind;
+    ///  <summary>Write access method for <c>Directory</c> property.</summary>
+    procedure SetDirectory(const AValue: string);
+  public
+    ///  <summary>Constructs a new record instance with the given property
+    ///  values.</summary>
+    constructor Create(const AFormat: TDataFormatKind;
+      const ADirectory: string);
+    ///  <summary>The format in which the data is stored.</summary>
+    property Format: TDataFormatKind read fFormat;
+    ///  <summary>The directory in which the data is stored.</summary>
+    property Directory: string read fDirectory write SetDirectory;
+  end;
 
   TDataFormatInfo = record
   strict private
     type
       TMapRecord = record
-        ///  <summary>Collection data format kind.</summary>
+        ///  <summary>Data format kind.</summary>
         Kind: TDataFormatKind;
-        ///  <summary>Collection data format name.</summary>
+        ///  <summary>Data format name.</summary>
         Name: string;
       end;
     const
@@ -98,6 +119,20 @@ begin
   for Idx := Low(LookupTable) to High(LookupTable) do
     if LookupTable[Idx].Kind = AKind then
       Exit(Idx);
+end;
+
+{ TDataStorageDetails }
+
+constructor TDataStorageDetails.Create(const AFormat: TDataFormatKind;
+  const ADirectory: string);
+begin
+  fFormat := AFormat;
+  fDirectory := ADirectory;
+end;
+
+procedure TDataStorageDetails.SetDirectory(const AValue: string);
+begin
+  fDirectory := AValue;
 end;
 
 end.

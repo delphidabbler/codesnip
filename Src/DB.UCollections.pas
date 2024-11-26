@@ -63,63 +63,12 @@ type
 
   ECollectionID = class(ECodeSnip);
 
-  TCollectionLocation = record
-  strict private
-    var
-      fDirectory: string;
-      fMetaDataFile: string;
-      fEncodingHint: TEncodingType;
-    procedure SetDirectory(const ANewDirectory: string);
-  public
-
-    ///  <summary>Instantiates a record with given values.</summary>
-    ///  <param name="ADirectory"><c>string</c> [in] File system directory
-    ///  containing the collection data. Must be non-empty and a valid directory
-    ///  name.</param>
-    ///  <param name="AMetaDataFile"><c>string</c> [in] Path to the collection's
-    ///  meta data file, if any. May be empty if collection has no meta data
-    ///  file or if the meta data file name is fixed. If non-empty the path must
-    ///  be relative to <c>ADirectory</c>. Optional: default is empty string.
-    ///  </param>
-    ///  <param name="AEncodingHint"><c>TEncodingType</c> [in] Hints at the
-    ///  encoding used by text files in <c>ADirectory</c>. Only required if the
-    ///  text files are not used in the collection or if the collection format
-    ///  specifies the text format. Optional: default is system default
-    ///  encoding.</param>
-    constructor Create(const ADirectory: string;
-      const AMetaDataFile: string = '';
-      const AEncodingHint: TEncodingType = TEncodingType.etSysDefault);
-
-    ///  <summary>File system directory containing the collection data.
-    ///  </summary>
-    ///  <remarks>Must be a valid directory name and must exist.</remarks>
-    property Directory: string read fDirectory write SetDirectory;
-
-    ///  <summary>Name of any meta data file, relative to <c>Directory</c>.
-    ///  </summary>
-    ///  <remarks>May be empty string. If non-empty must be a valid path name
-    ///  and the file must exist.</remarks>
-    property MetaDataFile: string read fMetaDataFile;
-
-    ///  <summary>Hints at the type of encoding used by the text files in
-    ///  <c>Directory</c>.</summary>
-    ///  <remarks><c>EncodingHint</c> should only be used where the I/O code has
-    ///  no knowledge of the expected text file encoding AND the where the files
-    ///  do not contain preamble bytes that specify the encoding.</remarks>
-    property EncodingHint: TEncodingType read fEncodingHint;
-
-    ///  <summary>Checks if the record instance has valid fields.</summary>
-    function IsValid: Boolean;
-
-  end;
-
   TCollection = record
   strict private
     var
       fUID: TCollectionID;
       fName: string;
-      fLocation: TCollectionLocation;
-      fCollectionFormatKind: TDataFormatKind;
+      fStorage: TDataStorageDetails;
   public
     type
       TComparer = class(TInterfacedObject,
@@ -138,20 +87,16 @@ type
     ///  <param name="AName"><c>string</c> [in] Name of collection. Should be
     ///  unique. Must not be empty or only whitespace.</param>
     constructor Create(const AUID: TCollectionID; const AName: string;
-      const ALocation: TCollectionLocation;
-      const ACollectionFormatKind: TDataFormatKind);
+      const AStorage: TDataStorageDetails);
     ///  <summary>Collection identifier. Must be unique.</summary>
     property UID: TCollectionID
       read fUID;
     ///  <summary>Collection name. Must be unique.</summary>
     property Name: string read
       fName;
-    ///  <summary>Collection location information.</summary>
-    property Location: TCollectionLocation
-      read fLocation;
-    ///  <summary>Kind of collection format used for to store data for this
-    ///  collection.</summary>
-    property CollectionFormatKind: TDataFormatKind read fCollectionFormatKind;
+    ///  <summary>Collection storage information.</summary>
+    property Storage: TDataStorageDetails
+      read fStorage;
     ///  <summary>Checks if this record's fields are valid.</summary>
     function IsValid: Boolean;
     ///  <summary>Checks if this record is the default collection.</summary>
@@ -193,10 +138,8 @@ type
       CountKey = 'Count';
       UIDKey = 'UID';
       NameKey = 'Name';
-      LocationDirectoryKey = 'Location.Directory';
-      LocationMetaDataFileKey = 'Location.MetaDataFile';
-      LocationEncodingHintKey = 'Location.EncodingHint';
-      DataFormatKey = 'DataFormat';
+      StorageFormatKey = 'Storage.Format';
+      StorageDirectoryKey = 'Storage.Directory';
     class procedure SaveCollection(const AOrdinal: Cardinal;
       const ACollection: TCollection); static;
     class procedure LoadCollection(const AOrdinal: Cardinal;
@@ -221,41 +164,10 @@ uses
 resourcestring
   SBadHexString = 'Invalid Hex String.';
 
-{ TCollectionLocation }
-
-constructor TCollectionLocation.Create(const ADirectory,
-  AMetaDataFile: string; const AEncodingHint: TEncodingType);
-begin
-  fDirectory := StrTrim(ADirectory);
-  fMetaDataFile := StrTrim(AMetaDataFile);
-  fEncodingHint := AEncodingHint;
-  Assert(IsValid, 'TCollectionLocation.Create: invalid parameter(s)');
-end;
-
-function TCollectionLocation.IsValid: Boolean;
-begin
-  Result := True;
-  if fDirectory = '' then
-    Exit(False);
-  if not TPath.HasValidPathChars(fDirectory, False) then
-    Exit(False);
-  if (fMetaDataFile <> '') then
-  begin
-    if not TPath.IsRelativePath(fMetaDataFile) then
-      Exit(False);
-  end;
-end;
-
-procedure TCollectionLocation.SetDirectory(const ANewDirectory: string);
-begin
-  fDirectory := ANewDirectory;
-end;
-
 { TCollection }
 
-constructor TCollection.Create(const AUID: TCollectionID;
-  const AName: string; const ALocation: TCollectionLocation;
-  const ACollectionFormatKind: TDataFormatKind);
+constructor TCollection.Create(const AUID: TCollectionID; const AName: string;
+  const AStorage: TDataStorageDetails);
 var
   TrimmedName: string;
 begin
@@ -263,13 +175,12 @@ begin
   Assert(not AUID.IsNull, 'TCollection.Create: AUID is null');
   Assert(TrimmedName <> '',
     'TCollection.Create: AName is empty or only whitespace');
-  Assert(ALocation.IsValid, 'TCollection.Create: ALocation is not valid');
-  Assert(ACollectionFormatKind <> TDataFormatKind.Error,
-    'TCollection.Create: ACollectionFormatKind = TCollectionFormatKind.Error');
+  {TODO -cRefactor: move following into IsValid method of TDataDetails}
+  Assert(AStorage.Format <> TDataFormatKind.Error,
+    'TCollection.Create: ADataDetails.Kind = TCollectionFormatKind.Error');
   fUID := AUID.Clone;
   fName := TrimmedName;
-  fLocation := ALocation;
-  fCollectionFormatKind := ACollectionFormatKind;
+  fStorage := AStorage;
 end;
 
 function TCollection.IsDefault: Boolean;
@@ -283,8 +194,7 @@ begin
   may not be needed.}
   Result := not fUID.IsNull
     and (fName <> '')
-    and fLocation.IsValid
-    and (fCollectionFormatKind <> TDataFormatKind.Error);
+    and (fStorage.Format <> TDataFormatKind.Error);
 end;
 
 { TCollections }
@@ -410,10 +320,10 @@ begin
       TCollection.Create(
         TCollectionID.Default,
         'Default',
-        TCollectionLocation.Create(
-          TAppInfo.UserDefaultCollectionDir, '', etUTF8
-        ),
-        TDataFormatInfo.DefaultFormat
+        TDataStorageDetails.Create(
+          TDataFormatInfo.DefaultFormat,
+          TAppInfo.UserDefaultCollectionDir
+        )
       )
     );
 end;
@@ -559,12 +469,12 @@ end;
 class procedure TCollectionsPersist.Load(
   const ACollections: TCollections);
 var
-  Storage: ISettingsSection;
+  ConfigSection: ISettingsSection;
   Count: Integer;
   Idx: Integer;
 begin
-  Storage := Settings.ReadSection(ssCollections);
-  Count := Storage.GetInteger(CountKey, 0);
+  ConfigSection := Settings.ReadSection(ssCollections);
+  Count := ConfigSection.GetInteger(CountKey, 0);
   for Idx := 0 to Pred(Count) do
     LoadCollection(Idx, ACollections);
 end;
@@ -572,45 +482,39 @@ end;
 class procedure TCollectionsPersist.LoadCollection(const AOrdinal: Cardinal;
   const ACollections: TCollections);
 var
-  Storage: ISettingsSection;
-  Location: TCollectionLocation;
+  ConfigSection: ISettingsSection;
   UID: TCollectionID;
   Name: string;
   Collection: TCollection;
-  DataFormat: TDataFormatKind;
+  StorageDetails: TDataStorageDetails;
 begin
-  Storage := Settings.ReadSection(ssCollection, IntToStr(AOrdinal));
-  UID := TCollectionID.Create(Storage.GetBytes(UIDKey));
+  ConfigSection := Settings.ReadSection(ssCollection, IntToStr(AOrdinal));
+  UID := TCollectionID.Create(ConfigSection.GetBytes(UIDKey));
   if ACollections.ContainsID(UID) then
     // Don't load a duplicate collection
     Exit;
-  Name := Storage.GetString(NameKey, '');
-  Location := TCollectionLocation.Create(
-    Storage.GetString(LocationDirectoryKey, ''),
-    Storage.GetString(LocationMetaDataFileKey, ''),
-    TEncodingType(
-      Storage.GetInteger(
-        LocationEncodingHintKey, Ord(TEncodingType.etSysDefault)
-      )
-    )
+  Name := ConfigSection.GetString(NameKey, '');
+
+  StorageDetails := TDataStorageDetails.Create(
+    TDataFormatKind(
+      ConfigSection.GetInteger(StorageFormatKey, Ord(TDataFormatKind.Error))
+    ),
+    ConfigSection.GetString(StorageDirectoryKey, '')
   );
-  DataFormat := TDataFormatKind(
-    Storage.GetInteger(DataFormatKey, Ord(TDataFormatKind.Error))
-  );
-  Collection := TCollection.Create(UID, Name, Location, DataFormat);
+  Collection := TCollection.Create(UID, Name, StorageDetails);
   ACollections.Add(Collection);
 end;
 
 class procedure TCollectionsPersist.Save(const
   ACollections: TCollections);
 var
-  Storage: ISettingsSection;
+  ConfigSection: ISettingsSection;
   Idx: Integer;
 begin
   // Save number of collections
-  Storage := Settings.EmptySection(ssCollections);
-  Storage.SetInteger(CountKey, ACollections.Count);
-  Storage.Save;
+  ConfigSection := Settings.EmptySection(ssCollections);
+  ConfigSection.SetInteger(CountKey, ACollections.Count);
+  ConfigSection.Save;
   // Save each collection's properties in its own section
   for Idx := 0 to Pred(ACollections.Count) do
     SaveCollection(Idx, ACollections[Idx]);
@@ -619,19 +523,15 @@ end;
 class procedure TCollectionsPersist.SaveCollection(const AOrdinal: Cardinal;
   const ACollection: TCollection);
 var
-  Storage: ISettingsSection;
+  ConfigSection: ISettingsSection;
 begin
   // Save info about collection format in its own section
-  Storage := Settings.EmptySection(ssCollection, IntToStr(AOrdinal));
-  Storage.SetBytes(UIDKey, ACollection.UID.ToArray);
-  Storage.SetString(NameKey, ACollection.Name);
-  Storage.SetString(LocationDirectoryKey, ACollection.Location.Directory);
-  Storage.SetString(LocationMetaDataFileKey, ACollection.Location.MetaDataFile);
-  Storage.SetInteger(
-    LocationEncodingHintKey, Ord(ACollection.Location.EncodingHint)
-  );
-  Storage.SetInteger(DataFormatKey, Ord(ACollection.CollectionFormatKind));
-  Storage.Save;
+  ConfigSection := Settings.EmptySection(ssCollection, IntToStr(AOrdinal));
+  ConfigSection.SetBytes(UIDKey, ACollection.UID.ToArray);
+  ConfigSection.SetString(NameKey, ACollection.Name);
+  ConfigSection.SetInteger(StorageFormatKey, Ord(ACollection.Storage.Format));
+  ConfigSection.SetString(StorageDirectoryKey, ACollection.Storage.Directory);
+  ConfigSection.Save;
 end;
 
 { TCollection.TComparer }

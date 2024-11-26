@@ -20,7 +20,6 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  DB.UCollections,
   DB.DataFormats,
   UIStringList,
   UVersionInfo;
@@ -151,7 +150,8 @@ type
     ///  <param name="ACollection"><c>TCollection</c> [in] Collection associated
     ///  with the meta data being created.</param>
     ///  <returns><c>IDBMetaData</c>. Required meta data object.</returns>
-    class function Instance(ACollection: TCollection): IDBMetaData;
+    class function Instance(const AStorageDetails: TDataStorageDetails):
+      IDBMetaData;
       virtual; abstract;
     ///  <summary>Gets the meta data capabilities for the collection data
     ///  format.</summary>
@@ -198,7 +198,7 @@ type
     ///  <returns><c>IDBMetaData</c>. Requested object. May be a null object if
     ///  no meta data class was registered for the data format associated with
     ///  <c>ACollection</c>.</returns>
-    class function CreateInstance(const ACollection: TCollection):
+    class function CreateInstance(const AStorageDetails: TDataStorageDetails):
       IDBMetaData; static;
     ///  <summary>Gets the meta data capabilities for a collection data format.
     ///  </summary>
@@ -341,13 +341,11 @@ begin
   >.Create;
 end;
 
-class function TMetaDataFactory.CreateInstance(const ACollection: TCollection):
-  IDBMetaData;
+class function TMetaDataFactory.CreateInstance(
+  const AStorageDetails: TDataStorageDetails): IDBMetaData;
 begin
-  if fCallbackMap.ContainsKey(ACollection.CollectionFormatKind) then
-    Result := fCallbackMap[ACollection.CollectionFormatKind].Instance(
-      ACollection
-    )
+  if fCallbackMap.ContainsKey(AStorageDetails.Format) then
+    Result := fCallbackMap[AStorageDetails.Format].Instance(AStorageDetails)
   else
     Result := TNullMetaData.Create;
 end;
