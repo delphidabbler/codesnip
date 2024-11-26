@@ -429,10 +429,11 @@ type
 implementation
 
 uses
-  // Project
+  // Delphi
   Classes,
   IOUtils,
-  // VCL
+  // Project
+  DB.DataFormats,
   UEncodings,
   UIOUtils,
   UResourceUtils,
@@ -839,7 +840,7 @@ end;
 initialization
 
 TMetaDataFactory.RegisterCreator(
-  TCollectionFormatKind.DCSC_v2, TMainDBMetaData
+  TDataFormatKind.DCSC_v2, TMainDBMetaData
 );
 
 end.

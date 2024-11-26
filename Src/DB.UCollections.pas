@@ -19,70 +19,12 @@ uses
   SysUtils,
   Generics.Collections,
   Generics.Defaults,
+
+  DB.DataFormats,
   UEncodings,
   UExceptions,
   USettings,
   USingleton;
-
-type
-
-  ///  <summary>Enumeration of the kinds of supported snippet collection data
-  ///  formats.</summary>
-  ///  <remarks>
-  ///  <para><c>Error</c> -- Invalid format. Used to indicate an unknown format
-  ///  or other error.</para>
-  ///  <para><c>DCSC_v2</c> -- Format used by the DelphiDabbler Code Snippets
-  ///  Collection v2.</para>
-  ///  <para><c>Native_v4</c> -- Native format used by CodeSnip v4 to store user
-  ///  snippets.</para>
-  ///  </remarks>
-  TCollectionFormatKind = ( // TODO: move to more appropriate unit
-    // NEVER specify a literal ordinal value in this enumeration.
-    // NEVER delete or re-order the enumeration items: the ordinal values may
-    //       be written to a config file and changing the ordinal value here can
-    //       cause hard to trace bugs. If an item goes out of use then leave it
-    //       in place & possibly rename the item to indicate its redundancy.
-    // NEVER associate error with a format loader or saver class.
-    Error,
-    DCSC_v2,
-    Native_v4
-  );
-
-
-  TCollectionFormatInfo = record // TODO: move to more appropriate unit
-  strict private
-    type
-      TMapRecord = record
-        ///  <summary>Collection data format kind.</summary>
-        Kind: TCollectionFormatKind;
-        ///  <summary>Collection data format name.</summary>
-        Name: string;
-      end;
-    const
-      // There are so few entries in this table it's not worth the overhead
-      // of using a dicitionary for the lookup.
-      LookupTable: array[0..1] of TMapRecord = (
-        (Kind: TCollectionFormatKind.Native_v4;
-          Name: 'CodeSnip Native Snippet Collection v4'),
-        (Kind: TCollectionFormatKind.DCSC_v2;
-          Name: 'DelphiDabbler Code Snippets Collection v2')
-      );
-    class function IndexOf(const AKind: TCollectionFormatKind): Integer; static;
-  public
-    const
-      ///  <summary>Specifies the data format used for the default collection.
-      ///  </summary>
-      DefaultFormat = TCollectionFormatKind.Native_v4;
-  public
-    ///  <summary>Gets the name of the data format specified by
-    ///  <c>AKind</c>. Returns an empty string if no name is associated with
-    ///  <c>AKind</c>.</summary>
-    class function GetName(const AKind: TCollectionFormatKind): string; static;
-    ///  <summary>Returns an array of all supported data formats.</summary>
-    ///  <returns><c>TArray&lt;TCollectionFormatKind&gt;</c>. Array of values
-    ///  that identify the supported data formats.</returns>
-    class function GetSupportedFormats: TArray<TCollectionFormatKind>; static;
-  end;
 
 type
 
@@ -177,7 +119,7 @@ type
       fUID: TCollectionID;
       fName: string;
       fLocation: TCollectionLocation;
-      fCollectionFormatKind: TCollectionFormatKind;
+      fCollectionFormatKind: TDataFormatKind;
   public
     type
       TComparer = class(TInterfacedObject,
@@ -197,7 +139,7 @@ type
     ///  unique. Must not be empty or only whitespace.</param>
     constructor Create(const AUID: TCollectionID; const AName: string;
       const ALocation: TCollectionLocation;
-      const ACollectionFormatKind: TCollectionFormatKind);
+      const ACollectionFormatKind: TDataFormatKind);
     ///  <summary>Collection identifier. Must be unique.</summary>
     property UID: TCollectionID
       read fUID;
@@ -209,8 +151,7 @@ type
       read fLocation;
     ///  <summary>Kind of collection format used for to store data for this
     ///  collection.</summary>
-    property CollectionFormatKind: TCollectionFormatKind
-      read fCollectionFormatKind;
+    property CollectionFormatKind: TDataFormatKind read fCollectionFormatKind;
     ///  <summary>Checks if this record's fields are valid.</summary>
     function IsValid: Boolean;
     ///  <summary>Checks if this record is the default collection.</summary>
@@ -314,7 +255,7 @@ end;
 
 constructor TCollection.Create(const AUID: TCollectionID;
   const AName: string; const ALocation: TCollectionLocation;
-  const ACollectionFormatKind: TCollectionFormatKind);
+  const ACollectionFormatKind: TDataFormatKind);
 var
   TrimmedName: string;
 begin
@@ -323,7 +264,7 @@ begin
   Assert(TrimmedName <> '',
     'TCollection.Create: AName is empty or only whitespace');
   Assert(ALocation.IsValid, 'TCollection.Create: ALocation is not valid');
-  Assert(ACollectionFormatKind <> TCollectionFormatKind.Error,
+  Assert(ACollectionFormatKind <> TDataFormatKind.Error,
     'TCollection.Create: ACollectionFormatKind = TCollectionFormatKind.Error');
   fUID := AUID.Clone;
   fName := TrimmedName;
@@ -343,7 +284,7 @@ begin
   Result := not fUID.IsNull
     and (fName <> '')
     and fLocation.IsValid
-    and (fCollectionFormatKind <> TCollectionFormatKind.Error);
+    and (fCollectionFormatKind <> TDataFormatKind.Error);
 end;
 
 { TCollections }
@@ -472,7 +413,7 @@ begin
         TCollectionLocation.Create(
           TAppInfo.UserDefaultCollectionDir, '', etUTF8
         ),
-        TCollectionFormatKind.Native_v4
+        TDataFormatKind.Native_v4
       )
     );
 end;
@@ -636,7 +577,7 @@ var
   UID: TCollectionID;
   Name: string;
   Collection: TCollection;
-  DataFormat: TCollectionFormatKind;
+  DataFormat: TDataFormatKind;
 begin
   Storage := Settings.ReadSection(ssCollection, IntToStr(AOrdinal));
   UID := TCollectionID.Create(Storage.GetBytes(UIDKey));
@@ -653,8 +594,8 @@ begin
       )
     )
   );
-  DataFormat := TCollectionFormatKind(
-    Storage.GetInteger(DataFormatKey, Ord(TCollectionFormatKind.Error))
+  DataFormat := TDataFormatKind(
+    Storage.GetInteger(DataFormatKey, Ord(TDataFormatKind.Error))
   );
   Collection := TCollection.Create(UID, Name, Location, DataFormat);
   ACollections.Add(Collection);
@@ -691,45 +632,6 @@ begin
   );
   Storage.SetInteger(DataFormatKey, Ord(ACollection.CollectionFormatKind));
   Storage.Save;
-end;
-
-{ TCollectionFormatInfo }
-
-class function TCollectionFormatInfo.GetName(
-  const AKind: TCollectionFormatKind): string;
-var
-  Idx: Integer;
-begin
-  Idx := IndexOf(AKind);
-  if Idx < 0 then
-    Exit('');
-  Result := LookupTable[Idx].Name;
-end;
-
-class function TCollectionFormatInfo.GetSupportedFormats:
-  TArray<TCollectionFormatKind>;
-var
-  Idx: Integer;
-  Item: TMapRecord;
-begin
-  SetLength(Result, Length(LookupTable));
-  Idx := 0;
-  for Item in LookupTable do
-  begin
-    Result[Idx] := Item.Kind;
-    Inc(Idx);
-  end;
-end;
-
-class function TCollectionFormatInfo.IndexOf(
-  const AKind: TCollectionFormatKind): Integer;
-var
-  Idx: Integer;
-begin
-  Result := -1;
-  for Idx := Low(LookupTable) to High(LookupTable) do
-    if LookupTable[Idx].Kind = AKind then
-      Exit(Idx);
 end;
 
 { TCollection.TComparer }

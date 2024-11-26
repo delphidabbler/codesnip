@@ -21,6 +21,7 @@ uses
   Generics.Collections,
   // Project
   DB.UCollections,
+  DB.DataFormats,
   UIStringList,
   UVersionInfo;
 
@@ -178,9 +179,7 @@ type
             but does contain class types.}
       ///  <summary>Map of collection format kinds to classes that implement the
       ///  format's meta data.</summary>
-      fCallbackMap: TDictionary<
-        TCollectionFormatKind, TRegisterableMetaDataClass
-      >;
+      fCallbackMap: TDictionary<TDataFormatKind, TRegisterableMetaDataClass>;
   public
     class constructor Create;
     class destructor Destroy;
@@ -190,7 +189,7 @@ type
     ///  format for which the meta data class is being registered.</param>
     ///  <param name="AClass"><c>TRegisterableMetaDataClass</c> [in] Type of
     ///  class to create.</param>
-    class procedure RegisterCreator(AFormat: TCollectionFormatKind;
+    class procedure RegisterCreator(AFormat: TDataFormatKind;
       AClass: TRegisterableMetaDataClass); static;
     ///  <summary>Creates a meta data object instance that can read a given
     ///  collection data format.</summary>
@@ -207,7 +206,7 @@ type
     ///  format for which meta data capabilities are required.</param>
     ///  <returns><c>TMetaDataCapabilities</c>. Required meta data capabilities.
     ///  </returns>
-    class function CapabilitiesOf(const AFormat: TCollectionFormatKind):
+    class function CapabilitiesOf(const AFormat: TDataFormatKind):
       TMetaDataCapabilities; static;
   end;
 
@@ -327,7 +326,7 @@ end;
 { TMetaDataFactory }
 
 class function TMetaDataFactory.CapabilitiesOf(
-  const AFormat: TCollectionFormatKind): TMetaDataCapabilities;
+  const AFormat: TDataFormatKind): TMetaDataCapabilities;
 begin
   if fCallbackMap.ContainsKey(AFormat) then
     Result := fCallbackMap[AFormat].Capabilities
@@ -338,7 +337,7 @@ end;
 class constructor TMetaDataFactory.Create;
 begin
   fCallbackMap := TDictionary<
-    TCollectionFormatKind, TRegisterableMetaDataClass
+    TDataFormatKind, TRegisterableMetaDataClass
   >.Create;
 end;
 
@@ -359,7 +358,7 @@ begin
 end;
 
 class procedure TMetaDataFactory.RegisterCreator(
-  AFormat: TCollectionFormatKind; AClass: TRegisterableMetaDataClass);
+  AFormat: TDataFormatKind; AClass: TRegisterableMetaDataClass);
 begin
   fCallbackMap.AddOrSetValue(AFormat, AClass);
 end;

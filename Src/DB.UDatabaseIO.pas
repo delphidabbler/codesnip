@@ -131,6 +131,7 @@ uses
   Generics.Collections,
   IOUtils,
   // Project
+  DB.DataFormats,
   DBIO.UCategoryIO,
   DBIO.UFileIOIntf,
   DBIO.UIniData,
@@ -422,9 +423,9 @@ begin
   {TODO -cUDatabaseIO: Revise database loaders to get file path and other
           info from collection instead of hard wiring it.}
   case Collection.CollectionFormatKind of
-    TCollectionFormatKind.DCSC_v2:
+    TDataFormatKind.DCSC_v2:
       Result := TDCSCV2FormatLoader.Create(Collection);
-    TCollectionFormatKind.Native_v4:
+    TDataFormatKind.Native_v4:
       Result := TNativeV4FormatLoader.Create(Collection);
     else
       Result := nil;
@@ -435,9 +436,9 @@ class function TDatabaseIOFactory.CreateDBSaver(
   const Collection: TCollection): IDataFormatSaver;
 begin
   case Collection.CollectionFormatKind of
-    TCollectionFormatKind.DCSC_v2:
+    TDataFormatKind.DCSC_v2:
       Result := TDCSCV2FormatSaver.Create(Collection);
-    TCollectionFormatKind.Native_v4:
+    TDataFormatKind.Native_v4:
       Result := TNativeV4FormatSaver.Create(Collection);
     else
       Result := nil;
