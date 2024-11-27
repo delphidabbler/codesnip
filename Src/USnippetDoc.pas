@@ -119,6 +119,7 @@ uses
   Generics.Collections,
   // Project
   Compilers.UCompilers,
+  DB.DataFormats,
   DB.UMain,
   DB.UMetaData,
   DB.USnippetKind,
@@ -138,7 +139,7 @@ var
 begin
   Collection := TCollections.Instance.GetCollection(ACollectionID);
   Result := Format(sCollectionInfo, [Collection.Name]);
-  MetaData := TMetaDataFactory.CreateInstance(Collection);
+  MetaData := TMetaDataFactory.CreateInstance(Collection.Storage);
   if mdcLicense in MetaData.GetCapabilities then
   begin
     Result := Result + ' ' + MetaData.GetLicenseInfo.NameWithURL + '.';

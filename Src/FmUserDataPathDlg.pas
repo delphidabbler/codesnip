@@ -176,7 +176,7 @@ begin
   actMove.Enabled := (NewDirFromEditCtrl <> '')
     and not StrSameText(
       NewDirFromEditCtrl,
-      fCollList.Collection(cbCollection.ItemIndex).Location.Directory
+      fCollList.Collection(cbCollection.ItemIndex).Storage.Directory
     )
     and Self.Enabled;
 end;

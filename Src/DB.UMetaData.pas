@@ -20,7 +20,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  DB.UCollections,
+  DB.DataFormats,
   UIStringList,
   UVersionInfo;
 
@@ -150,8 +150,22 @@ type
     ///  <param name="ACollection"><c>TCollection</c> [in] Collection associated
     ///  with the meta data being created.</param>
     ///  <returns><c>IDBMetaData</c>. Required meta data object.</returns>
-    class function Instance(ACollection: TCollection): IDBMetaData;
+    class function Instance(const AStorageDetails: TDataStorageDetails):
+      IDBMetaData;
       virtual; abstract;
+    ///  <summary>Gets the meta data capabilities for the collection data
+    ///  format.</summary>
+    ///  <returns><c>TMetaDataCapabilities</c>. Required meta data capabilities.
+    ///  </returns>
+    ///  <remarks>This method enables meta data capabilities to be obtained
+    ///  without creating an instance of the object.</remarks>
+    class function Capabilities: TMetaDataCapabilities; virtual; abstract;
+    ///  <summary>Returns information about what, if any, meta data is supported
+    ///  by a collection.</summary>
+    ///  <remarks>This method provides a means of accessing the data returned by
+    ///  the <c>Capabilities</c> class method from <c>IDBMetaData</c> instances.
+    ///  </remarks>
+    function GetCapabilities: TMetaDataCapabilities; virtual;
   end;
 
   TRegisterableMetaDataClass = class of TRegisterableMetaData;
@@ -161,11 +175,11 @@ type
   TMetaDataFactory = record
   strict private
     class var
-      ///  <summary>Map of collection format kinds to functions that create
-      ///  meta data objects of the required type.</summary>
-      fCallbackMap: TDictionary<
-        TCollectionFormatKind, TRegisterableMetaDataClass
-      >;
+      {TODO -Refactor: rename fCallbackMap since it does not contain callback,
+            but does contain class types.}
+      ///  <summary>Map of collection format kinds to classes that implement the
+      ///  format's meta data.</summary>
+      fCallbackMap: TDictionary<TDataFormatKind, TRegisterableMetaDataClass>;
   public
     class constructor Create;
     class destructor Destroy;
@@ -175,7 +189,7 @@ type
     ///  format for which the meta data class is being registered.</param>
     ///  <param name="AClass"><c>TRegisterableMetaDataClass</c> [in] Type of
     ///  class to create.</param>
-    class procedure RegisterCreator(AFormat: TCollectionFormatKind;
+    class procedure RegisterCreator(AFormat: TDataFormatKind;
       AClass: TRegisterableMetaDataClass); static;
     ///  <summary>Creates a meta data object instance that can read a given
     ///  collection data format.</summary>
@@ -184,8 +198,16 @@ type
     ///  <returns><c>IDBMetaData</c>. Requested object. May be a null object if
     ///  no meta data class was registered for the data format associated with
     ///  <c>ACollection</c>.</returns>
-    class function CreateInstance(const ACollection: TCollection):
+    class function CreateInstance(const AStorageDetails: TDataStorageDetails):
       IDBMetaData; static;
+    ///  <summary>Gets the meta data capabilities for a collection data format.
+    ///  </summary>
+    ///  <param name="AFormat"><c>TCollectionFormatKind</c> [in] Collection data
+    ///  format for which meta data capabilities are required.</param>
+    ///  <returns><c>TMetaDataCapabilities</c>. Required meta data capabilities.
+    ///  </returns>
+    class function CapabilitiesOf(const AFormat: TDataFormatKind):
+      TMetaDataCapabilities; static;
   end;
 
 implementation
@@ -294,22 +316,36 @@ begin
     Result := sCopyright + ' ' + Result;
 end;
 
+{ TRegisterableMetaData }
+
+function TRegisterableMetaData.GetCapabilities: TMetaDataCapabilities;
+begin
+  Result := Capabilities;
+end;
+
 { TMetaDataFactory }
+
+class function TMetaDataFactory.CapabilitiesOf(
+  const AFormat: TDataFormatKind): TMetaDataCapabilities;
+begin
+  if fCallbackMap.ContainsKey(AFormat) then
+    Result := fCallbackMap[AFormat].Capabilities
+  else
+    Result := [];
+end;
 
 class constructor TMetaDataFactory.Create;
 begin
   fCallbackMap := TDictionary<
-    TCollectionFormatKind, TRegisterableMetaDataClass
+    TDataFormatKind, TRegisterableMetaDataClass
   >.Create;
 end;
 
-class function TMetaDataFactory.CreateInstance(const ACollection: TCollection):
-  IDBMetaData;
+class function TMetaDataFactory.CreateInstance(
+  const AStorageDetails: TDataStorageDetails): IDBMetaData;
 begin
-  if fCallbackMap.ContainsKey(ACollection.CollectionFormatKind) then
-    Result := fCallbackMap[ACollection.CollectionFormatKind].Instance(
-      ACollection
-    )
+  if fCallbackMap.ContainsKey(AStorageDetails.Format) then
+    Result := fCallbackMap[AStorageDetails.Format].Instance(AStorageDetails)
   else
     Result := TNullMetaData.Create;
 end;
@@ -320,7 +356,7 @@ begin
 end;
 
 class procedure TMetaDataFactory.RegisterCreator(
-  AFormat: TCollectionFormatKind; AClass: TRegisterableMetaDataClass);
+  AFormat: TDataFormatKind; AClass: TRegisterableMetaDataClass);
 begin
   fCallbackMap.AddOrSetValue(AFormat, AClass);
 end;

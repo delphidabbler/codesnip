@@ -103,6 +103,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  DB.DataFormats,
   DB.UMetaData,
   UAppInfo,
   UUtils;
@@ -153,7 +154,7 @@ function TSaveUnitMgr.CreateHeaderComments: IStringList;
   var
     DBMetaData: IDBMetaData;
   begin
-    DBMetaData := TMetaDataFactory.CreateInstance(ACollection);
+    DBMetaData := TMetaDataFactory.CreateInstance(ACollection.Storage);
     Result := '';
     if mdcLicense in DBMetaData.GetCapabilities then
     begin

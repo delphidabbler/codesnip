@@ -41,6 +41,7 @@ type
     const ProgramID = 'codesnip';
       {TODO -cVault: Remove unused ProgramID const}
       {Machine readable identifier of program}
+  public
     class function UserAppDir: string;
       {Gets the CodeSnip data directory stored within the user's application
       data directory.
@@ -52,14 +53,31 @@ type
         @return Full path to common application data directory.
       }
     class function AppDataDir: string;
+      {TODO -cCollections: Remove AppDataDir method: used for "main" database}
       {Returns the directory where CodeSnip stores the "database" files.
         @return Full path to database sub directory.
       }
-    class function DefaultUserDataDir: string;
-      {Returns the default directory where CodeSnip stores the uer's "database"
-      files.
-        @return Full path to required directory.
-      }
+
+    ///  <summary>Returns the path where collections are recommended to be
+    ///  stored for the current user.</summary>
+    ///  <remarks>
+    ///  <para>Collections each have their own sub-directory of this directory.
+    ///  </para>
+    ///  <para>The user may ignore this recommendation and install collections
+    ///  anywhere they choose.</para>
+    ///  </remarks>
+    class function UserCollectionsDir: string;
+
+    ///  <summary>Returns the path where the Default collection is recommended
+    ///  to be stored for the current user.</summary>
+    ///  <remarks>
+    ///  <para>If the Default collection is not present then CodeSnip will
+    ///  automatically create it in this directory.</para>
+    ///  <para>The user may move the Default collection anywhere they choose.
+    ///  </para>
+    ///  </remarks>
+    class function UserDefaultCollectionDir: string;
+
     class function AppExeFilePath: string;
       {Returns fully specified name of program's executable file.
         @return Name of file.
@@ -169,19 +187,6 @@ begin
   {$ENDIF}
 end;
 
-class function TAppInfo.DefaultUserDataDir: string;
-  {Returns the default directory where CodeSnip stores the uer's "database"
-  files.
-    @return Full path to required directory.
-  }
-begin
-  {$IFNDEF PORTABLE}
-  Result := UserAppDir + '\UserDatabase';
-  {$ELSE}
-  Result := UserAppDir + '\UserDB';
-  {$ENDIF}
-end;
-
 class function TAppInfo.HelpFileName: string;
   {Returns fully specified name of CodeSnip's help file.
     @return Name of help file.
@@ -248,9 +253,19 @@ begin
   Result := UserAppDir + '\Categories';
 end;
 
+class function TAppInfo.UserCollectionsDir: string;
+begin
+  Result := UserAppDir + '\Collections';
+end;
+
 class function TAppInfo.UserConfigFileName: string;
 begin
   Result := UserAppDir + '\User.config';
+end;
+
+class function TAppInfo.UserDefaultCollectionDir: string;
+begin
+  Result := UserCollectionsDir + '\Default';
 end;
 
 class function TAppInfo.UserFavouritesFileName: string;
