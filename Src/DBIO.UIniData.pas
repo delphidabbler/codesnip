@@ -942,9 +942,14 @@ const
     'Q'     // crQuery
   );
   TestInfo: array[TSnippetTestInfo] of string = (
-    'none',     // stiNone
-    'basic',    // stiBasic
-    'advanced'  // stiAdvanced
+    {TODO -cVault: New empty entries added because new entries have been added
+            to TSnippetTestInfo. Need to update code to support new Advanced.XXX
+            entries in DCSC v2.2}
+    'none',       // stiNone
+    'basic',      // stiBasic
+    'advanced',   // stiAdvanced
+    '',           // stiUnitTests
+    ''            // stiDemoCode
   );
 var
   SourceFileName: string;

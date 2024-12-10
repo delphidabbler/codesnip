@@ -250,7 +250,9 @@ function TSnippetHTML.TestingImage: string;
 resourcestring
   sTestingNone = 'Untested'#13#10'Use with care';
   sTestingBasic = 'Passed simple tests';
-  sTestingAdvanced = 'Passed advanced / unit testing';
+  sTestingAdvanced = 'Passed unspecified advanced testing';
+  sTestingUnitTests = 'Has unit tests';
+  sTestingDemo = 'Has demo program';
 const
   ImgWidth = 16;
   ImgHeight = 16;
@@ -260,7 +262,11 @@ const
   end =(
     (ResName: 'testing-none.png';     Title: sTestingNone),
     (ResName: 'testing-basic.png';    Title: sTestingBasic),
-    (ResName: 'testing-advanced.png'; Title: sTestingAdvanced)
+    (ResName: 'testing-advanced.png'; Title: sTestingAdvanced),
+    {TODO -cVault: Add new icons below for unit tests and demo code test info
+            to replace testing-advanced.png}
+    (ResName: 'testing-advanced.png'; Title: sTestingUnitTests),
+    (ResName: 'testing-advanced.png'; Title: sTestingDemo)
   );
 var
   Attrs: IHTMLAttributes; // image's attributes

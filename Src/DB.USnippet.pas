@@ -36,7 +36,9 @@ type
   TSnippetTestInfo = (
     stiNone,              // snippet has not been tested
     stiBasic,             // snippet has had some basic testing
-    stiAdvanced           // snippet has had advanced (unit) testing
+    stiAdvanced,          // snippet has had unspecified advanced testing
+    stiUnitTests,         // snippet has unit tests
+    stiDemoCode           // snippet has a demo program
   );
 
 type
