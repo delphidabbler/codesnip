@@ -21,6 +21,7 @@ interface
 
 uses
   // Delphi
+  SysUtils,
   Classes,
   // Project
   UConsts;
@@ -116,6 +117,12 @@ function StrStartsText(const SubStr, Str: UnicodeString): Boolean;
 ///  </summary>
 function StrReplace(const Str, FindStr, ReplaceStr: UnicodeString):
   UnicodeString;
+
+///  <summary>Replaces all occurences in <c>Str</c> of characters for which
+///  predicate <c>Condition</c> returns <c>True</c> with character
+///  <c>ReplaceCh</c> and returns the modified string.</summary>
+function StrReplaceChar(const Str: string; const Condition: TPredicate<Char>;
+  const ReplaceCh: Char): string;
 
 ///  <summary>Trims leading and trailing white space characters from a string.
 ///  </summary>
@@ -333,7 +340,8 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, Character;
+  StrUtils,
+  Character;
 
 { Internal helper routines }
 
@@ -657,6 +665,19 @@ function StrReplace(const Str, FindStr, ReplaceStr: UnicodeString):
   UnicodeString;
 begin
   Result := StrUtils.AnsiReplaceStr(Str, FindStr, ReplaceStr);
+end;
+
+function StrReplaceChar(const Str: string; const Condition: TPredicate<Char>;
+  const ReplaceCh: Char): string;
+var
+  Idx: Integer;
+begin
+  SetLength(Result, Length(Str));
+  for Idx := 1 to Length(Str) do
+    if Condition(Str[Idx]) then
+      Result[Idx] := ReplaceCh
+    else
+      Result[Idx] := Str[Idx];
 end;
 
 function StrSameStr(const Left, Right: UnicodeString): Boolean;
