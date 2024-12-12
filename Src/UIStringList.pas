@@ -170,15 +170,19 @@ type
     constructor Create; overload;
       {Class constructor. Creates new empty list.
       }
+
+    ///  <summary>Create a new list containing all the strings contained in a
+    ///  given string list.</summary>
+    ///  <param name="Strs"><c>TStrings</c> [in] List of strings to add. An
+    ///  empty list is created if <c>Strs</c> is empty or nil.</param>
     constructor Create(const Strs: TStrings); overload;
-      {Class constructor. Creates new list containing specified strings.
-        @param Strs [in] List of strings to be stored in list.
-      }
+
+    ///  <summary>Create a new list containing all the strings contained in a
+    ///  given string list.</summary>
+    ///  <param name="Strs"><c>IStringList</c> [in] List of strings to add. An
+    ///  empty list is created if <c>Strs</c> is empty or nil.</param>
     constructor Create(const Strs: IStringList); overload;
-      {Class constructor. Creates new list containing strings from another
-      IStringList instance.
-        @param Strs [in] List of strings to be stored in list.
-      }
+
     constructor Create(const Str: string); overload;
       {Class constructor. Creates new list containing a single string.
         @param Str [in] String to be included in list.
@@ -194,10 +198,13 @@ type
         @param Trim [in] Determines whether strings are trimmed of trailing and
           leading spaces before adding to list.
       }
+
+    ///  <summary>Create a new list containing all the strings contained in a
+    ///  given array.</summary>
+    ///  <param name="Strs"><c>array of string</c> [in] List of strings to add.
+    ///  An empty list is created if <c>Strs</c> is empty.</param>
     constructor Create(const Strs: array of string); overload;
-      {Class constructor. Creates new list containing strings from array.
-        @param Strs [in] Array of strings to be included in list.
-      }
+
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
@@ -207,18 +214,25 @@ type
         @param Str [in] String to be added to list.
         @return Index of new string in list.
       }
+
+    ///  <summary>Adds all strings from a string list to the end of the list.
+    ///  </summary>
+    ///  <param name="Strs"><c>TStrings</c> [in] List of strings to add. Does
+    ///  nothing if <c>Strs</c> is <c>nil</c> or empty.</param>
     procedure Add(const Strs: TStrings); overload;
-      {Adds all items from a string list to end of list.
-        @param Strs [in] String list to be added.
-      }
+
+    ///  <summary>Adds all strings from a string list to the end of the list.
+    ///  </summary>
+    ///  <param name="Strs"><c>IStringList</c> [in] List of strings to add. Does
+    ///  nothing if <c>Strs</c> is <c>nil</c> or empty.</param>
     procedure Add(const Strs: IStringList); overload;
-      {Adds all items from another IStringList instance to end of list.
-        @param Strs [in] String list to be added.
-      }
+
+    ///  <summary>Adds all strings from an array of strings to the end of the
+    ///  list.</summary>
+    ///  <param name="Strs"><c>array of string</c> [in] Array of strings to add.
+    ///  Does nothing if <c>Strs</c> is empty.</param>
     procedure Add(const Strs: array of string); overload;
-      {Adds all strings from an array to end of list.
-        @param Strs [in] Dynamic array of strings to be added.
-      }
+
     procedure Add(const Str: string; const Delim: string;
       const AllowEmpty: Boolean; const Trim: Boolean = False); overload;
       {Splits a string at delimiter and adds component parts of string to end of
@@ -345,11 +359,9 @@ uses
 { TIStringList }
 
 procedure TIStringList.Add(const Strs: TStrings);
-  {Adds all items from a string list to end of list.
-    @param Strs [in] String list to be added.
-  }
 begin
-  fStrings.AddStrings(Strs);
+  if Assigned(Strs) then
+    fStrings.AddStrings(Strs);
 end;
 
 function TIStringList.Add(const Str: string): Integer;
@@ -362,14 +374,12 @@ begin
 end;
 
 procedure TIStringList.Add(const Strs: IStringList);
-  {Adds all items from another IStringList instance to end of list.
-    @param Strs [in] String list to be added.
-  }
 var
-  Idx: Integer; // loops through strings in added list
+  S: string;
 begin
-  for Idx := 0 to Pred(Strs.Count) do
-    Add(Strs[Idx]);
+  if Assigned(Strs) then
+    for S in Strs do
+      Add(S);
 end;
 
 procedure TIStringList.Add(const Str: string; const Delim: string;
@@ -398,9 +408,6 @@ begin
 end;
 
 procedure TIStringList.Add(const Strs: array of string);
-  {Adds all strings from an array to end of list.
-    @param Strs [in] Dynamic array of strings to be added.
-  }
 var
   Idx: Integer; // loops thru elements of array
 begin
