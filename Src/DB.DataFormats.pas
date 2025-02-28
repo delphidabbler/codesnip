@@ -13,6 +13,8 @@ type
   ///  Collection v2.</para>
   ///  <para><c>Native_v4</c> -- Native format used by CodeSnip v4 to store user
   ///  snippets.</para>
+  ///  <para><c>Native_Vault</c> -- Native format used by CodeSnip Vault to
+  ///  store user snippets.</para>
   ///  </remarks>
   TDataFormatKind = (
     // NEVER specify a literal ordinal value in this enumeration.
@@ -23,7 +25,8 @@ type
     // NEVER associate error with a format loader or saver class.
     Error,
     DCSC_v2,
-    Native_v4
+    Native_v4,
+    Native_Vault
   );
 
   ///  <summary>Record containing details of the data format and location in
@@ -60,9 +63,11 @@ type
     const
       // There are so few entries in this table it's not worth the overhead
       // of using a dicitionary for the lookup.
-      LookupTable: array[0..1] of TMapRecord = (
+      LookupTable: array[0..2] of TMapRecord = (
+        (Kind: TDataFormatKind.Native_Vault;
+          Name: 'CodeSnip Vault Native Snippet Collection'),
         (Kind: TDataFormatKind.Native_v4;
-          Name: 'CodeSnip Native Snippet Collection v4'),
+          Name: 'CodeSnip 4 Native Snippet Collection'),
         (Kind: TDataFormatKind.DCSC_v2;
           Name: 'DelphiDabbler Code Snippets Collection v2')
       );

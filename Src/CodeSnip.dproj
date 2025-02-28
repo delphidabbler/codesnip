@@ -589,6 +589,7 @@
 				<Form>CollectionBackupDlg</Form>
 			</DCCReference>
 			<DCCReference Include="DB.DataFormats.pas"/>
+			<DCCReference Include="DB.IO.DataFormat.Native.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

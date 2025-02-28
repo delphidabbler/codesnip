@@ -132,6 +132,7 @@ uses
   IOUtils,
   // Project
   DB.DataFormats,
+  DB.IO.DataFormat.Native,
   DBIO.UCategoryIO,
   DBIO.UFileIOIntf,
   DBIO.UIniData,
@@ -252,6 +253,19 @@ type
     Class that updates Database object with data read from user database.
   }
   TNativeV4FormatLoader = class(TDatabaseLoader, IDataFormatLoader)
+  strict protected
+    function CreateReader: IDataReader; override;
+      {Creates reader object. If user database doesn't exist a nul reader is
+      created.
+        @return Reader object instance.
+      }
+    function ErrorMessageHeading: string; override;
+      {Returns heading to use in error messages. Identifies main database.
+        @return Required heading.
+      }
+  end;
+
+  TNativeVaultFormatLoader = class(TDatabaseLoader, IDataFormatLoader)
   strict protected
     function CreateReader: IDataReader; override;
       {Creates reader object. If user database doesn't exist a nul reader is
@@ -390,6 +404,31 @@ type
       const Provider: IDBDataProvider); override;
   end;
 
+  TNativeVaultFormatSaver = class(TFormatSaver,
+    IDataFormatSaver
+  )
+  strict protected
+
+    ///  <summary>Creates an object that can write data to storage in
+    ///  CodeSnip's native v4 data format.</summary>
+    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
+    function CreateWriter: IDataWriter; override;
+
+  public
+
+    ///  <summary>Saves data to storage.</summary>
+    ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
+    ///  in the database.</param>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] List of all
+    ///  categories in the database.</param>
+    ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
+    ///  obtain details of the data to be stored.</param>
+    ///  <remarks>Method of IDataFormatSaver.</remarks>
+    procedure Save(const SnipList: TSnippetList;
+      const Categories: TCategoryList;
+      const Provider: IDBDataProvider); override;
+  end;
+
   ///  <summary>Class used to save global category information, regardless of
   ///  any categories saved with collections.</summary>
   TGlobalCategoryLoader = class(TInterfacedObject, IGlobalCategoryLoader)
@@ -427,6 +466,8 @@ begin
       Result := TDCSCV2FormatLoader.Create(Collection);
     TDataFormatKind.Native_v4:
       Result := TNativeV4FormatLoader.Create(Collection);
+    TDataFormatKind.Native_Vault:
+      Result := TNativeVaultFormatLoader.Create(Collection);
     else
       Result := nil;
   end;
@@ -440,6 +481,8 @@ begin
       Result := TDCSCV2FormatSaver.Create(Collection);
     TDataFormatKind.Native_v4:
       Result := TNativeV4FormatSaver.Create(Collection);
+    TDataFormatKind.Native_Vault:
+      Result := TNativeVaultFormatSaver.Create(Collection);
     else
       Result := nil;
   end;
@@ -679,6 +722,25 @@ begin
   Result := sError;
 end;
 
+{ TNativeVaultFormatLoader }
+
+function TNativeVaultFormatLoader.CreateReader: IDataReader;
+begin
+  Result := TNativeDataReader.Create(Collection.Storage.Directory);
+  if not Result.DatabaseExists then
+    Result := TNulDataReader.Create;
+end;
+
+function TNativeVaultFormatLoader.ErrorMessageHeading: string;
+resourcestring
+  sError = 'Error loading the collection %0:s using the %1:s data format:';
+begin
+  Result := Format(
+    sError,
+    [Collection.Name, TDataFormatInfo.GetName(Collection.Storage.Format)]
+  );
+end;
+
 { TFormatSaver }
 
 constructor TFormatSaver.Create(const ACollection: TCollection);
@@ -818,6 +880,20 @@ begin
 end;
 
 procedure TNativeV4FormatSaver.Save(const SnipList: TSnippetList;
+  const Categories: TCategoryList; const Provider: IDBDataProvider);
+begin
+  {TODO -cVault: Backup and restore this collection per the DCSC v2 loader}
+  DoSave(SnipList, Categories, Provider);
+end;
+
+{ TNativeVaultFormatSaver }
+
+function TNativeVaultFormatSaver.CreateWriter: IDataWriter;
+begin
+  Result := TNativeDataWriter.Create(Collection.Storage.Directory);
+end;
+
+procedure TNativeVaultFormatSaver.Save(const SnipList: TSnippetList;
   const Categories: TCategoryList; const Provider: IDBDataProvider);
 begin
   DoSave(SnipList, Categories, Provider);
