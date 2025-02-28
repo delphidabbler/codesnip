@@ -32,7 +32,7 @@ type
     mdcLicense,
     mdcCopyright,
     mdcContributors,
-    mdcTesters
+    mdcTesters      {TODO -cView: rename as mdcAcknowledgements}
   );
 
   TMetaDataCapabilities = set of TMetaDataCapability;
@@ -49,21 +49,27 @@ type
     ///  <summary>Record constructor: sets all fields of record.</summary>
     ///  <remarks>Any or all parameters may be the empty string</remarks>
     constructor Create(const AName, ASPDX, AURL, AText: string);
+
     ///  <summary>Creates and returns a null record with all fields set to the
     ///  empty string.</summary>
     class function CreateNull: TDBLicenseInfo; static;
+
     ///  <summary>Name of license.</summary>
     property Name: string read fName;
+
     ///  <summary>Open Source Initiative SPDX short idenitifier for licenses.
     ///  </summary>
     ///  <remarks>If the license is not supported by the Open Source Initiative
     ///  then this property will be the empty string.</remarks>
     property SPDX: string read fSPDX;
+
     ///  <summary>URL of license online.</summary>
     ///  <remarks>Optional.</remarks>
     property URL: string read fURL;
+
     ///  <summary>Full text of license.</summary>
     property Text: string read fText;
+
     ///  <summary>Returns a string containing license name followed by any URL
     ///  in parentheses.</summary>
     ///  <remarks>If no URL is available then only the license name is returned.
@@ -212,6 +218,14 @@ type
 
 implementation
 
+uses
+  // Delphi
+  SysUtils,
+  Character,
+  // Project
+  UConsts,
+  UStrUtils;
+
 type
   ///  <summary>Implements a null, do nothing, meta data object.</summary>
   ///  <remarks>Instance of this class are used when a collection format does
@@ -260,11 +274,26 @@ type
 { TDBLicenseInfo }
 
 constructor TDBLicenseInfo.Create(const AName, ASPDX, AURL, AText: string);
+
+  function StandardiseStr(const AStr: string): string;
+  begin
+    Result := StrCompressWhiteSpace(
+      StrReplaceChar(
+        AStr,
+        function(Ch: Char): Boolean
+          begin
+            Result := TCharacter.IsControl(Ch);
+          end,
+        ' '
+      )
+    );
+  end;
+
 begin
-  fName := AName;
-  fSPDX := ASPDX;
-  fURL := AURL;
-  fText := AText;
+  fName := StandardiseStr(AName);
+  fSPDX := StandardiseStr(ASPDX);
+  fURL := StandardiseStr(AURL);
+  fText := StandardiseStr(AText);
 end;
 
 class function TDBLicenseInfo.CreateNull: TDBLicenseInfo;
