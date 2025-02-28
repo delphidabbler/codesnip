@@ -6,8 +6,7 @@
  * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a static class that manages sharing of user defined snippets.
- * Provides support for exporting snippets, importing snippets and submitting
- * snippets to the online database.
+ * Provides support for exporting and importing snippets.
 }
 
 
@@ -19,39 +18,37 @@ interface
 
 uses
   // Project
-  DB.USnippet, UBaseObjects, UView;
+  DB.USnippet,
+  UBaseObjects,
+  UView;
 
 
 type
 
-  {
-  TCodeShareMgr:
-    Sealed static class that manages sharing of user defined snippets. Provides
-    support for exporting snippets, importing snippets and submitting snippets
-    to the online database.
-  }
+  ///  <summary>Manages sharing snippets. Provides support for exporting and
+  /// importing snippets.</summary>
   TCodeShareMgr = class sealed(TNoConstructObject)
   strict private
+    ///  <summary>Gets reference to any snippet represented by a view item.
+    ///  </summary>
+    ///  <param name="ViewItem"><c>IView</c> [in] View item fromm which snippet
+    ///  is to be extracted, if present.</param>
+    ///  <returns><c>TSnippet</c>. Reference to the required snippet or nil if
+    ///  the view item does not represent a snippet.</returns>
     class function GetSnippetFromView(ViewItem: IView): TSnippet;
-      {Gets reference to any user defined snippet represented by a view item.
-        @param ViewItem [in] View item for which snippet is required.
-        @return Reference to required snippet or nil if view item does not
-          represent a snippet or if snippet is not user defined.
-      }
   public
+    ///  <summary>Checks if there are any snippets that can be shared (i.e.
+    ///  exported).</summary>
+    ///  <returns><c>Boolean</c>. <c>True</c> if database is not empty,
+    ///  <c>False</c> otherwise.</returns>
     class function CanShare: Boolean;
-      {Checks if there are any user defined snippets that can be shared (i.e.
-      exported or submitted.
-        @return True if user defined snippets exist in database.
-      }
+    ///  <summary>Exports snippets to an export file.</summary>
+    ///  <param name="ViewItem"><c>IView</c> [in] View item that may contain a
+    ///  snippet. If so the snippet is included in the export file by default.
+    ///  </param>
     class procedure ExportCode(ViewItem: IView);
-      {Exports user defined code to an export file.
-        @param ViewItem [in] View item that may contain a user defined snippet.
-          If so the snippet is included in the export file by default.
-      }
+    ///  <summary>Imports snippets from an export file.</summary>
     class procedure ImportCode;
-      {Imports user defined code from an export file.
-      }
   end;
 
 
@@ -62,49 +59,37 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, FmCodeExportDlg, FmCodeImportDlg, UCodeImportMgr;
+  DB.UCollections,
+  DB.UMain,
+  FmCodeExportDlg,
+  FmCodeImportDlg,
+  UCodeImportMgr;
 
 
 { TCodeShareMgr }
 
 class function TCodeShareMgr.CanShare: Boolean;
-  {Checks if there are any user defined snippets that can be shared (i.e.
-  exported or submitted.
-    @return True if user defined snippets exist in database.
-  }
 begin
-  Result := Database.Snippets.Count(True) > 0;
+  Result := not Database.Snippets.IsEmpty;
 end;
 
 class procedure TCodeShareMgr.ExportCode(ViewItem: IView);
-  {Exports user defined code to an export file.
-    @param ViewItem [in] View item that may contain a user defined snippet. If
-      so the snippet is included in the export file by default.
-  }
 begin
   TCodeExportDlg.Execute(nil, GetSnippetFromView(ViewItem));
 end;
 
 class function TCodeShareMgr.GetSnippetFromView(
   ViewItem: IView): TSnippet;
-  {Gets reference to any user defined snippet represented by a view item.
-    @param ViewItem [in] View item for which snippet is required.
-    @return Reference to required snippet or nil if view item does not represent
-      a snippet or if snippet is not user defined.
-  }
 var
   SnippetView: ISnippetView;  // ViewItem as snippet view if supported
 begin
-  if Supports(ViewItem, ISnippetView, SnippetView)
-    and (SnippetView.Snippet.UserDefined) then
+  if Supports(ViewItem, ISnippetView, SnippetView) then
     Result := SnippetView.Snippet
   else
     Result := nil;
 end;
 
 class procedure TCodeShareMgr.ImportCode;
-  {Imports user defined code from an export file.
-  }
 var
   ImportMgr: TCodeImportMgr;  // manages import of code
 begin
@@ -117,4 +102,5 @@ begin
 end;
 
 end.
+
 

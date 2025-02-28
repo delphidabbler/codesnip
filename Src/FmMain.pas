@@ -500,7 +500,6 @@ type
     ///  position is permitted and blocks the move if not.</summary>
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
-    procedure ActNonEmptyUserDBUpdate(Sender: TObject);
   strict private
     var
       ///  <summary>Object that notifies user-initiated events by triggering
@@ -528,10 +527,10 @@ type
     ///  <summary>Displays view item from history list given by TViewItemAction
     ///  instance referenced by Sender.</summary>
     procedure ActViewHistoryItemExecute(Sender: TObject);
-    ///  <summary>Opens a named user defined snippet in Snippets Editor for
-    ///  editing. The snippet name is provided by the TEditSnippetAction
-    ///  instance referenced by Sender.</summary>
-    procedure ActEditSnippetByNameExecute(Sender: TObject);
+    ///  <summary>Opens snippet in Snippets Editor for editing. The snippet ID 
+    ///  is provided by the TEditSnippetAction instance referenced by Sender.
+    ///  </summary>
+    procedure ActEditSnippetByIDExecute(Sender: TObject);
     ///  <summary>Selects a tab in the details pane where the tab is provided by
     ///  the TDetailTabAction instance referenced by Sender.</summary>
     procedure ActSelectDetailTabExecute(Sender: TObject);
@@ -585,7 +584,9 @@ uses
   // Project
   ClassHelpers.UControls,
   ClassHelpers.UGraphics,
-  DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
+  DB.UCategory,
+  DB.UCollections,
+  DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
   FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo,
   UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
   UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
@@ -758,18 +759,19 @@ begin
     TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView);
 end;
 
-procedure TMainForm.ActEditSnippetByNameExecute(Sender: TObject);
+procedure TMainForm.ActEditSnippetByIDExecute(Sender: TObject);
 begin
-  TUserDBMgr.EditSnippet((Sender as TEditSnippetAction).SnippetName);
+  TUserDBMgr.EditSnippet((Sender as TEditSnippetAction).ID);
 end;
 
 procedure TMainForm.actEditSnippetExecute(Sender: TObject);
+var
+  Snippet: TSnippet;
 begin
   Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actEditSnippetExecute: Can''t edit current view item');
-  fNotifier.EditSnippet(
-    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet.Name
-  );
+  Snippet := (fMainDisplayMgr.CurrentView as ISnippetView).Snippet;
+  fNotifier.EditSnippet(Snippet.Key, Snippet.CollectionID);
   // display of updated snippet is handled by snippets change event handler
 end;
 
@@ -936,11 +938,6 @@ end;
 procedure TMainForm.ActNonEmptyDBUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := not Database.Snippets.IsEmpty;
-end;
-
-procedure TMainForm.ActNonEmptyUserDBUpdate(Sender: TObject);
-begin
-  (Sender as TAction).Enabled := not Database.Snippets.IsEmpty(True);
 end;
 
 procedure TMainForm.ActOverviewTabExecute(Sender: TObject);
@@ -1393,7 +1390,6 @@ begin
     // note that actions created on fly are automatically freed
     fNotifier := TNotifier.Create;
     ActionSetter := fNotifier as ISetActions;
-    ActionSetter.SetUpdateDbaseAction(actUpdateDbase);
     ActionSetter.SetDisplaySnippetAction(
       TActionFactory.CreateSnippetAction(Self)
     );
@@ -1411,11 +1407,8 @@ begin
       TActionFactory.CreateDetailTabAction(Self, ActSelectDetailTabExecute)
     );
     ActionSetter.SetEditSnippetAction(
-      TActionFactory.CreateEditSnippetAction(
-        Self, ActEditSnippetByNameExecute
-      )
+      TActionFactory.CreateEditSnippetAction(Self, ActEditSnippetByIDExecute)
     );
-    ActionSetter.SetNewSnippetAction(actAddSnippet);
     ActionSetter.SetNewsAction(actBlog);
     ActionSetter.SetAboutBoxAction(actAbout);
 

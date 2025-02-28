@@ -34,17 +34,20 @@ type
   TCodeExportDlg = class(TGenericOKDlg, INoPublicConstruct)
     btnBrowse: TButton;
     edFile: TEdit;
+    {TODO -cRefactor: Change type of frmSnippets to TSelectSnippetsFrame -
+            TSelectSnippetsFrame and TSelectUserSnippetsFrame are now
+            functionally identical.}
     frmSnippets: TSelectUserSnippetsFrame;
     lblFile: TLabel;
     lblSnippets: TLabel;
     procedure btnBrowseClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
   strict private
+    ///  <summary>Selects a snippet in the snippets check list.</summary>
+    ///  <param name="Snippet"><c>TSnippet</c> [in] Snippet to be selected.
+    ///  If <c>nil</c> then no snippet is selected.</param>
     procedure SelectSnippet(const Snippet: TSnippet);
-      {Selects a snippet in the snippets check list.
-        @param Snippet [in] Snippet to be selected. If nil, or not user-defined,
-          no snippet is selected.
-      }
+
     procedure WriteOutputFile;
       {Writes export file.
       }
@@ -55,13 +58,14 @@ type
       controls that depend on UI font.
       }
   public
+    ///  <summary>Displays export dialog box and writes export file containing
+    ///  user's selected snippets.</summary>
+    ///  <param name="AOwner"><c>TComponent</c> [in] Reference to control that
+    ///  owns the dialogue box.</param>
+    ///  <param name="Snippet"><c>TSnippet</c> [in] Reference to a snippet to
+    ///  pre-select in the snippets check list box. If <c>nil</c> then no
+    ///  snippet is pre-selected.</param>
     class procedure Execute(const AOwner: TComponent; const Snippet: TSnippet);
-      {Displays export dialog box and writes export file if user OKs entries.
-        @param AOwner [in] Reference to control that owns the dialog box.
-        @param Snippet [in] Reference to a snippet to pre-select in snippets
-          check list box. If nil or not user-defined then no snippet is pre-
-          selected.
-      }
   end;
 
 
@@ -72,6 +76,7 @@ uses
   // Delphi
   SysUtils, Dialogs,
   // Project
+  DB.UCollections,
   UCodeImportExport, UCtrlArranger, UEncodings, UExceptions, UIOUtils,
   UMessageBox, UOpenDialogHelper, USaveDialogEx, UStrUtils, UUtils;
 
@@ -184,11 +189,12 @@ end;
 
 class procedure TCodeExportDlg.Execute(const AOwner: TComponent;
   const Snippet: TSnippet);
-  {Displays export dialog box and writes export file if user OKs entries.
-    @param AOwner [in] Reference to control that owns the dialog box.
-    @param Snippet [in] Reference to a snippet to pre-select in snippets check
-      list box. If nil or not user-defined then no snippet is pre-selected.
-  }
+  {TODO -cVault: Add parameter to receive snippet selection per current search
+          display only those snippets (maybe filtering out unwanted snippets by
+          handling an event triggered by the snippet list frame. As now, select
+          only the snippet specified by the Snippet parameter.}
+  {TODO -cVault: Add check box to use to causes all snippets depended upon by
+          each exported snippet to also be exported.}
 var
   Dlg: TCodeExportDlg;
 begin
@@ -202,20 +208,17 @@ begin
 end;
 
 procedure TCodeExportDlg.SelectSnippet(const Snippet: TSnippet);
-  {Selects a snippet in the snippets check list.
-    @param Snippet [in] Snippet to be selected. If nil, or not user-defined, no
-      snippet is selected.
-  }
 var
   List: TSnippetList; // list containing only the provided snippet
 begin
-  if not Assigned(Snippet) or not Snippet.UserDefined then
-    // Snippet is nil or not user-defined: select nothing
+  if not Assigned(Snippet) then
+    // Snippet is nil: select nothing
     frmSnippets.SelectedSnippets := nil
   else
   begin
-    // Snippet is user-defined. We make a snippet list containing only this
-    // snippet because frmSnippets requires a list of snippets to select.
+    // Snippet is not nil: we make a snippet list containing only this snippet.
+    // A list is required because frmSnippets requires a list of snippets to
+    // select.
     List := TSnippetList.Create;
     try
       List.Add(Snippet);

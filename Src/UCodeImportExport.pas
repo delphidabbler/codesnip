@@ -5,8 +5,7 @@
  *
  * Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements classes that can import and export user defined snippets from and
- * to XML.
+ * Implements classes that can import and export snippets from and to XML.
 }
 
 
@@ -21,11 +20,14 @@ uses
   SysUtils,
   Classes,
   XMLIntf,
+  Generics.Collections,
   // Project
+  DB.UCategory,
   DB.USnippet,
   UBaseObjects,
   UEncodings,
   UIStringList,
+  USnippetIDs,
   UXMLDocHelper,
   UXMLDocumentEx;
 
@@ -34,8 +36,8 @@ type
   ///  <summary>Encapsulates data that describes a snippet that has been read
   ///  from an import file.</summary>
   TSnippetInfo = record
-    ///  <summary>Snippet name.</summary>
-    Name: string;
+    ///  <summary>Snippet key.</summary>
+    Key: string;
     ///  <summary>Description of snippet.</summary>
     Data: TSnippetEditData;
     ///  <summary>Copies given TSnippetInfo record to this one.</summary>
@@ -52,10 +54,16 @@ type
   ///  <summary>Imports code snippets from XML.</summary>
   TCodeImporter = class(TNoPublicConstructObject)
   strict private
-    ///  <summary>Version of file being imported.</summary>
-    fVersion: Integer;
-    ///  <summary>List of snippets read from XML.</summary>
-    fSnippetInfo: TSnippetInfoList;
+    const
+      {TODO -cVault: Let user select or create a category rather than imposing
+              this one}
+      ///  <summary>ID of category used to import snippets.</summary>
+      ImportCatID = 'imports';
+    var
+      ///  <summary>Version of file being imported.</summary>
+      fVersion: Integer;
+      ///  <summary>List of snippets read from XML.</summary>
+      fSnippetInfo: TSnippetInfoList;
     ///  <summary>Extended XML document object.</summary>
     fXMLDoc: IXMLDocumentEx;
     ///  <summary>Retrieves a list of all snippet nodes from XML document.
@@ -69,9 +77,13 @@ type
     ///  </summary>
     ///  <exception>ECodeImporter raised if XML is not valid.</exception>
     function ValidateDoc: Integer;
+    ///  <summary>Checks if the special import category exists and creates it if
+    ///  not.</summary>
+    class procedure EnsureImportCategoryExists;
     ///  <summary>Constructs and initialises object ready to perform import.
     ///  </summary>
     constructor InternalCreate;
+
   public
     ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
@@ -93,6 +105,7 @@ type
   TCodeExporter = class(TNoPublicConstructObject)
   strict private
     var
+      fSnippetKeyMap: TDictionary<TSnippetID,string>;
       ///  <summary>List of snippets to be exported.</summary>
       fSnippets: TSnippetList;
       ///  <summary>Extended XML document object.</summary>
@@ -102,8 +115,11 @@ type
     ///  </summary>
     ///  <exception>An exception is always raised.</exception>
     procedure HandleException(const EObj: TObject);
-    ///  <summary>Returns a list of snippet names from snippets list.</summary>
-    function SnippetNames(const SnipList: TSnippetList): IStringList;
+    ///  <summary>Returns a list of snippet keys for each snippet in
+    ///  <c>SnipList</c>. Returned keys are found by looking up the new key
+    ///  corresponding to the snippet's original key in <c>fSnippetKeyMap</c>.
+    ///  </summary>
+    function SnippetKeys(const SnipList: TSnippetList): IStringList;
     ///  <summary>Writes a XML node that contains a list of pascal names.
     ///  </summary>
     ///  <param name="ParentNode">IXMLNode [in] Node under which this name list
@@ -165,13 +181,13 @@ uses
   XMLDom,
   // Project
   ActiveText.UMain,
+  DB.UCollections,
   DB.UMain,
   DB.USnippetKind,
   UAppInfo,
-  UReservedCategories,
   USnippetExtraHelper,
-  USnippetIDs,
   UStructs,
+  UStrUtils,
   UXMLDocConsts;
 
 
@@ -187,6 +203,7 @@ const
 
 destructor TCodeExporter.Destroy;
 begin
+  fSnippetKeyMap.Free;
   fXMLDoc := nil;
   inherited;
 end;
@@ -243,19 +260,30 @@ begin
 end;
 
 constructor TCodeExporter.InternalCreate(const SnipList: TSnippetList);
+var
+  Snippet: TSnippet;
 begin
   inherited InternalCreate;
   fSnippets := SnipList;
+  fSnippetKeyMap := TDictionary<TSnippetID,string>.Create(
+    TSnippetID.TComparer.Create
+  );
+  // Create map of actual snippet ID to new unique key with default collection
+  for Snippet in SnipList do
+    fSnippetKeyMap.Add(
+      Snippet.ID,
+      (Database as IDatabaseEdit).GetUniqueSnippetKey(TCollectionID.Default)
+    );
 end;
 
-function TCodeExporter.SnippetNames(
-  const SnipList: TSnippetList): IStringList;
+function TCodeExporter.SnippetKeys(const SnipList: TSnippetList): IStringList;
 var
   Snippet: TSnippet;  // references each snippet in list
 begin
   Result := TIStringList.Create;
   for Snippet in SnipList do
-    Result.Add(Snippet.Name);
+    if fSnippetKeyMap.ContainsKey(Snippet.ID) then
+      Result.Add(fSnippetKeyMap[Snippet.ID]);
 end;
 
 procedure TCodeExporter.WriteProgInfo(const ParentNode: IXMLNode);
@@ -282,9 +310,13 @@ procedure TCodeExporter.WriteSnippet(const ParentNode: IXMLNode;
 var
   SnippetNode: IXMLNode; // new snippet node
 begin
-  // Create snippet node with attribute that specifies snippet name
+  // Create snippet node with attribute that specifies snippet key.
+  // Snippet is exported under a new, unique key within the Default collection.
+  // Since no collection information is saved, we need choose one collection in
+  // order to generate the key, and the Default collection is the only one
+  // guaranteed to be present.
   SnippetNode := fXMLDoc.CreateElement(ParentNode, cSnippetNode);
-  SnippetNode.Attributes[cSnippetNameAttr] := Snippet.Name;
+  SnippetNode.Attributes[cSnippetNameAttr] := fSnippetKeyMap[Snippet.ID];
   // Add nodes for properties: (ignore category and xrefs)
   // description node is written even if empty (which it shouldn't be)
   fXMLDoc.CreateElement(
@@ -292,9 +324,12 @@ begin
     cDescriptionNode,
     TSnippetExtraHelper.BuildREMLMarkup(Snippet.Description)
   );
-  // Snippet's display name is only written if different to Snippet's name
-  if Snippet.Name <> Snippet.DisplayName then
-    fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Snippet.DisplayName);
+  // Snippet's display name always written: if display name is specified we use
+  // it, otherwise we use the original snippet key.
+  if not StrIsEmpty(Snippet.DisplayName, True) then
+    fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Snippet.DisplayName)
+  else
+    fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Snippet.Key);
   // source code is stored directly in XML, not in external file
   fXMLDoc.CreateElement(SnippetNode, cSourceCodeTextNode, Snippet.SourceCode);
   // write highlight source flag
@@ -316,7 +351,7 @@ begin
   );
   // depends and units lists
   WriteReferenceList(
-    SnippetNode, cDependsNode, SnippetNames(Snippet.Depends)
+    SnippetNode, cDependsNode, SnippetKeys(Snippet.Depends)
   );
   WriteReferenceList(
     SnippetNode, cUnitsNode, TIStringList.Create(Snippet.Units)
@@ -342,6 +377,20 @@ begin
   fXMLDoc := nil;
   OleUninitialize;
   inherited;
+end;
+
+class procedure TCodeImporter.EnsureImportCategoryExists;
+resourcestring
+  ImportCatDesc = 'Imported Snippets';
+var
+  ImportCatData: TCategoryData;
+begin
+  if not Assigned(Database.Categories.Find(ImportCatID)) then
+  begin
+    ImportCatData.Init;
+    ImportCatData.Desc := ImportCatDesc;
+    (Database as IDatabaseEdit).AddCategory(ImportCatID, ImportCatData);
+  end;
 end;
 
 procedure TCodeImporter.Execute(const Data: TBytes);
@@ -370,9 +419,10 @@ procedure TCodeImporter.Execute(const Data: TBytes);
     TXMLDocHelper.GetPascalNameList(fXMLDoc, DependsNode, SnippetNames);
     Depends.Clear;
     for SnippetName in SnippetNames do
-      // Note: in building snippet ID list we assume each snippet is user-
-      // defined. It may not be, but there is no way of telling from XML.
-      Depends.Add(TSnippetID.Create(SnippetName, True));
+      // Note: in building snippet ID list we assume each snippet is from the
+      // default collection. It may not be, but there is no way of telling
+      // from XML.
+      Depends.Add(TSnippetID.Create(SnippetName, TCollectionID.Default));
   end;
 
   // Reads description node and converts to active text.
@@ -417,14 +467,16 @@ begin
     begin
       // Read a snippet node
       SnippetNode := SnippetNodes[Idx];
-      fSnippetInfo[Idx].Name := SnippetNode.Attributes[cSnippetNameAttr];
+      fSnippetInfo[Idx].Key := SnippetNode.Attributes[cSnippetNameAttr];
       fSnippetInfo[Idx].Data :=
         (Database as IDatabaseEdit).GetEditableSnippetInfo;
-      fSnippetInfo[Idx].Data.Props.Cat := TReservedCategories.ImportsCatID;
+      fSnippetInfo[Idx].Data.Props.Cat := ImportCatID;
       fSnippetInfo[Idx].Data.Props.Desc := GetDescription(SnippetNode);
       fSnippetInfo[Idx].Data.Props.DisplayName := TXMLDocHelper.GetSubTagText(
         fXMLDoc, SnippetNode, cDisplayNameNode
       );
+      if fSnippetInfo[Idx].Data.Props.DisplayName = '' then
+        fSnippetInfo[Idx].Data.Props.DisplayName := fSnippetInfo[Idx].Key;
       fSnippetInfo[Idx].Data.Props.SourceCode := TXMLDocHelper.GetSubTagText(
         fXMLDoc, SnippetNode, cSourceCodeTextNode
       );
@@ -507,11 +559,10 @@ end;
 constructor TCodeImporter.InternalCreate;
 begin
   inherited InternalCreate;
-  // Set up XML document that will read data
   OleInitialize(nil);
   fXMLDoc := TXMLDocHelper.CreateXMLDoc;
-  // Initialise fields that receive imported data
   SetLength(fSnippetInfo, 0);
+  EnsureImportCategoryExists;
 end;
 
 function TCodeImporter.ValidateDoc: Integer;
@@ -543,13 +594,13 @@ end;
 
 procedure TSnippetInfo.Assign(const Src: TSnippetInfo);
 begin
-  Name := Src.Name;
+  Key := Src.Key;
   Data.Assign(Src.Data);
 end;
 
 procedure TSnippetInfo.Init;
 begin
-  Name := '';
+  Key := '';
   Data.Init;
 end;
 

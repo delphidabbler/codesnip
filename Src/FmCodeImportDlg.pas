@@ -25,9 +25,11 @@ uses
   ExtCtrls,
   Forms,
   // Project
+  DB.UCollections,
   FmWizardDlg,
   UBaseObjects,
-  UCodeImportMgr;
+  UCodeImportMgr,
+  UCollectionListAdapter;
 
 type
   ///  <summary>
@@ -47,50 +49,45 @@ type
     lvImports: TListView;
     lblImportList: TLabel;
     lblLoadFile: TLabel;
-    btnRename: TButton;
-    edRename: TEdit;
-    lblSelectedSnippet: TLabel;
     alMain: TActionList;
-    actRename: TAction;
     actBrowse: TAction;
     lblModifyInstructions: TLabel;
     lblFinish: TLabel;
     sbFinish: TScrollBox;
+    tsCollection: TTabSheet;
+    lblCollection: TLabel;
+    cbCollection: TComboBox;
     ///  <summary>Handles clicks on list view check boxes.</summary>
     procedure lvImportsItemChecked(Sender: TObject; Item: TListItem);
-    ///  <summary>Handles selection changes events in list view.</summary>
-    procedure lvImportsSelectItem(Sender: TObject; Item: TListItem;
-      Selected: Boolean);
-    ///  <summary>Updates enabled state of rename action and associated
-    ///  controls.</summary>
-    procedure actRenameUpdate(Sender: TObject);
-    ///  <summary>Handles event that requests renaming of a snippet.</summary>
-    procedure actRenameExecute(Sender: TObject);
     ///  <summary>Handles request to display open file dialog box to get import
     ///  file name.</summary>
     procedure actBrowseExecute(Sender: TObject);
+    ///  <summary>Frees field objects and objects stored in list view items'
+    ///  Data properties.</summary>
+    procedure FormDestroy(Sender: TObject);
+    ///  <summary>Creates field objects.</summary>
+    procedure FormCreate(Sender: TObject);
   strict private
     const
       // Indices of wizard pages
-      cIntroPage    = 0;
-      cFilePage     = 1;
-      cUpdatePage   = 2;
-      cFinishPage   = 3;
+      cIntroPage      = 0;
+      cFilePage       = 1;
+      cCollectionPage = 2;
+      cUpdatePage     = 3;
+      cFinishPage     = 4;
       // Index of subitems in list view
-      cLVActionIdx  = 1;
-      cLVImportName = 0;
+      cLVActionIdx  = 0;
     var
       ///  <summary>Reference to import manager object used to perform import
       ///  operations.</summary>
       fImportMgr: TCodeImportMgr;
+      ///  <summary>Object that populates <c>cbCollection</c> with an
+      ///  alphabetical list of collection names and manages interaction with
+      ///  it.</summary>
+      fCollList: TCollectionListAdapter;
     ///  <summary>Validates entries on wizard pages indetified by the page
     ///  index.</summary>
     procedure ValidatePage(const PageIdx: Integer);
-    ///  <summary>Checks validity of a given snippet name that is to be used
-    ///  to replace the name in a given list item. Passes any error message
-    ///  back via parameter list.</summary>
-    function ValidateSnippetName(const Name: string; const Item: TListItem;
-      out ErrMsg: string): Boolean;
     ///  <summary>Reads input file from disk.</summary>
     procedure ReadImportFile;
     ///  <summary>Retrieves import file name from edit control where it is
@@ -106,12 +103,6 @@ type
     ///  <summary>Counts snippets that will be / have been added to database.
     ///  Excludes any snippets skipped by user.</summary>
     function CountImportSnippets: Integer;
-    ///  <summary>Retrieves the name that will be used to add an imported
-    ///  snippet to the database from the given list item.</summary>
-    function GetImportAsNameFromLV(const Item: TListItem): string;
-    ///  <summary>Updates given list item with new imported snippet name.
-    ///  </summary>
-    procedure SetImportNameInLV(const Item: TListItem; const Value: string);
     ///  <summary>Updates given list item with description of current import
     ///  action for the associated snippet.</summary>
     procedure SetActionInLV(const Item: TListItem; const Value: string);
@@ -126,11 +117,17 @@ type
     procedure UpdateDatabase;
     ///  <summary>Displays names of imported snippets on finish page.</summary>
     procedure PresentResults;
+    ///  <summary>Gets the ID of the collection into which all snippets are to
+    ///  be imported.</summary>
+    function GetCollectionID: TCollectionID;
   strict protected
     ///  <summary>Protected constructor that sets up object to use given import
     ///  manager object.</summary>
     constructor InternalCreate(AOwner: TComponent;
       const ImportMgr: TCodeImportMgr); reintroduce;
+    ///  <summary>Initialises form fields and controls.</summary>
+    ///  <remarks>Overridden method called from ancestor class.</remarks>
+    procedure InitForm; override;
     ///  <summary>Aligns and arranges controls in each tab sheet and sizes
     ///  dialog box to accomodate controls.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
@@ -168,6 +165,7 @@ uses
   SysUtils,
   Dialogs,
   // Project
+  UBox,
   UCtrlArranger,
   UExceptions,
   UMessageBox,
@@ -187,7 +185,7 @@ var
 resourcestring
   sFilter = 'CodeSnip export files (*.csexp)|*.csexp|'  // file filter
     + 'All files (*.*)|*.*';
-  sTitle = 'Import File';                               // dialog box title
+  sTitle = 'Import File';                               // dialogue box title
 begin
   OpenDlg := TOpenDialogEx.Create(nil);
   try
@@ -208,23 +206,6 @@ begin
   end;
 end;
 
-procedure TCodeImportDlg.actRenameExecute(Sender: TObject);
-var
-  ErrMsg: string; // any error message returned from snippets validator
-begin
-  if not ValidateSnippetName(edRename.Text, lvImports.Selected, ErrMsg) then
-    raise EDataEntry.Create(ErrMsg, edRename);
-  SetImportNameInLV(lvImports.Selected, edRename.Text);
-  lvImports.Selected.MakeVisible(False);
-  UpdateImportData(lvImports.Selected);
-end;
-
-procedure TCodeImportDlg.actRenameUpdate(Sender: TObject);
-begin
-  actRename.Enabled := Assigned(lvImports.Selected);
-  edRename.Enabled := Assigned(lvImports.Selected);
-end;
-
 procedure TCodeImportDlg.ArrangeForm;
 begin
   TCtrlArranger.SetLabelHeights(Self);
@@ -240,13 +221,13 @@ begin
   );
   lblLoadFile.Top := TCtrlArranger.BottomOf([edFile, btnBrowse], 12);
 
+  // tsCollection
+  cbCollection.Top := TCtrlArranger.BottomOf(lblCollection, 6);
+  cbCollection.Width := tsCollection.Width;
+
   // tsUpdate
   lblImportList.Top := TCtrlArranger.BottomOf(lblModifyInstructions, 8);
   lvImports.Top := TCtrlArranger.BottomOf(lblImportList, 6);
-  lblSelectedSnippet.Top := TCtrlArranger.BottomOf(lvImports, 8);
-  TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(lblSelectedSnippet, 6), [edRename, btnRename]
-  );
 
   // tsFinish
   sbFinish.Top := TCtrlArranger.BottomOf(lblFinish, 6);
@@ -307,16 +288,33 @@ begin
   end;
 end;
 
+procedure TCodeImportDlg.FormCreate(Sender: TObject);
+begin
+  inherited;
+  fCollList := TCollectionListAdapter.Create;
+end;
+
+procedure TCodeImportDlg.FormDestroy(Sender: TObject);
+var
+  Idx: Integer;
+begin
+  inherited;
+  fCollList.Free;
+  // Free the TBox<> objects stored in list item data pointer
+  for Idx := Pred(lvImports.Items.Count) downto 0 do
+    TObject(lvImports.Items[Idx].Data).Free;
+end;
+
+function TCodeImportDlg.GetCollectionID: TCollectionID;
+begin
+  Assert(cbCollection.ItemIndex >= 0,
+    ClassName + '.GetCollectionID: no collection selected');
+  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
+end;
+
 function TCodeImportDlg.GetFileNameFromEditCtrl: string;
 begin
   Result := StrTrim(edFile.Text);
-end;
-
-function TCodeImportDlg.GetImportAsNameFromLV(const Item: TListItem): string;
-begin
-  if Item.SubItems.Count <= cLVImportName then
-    Exit('');
-  Result := Item.SubItems[cLVImportName];
 end;
 
 function TCodeImportDlg.HeadingText(const PageIdx: Integer): string;
@@ -324,20 +322,34 @@ resourcestring
   // Page headings
   sIntroPageheading = 'Import snippets from a file';
   sFilePage = 'Choose import file';
+  sCollectionPage = 'Choose a collection';
   sUpdatePage = 'Edit import and update database';
   sFinishPage = 'Import complete';
 begin
   case PageIdx of
-    cIntroPage:     Result := sIntroPageheading;
-    cFilePage:      Result := sFilePage;
-    cUpdatePage:    Result := sUpdatePage;
-    cFinishPage:    Result := sFinishPage;
+    cIntroPage:       Result := sIntroPageheading;
+    cFilePage:        Result := sFilePage;
+    cCollectionPage:  Result := sCollectionPage;
+    cUpdatePage:      Result := sUpdatePage;
+    cFinishPage:      Result := sFinishPage;
   end;
+end;
+
+procedure TCodeImportDlg.InitForm;
+begin
+  fCollList.ToStrings(cbCollection.Items);
+  Assert(cbCollection.Items.Count > 0, ClassName + '.InitForm: no collections');
+  Assert(TCollections.Instance.ContainsID(TCollectionID.Default),
+    ClassName + '.InitForm: default collection not found');
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  Assert(cbCollection.ItemIndex >= 0,
+    ClassName + '.InitForm: default collection name not in cbCollection');
+
+  inherited;
 end;
 
 procedure TCodeImportDlg.InitImportInfo;
 
-  // ---------------------------------------------------------------------------
   ///  Creates a new list view items containing given information.
   procedure AddListItem(const Info: TImportInfo);
   var
@@ -345,13 +357,11 @@ procedure TCodeImportDlg.InitImportInfo;
   begin
     LI := lvImports.Items.Add;
     LI.SubItems.Add('');
-    LI.SubItems.Add('');
-    LI.Caption := Info.OrigName;
-    SetImportNameInLV(LI, Info.ImportAsName);
+    LI.Caption := Info.DisplayName;
     LI.Checked := not Info.Skip;
+    LI.Data := TBox<TImportInfo>.Create(Info);
     UpdateActionDisplay(LI);
   end;
-  // ---------------------------------------------------------------------------
 
 var
   InfoItem: TImportInfo;  // import info item describing an imported snippet
@@ -375,19 +385,13 @@ constructor TCodeImportDlg.InternalCreate(AOwner: TComponent;
 begin
   inherited InternalCreate(AOwner);
   fImportMgr := ImportMgr;
+  fImportMgr.RequestCollectionCallback := GetCollectionID;
 end;
 
 procedure TCodeImportDlg.lvImportsItemChecked(Sender: TObject; Item: TListItem);
 begin
   UpdateActionDisplay(Item);
   UpdateImportData(Item);
-end;
-
-procedure TCodeImportDlg.lvImportsSelectItem(Sender: TObject; Item: TListItem;
-  Selected: Boolean);
-begin
-  if Assigned(Item) then
-    edRename.Text := GetImportAsNameFromLV(Item);
 end;
 
 procedure TCodeImportDlg.MoveForward(const PageIdx: Integer;
@@ -415,7 +419,6 @@ end;
 
 procedure TCodeImportDlg.PresentResults;
 
-  // ---------------------------------------------------------------------------
   ///  Creates a label containing name of an imported snippet and adds it to
   ///  scroll box with top at given position.
   procedure AddLabel(var Top: Integer; const SnippetName: string);
@@ -429,7 +432,6 @@ procedure TCodeImportDlg.PresentResults;
     Lbl.Caption := '� ' + SnippetName;
     Top := TCtrlArranger.BottomOf(Lbl, 2);
   end;
-  // ---------------------------------------------------------------------------
 
 var
   DataItem: TImportInfo;  // description of each snippet from import file
@@ -440,7 +442,7 @@ begin
   begin
     if DataItem.Skip then
       Continue;
-    AddLabel(LblTop, DataItem.ImportAsName);
+    AddLabel(LblTop, DataItem.DisplayName);
   end;
 end;
 
@@ -455,14 +457,6 @@ begin
   if Item.SubItems.Count <= cLVActionIdx then
     Exit;
   Item.SubItems[cLVActionIdx] := Value;
-end;
-
-procedure TCodeImportDlg.SetImportNameInLV(const Item: TListItem;
-  const Value: string);
-begin
-  if Item.SubItems.Count <= cLVImportName then
-    Exit;
-  Item.SubItems[cLVImportName] := Value;
 end;
 
 procedure TCodeImportDlg.UpdateActionDisplay(const Item: TListItem);
@@ -505,21 +499,13 @@ begin
 end;
 
 procedure TCodeImportDlg.UpdateImportData(const Item: TListItem);
-var
-  DataItem: TImportInfo;  // description of each snippet from import file
-  Idx: Integer;           // index of selected snippet name in import info list
 begin
   if not Assigned(Item) then
     Exit;
-  Idx := fImportMgr.ImportInfo.IndexOfName(Item.Caption);
-  if Idx = -1 then
-    raise EBug.Create(
-      ClassName + '.UpdateImportData: Can''t find import data item.'
-    );
-  DataItem := TImportInfo.Create(
-    Item.Caption, GetImportAsNameFromLV(Item), not Item.Checked
+  fImportMgr.ImportInfo.SetSkip(
+    TBox<TImportInfo>(Item.Data).Value.OrigKey,
+    not Item.Checked
   );
-  fImportMgr.ImportInfo.Items[Idx] := DataItem;
 end;
 
 procedure TCodeImportDlg.ValidatePage(const PageIdx: Integer);
@@ -544,31 +530,6 @@ begin
     begin
       if CountImportSnippets = 0 then
         raise EDataEntry.Create(sNoSnippetsSelected, lvImports);
-    end;
-  end;
-end;
-
-function TCodeImportDlg.ValidateSnippetName(const Name: string;
-  const Item: TListItem; out ErrMsg: string): Boolean;
-resourcestring
-  // Error message
-  sDuplicateName = '"%s" duplicates a name in the import list.';
-var
-  LI: TListItem;  // each list item in list view
-begin
-  // Checks snippet name for being well formed and not already in user database
-  Result := TSnippetValidator.ValidateName(Name, True, ErrMsg);
-  if not Result then
-    Exit;
-  // Checks name not already used for other imported snippets
-  for LI in lvImports.Items do
-  begin
-    if LI = Item then
-      Continue;     // this is item we're about to change: ignore its name
-    if StrSameText(Name, GetImportAsNameFromLV(LI)) then
-    begin
-      ErrMsg := Format(sDuplicateName, [Name]);
-      Exit(False);
     end;
   end;
 end;

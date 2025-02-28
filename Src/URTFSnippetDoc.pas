@@ -18,6 +18,7 @@ interface
 
 uses
   // Project
+  DB.UCollections,
   ActiveText.UMain, ActiveText.URTFRenderer, Hiliter.UGlobals, UEncodings,
   UIStringList, USnippetDoc, URTFBuilder, URTFStyles;
 
@@ -75,12 +76,12 @@ type
   strict protected
     ///  <summary>Initialises rich text document.</summary>
     procedure InitialiseDoc; override;
-    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
-    ///  user defined or from main database.</summary>
-    ///  <remarks>Heading is coloured according to whether user defined or not.
+    ///  <summary>Output given heading, i.e. snippet name for snippet from a
+    ///  given collection..</summary>
+    ///  <remarks>Heading is coloured according the the snippet's collection.
     ///  </remarks>
-    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
-      override;
+    procedure RenderHeading(const Heading: string;
+      const ACollectionID: TCollectionID); override;
     ///  <summary>Adds given snippet description to document.</summary>
     ///  <remarks>Active text formatting is observed and styled to suit
     ///  document.</remarks>
@@ -106,9 +107,8 @@ type
     ///  <remarks>Active text formatting is observed and styled to suit
     ///  document.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); override;
-    ///  <summary>Adds given information about code snippets database to
-    ///  document.</summary>
-    procedure RenderDBInfo(const Text: string); override;
+    ///  <summary>Output given information about a collection.</summary>
+    procedure RenderCollectionInfo(const Text: string); override;
     ///  <summary>Finalises document and returns content as encoded data.
     ///  </summary>
     function FinaliseDoc: TEncodedData; override;
@@ -162,6 +162,8 @@ begin
 end;
 
 procedure TRTFSnippetDoc.InitialiseDoc;
+var
+  Collection: TCollection;
 begin
   // Create object used to build main rich text document
   fBuilder := TRTFBuilder.Create(0);  // Use default code page
@@ -172,8 +174,10 @@ begin
   fBuilder.ColourTable.Add(clWarningText);
   fBuilder.ColourTable.Add(clVarText);
   fBuilder.ColourTable.Add(clExternalLink);
-  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[False]);
-  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[True]);
+  for Collection in TCollections.Instance do
+    fBuilder.ColourTable.Add(
+      Preferences.GetSnippetHeadingColour(Collection.UID)
+    );
 end;
 
 procedure TRTFSnippetDoc.InitStyles;
@@ -316,6 +320,17 @@ begin
   end;
 end;
 
+procedure TRTFSnippetDoc.RenderCollectionInfo(const Text: string);
+begin
+  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
+  fBuilder.SetFontSize(DBInfoFontSize);
+  fBuilder.SetFontStyle([fsItalic]);
+  fBuilder.AddText(Text);
+  fBuilder.EndPara;
+  fBuilder.ClearParaFormatting;
+  fBuilder.ResetCharStyle;
+end;
+
 procedure TRTFSnippetDoc.RenderCompilerInfo(const Heading: string;
   const Info: TCompileDocInfoArray);
 
@@ -371,17 +386,6 @@ begin
   end;
 end;
 
-procedure TRTFSnippetDoc.RenderDBInfo(const Text: string);
-begin
-  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
-  fBuilder.SetFontSize(DBInfoFontSize);
-  fBuilder.SetFontStyle([fsItalic]);
-  fBuilder.AddText(Text);
-  fBuilder.EndPara;
-  fBuilder.ClearParaFormatting;
-  fBuilder.ResetCharStyle;
-end;
-
 procedure TRTFSnippetDoc.RenderDescription(const Desc: IActiveText);
 var
   RTFWriter: TActiveTextRTF;  // Object that generates RTF from active text
@@ -417,12 +421,12 @@ begin
 end;
 
 procedure TRTFSnippetDoc.RenderHeading(const Heading: string;
-  const UserDefined: Boolean);
+  const ACollectionID: TCollectionID);
 begin
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.SetFontSize(HeadingFontSize);
   if fUseColour then
-    fBuilder.SetColour(Preferences.DBHeadingColours[UserDefined]);
+    fBuilder.SetColour(Preferences.GetSnippetHeadingColour(ACollectionID));
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(0.0, ParaSpacing));
   fBuilder.AddText(Heading);
   fBuilder.EndPara;

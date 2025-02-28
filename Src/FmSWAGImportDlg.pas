@@ -24,20 +24,23 @@ uses
   StdCtrls,
   Forms,
   ExtCtrls,
+  ActnList,
   Classes,
   Generics.Collections,
   // Project
+  DB.UCollections,
   FmWizardDlg,
   FrBrowserBase,
   FrFixedHTMLDlg,
   FrHTMLDlg,
   FrHTMLTpltDlg,
   UBaseObjects,
+  UCollectionListAdapter,
   UContainers,
   UCSSBuilder,
   SWAG.UCommon,
   SWAG.UImporter,
-  SWAG.UReader, ActnList;
+  SWAG.UReader;
 
 
 type
@@ -54,7 +57,7 @@ type
     clbSelectPackets: TCheckListBox;
     tsUpdate: TTabSheet;
     lvImports: TListView;
-    lblUpdateDesc: TLabel;
+    lblUpdateDesc1: TLabel;
     tsFinish: TTabSheet;
     frmOutro: THTMLTpltDlgFrame;
     btnDisplayCategory: TButton;
@@ -71,6 +74,9 @@ type
     frmIntro: THTMLTpltDlgFrame;
     lblVersionNumber: TLabel;
     lblFolderPageInfo1: TLabel;
+    lblUpdateDesc2: TLabel;
+    lblCollection: TLabel;
+    cbCollection: TComboBox;
     ///  <summary>Handles clicks on the check boxes next to packets in the
     ///  packet selection list box by selecting and deselecting packets for
     ///  inclusion in the import.</summary>
@@ -104,8 +110,13 @@ type
     procedure actDisplayPacketExecute(Sender: TObject);
     ///  <summary>Updates enabled state of display packet category.</summary>
     procedure actDisplayPacketUpdate(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   strict private
     const
+      {TODO -cCollections: Add combo box to select collection into which to add
+              imported snippets. Either add combo box to update page, or add a
+              new page for it before finish page or before update page.}
       ///  <summary>Index of introductory page in wizard.</summary>
       cIntroPage = 0;
       ///  <summary>Index of SWAG database folder selection page in wizard.
@@ -137,9 +148,17 @@ type
       ///  <summary>ID of currently selected category.</summary>
       ///  <remarks>Set to zero if no category is selected.</remarks>
       fCurrentCatID: Cardinal;
+      ///  <summary>Object that populates <c>cbCollection</c> with an
+      ///  alphabetical list of collection names and manages interaction with
+      ///  it.</summary>
+      fCollList: TCollectionListAdapter;
     ///  <summary>Retrieves import directory name from edit control where it is
     ///  entered.</summary>
     function GetDirNameFromEditCtrl: string;
+    ///  <summary>Retrieves collection specified by user that applies to
+    ///  imported snippets.</summary>
+    ///  <returns><c>TCollectionID</c>. The required collection ID.</returns>
+    function SelectedCollectionID: TCollectionID;
     ///  <summary>Validates entries on the wizard page identified by the given
     ///  page index.</summary>
     procedure ValidatePage(const PageIdx: Integer);
@@ -350,11 +369,19 @@ begin
   TCtrlArranger.AlignHCentresTo([clbSelectPackets], [btnDisplayPacket]);
 
   // tsUpdate
-  lblUpdateDesc.Width := tsUpdate.ClientWidth;
-  lblUpdateDesc.Top := 3;
+  TCtrlArranger.AlignLefts(
+    [lblUpdateDesc1, lblUpdateDesc2, lblCollection, lvImports], 0
+  );
+  lblUpdateDesc1.Width := tsUpdate.ClientWidth;
+  lblUpdateDesc2.Width := tsUpdate.ClientWidth;
   lvImports.Width := tsUpdate.ClientWidth;
-  TCtrlArranger.AlignLefts([lblUpdateDesc, lvImports], 0);
-  TCtrlArranger.MoveBelow(lblUpdateDesc, lvImports, 12);
+  lblUpdateDesc1.Top := 3;
+  TCtrlArranger.MoveBelow(lblUpdateDesc1, lblUpdateDesc2, 4);
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(lblUpdateDesc2, 8), [lblCollection, cbCollection]
+  );
+  TCtrlArranger.MoveToRightOf(lblCollection, cbCollection, 4);
+  TCtrlArranger.MoveBelow([lblCollection, cbCollection], lvImports, 12);
 
   // tsFinish
   frmOutro.Height := frmOutro.DocHeight;
@@ -503,6 +530,16 @@ begin
       );
     end
   );
+
+  // Set up collection list
+  fCollList.ToStrings(cbCollection.Items);
+  Assert(cbCollection.Items.Count > 0,
+    ClassName + '.ConfigForm: no collections');
+  Assert(TCollections.Instance.ContainsID(TCollectionID.Default),
+    ClassName + '.ConfigForm: default collection not found');
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  Assert(cbCollection.ItemIndex >= 0,
+    ClassName + '.ConfigForm: default collection not in cbCollection');
 end;
 
 destructor TSWAGImportDlg.Destroy;
@@ -577,6 +614,18 @@ begin
   finally
     Dlg.Free;
   end;
+end;
+
+procedure TSWAGImportDlg.FormCreate(Sender: TObject);
+begin
+  inherited;
+  fCollList := TCollectionListAdapter.Create;
+end;
+
+procedure TSWAGImportDlg.FormDestroy(Sender: TObject);
+begin
+  fCollList.Free;
+  inherited;
 end;
 
 function TSWAGImportDlg.GetDirNameFromEditCtrl: string;
@@ -771,7 +820,6 @@ begin
     begin
       LI := lvImports.Items.Add;
       LI.Caption := Packet.Title;
-      LI.SubItems.Add(TSWAGImporter.MakeValidSnippetName(Packet.ID));
     end;
   finally
     lvImports.Items.EndUpdate;
@@ -823,6 +871,13 @@ begin
   );
 end;
 
+function TSWAGImportDlg.SelectedCollectionID: TCollectionID;
+begin
+  Assert(cbCollection.ItemIndex >= 0,
+    ClassName + '.SelectedCollectionID: no collection selected');
+  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
+end;
+
 procedure TSWAGImportDlg.UpdateButtons(const PageIdx: Integer);
 resourcestring
   // button caption for update page
@@ -856,6 +911,7 @@ begin
       procedure
       begin
         fImporter.Import(
+          SelectedCollectionID,
           procedure (const Packet: TSWAGPacket)
           begin
             Application.ProcessMessages;

@@ -19,7 +19,9 @@ uses
   // Delphi
   Classes, ActiveX,
   // Project
-  IntfNotifier, UView;
+  DB.UCollections,
+  IntfNotifier,
+  UView;
 
 
 type
@@ -35,8 +37,6 @@ type
   TNotifier = class(TInterfacedObject, INotifier, ISetActions)
   strict private
     var
-      ///  <summary>Action that triggers a database update.</summary>
-      fUpdateDbaseAction: TBasicAction;
       ///  <summary>Action that causes a named snippet to be displayed.
       ///  </summary>
       fDisplaySnippetAction: TBasicAction;
@@ -56,9 +56,6 @@ type
       fEditSnippetAction: TBasicAction;
       ///  <summary>Action that causes a category to be displayed.</summary>
       fDisplayCategoryAction: TBasicAction;
-      ///  <summary>Action that causes the Snippets Editor to be opened ready to
-      ///  create a new snippet.</summary>
-      fNewSnippetAction: TBasicAction;
       ///  <summary>Action that causes news items from CodeSnip news feed to be
       ///  displayed.</summary>
       fNewsAction: TBasicAction;
@@ -67,20 +64,15 @@ type
 
   public
 
-    ///  <summary>Requests a database update.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure UpdateDbase;
-
     ///  <summary>Displays a snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of required snippet.
+    ///  <param name="Key">WideString [in] Required snippet's key.
     ///  </param>
-    ///  <param name="UserDefined">WordBool [in] Indicates whether snippet is
-    ///  user defined.</param>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
+    ///  collection.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool);
+    procedure DisplaySnippet(const Key: WideString;
+      ACollectionID: TCollectionID; NewTab: WordBool);
 
     ///  <summary>Displays a category.</summary>
     ///  <param name="CatId">WideString [in] ID of required category.</param>
@@ -114,16 +106,12 @@ type
     procedure ChangeDetailPane(const Pane: Integer);
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet.</param>
-    ///  <remarks>
-    ///  <para>Snippet must be user defined.</para>
-    ///  <para>Methods of INotifier.</para>
-    ///  </remarks>
-    procedure EditSnippet(const SnippetName: WideString);
-
-    ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure NewSnippet;
+    ///  <param name="Key">WideString [in] Snippet's key.</param>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
+    ///  collection.</param>
+    ///  <remarks>Method of INotifier.</remarks>
+    procedure EditSnippet(const Key: WideString;
+      const ACollectionID: TCollectionID);
 
     ///  <summary>Displays news items from the CodeSnip news feed.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -132,11 +120,6 @@ type
     ///  <summary>Displays the program's About Box.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
     procedure ShowAboutBox;
-
-    ///  <summary>Sets action used to request a database update.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetUpdateDbaseAction(const Action: TBasicAction);
 
     ///  <summary>Sets action used to display a snippet.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -183,12 +166,6 @@ type
     ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetDisplayCategoryAction(const Action: TBasicAction);
 
-    ///  <summary>Sets action used to open snippets editor to create a new
-    ///  snippet.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetNewSnippetAction(const Action: TBasicAction);
-
     ///  <summary>Sets action used to display news items from the CodeSnip news
     ///  feed.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -215,6 +192,7 @@ uses
   UDetailTabAction,
   UEditSnippetAction,
   USnippetAction,
+  USnippetIDs,
   UViewItemAction;
 
 
@@ -253,31 +231,28 @@ begin
   end;
 end;
 
-procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
-  UserDefined: WordBool; NewTab: WordBool);
+procedure TNotifier.DisplaySnippet(const Key: WideString;
+  ACollectionID: TCollectionID; NewTab: WordBool);
 begin
   if Assigned(fDisplaySnippetAction) then
   begin
-    (fDisplaySnippetAction as TSnippetAction).SnippetName := SnippetName;
-    (fDisplaySnippetAction as TSnippetAction).UserDefined := UserDefined;
+    (fDisplaySnippetAction as TSnippetAction).Key := Key;
+    (fDisplaySnippetAction as TSnippetAction).CollectionID := ACollectionID;
     (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
     fDisplaySnippetAction.Execute;
   end;
 end;
 
-procedure TNotifier.EditSnippet(const SnippetName: WideString);
+procedure TNotifier.EditSnippet(const Key: WideString;
+  const ACollectionID: TCollectionID);
 begin
   if Assigned(fEditSnippetAction) then
   begin
-    (fEditSnippetAction as TEditSnippetAction).SnippetName := SnippetName;
+    (fEditSnippetAction as TEditSnippetAction).ID := TSnippetID.Create(
+      Key, ACollectionID
+    );
     fEditSnippetAction.Execute;
   end;
-end;
-
-procedure TNotifier.NewSnippet;
-begin
-  if Assigned(fNewSnippetAction) then
-    fNewSnippetAction.Execute;
 end;
 
 procedure TNotifier.SetAboutBoxAction(const Action: TBasicAction);
@@ -330,11 +305,6 @@ begin
   fNewsAction := Action;
 end;
 
-procedure TNotifier.SetNewSnippetAction(const Action: TBasicAction);
-begin
-  fNewSnippetAction := Action;
-end;
-
 procedure TNotifier.SetOverviewStyleChangeActions(
   const Actions: array of TBasicAction);
 var
@@ -348,12 +318,6 @@ end;
 procedure TNotifier.SetShowViewItemAction(const Action: TBasicAction);
 begin
   fShowViewItemAction := Action;
-end;
-
-procedure TNotifier.SetUpdateDbaseAction(
-  const Action: TBasicAction);
-begin
-  fUpdateDbaseAction := Action;
 end;
 
 procedure TNotifier.ShowAboutBox;
@@ -376,12 +340,6 @@ begin
     (fShowViewItemAction as TViewItemAction).NewTab := NewTab;
     fShowViewItemAction.Execute;
   end;
-end;
-
-procedure TNotifier.UpdateDbase;
-begin
-  if Assigned(fUpdateDbaseAction) then
-    fUpdateDbaseAction.Execute;
 end;
 
 end.

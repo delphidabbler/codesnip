@@ -66,10 +66,25 @@ uses
   // Delphi
   SysUtils, Generics.Defaults,
   // Project
-  Compilers.UGlobals, Compilers.UCompilers, DB.UMain, DB.USnippet, UConsts,
-  UContainers, UCSSUtils, UEncodings, UHTMLTemplate, UHTMLUtils,
-  UJavaScriptUtils, UPreferences, UQuery, UResourceUtils, USnippetHTML,
-  USnippetPageHTML, UStrUtils, USystemInfo;
+  Compilers.UGlobals,
+  Compilers.UCompilers,
+  DB.UCollections,
+  DB.UMain,
+  DB.USnippet,
+  UConsts,
+  UContainers,
+  UCSSUtils,
+  UEncodings,
+  UHTMLTemplate,
+  UHTMLUtils,
+  UJavaScriptUtils,
+  UPreferences,
+  UQuery,
+  UResourceUtils,
+  USnippetHTML,
+  USnippetPageHTML,
+  UStrUtils,
+  USystemInfo;
 
 
 type
@@ -223,11 +238,6 @@ type
     ///  snippets to be displayed.</summary>
     function IsSnippetRequired(const Snippet: TSnippet): Boolean; virtual;
       abstract;
-    ///  <summary>Returns name of CSS class to be used for page heading.
-    ///  </summary>
-    ///  <remarks>Provides default class name. Descendant classes should
-    ///  override as necessary.</remarks>
-    function GetH1ClassName: string; virtual;
     ///  <summary>Returns page's heading text.</summary>
     ///  <remarks>Returns view's description by default. Descendants can
     ///  override if different behaviour is required.</remarks>
@@ -263,9 +273,6 @@ type
     ///  <remarks>The snippet is to be displayed if it is in the category being
     ///  displayed.</remarks>
     function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
-    ///  <summary>Returns name of CSS class to be used for page heading.
-    ///  </summary>
-    function GetH1ClassName: string; override;
     ///  <summary>Returns narrative to be used at top of any page that displays
     ///  a snippet list.</summary>
     function GetNarrative: string; override;
@@ -407,8 +414,9 @@ end;
 
 procedure TWelcomePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 var
-  UserDBCount: Integer;
-  MainDBCount: Integer;
+  Collection: TCollection;
+  CollectionCount: Integer;
+  CollectionList: TStringBuilder;
   Compilers: ICompilers;
   Compiler: ICompiler;
   CompilerList: TStringBuilder;
@@ -418,27 +426,24 @@ begin
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
-  UserDBCount := Database.Snippets.Count(True);
+  CollectionCount := TCollections.Instance.Count;
   Tplt.ResolvePlaceholderHTML(
-    'HaveUserDB', TCSS.BlockDisplayProp(UserDBCount > 0)
-  );
-  Tplt.ResolvePlaceholderHTML(
-    'NoUserDB', TCSS.BlockDisplayProp(UserDBCount <= 0)
-  );
-  Tplt.ResolvePlaceholderText(
-    'UserDBCount', IntToStr(UserDBCount)
+    'CollectionCount', IntToStr(CollectionCount)
   );
 
-  MainDBCount := Database.Snippets.Count(False);
-  Tplt.ResolvePlaceholderHTML(
-    'HaveMainDB', TCSS.BlockDisplayProp(MainDBCount > 0)
-  );
-  Tplt.ResolvePlaceholderHTML(
-    'NoMainDB', TCSS.BlockDisplayProp(MainDBCount <= 0)
-  );
-  Tplt.ResolvePlaceholderText(
-    'MainDBCount', IntToStr(MainDBCount)
-  );
+  CollectionList := TStringBuilder.Create;
+  try
+    for Collection in TCollections.Instance do
+      CollectionList.AppendLine(
+        THTML.CompoundTag(
+          'li',
+          THTML.Entities(Collection.Name)
+        )
+      );
+    Tplt.ResolvePlaceholderHTML('CollectionList', CollectionList.ToString);
+  finally
+    CollectionList.Free;
+  end;
 
   Compilers := TCompilersFactory.CreateAndLoadCompilers;
   Tplt.ResolvePlaceholderHTML(
@@ -507,24 +512,15 @@ begin
       'overflowXFixScript',
       'window.onload = null;'
     );
-  if GetSnippet.UserDefined then
-    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
-  else
-    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
-  Tplt.ResolvePlaceholderHTML(
-    'TestingInfo', TCSS.BlockDisplayProp(not GetSnippet.UserDefined)
-  );
-  Tplt.ResolvePlaceholderHTML(
-    'EditLink', TCSS.BlockDisplayProp(GetSnippet.UserDefined)
-  );
   Tplt.ResolvePlaceholderText(
     'EditEventHandler',
-    TJavaScript.LiteralFunc('editSnippet', [GetSnippet.Name])
+    TJavaScript.LiteralFunc(
+      'editSnippet', [GetSnippet.Key, GetSnippet.CollectionID.ToHexString]
+    )
   );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
-    if not GetSnippet.UserDefined then
-      Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
+    Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
     Tplt.ResolvePlaceholderHTML('SnippetName', SnippetHTML.SnippetName);
   finally
     SnippetHTML.Free;
@@ -564,11 +560,6 @@ begin
   inherited;
 end;
 
-function TSnippetListPageHTML.GetH1ClassName: string;
-begin
-  Result := 'maindb';
-end;
-
 function TSnippetListPageHTML.GetHeading: string;
 begin
   Result := View.Description;
@@ -590,7 +581,6 @@ end;
 procedure TSnippetListPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 begin
   inherited;
-  Tplt.ResolvePlaceholderHTML('H1Class', GetH1ClassName);
   Tplt.ResolvePlaceholderText('Heading', GetHeading);
   if HaveSnippets then
   begin
@@ -644,14 +634,6 @@ resourcestring
   sNote = 'The current selection contains no snippets in this category.';
 begin
   Result := sNote;
-end;
-
-function TCategoryPageHTML.GetH1ClassName: string;
-begin
-  if (View as ICategoryView).Category.UserDefined then
-    Result := 'userdb'
-  else
-    Result := inherited GetH1ClassName;
 end;
 
 function TCategoryPageHTML.GetNarrative: string;

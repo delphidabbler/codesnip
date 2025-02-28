@@ -1,5 +1,5 @@
 inherited UserDataPathDlg: TUserDataPathDlg
-  Caption = 'Move User Database'
+  Caption = 'Move Collection Data'
   ExplicitWidth = 474
   ExplicitHeight = 375
   PixelsPerInch = 96
@@ -16,20 +16,20 @@ inherited UserDataPathDlg: TUserDataPathDlg
       Height = 25
       AutoSize = False
       Caption = 
-        'Use this dialogue box to move the user database to a new directo' +
-        'ry or to restore the directory to its default location. Choose t' +
-        'he appropriate option below.'
+        'Use this dialogue box to move a collection'#39's data to a new direc' +
+        'tory.'#13#10'Choose the collection whose data you wish to move then en' +
+        'ter the directory you wish to move the data to.'
       WordWrap = True
     end
     object lblWarning: TLabel
       Left = 0
-      Top = 32
+      Top = 31
       Width = 377
-      Height = 20
+      Height = 34
       AutoSize = False
       Caption = 
-        'You are strongly advised to make a backup of the database before' +
-        ' continuing.'
+        'You are strongly advised to make a backup of the collection befo' +
+        're continuing.'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -38,137 +38,45 @@ inherited UserDataPathDlg: TUserDataPathDlg
       ParentFont = False
       WordWrap = True
     end
-    object gbMove: TGroupBox
+    object lblPath: TLabel
       Left = 0
-      Top = 59
-      Width = 377
-      Height = 140
-      Caption = 'Move database to new directory'
+      Top = 125
+      Width = 217
+      Height = 13
+      Caption = 'Enter the full path of the new data &directory:'
+      FocusControl = edPath
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
+      Font.Style = []
       ParentFont = False
-      TabOrder = 0
-      object lblPath: TLabel
-        Left = 8
-        Top = 20
-        Width = 240
-        Height = 13
-        Caption = 'Enter the full path to the new database &directory:'
-        FocusControl = edPath
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
-      object lblExplainMove: TLabel
-        Left = 8
-        Top = 66
-        Width = 361
-        Height = 34
-        AutoSize = False
-        Caption = 
-          'The directory must be empty and must not be a sub-directory of t' +
-          'he current database directory. If the directory does not exist a' +
-          ' new one will be created.'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        WordWrap = True
-      end
-      object edPath: TEdit
-        Left = 8
-        Top = 39
-        Width = 325
-        Height = 21
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-      end
-      object btnBrowse: TButton
-        Left = 341
-        Top = 39
-        Width = 27
-        Height = 21
-        Action = actBrowse
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 1
-      end
-      object btnMove: TButton
-        Left = 112
-        Top = 86
-        Width = 153
-        Height = 41
-        Action = actMove
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 2
-      end
     end
-    object gbRestore: TGroupBox
+    object lblExplainMove: TLabel
       Left = 0
-      Top = 208
-      Width = 377
-      Height = 112
-      Caption = 'Restore database to default directory'
+      Top = 171
+      Width = 361
+      Height = 62
+      AutoSize = False
+      Caption = 
+        'The directory must be empty and must not be a sub-directory of t' +
+        'he current collection'#39's data directory. If the directory does no' +
+        't exist a new one will be created.'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
+      Font.Style = []
       ParentFont = False
-      TabOrder = 1
-      object lblExplainDefaultPath: TLabel
-        Left = 8
-        Top = 20
-        Width = 361
-        Height = 34
-        AutoSize = False
-        Caption = 
-          'Use this button to restore the database to its default directory' +
-          '. This option is only available if the database has been moved.'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        WordWrap = True
-      end
-      object btnDefaultPath: TButton
-        Left = 112
-        Top = 61
-        Width = 153
-        Height = 41
-        Action = actDefaultPath
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-      end
+      WordWrap = True
+    end
+    object lblCollection: TLabel
+      Left = 0
+      Top = 71
+      Width = 122
+      Height = 13
+      Caption = 'Select &collection to move:'
+      FocusControl = cbCollection
     end
     inline frmProgress: TProgressFrame
       Left = 57
@@ -176,13 +84,65 @@ inherited UserDataPathDlg: TUserDataPathDlg
       Width = 320
       Height = 82
       ParentBackground = False
-      TabOrder = 2
+      TabOrder = 4
       Visible = False
       ExplicitLeft = 57
       ExplicitHeight = 82
       inherited pnlBody: TPanel
         Height = 82
+        ExplicitLeft = 55
+        ExplicitTop = 72
+        ExplicitHeight = 82
       end
+    end
+    object btnMove: TButton
+      Left = 87
+      Top = 199
+      Width = 153
+      Height = 41
+      Action = actMove
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+    end
+    object edPath: TEdit
+      Left = 0
+      Top = 144
+      Width = 325
+      Height = 21
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
+    end
+    object btnBrowse: TButton
+      Left = 331
+      Top = 144
+      Width = 27
+      Height = 21
+      Action = actBrowse
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 2
+    end
+    object cbCollection: TComboBox
+      Left = 0
+      Top = 88
+      Width = 358
+      Height = 21
+      Style = csDropDownList
+      TabOrder = 0
     end
   end
   object alDlg: TActionList
@@ -191,11 +151,6 @@ inherited UserDataPathDlg: TUserDataPathDlg
     object actBrowse: TAction
       Caption = '...'
       OnExecute = actBrowseExecute
-    end
-    object actDefaultPath: TAction
-      Caption = '&Restore Default Path'
-      OnExecute = actDefaultPathExecute
-      OnUpdate = actDefaultPathUpdate
     end
     object actMove: TAction
       Caption = '&Move'

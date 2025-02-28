@@ -20,6 +20,7 @@ uses
   // Delphi
   Classes, ActiveX, Windows,
   // Project
+  DB.UCollections,
   UView;
 
 
@@ -29,18 +30,15 @@ type
   INotifier = interface(IInterface)
     ['{13962DE4-784A-4B70-9D3F-FD434FAE4F4F}']
 
-    ///  <summary>Requests a database update.</summary>
-    procedure UpdateDbase;
-
     ///  <summary>Displays a snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of required snippet.
+    ///  <param name="Key">WideString [in] Required snippet's key.
     ///  </param>
-    ///  <param name="UserDefined">WordBool [in] Indicates whether snippet is
-    ///  user defined.</param>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
+    ///  collection.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
-    procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool);
+    procedure DisplaySnippet(const Key: WideString;
+      ACollectionID: TCollectionID; NewTab: WordBool);
 
     ///  <summary>Displays a category.</summary>
     ///  <param name="CatId">WideString [in] ID of required category.</param>
@@ -67,12 +65,11 @@ type
     procedure ChangeDetailPane(const Pane: Integer);
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet.</param>
-    ///  <remarks>Snippet must be user defined.</remarks>
-    procedure EditSnippet(const SnippetName: WideString);
-
-    ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
-    procedure NewSnippet;
+    ///  <param name="Key">WideString [in] Snippet's key.</param>
+    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
+    ///  collection.</param>
+    procedure EditSnippet(const Key: WideString;
+      const ACollectionID: TCollectionID);
 
     ///  <summary>Displays news items from the CodeSnip news feed.</summary>
     procedure ShowNews;
@@ -89,10 +86,6 @@ type
   ///  interface.</remarks>
   ISetActions = interface(IInterface)
     ['{A4B7AFE2-EE6C-4D39-BEA6-B52CC8AAC1DE}']
-
-    ///  <summary>Sets action used to request a database update.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetUpdateDbaseAction(const Action: TBasicAction);
 
     ///  <summary>Sets action used to display a snippet.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -129,11 +122,6 @@ type
     ///  <summary>Sets action used to display a category.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetDisplayCategoryAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to open snippets editor to create a new
-    ///  snippet.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetNewSnippetAction(const Action: TBasicAction);
 
     ///  <summary>Sets action used to display news items from the CodeSnip news
     ///  feed.</summary>

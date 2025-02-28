@@ -19,7 +19,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Top = 0
       Width = 662
       Height = 504
-      ActivePage = tsCompileResults
+      ActivePage = tsCode
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
@@ -41,14 +41,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Height = 13
           Caption = '&Source code:'
           FocusControl = edSourceCode
-        end
-        object lblName: TLabel
-          Left = 3
-          Top = 11
-          Width = 31
-          Height = 13
-          Caption = '&Name:'
-          FocusControl = edName
         end
         object lblCategories: TLabel
           Left = 0
@@ -98,6 +90,22 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Caption = 'Displa&y Name:'
           FocusControl = edDisplayName
         end
+        object lblCollection: TLabel
+          Left = 3
+          Top = 10
+          Width = 50
+          Height = 13
+          Caption = 'C&ollection:'
+          FocusControl = cbCollection
+        end
+        object lblCollectionInfo: TLabel
+          Left = 411
+          Top = 10
+          Width = 76
+          Height = 13
+          Caption = 'lblCollectionInfo'
+          FocusControl = cbCollection
+        end
         object edSourceCode: TMemo
           Left = 4
           Top = 224
@@ -112,14 +120,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           PopupMenu = mnuEditCtrls
           ScrollBars = ssBoth
           TabOrder = 6
-        end
-        object edName: TEdit
-          Left = 93
-          Top = 7
-          Width = 209
-          Height = 21
-          PopupMenu = mnuEditCtrls
-          TabOrder = 0
         end
         object cbCategories: TComboBox
           Left = 93
@@ -154,12 +154,14 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           inherited edText: TMemo
             Width = 462
             Height = 55
+            TabOrder = 1
             ExplicitWidth = 462
             ExplicitHeight = 55
           end
           inherited tcEditMode: TTabControl
             Top = 55
             Width = 462
+            TabOrder = 0
             ExplicitTop = 55
             ExplicitWidth = 462
           end
@@ -188,6 +190,14 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Height = 17
           Caption = 'Synta&x highlight this snippet as Pascal code'
           TabOrder = 7
+        end
+        object cbCollection: TComboBox
+          Left = 93
+          Top = 7
+          Width = 298
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 0
         end
       end
       object tsReferences: TTabSheet

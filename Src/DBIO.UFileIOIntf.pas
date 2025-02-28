@@ -38,7 +38,7 @@ type
         @return True if database exists, False if not.
       }
     function GetAllCatIDs: IStringList;
-      {Get names of all categories in database.
+      {Get ids of all categories in database.
         @return List of category ids.
       }
     procedure GetCatProps(const CatID: string; var Props: TCategoryData);
@@ -48,30 +48,30 @@ type
           values of category properties by implementor.
       }
     function GetCatSnippets(const CatID: string): IStringList;
-      {Get names of all snippets in a category.
+      {Get keys of all snippets in a category.
         @param CatID [in] Id of category containing snippets.
-        @return List of snippet names.
+        @return List of snippet IDs.
       }
-    procedure GetSnippetProps(const Snippet: string; var Props: TSnippetData);
+    procedure GetSnippetProps(const SnippetKey: string; var Props: TSnippetData);
       {Get properties of a snippet. These are the fields of the snippet's
       record in the snippets "table".
-        @param Snippet [in] Name of snippet.
+        @param SnippetKey [in] Snippet's key.
         @param Props [in/out] Empty properties passed in. Record fields set to
           values of snippet's properties by implementor.
       }
-    function GetSnippetXRefs(const Snippet: string): IStringList;
+    function GetSnippetXRefs(const SnippetKey: string): IStringList;
       {Get list of all snippets that are cross referenced by a snippet.
-        @param Snippet [in] Name of snippet we need cross references for.
-        @return List of snippet names.
+        @param SnippetKey [in] Keyof snippet we need cross references for.
+        @return List of snippet keys.
       }
-    function GetSnippetDepends(const Snippet: string): IStringList;
+    function GetSnippetDepends(const SnippetKey: string): IStringList;
       {Get list of all snippet on which a given snippet depends.
-        @param Snippet [in] Name of snippet.
-        @return List of snippet names.
+        @param SnippetKey [in] Snippet's key.
+        @return List of snippet keys.
       }
-    function GetSnippetUnits(const Snippet: string): IStringList;
+    function GetSnippetUnits(const SnippetKey: string): IStringList;
       {Get list of all units referenced by a snippet.
-        @param Snippet [in] Name of snippet.
+        @param SnippetKey [in] Snippet's key.
         @return List of unit names.
       }
   end;
@@ -100,33 +100,33 @@ type
       {Write the list of snippets belonging to a category. Always called after
       WriteCatProps for any given category.
         @param CatID [in] ID of category.
-        @param SnipList [in] List of names of snippets.
+        @param SnipList [in] List of IDs of snippets.
       }
-    procedure WriteSnippetProps(const SnippetName: string;
+    procedure WriteSnippetProps(const SnippetKey: string;
       const Props: TSnippetData);
       {Write the properties of a snippet. Always called after all categories are
       written and before WriteSnippetUnits, so can be used to perform any per-
       snippet intialisation.
-        @param SnippetName [in] Name of snippet.
+        @param SnippetKey [in] Snippet's key.
         @param Props [in] Properties of snippet.
       }
-    procedure WriteSnippetUnits(const SnippetName: string;
+    procedure WriteSnippetUnits(const SnippetKey: string;
       const Units: IStringList);
       {Write the list of units required by a snippet.
-        @param SnippetName [in] Name of snippet.
+        @param SnippetKey [in] Snippet's key.
         @param Units [in] List of names of required units.
       }
-    procedure WriteSnippetDepends(const SnippetName: string;
+    procedure WriteSnippetDepends(const SnippetKey: string;
       const Depends: IStringList);
       {Write the list of snippets on which a snippet depends.
-        @param SnippetName [in] Name of snippet.
-        @param Depends [in] List of snippet names.
+        @param SnippetKey [in] Snippet's key.
+        @param Depends [in] List of snippet keys.
       }
-    procedure WriteSnippetXRefs(const SnippetName: string;
+    procedure WriteSnippetXRefs(const SnippetKey: string;
       const XRefs: IStringList);
       {Write the list of snippets that a snippet cross-references.
-        @param SnippetName [in] Name of snippet.
-        @param XRefs [in] List of snippet names.
+        @param SnippetKey [in] Snippet's key.
+        @param XRefs [in] List of snippet keys.
       }
     procedure Finalise;
       {Finalises the database. Always called after all other methods.

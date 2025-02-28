@@ -273,6 +273,7 @@ uses
   // Delphi
   SysUtils, DateUtils, Windows, Graphics,
   // Project
+  DB.UCollections,
   DB.UMain, DB.USnippet, UCtrlArranger, UMessageBox, UPreferences, USettings,
   UStructs, UStrUtils;
 
@@ -343,8 +344,8 @@ begin
   LI := fLVFavs.Selected as TFavouriteListItem;
   SelectedSnippet := LI.Favourite.SnippetID;
   fNotifier.DisplaySnippet(
-    SelectedSnippet.Name,
-    SelectedSnippet.UserDefined,
+    SelectedSnippet.Key,
+    SelectedSnippet.CollectionID,
     chkNewTab.Checked
   );
   fFavourites.Touch(SelectedSnippet);
@@ -366,7 +367,7 @@ begin
   if Assigned(Snippet) then
     LI.Caption := Snippet.DisplayName
   else
-    LI.Caption := Favourite.SnippetID.Name;
+    LI.Caption := Favourite.SnippetID.Key;
   if IsToday(Favourite.LastAccessed) then
     LI.SubItems.Add(TimeToStr(Favourite.LastAccessed))
   else
@@ -579,10 +580,12 @@ end;
 procedure TFavouritesDlg.LVCustomDrawItem(Sender: TCustomListView;
   Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
 var
-  UserDefined: Boolean;
+  CollectionID: TCollectionID;
 begin
-  UserDefined := (Item as TFavouriteListItem).Favourite.SnippetID.UserDefined;
-  fLVFavs.Canvas.Font.Color := Preferences.DBHeadingColours[UserDefined];
+  CollectionID := (Item as TFavouriteListItem).Favourite.SnippetID.CollectionID;
+  fLVFavs.Canvas.Font.Color := Preferences.GetSnippetHeadingColour(
+    CollectionID
+  );
 end;
 
 procedure TFavouritesDlg.LVCustomDrawSubItem(Sender: TCustomListView;

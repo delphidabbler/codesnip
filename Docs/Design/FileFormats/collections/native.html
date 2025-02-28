@@ -1,0 +1,934 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2024, Peter Johnson (gravatar.com/delphidabbler).
+ *
+ * CodeSnip File Format Documentation: Native Collection Format v5
+-->
+<html xmlns="https://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>
+  CodeSnip File Format Documentation - Native Collection Format
+</title>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  media="screen"
+  href="../main.css"
+/>
+
+</head>
+
+<body>
+
+<div class="title">
+  <div>
+    DelphiDabbler CodeSnip
+  </div>
+  <div class="subtitle">
+    File Format Documentation
+  </div>
+</div>
+
+<h1>
+  Native Collection Format
+</h1>
+
+<section id="contents">
+
+<h2>
+  Contents
+</h2>
+
+<ul>
+  <li>
+    <a href="#intro">Introduction</a>
+  </li>
+  <li>
+    <a href="#encoding">Encoding</a>
+  </li>
+  <li>
+    <a href="#format">File Format</a>
+    <ul>
+      <li>
+        <a href="#xml-file">XML File</a>
+      </li>
+      <li>
+        <a href="#source-files">Source Files</a>
+      </li>
+      <!-- TODO: To be implemented
+      <li>
+        <a href="#license-file">License File</a>
+      </li>
+      -->
+    </ul>
+  </li>
+  <li>
+    <a href="#changes">Change Log</a>
+  </li>
+</ul>
+
+</section>
+
+<section id="intro">
+
+<h2>
+  Introduction
+</h2>
+
+<p>
+  This file format is the default collection data format used by CodeSnip Vault.
+</p>
+
+<p>
+  The format comprises a single XML file along with a number of data files located in the same directory. Each user can have zero or more snippet collections that use this format.
+</p>
+
+<p>
+  The XML file is named <code>collection.xml</code>. It contains all the information about about the collection, except for the source code of each snippet.
+</p>
+
+<p>
+  Snippet source code is stored in separate data files &ndash; one per snippet. Each source code file is referenced by the XML file.
+</p>
+
+<p>
+  The format allows for later revisions. Files are versioned and comply with the principles of Semantic Versioning.  Details of all the changes between versions are listed in the <a href="#changes">Change Log</a> at the end of this document.
+</p>
+
+</section>
+
+<section id="encoding">
+
+<h2>
+  Encoding
+</h2>
+
+<p>
+  All files are text files that use UTF-8 encoding, <em>without</em> any UTF-8 preamble (BOM). The XML processing instruction of <code>collection.xml</code> has its <em>encoding</em> atrribute set to <code>UTF-8</code>.
+</p>
+
+</section>
+
+<section id="format">
+
+<h2>
+  File Format
+</h2>
+
+<h3 id="xml-file">
+  XML File
+</h3>
+
+<p>
+  The following information applies to file format v1.0.
+</p>
+
+<dl>
+  <dt>
+    <strong><em>XML processing instruction</em></strong>
+  </dt>
+  <dd>
+    <p>
+      Attributes:
+    <p>
+    <dl class="indent">
+      <dt>
+        <em>version</em>
+      </dt>
+      <dd>
+        Always set to <code>1.0</code>.
+      </dd>
+      <dt>
+        <em>encoding</em>
+      </dt>
+      <dd>
+        Character encoding used for file. Always set to  <code>UTF-8</code>.
+      </dd>
+    </dl>
+  </dd>
+
+  <dt>
+    <strong>collection</strong>
+  </dt>
+  <dd>
+    <p>
+      Parent node that contains all the collection data.
+    </p>
+    <p>
+      Attributes:
+    </p>
+    <dl class="indent">
+      <dt>
+        <em>watermark</em>
+      </dt>
+      <dd>
+        Identifies the file as the correct type. It is always set to <code>882BAD68-8C3E-44E3-BBF4-17E55143DAF8</code>, regardless of the file version.
+      </dd>
+      <dt>
+        <em>version-major</em>
+      </dt>
+      <dd>
+        Identifies the major version of the file format. <span class="very-strong">Must</span> be <code>1</code>.
+      </dd>
+      <dt>
+        <em>version-minor</em>
+      </dt>
+      <dd>
+        Identifies the minor version of the file format. <span class="very-strong">Must</span> be <code>0</code>.
+      </dd>
+    </dl>
+  </dd>
+
+  <dt>
+    <strong>collection/categories</strong>
+  </dt>
+  <dd>
+    <p>
+      Contains a list of all categories used by the collection.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/categories/category</strong>
+  </dt>
+  <dd>
+    <p>
+      Contains information about a single category. There is one node per category.
+    </p>
+    <p>
+      Attributes:
+    </p>
+    <dl class="indent">
+      <dt>
+        <em>id</em>
+      </dt>
+      <dd>
+        Unique id of the category.
+      </dd>
+    </dl>
+  <dd>
+
+  <dt>
+    <strong>collection/categories/category/description</strong>
+  </dt>
+  <dd>
+    <p>
+      Description of the category.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/categories/category/snippet-keys</strong>
+  </dt>
+  <dd>
+    <p>
+      Contains list of the unique keys of all snippets in this category. May be omitted if there are no snippets in the category.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/categories/category/snippet-keys/key</strong>
+  </dt>
+  <dd>
+    <p>
+      Contains the key of a snippet in the category. There is one node for each snippet in the category. 
+    </p>
+    <p>
+      The value must be:
+    </p>
+    <ul class="squashed">
+      <li>unique withing the collection</li>
+      <li>a valid Unicode Pascal identifier</li>
+    </ul>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets</strong>
+  </dt>
+  <dd>
+    <p>
+      Contains defintiions of all snippets in the collection.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet</strong>
+  </dt>
+  <dd>
+    <p>
+      Contains information about a snippet. There is one node per snippet.
+    </p>
+    <p>
+      Attributes:
+    </p>
+    <dl class="indent">
+      <dt>
+        <em>key</em>
+      </dt>
+      <dd>
+        <p>
+          The snippet key.
+        </p>
+        <p>
+          The value must be:
+        </p>
+        <ul class="squashed">
+          <li>unique withing the collection</li>
+          <li>a valid Unicode Pascal identifier</li>
+        </ul>
+      </dd>
+      <dt>
+        <em>category</em>
+      </dt>
+      <dd>
+        <p>
+          The unique id of the category to which the snippet belongs. 
+        </p>
+        <p>
+          The value must correspond to the <em>id</em> attribute of one of the <em>collection/categories/category</em> nodes.
+        </p>
+      </dd>
+      <dt>
+        <em>kind</em>
+      </dt>
+      <dd>
+        <p>
+          The type of snippet.
+        </p>
+        <p>
+          Valid values are:
+        </p>
+        <ul class="squashed">
+          <li><code>freeform</code></li>
+          <li><code>routine</code></li>
+          <li><code>type</code></li>
+          <li><code>const</code></li>
+          <li><code>class</code></li>
+          <li><code>unit</code></li>
+        </ul>
+        <p>
+          The values are not case sensitive.
+        </p>
+        <p>
+          If <em>collection/snippets/snippet/source-code/language</em> has any value other than <code>Pascal</code> then this attribute <span class="very-strong">must</span> have value <code>freeform</code>. 
+        </p>
+      </dd>
+    </dl>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/display-name</strong>
+  </dt>
+  <dd>
+    <p>
+      The snippet's display name.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/description</strong>
+  </dt>
+  <dd>
+    <p>
+      Description of the snippet.
+    </p>
+    <p>
+      Content <span class="very-strong">must</span> be valid <a href="../reml.html">REML</a> markup. <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/delphidabbler/reml/main/docs/reml-v6.html">REML v6</a> is supported.
+    </p>
+    <p>
+      This node <em>may</em> be omitted if there is no description.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/notes</strong>
+  </dt>
+  <dd>
+    <p>
+      Additional information about the snippet.
+    </p>
+    <p>
+      Content <span class="very-strong">must</span> be valid <a href="../reml.html">REML</a> markup. <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/delphidabbler/reml/main/docs/reml-v6.html">REML v6</a> is supported.
+    </p>
+    <p>
+      This node <em>may</em> be omitted if there are no notes.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/source-code</strong>
+  </dt>
+  <dd>
+    <p>
+      Contains information about a snippet's source code.
+    </p>
+    <p>
+      Attributes:
+    </p>
+    <dl class="indent">
+      <dt>
+        <em>file-name</em>
+      </dt>
+      <dd>
+        <p>
+          Name of the file containing the snippet's source code.
+        </p>
+        <p>
+          The named file <span class="very-strong">must</span> exist in the same directory as this XML file.
+        </p>
+      </dd>
+      <dt>
+        <em>language</em>
+      </dt>
+      <dd>
+        <p>
+          Identifies the programming language, if any, used by the source code.
+        </p>
+        <p>
+          Valid values are:
+        </p>
+        <ul class="squashed">
+          <li>
+            <code>text</code> &ndash; the snippet is plain text, not source code. 
+          </li>
+          <li>
+            <code>unknown</code> &ndash; the snippet's source code language is unknown to CodeSnip.
+          </li>
+          <li>
+            <code>pascal</code> &ndash; the snippet's source code is written in Object Pascal.
+          </li>
+        </ul>
+      </dd>
+    </dl>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/compile-results</strong>
+  </dt>
+  <dd>
+    <p>
+      Contains a list of compile results for the snippet.
+    </p>
+    <p>
+      This node has no meaning and <span class="very-strong">must</span> be omitted if either of the following two conditions apply:
+    </p>
+    <ol>
+      <li>
+        The source code language is not <code>pascal</code>.
+      </li>
+      <li>
+        The snippet kind is <code>freeform</code>.
+      </li>
+    </ol>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/compile-results/compiler
+    </strong>
+  </dt>
+  <dd>
+    <p>
+      The compile result for a given compiler. There is an entry for each known compiler.
+    </p>
+    <p>
+      Attributes:
+    </p>
+    <dl class="indent">
+      <dt>
+        <em>id</em>
+      </dt>
+      <dd>
+        <p>
+          Identifies the compiler. Valid identifiers are are one of:
+        </p>
+        <ul class="squashed">
+          <li>
+            <em>d2</em> &ndash; Delphi 2 compiler
+          </li>
+          <li>
+            <em>d3</em> &ndash; Delphi 3 compiler
+          </li>
+          <li>
+            <em>d4</em> &ndash; Delphi 4 compiler
+          </li>
+          <li>
+            <em>d5</em> &ndash; Delphi 5 compiler
+          </li>
+          <li>
+            <em>d6</em> &ndash; Delphi 6 compiler
+          </li>
+          <li>
+            <em>d7</em> &ndash; Delphi 7 compiler
+          </li>
+          <li>
+            <em>d2005</em> &ndash; Delphi 2005 compiler
+          </li>
+          <li>
+            <em>d2006</em> &ndash; Delphi 2006 compiler
+          </li>
+          <li>
+            <em>d2007</em> &ndash; Delphi 2007 compiler
+          </li>
+          <li>
+            <em>d2009</em> &ndash; Delphi 2009 compiler
+          </li>
+          <li>
+            <em>d2010</em> &ndash; Delphi 2010 compiler
+          </li>
+          <li>
+            <em>dXE</em> &ndash; Delphi XE compiler
+          </li>
+          <li>
+            <em>dxe2</em> &ndash; Delphi XE2 compiler
+          </li>
+          <li>
+            <em>dxe3</em> &ndash; Delphi XE3 compiler
+          </li>
+          <li>
+            <em>dxe4</em> &ndash; Delphi XE4 compiler
+          </li>
+          <li>
+            <em>dxe5</em> &ndash; Delphi XE5 compiler
+          </li>
+          <li>
+            <em>dxe6</em> &ndash; Delphi XE6 compiler
+          </li>
+          <li>
+            <em>dxe7</em> &ndash; Delphi XE7 compiler
+          </li>
+          <li>
+            <em>dxe8</em> &ndash; Delphi XE8 compiler
+          </li>
+          <li>
+            <em>d10.0</em> &ndash; Delphi 10 Seattle compiler
+          </li>
+          <li>
+            <em>d10.1</em> &ndash; Delphi 10.1 Berlin compiler
+          </li>
+          <li>
+            <em>d10.2</em> &ndash; Delphi 10.2 Tokyo compiler
+          </li>
+          <li>
+            <em>d10.3</em> &ndash; Delphi 10.3 Rio compiler
+          </li>
+          <li>
+            <em>d10.4</em> &ndash; Delphi 10.4 Sydney compiler
+          </li>
+          <li>
+            <em>d11</em> &ndash; Delphi 11.x Alexandria compiler
+          </li>
+          <li>
+            <em>d12</em> &ndash; Delphi 12 Athens compiler
+          </li>
+          <li>
+            <em>fpc</em> &ndash; Free Pascal compiler
+          </li>
+        </ul>
+        <p>
+          The values are not case sensitive.
+        </p>
+      </dd>
+      <dt>
+        <em>result</em>
+      </dt>
+      <dd>
+        <p>
+          The compile result for the compiler. Valid values are:
+        </p>
+        <ul class="squashed">
+          <li>
+            <code>y</code> &ndash; Compiles with the identified compiler.
+          </li>
+          <li>
+            <code>n</code> &ndash; Does not compile with the identified compiler.
+          </li>
+          <li>
+            <code>q</code> &ndash; Compile result for this compiler is not known.
+          </li>
+        </ul>
+        <p>
+          The values are not case sensitive.
+        </p>
+      </dd>
+    </dl>
+    <p>
+      There is no text content.
+    </p>
+    <p>
+      Omitting a node for any compiler is permitted and is equivalent to specifying <code>q</code>.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/tests</strong>
+  </dt>
+  <dd>
+    <p>
+      Provides information about the level of testing applied to this snippet.
+    </p>
+    <p>
+      Attributes:
+    </p>
+    <dl class="indent">
+      <dt>
+        <em>level</em>
+      </dt>
+      <dd>
+        <p>
+          The level of testing achieved. Valid values are:
+        </p>
+        <ul class="squashed">
+          <li>
+            <code>none</code> &ndash; the snippet has not been tested.
+          </li>
+          <li>
+            <code>basic</code> &ndash; the snippet has passed some simple, unspecified testing.
+          </li>
+          <li>
+            <code>advanced</code> &ndash; the snippet has passed more advanced, but unspecified testing.
+          </li>
+          <li>
+            <code>unit-tests</code> &ndash; the snippet has passed unit tests.
+          </li>
+          <li>
+            <code>demo-code</code> &ndash; there exists demo code that exercises the snippet.
+          </li>
+        </ul>
+      </dd>
+      <dt>
+        <em>url</em>
+      </dt>
+      <dd>
+        <p>
+          The URL of any unit tests or demo code. 
+        </p>
+        <p>
+          This attribute <span class="very-strong">must</span> only be provided when the <em>level</em> attribute has value <code>unit-tests</code> or <code>demo-code</code>.
+        </p>
+      </dd>
+    </dl>
+    <p>
+      There is no text content.
+    </p>
+    <p>
+      This node <em>may</em> be omitted if the unit has not been tested. In this case a testing level of <code>none</code> will be assumed.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/required-units</strong>
+  </dt>
+  <dd>
+    <p>
+      List of units required to compile the snippet.
+    </p>
+    <p>
+      The node <em>may</em> be omitted if there are no required units.
+    </p>
+    <p>
+      If <em>collection/snippets/snippet/source-code/language</em> has any value other than <code>Pascal</code> then this node has no meaning and <span class="very-strong">must</span> be omitted.
+    </p>
+
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/required-units/unit</strong>
+  </dt>
+  <dd>
+    <p>
+      Name of a unit within the required units list.
+    </p>
+    <p>
+      <span class="very-strong">Must</span> be a valid Pascal identifier.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/required-snippets</strong>
+  </dt>
+  <dd>
+    <p>
+      List of snippets that are required to compile the snippet.
+    </p>
+    <p>
+      The node <em>may</em> be omitted if there are no required snippets.
+    </p>
+    <p>
+      If <em>collection/snippets/snippet/source-code/language</em> has any value other than <code>Pascal</code> then this node has no meaning and <span class="very-strong">must</span> be omitted.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/required-snippets/key</strong>
+  </dt>
+  <dd>
+    <p>
+      Key of a snippet within the required snippets list.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/xrefs</strong>
+  </dt>
+  <dd>
+    <p>
+      List of cross-referenced snippets.
+    </p>
+    <p>
+      The node <em>may</em> be omitted if there are no cross referenced snippets.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/snippets/snippet/xrefs/key</strong>
+  </dt>
+  <dd>
+    <p>
+      Key of a snippet within the cross-references list.
+    </p>
+  </dd>
+
+  <!-- TODO: Meta data yet to be implemented
+  <dt>
+    <strong>collection/license</strong>
+  </dt>
+  <dd>
+    <p>
+      Contains license information for the collection.
+    </p>
+    <p>
+      Attributes:
+    </p>
+    <dl class="indent">
+      <dt>
+        <em>spdx</em>
+      </dt>
+      <dd>
+        <p> 
+          The license's SPDX identifier.
+        </p>
+        <p>
+          If the license has a SPDX identifier the attribute's value <span class="very-strong">must</span> be a valid SPDX identifier from the <a href="https://spdx.org/licenses/">SPDX License List</a>.
+        </p>
+        <p>
+          If the license has no associated SPDX identifier then this attribute <em>may</em> be either omitted or have an empty value.
+        </p>
+      </dd>
+      <dt>
+        <em>name</em>
+      </dt>
+      <dd>
+        <p>
+          The name of the license.
+        </p>
+        <p>
+          If the <em>spdx</em> attribute refers to a valid SPDX identifier then this attribute <em>should</em>, but is not required to, contain the name of the matching license per the <a href="https://spdx.org/licenses/">SPDX License List</a>.
+        </p>
+          If no license name is provided then this attribute <em>may</em> be either omitted or have an empty value. 
+        </p>
+      </dd>
+      <dt>
+        <em>url</em>
+      </dt>
+      <dd>
+        <p>
+          The URL of the full license text.
+        </p>
+        <p>
+          If a URL is provided then the linked license <em>should</em>, but is not required to, have the same text as any license text in the file referenced by the <em>license-file-name</em> attribute.
+        </p>
+        <p>
+          If no license URL is provided then this attribute <em>may</em> be either omitted or have an empty value.
+        </p>
+      </dd>
+      <dt>
+        <em>license-file-name</em>
+      </dt>
+      <dd>
+        <p>
+          The name of a file containing the full license text.
+        </p>
+        <p>
+          If a file name is provided then it <span class="very-strong">must</span> refer to an existing, non-empty, file in the same folder as the XML file.
+        </p>
+        <p>
+          If no such license files exists then this attribute <em>may</em> be either omitted or have an empty value.
+        </p>
+      </dd>
+    </dl>
+    <p>
+      This node has no text content.
+    </p>
+    <p>
+      The node <em>may</em> be omitted if there are no values for any attributes. A missing node is taken to mean that there is no license information.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/copyright</strong>
+  </dt>
+  <dd>
+    <p>
+      Contains information about the copyright that applies to the collection.
+    </p>
+    <p>
+      Attributes:
+    </p>
+    <dl class="indent">
+      <dt>
+        <em>date</em>
+      </dt>
+      <dd>
+        <p>
+          The date of the copyright.
+        </p>
+        <p>
+          The copyright date <em>may</em> be either a year (e.g. <code>2024</code>) or a range of years (e.g. <code>2009-2021</code>).
+        </p>
+        <p>
+          If no copyright date is provided then this attribute <em>may</em> be either omitted or have an empty value.
+        </p>
+      </dd>
+      <dt>
+        <em>holder</em>
+      </dt>
+      <dd>
+        <p>
+          The name(s) of the copyright holder(s).
+        </p>
+        <p>
+          If there are numerous contributors to the collection, who each have a claim on copyright, they <span class="very-strong">must</span> be listed under the <em>collection/copyright/contributors</em> node and this attribute's value should refer to the fact, e.g. <code>Alice Jones &amp; contributors</code> or simply <code>Contributors</code>.
+        </p>
+        <p>
+          If no copyright holder is provided then this attribute <em>may</em> be either omitted or have an empty value.
+        </p>
+      </dd>
+      <dt>
+        <em>holder-url</em>
+      </dt>
+      <dd>
+        <p>
+          A URL where additional copyright information can be found.
+        </p>
+        <p>
+          If there is no such URL then this attribute <em>may</em> be either omitted or have an empty value.
+        </p>
+      </dd>
+      <p>
+        The node <em>may</em> be omitted if there are no values for any attributes the <em>collection/copyright/contributors</em> is not present. A missing node is taken to mean that there is no copyright information.
+      </p>
+    </dl>
+  </dd>
+
+  <dt>
+    <strong>collection/copyright/contributors</strong>
+  </dt>
+  <dd>
+    <p>
+      Contains a list of contributors to the project who have a claim on copyright.
+    </p>
+    <p>
+      The node <em>may</em> be omitted if there are no contributors.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/copyright/contributors/name</strong>
+  </dt>
+  <dd>
+    <p>
+      The name of a contributor. One node per contributor.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/acknowledgements</strong>
+  </dt>
+  <dd>
+    <p>
+      Contains a list of names of people who have contributed in some way the the project.
+    </p>
+    <p>
+      The node <em>may</em> be omitted if no people are acknowledged.
+    </p>
+  </dd>
+
+  <dt>
+    <strong>collection/acknowledgements/name</strong>
+  </dt>
+  <dd>
+    <p>
+      Name being acknowledged. One node per name in the list.
+    </p>
+  </dd>
+  -->
+
+</dl>
+
+<h3 id="source-files">
+  Source Code Files
+</h3>
+
+<p>
+  Source code is stored separately from the main XML file. The source code of each snippet has its own file. File names relate to the relevant snippet's key and have extension <code>.source</code>.
+</p>
+
+<p>
+  Source code files are referenced by the <em>file-name</em> attribute of a snippet's <em>collection/snippets/snippet/source-code</em> node in the XML file.
+</p>
+
+<!-- TODO: To be implemented
+<h3 id="license-file">
+  License File
+</h3>
+
+<p>
+  Any license text is stored in separately from the main XML file.
+</p>
+
+<p>
+  This file <em>may not</em> be present if there is no license text specified.
+</p>
+
+<p>
+  The file is named according to the <em>license-file-name</em> attribute of the <em>collection/license</em> node.
+</p>
+-->
+
+</section>
+
+<section id="changes">
+
+<h2>
+  Change Log
+</h2>
+
+<p>
+  This section describes the changes between versions of the file format.
+</p>
+
+<h3>
+  <strong>Version 1.0</strong>
+</h3>
+
+<ul>
+  <li>
+    Introduced with CodeSnip Vault.
+  </li>
+  <li>
+    Supports Delphi compilers from Delphi 2 to Delphi 12.x, plus Free Pascal.
+  </li>
+  <li>
+    Supports <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/delphidabbler/reml/main/docs/reml-v6.html">REML v6</a>.
+  </li>
+</ul>
+
+</section>

@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2008-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a static class that manages user's interaction with user database.
+ * Implements a static class that manages user's interaction with the database.
 }
 
 
@@ -14,12 +14,17 @@ unit UUserDBMgr;
 
 interface
 
+{TODO -cRefactoring: Rename this unit/classes/methods: the names refer to the
+        CodeSnip 4 database structure but the code now works with collections}
 
 uses
   // Delphi
   Classes,
   // Project
-  DB.UCategory, UBaseObjects, UView;
+  DB.UCategory,
+  UBaseObjects,
+  USnippetIDs,
+  UView;
 
 
 type
@@ -27,36 +32,13 @@ type
   ///  <summary>Static class that manages user's interaction with user database
   ///  and performs move and backup operations on it.</summary>
   TUserDBMgr = class(TNoConstructObject)
-  strict private
-    ///  <summary>OnClose event handler for open dialogue box. Checks if
-    ///  dialogue box can close.</summary>
-    ///  <param name="Sender">TObject [in] Reference to dialogue box in
-    ///  question.</param>
-    ///  <param name="CanClose">Boolean [in/out] Set to True to permit dialogue
-    ///  to close or False to inhibit closure.</param>
-    class procedure CanOpenDialogClose(Sender: TObject; var CanClose: Boolean);
-    ///  <summary>OnClose event handler for save dialogue box. Checks if
-    ///  dialogue box can close.</summary>
-    ///  <param name="Sender">TObject [in] Reference to dialogue box in
-    ///  question.</param>
-    ///  <param name="CanClose">Boolean [in/out] Set to True to permit dialogue
-    ///  to close or False to inhibit closure.</param>
-    class procedure CanSaveDialogClose(Sender: TObject; var CanClose: Boolean);
-    ///  <summary>Creates a list of user defined categories.</summary>
-    ///  <param name="IncludeSpecial">Boolean [in] Flag indicating whether list
-    ///  should include special, non-deletable, categories.</param>
-    ///  <returns>Required category list.</returns>
-    ///  <remarks>Caller must free the returned object.</remarks>
-    class function CreateUserCatList(
-      const IncludeSpecial: Boolean): TCategoryList;
   public
     ///  <summary>Enables user to adds a new user defined snippet to the
     ///  database using the snippets editor.</summary>
     class procedure AddSnippet;
-    ///  <summary>Enables user to edit the snippet with the given name using the
+    ///  <summary>Enables user to edit the snippet with the given ID using the
     ///  snippets editor.</summary>
-    ///  <remarks>The named snippet must be user defined.</remarks>
-    class procedure EditSnippet(const SnippetName: string);
+    class procedure EditSnippet(const ASnippetID: TSnippetID);
     ///  <summary>Duplicates the snippet specified by the given view as a user
     ///  defined snippet with name specified by user.</summary>
     class procedure DuplicateSnippet(ViewItem: IView);
@@ -96,7 +78,10 @@ type
     ///  <summary>Moves the user database to a new location specified by the
     ///  user.</summary>
     class procedure MoveDatabase;
-    ///  <summary>Deletes the user database, with permission.</summary>
+    ///  <summary>Deletes all the snippets in a collection specified by the
+    ///  user.</summary>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the collection's data was
+    ///  deleted, <c>False</c> otherwise.</returns>
     class function DeleteDatabase: Boolean;
   end;
 
@@ -106,19 +91,32 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Dialogs, Windows {for inlining}, IOUtils,
+  SysUtils,
+  Dialogs,
+  Windows {for inlining},
+  IOUtils,
   // Project
-  DB.UMain, DB.USnippet,
-  FmAddCategoryDlg, FmDeleteCategoryDlg, FmDuplicateSnippetDlg,
-  FmRenameCategoryDlg, FmSnippetsEditorDlg,
+  DB.UCollections,
+  DB.UMain,
+  DB.USnippet,
+  FmAddCategoryDlg,
+  FmCollectionBackup,
+  FmDeleteCategoryDlg,
+  FmDeleteUserDBDlg,
+  FmDuplicateSnippetDlg,
+  FmRenameCategoryDlg,
+  FmSnippetsEditorDlg,
   {$IFNDEF PORTABLE}
   FmUserDataPathDlg,
   {$ENDIF}
-  FmDeleteUserDBDlg, FmWaitDlg,
+  FmWaitDlg,
   UAppInfo,
-  UConsts, UExceptions, UIStringList, UMessageBox, UOpenDialogEx,
-  UOpenDialogHelper, UReservedCategories, USaveDialogEx, USnippetIDs,
-  UUserDBBackup, UWaitForThreadUI;
+  UConsts,
+  UExceptions,
+  UIStringList,
+  UMessageBox,
+  UUserDBBackup,
+  UWaitForThreadUI;
 
 type
   ///  <summary>Base class for classes that execute a user database management
@@ -182,13 +180,16 @@ type
         var
           ///  <summary>Name of backup file to be restored.</summary>
           fBakFileName: string;
+
+          fCollection: TCollection;
       strict protected
         ///  <summary>Restores the user database from a backup.</summary>
         procedure Execute; override;
       public
         ///  <summary>Constructs a new, suspended, thread that can restore the
         ///  database from the given backup file.</summary>
-        constructor Create(const BakFileName: string);
+        constructor Create(const BakFileName: string;
+          const ACollection: TCollection);
       end;
   public
     ///  <summary>Performs a user database restoration operation from in a
@@ -199,7 +200,8 @@ type
     ///  box, over which it is aligned.</param>
     ///  <param name="BakFileName">string [in] Name of backup file to be
     ///  restored.</param>
-    class procedure Execute(AOwner: TComponent; const BakFileName: string);
+    class procedure Execute(AOwner: TComponent; const BakFileName: string;
+      const ACollection: TCollection);
   end;
 
 type
@@ -214,13 +216,16 @@ type
         var
           ///  <summary>Name of backup file to be created.</summary>
           fBakFileName: string;
+
+          fCollection: TCollection;
       strict protected
         ///  <summary>Backs up the user database.</summary>
         procedure Execute; override;
       public
         ///  <summary>Constructs a new, suspended, thread that can backup the
         ///  database to the given backup file.</summary>
-        constructor Create(const BakFileName: string);
+        constructor Create(const BakFileName: string;
+          const ACollection: TCollection);
       end;
   public
     ///  <summary>Performs a user database backup operation from in a background
@@ -230,7 +235,8 @@ type
     ///  box, over which it is aligned.</param>
     ///  <param name="BakFileName">string [in] Name of backup file to be
     ///  created.</param>
-    class procedure Execute(AOwner: TComponent; const BakFileName: string);
+    class procedure Execute(AOwner: TComponent; const BakFileName: string;
+      const ACollection: TCollection);
   end;
 
 { TUserDBMgr }
@@ -249,37 +255,30 @@ end;
 
 class procedure TUserDBMgr.BackupDatabase(ParentCtrl: TComponent);
 var
-  SaveDlg: TSaveDialogEx;       // save dialog box used to name backup file
+  FileName: string;
+  Collection: TCollection;
 resourcestring
-  // Dialog box caption
-  sCaption = 'Save Backup';
+  sOverwritePrompt = '"%s" already exists. OK to overwrite?';
 begin
-  // Get backup file name from user via standard save dialog box
-  SaveDlg := TSaveDialogEx.Create(nil);
-  try
-    SaveDlg.OnCanClose := CanSaveDialogClose;
-    SaveDlg.Title := sCaption;
-    SaveDlg.Options := [ofShowHelp, ofExtensionDifferent, ofPathMustExist,
-      ofNoTestFileCreate, ofEnableSizing];
-    SaveDlg.HelpKeyword := 'SaveBackupDlg';
-    if SaveDlg.Execute then
-      // Perform backup
-      TUserDBBackupUI.Execute(ParentCtrl, SaveDlg.FileName);
-  finally
-    SaveDlg.Free;
+  if TCollectionBackupDlg.Execute(ParentCtrl, FileName, Collection) then
+  begin
+    if TFile.Exists(FileName)
+      and not TMessageBox.Confirm(
+        ParentCtrl, Format(sOverwritePrompt, [FileName])
+      ) then
+      Exit;
+    TUserDBBackupUI.Execute(ParentCtrl, FileName, Collection);
   end;
 end;
 
 class function TUserDBMgr.CanDeleteACategory: Boolean;
 var
-  CatList: TCategoryList; // list of user deletable categories
+  Cat: TCategory;
 begin
-  CatList := CreateUserCatList(False);  // builds list of deletable user cats
-  try
-    Result := CatList.Count > 0;
-  finally
-    CatList.Free;
-  end;
+  Result := False;
+  for Cat in Database.Categories do
+    if Cat.CanDelete then
+      Exit(True);
 end;
 
 class function TUserDBMgr.CanDuplicate(ViewItem: IView): Boolean;
@@ -288,48 +287,14 @@ begin
 end;
 
 class function TUserDBMgr.CanEdit(ViewItem: IView): Boolean;
-var
-  SnippetView: ISnippetView;  // ViewItem as snippet view if supported
 begin
   Assert(Assigned(ViewItem), ClassName + '.CanEdit: ViewItem is nil');
-  Result := Assigned(ViewItem)
-    and Supports(ViewItem, ISnippetView, SnippetView)
-    and SnippetView.Snippet.UserDefined;
-end;
-
-class procedure TUserDBMgr.CanOpenDialogClose(Sender: TObject;
-  var CanClose: Boolean);
-var
-  FileName: string;     // name of file entered in dialog box
-resourcestring
-  // Error message
-  sFileDoesNotExist = '"%s" does not exist.';
-begin
-  CanClose := False;
-  FileName := FileOpenEditedFileName(Sender as TOpenDialogEx);
-  if not FileExists(FileName) then
-  begin
-    // Specified file doesn't exist: inhibit closure
-    TMessageBox.Error(
-      Sender as TOpenDialogEx,
-      Format(sFileDoesNotExist, [FileName])
-    );
-    Exit;
-  end;
-  // All OK: allow closure
-  CanClose := True;
+  Result := Supports(ViewItem, ISnippetView);
 end;
 
 class function TUserDBMgr.CanRenameACategory: Boolean;
-var
-  CatList: TCategoryList; // list of user renamable categories
 begin
-  CatList := CreateUserCatList(True); // build list of all user categories
-  try
-    Result := CatList.Count > 0;
-  finally
-    CatList.Free;
-  end;
+  Result := True;
 end;
 
 class function TUserDBMgr.CanSave: Boolean;
@@ -338,41 +303,16 @@ begin
   Result := (Database as IDatabaseEdit).Updated;
 end;
 
-class procedure TUserDBMgr.CanSaveDialogClose(Sender: TObject;
-  var CanClose: Boolean);
-var
-  FileName: string;   // name of file entered in dialog box
-resourcestring
-  // Error message
-  sOverwritePrompt = '"%s" already exists. OK to overwrite?';
-begin
-  FileName := FileOpenEditedFileName(Sender as TSaveDialogEx);
-  if FileExists(FileName) then
-    // File exists: allow closure if user permits file to be overwritten
-    CanClose := TMessageBox.Confirm(
-      Sender as TSaveDialogEx,
-      Format(sOverwritePrompt, [FileName])
-    );
-end;
-
-class function TUserDBMgr.CreateUserCatList(
-  const IncludeSpecial: Boolean): TCategoryList;
-var
-  Cat: TCategory; // references each category in snippets database
-begin
-  Result := TCategoryList.Create;
-  for Cat in Database.Categories do
-    if Cat.UserDefined and
-      (IncludeSpecial or not TReservedCategories.IsReserved(Cat)) then
-      Result.Add(Cat);
-end;
-
 class procedure TUserDBMgr.DeleteACategory;
 var
   CatList: TCategoryList; // list of deletable categories
+  Cat: TCategory;
 begin
-  CatList := CreateUserCatList(False);
+  CatList := TCategoryList.Create;
   try
+    for Cat in Database.Categories do
+      if Cat.CanDelete then
+        CatList.Add(Cat);
     // all work takes place in dialog box
     TDeleteCategoryDlg.Execute(nil, CatList)
   finally
@@ -381,18 +321,22 @@ begin
 end;
 
 class function TUserDBMgr.DeleteDatabase: Boolean;
+var
+  CollectionToDelete: TCollection;
 begin
-  if not TDeleteUserDBDlg.Execute(nil) then
+  if not TDeleteUserDBDlg.Execute(nil, CollectionToDelete) then
     Exit(False);
-  if not TDirectory.Exists(TAppInfo.UserDataDir) then
+  if not TDirectory.Exists(CollectionToDelete.Storage.Directory) then
     Exit(False);
-  TDirectory.Delete(TAppInfo.UserDataDir, True);
+  TDirectory.Delete(CollectionToDelete.Storage.Directory, True);
   Result := True;
 end;
 
 class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
 
-  // Builds a list of snippet names from a given snippet ID list.
+  {TODO -cVault: rename following inner method to SnippetDisplayNames for
+          clarity}
+  // Builds a list of snippet display names from a given snippet ID list.
   function SnippetNames(const IDList: ISnippetIDList): IStringList;
   var
     ID: TSnippetID;     // loops through all IDs in list
@@ -423,8 +367,6 @@ begin
   Assert(Supports(ViewItem, ISnippetView),
     ClassName + '.Delete: Current view is not a snippet');
   Snippet := (ViewItem as ISnippetView).Snippet;
-  Assert(Snippet.UserDefined,
-    ClassName + '.Delete: Snippet must be user defined');
   // Check if snippet has dependents: don't allow deletion if so
   Dependents := (Database as IDatabaseEdit).GetDependents(Snippet);
   if Dependents.Count > 0 then
@@ -461,13 +403,13 @@ begin
   TDuplicateSnippetDlg.Execute(nil, (ViewItem as ISnippetView).Snippet);
 end;
 
-class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
+class procedure TUserDBMgr.EditSnippet(const ASnippetID: TSnippetID);
 var
   Snippet: TSnippet;    // reference to snippet to be edited
 begin
-  Snippet := Database.Snippets.Find(SnippetName, True);
+  Snippet := Database.Snippets.Find(ASnippetID);
   if not Assigned(Snippet) then
-    raise EBug.Create(ClassName + '.EditSnippet: Snippet not in user database');
+    raise EBug.Create(ClassName + '.EditSnippet: Snippet not found');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);
 end;
 
@@ -481,10 +423,13 @@ end;
 
 class procedure TUserDBMgr.RenameACategory;
 var
+  Cat: TCategory;
   CatList: TCategoryList; // list of user defined categories
 begin
-  CatList := CreateUserCatList(True);
+  CatList := TCategoryList.Create;
   try
+    for Cat in Database.Categories do
+      CatList.Add(Cat);
     // all work takes place in dialog box
     TRenameCategoryDlg.Execute(nil, CatList)
   finally
@@ -494,24 +439,23 @@ end;
 
 class function TUserDBMgr.RestoreDatabase(ParentCtrl: TComponent): Boolean;
 var
-  Dlg: TOpenDialogEx;             // open dialog box used to select backup file
+  FileName: string;
+  Collection: TCollection;
 resourcestring
-  sCaption = 'Open Backup File';  // dialog box caption
+  sFileDoesNotExist = '"%s" does not exist.';
 begin
-  // Get name of backup file from user via standard open dialog box
-  Dlg := TOpenDialogEx.Create(nil);
-  try
-    Dlg.OnCanClose := CanOpenDialogClose;
-    Dlg.Title := sCaption;
-    Dlg.Options := [ofShowHelp, ofPathMustExist, ofHideReadOnly,
-      ofEnableSizing];
-    Dlg.HelpKeyword := 'RestoreBackupDlg';
-    Result := Dlg.Execute;
-    if Result then
-      // Perform restoration
-      TUserDBRestoreUI.Execute(ParentCtrl, Dlg.FileName);
-  finally
-    Dlg.Free;
+  Result := TCollectionBackupDlg.Execute(ParentCtrl, FileName, Collection);
+  if Result then
+  begin
+    if not TFile.Exists(FileName) then
+    begin
+      // Specified file doesn't exist: inhibit closure
+      TMessageBox.Error(
+        ParentCtrl, Format(sFileDoesNotExist, [FileName])
+      );
+      Exit;
+    end;
+    TUserDBRestoreUI.Execute(ParentCtrl, FileName, Collection);
   end;
 end;
 
@@ -569,14 +513,14 @@ end;
 { TUserDBRestoreUI }
 
 class procedure TUserDBRestoreUI.Execute(AOwner: TComponent;
-  const BakFileName: string);
+  const BakFileName: string; const ACollection: TCollection);
 resourcestring
   // Caption for wait dialog
   sWaitCaption = 'Restoring database files...';
 var
   Thread: TRestoreThread;   // thread that performs restore operation
 begin
-  Thread := TRestoreThread.Create(BakFileName);
+  Thread := TRestoreThread.Create(BakFileName, ACollection);
   try
     RunThreadWithWaitDlg(Thread, AOwner, sWaitCaption);
   finally
@@ -586,17 +530,19 @@ end;
 
 { TUserDBRestoreUI.TRestoreThread }
 
-constructor TUserDBRestoreUI.TRestoreThread.Create(const BakFileName: string);
+constructor TUserDBRestoreUI.TRestoreThread.Create(const BakFileName: string;
+  const ACollection: TCollection);
 begin
   inherited Create(True);
   fBakFileName := BakFileName;
+  fCollection := ACollection;
 end;
 
 procedure TUserDBRestoreUI.TRestoreThread.Execute;
 var
   UserDBBackup: TUserDBBackup;
 begin
-  UserDBBackup := TUserDBBackup.Create(fBakFileName);
+  UserDBBackup := TUserDBBackup.Create(fBakFileName, fCollection);
   try
     UserDBBackup.Restore;
   finally
@@ -607,14 +553,14 @@ end;
 { TUserDBBackupUI }
 
 class procedure TUserDBBackupUI.Execute(AOwner: TComponent;
-  const BakFileName: string);
+  const BakFileName: string; const ACollection: TCollection);
 resourcestring
   // Caption for wait dialog
   sWaitCaption = 'Backing up database...';
 var
   Thread: TBackupThread;   // thread that performs restore operation
 begin
-  Thread := TBackupThread.Create(BakFileName);
+  Thread := TBackupThread.Create(BakFileName, ACollection);
   try
     RunThreadWithWaitDlg(Thread, AOwner, sWaitCaption);
   finally
@@ -624,10 +570,12 @@ end;
 
 { TUserDBBackupUI.TBackupThread }
 
-constructor TUserDBBackupUI.TBackupThread.Create(const BakFileName: string);
+constructor TUserDBBackupUI.TBackupThread.Create(const BakFileName: string;
+  const ACollection: TCollection);
 begin
   inherited Create(True);
   fBakFileName := BakFileName;
+  fCollection := ACollection;
 end;
 
 procedure TUserDBBackupUI.TBackupThread.Execute;
@@ -637,7 +585,7 @@ resourcestring
   // Dialog box caption
   sCaption = 'Save Backup';
 begin
-  UserDBBackup := TUserDBBackup.Create(fBakFileName);
+  UserDBBackup := TUserDBBackup.Create(fBakFileName, fCollection);
   try
     UserDBBackup.Backup;
   finally

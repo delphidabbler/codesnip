@@ -127,9 +127,15 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics,
+  SysUtils,
+  Graphics,
   // Project
-  UColours, UCtrlArranger, UPreferences, UQuery, USettings;
+  DB.UCollections,
+  UColours,
+  UCtrlArranger,
+  UPreferences,
+  UQuery,
+  USettings;
 
 
 {$R *.dfm}
@@ -229,7 +235,7 @@ begin
   // Set label font styles and colours
   lblSnippetName.Font.Style := [fsBold];
   lblSnippetName.Font.Color :=
-    Preferences.DBHeadingColours[fSnippet.UserDefined];
+    Preferences.GetSnippetHeadingColour(fSnippet.CollectionID);
   // Display selected snippet name in appropriate controls
   lblSnippetName.Caption := fSnippet.DisplayName;
   chkIncludeSnippet.Caption := Format(

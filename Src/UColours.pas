@@ -53,11 +53,13 @@ const
   clSplashShadowText    = clWhite;      // splash screen text shadow
 
   // new tab
-  clNewTabText          = cl3DLight;    // color of text displayed in new tabs
+  clNewTabText          = cl3DLight;    // text displayed in new tabs
 
-  // colours of snippet titles / heading
-  clMainSnippet         = clWindowText; // main database snippets
-  clUserSnippet         = clBlue;       // user database snippets
+  // group headings
+  clDefGroupHeading     = clWindowText; // default for overview group headings
+
+  // snippet headings
+  clDefSnippetHeading   = clWindowText; // default for snippet headings
 
   // markup tags
   clVarText             = clPurple;     // <var> tag text

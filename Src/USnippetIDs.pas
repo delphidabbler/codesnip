@@ -19,30 +19,49 @@ interface
 uses
   // Delphi
   Generics.Collections,
+  Generics.Defaults,
   // Project
-  IntfCommon;
+  IntfCommon,
+  DB.UCollections;
 
 
 type
 
-  ///  <summary>Record that uniquely identifies a code snippet. Specifies name
-  ///  and flag indicating whether snippet is user-defined.</summary>
+  ///  <summary>Record that uniquely identifies a code snippet.</summary>
+  ///  <remarks>Comprises the snippet's key and collection.</remarks>
   TSnippetID = record
   strict private
     var
-      ///  <summary>Value of Name property.</summary>
-      fName: string;
-      ///  <summary>Value of UserDefined property.</summary>
-      fUserDefined: Boolean;
+      ///  <summary>Value of Key property.</summary>
+      fKey: string;
+      fCollectionID: TCollectionID;
+    procedure SetKey(const AValue: string);
+    procedure SetCollectionID(const AValue: TCollectionID);
   public
-    ///  <summary>Name of snippet.</summary>
-    property Name: string read fName write fName;
+    type
+      TComparer = class(TInterfacedObject,
+        IComparer<TSnippetID>, IEqualityComparer<TSnippetID>
+      )
+      public
+        function Compare(const Left, Right: TSnippetID): Integer;
+        function Equals(const Left, Right: TSnippetID): Boolean;
+          reintroduce;
+        function GetHashCode(const Value: TSnippetID): Integer;
+          reintroduce;
+      end;
 
-    ///  <summary>Whether snippet is user defined.</summary>
-    property UserDefined: Boolean read fUserDefined write fUserDefined;
+    ///  <summary>Snippet's key.</summary>
+    property Key: string read fKey write SetKey;
+
+    ///  <summary>ID of the collection to which a snippet with this ID belongs.
+    ///  </summary>
+    ///  <remarks>ID must not be null.</remarks>
+    property CollectionID: TCollectionID
+      read fCollectionID write SetCollectionID;
 
     ///  <summary>Creates a record with given property values.</summary>
-    constructor Create(const AName: string; const AUserDefined: Boolean);
+    ///  <remarks><c>ACollectionID</c> must not be null.</remarks>
+    constructor Create(const AKey: string; const ACollectionID: TCollectionID);
 
     ///  <summary>Creates copy of given snippet ID</summary>
     constructor Clone(const Src: TSnippetID);
@@ -53,12 +72,15 @@ type
     ///  SID or +ve if this record greater than SID.</returns>
     function CompareTo(const SID: TSnippetID): Integer;
 
-    ///  <summary>Compares two snippet names.</summary>
-    ///  <param name="Left">string [in] First name.</param>
-    ///  <param name="Right">string [in] Second name.</param>
-    ///  <result>Integer. 0 if names are same, -ve if Left is less than Right or
+    ///  <summary>Returns the snippet ID's hash code.</summary>
+    function Hash: Integer;
+
+    ///  <summary>Compares two snippet keys.</summary>
+    ///  <param name="Left">string [in] First key.</param>
+    ///  <param name="Right">string [in] Second key.</param>
+    ///  <result>Integer. 0 if keys are same, -ve if Left is less than Right or
     ///  +ve Left is greater than Right.</result>
-    class function CompareNames(const Left, Right: string): Integer; static;
+    class function CompareKeys(const Left, Right: string): Integer; static;
 
     ///  <summary>Overload of equality operator for two TSnippetIDs.</summary>
     class operator Equal(const SID1, SID2: TSnippetID): Boolean;
@@ -148,7 +170,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
+  SysUtils,
   // Project
   UStrUtils;
 
@@ -157,25 +179,26 @@ uses
 
 constructor TSnippetID.Clone(const Src: TSnippetID);
 begin
-  Create(Src.Name, Src.UserDefined);
+  Create(Src.Key, Src.CollectionID);
 end;
 
-class function TSnippetID.CompareNames(const Left, Right: string): Integer;
+class function TSnippetID.CompareKeys(const Left, Right: string): Integer;
 begin
   Result := StrCompareText(Left, Right);
 end;
 
 function TSnippetID.CompareTo(const SID: TSnippetID): Integer;
 begin
-  Result := CompareNames(Name, SID.Name);
+  Result := CompareKeys(Key, SID.Key);
   if Result = 0 then
-    Result := Ord(UserDefined) - Ord(SID.UserDefined);
+    Result := TCollectionID.Compare(CollectionID, SID.CollectionID);
 end;
 
-constructor TSnippetID.Create(const AName: string; const AUserDefined: Boolean);
+constructor TSnippetID.Create(const AKey: string;
+  const ACollectionID: TCollectionID);
 begin
-  fName := AName;
-  fUserDefined := AUserDefined;
+  SetKey(AKey);
+  SetCollectionID(ACollectionID);
 end;
 
 class operator TSnippetID.Equal(const SID1, SID2: TSnippetID): Boolean;
@@ -183,9 +206,50 @@ begin
   Result := SID1.CompareTo(SID2) = 0;
 end;
 
+function TSnippetID.Hash: Integer;
+var
+  PartialHash: Integer;
+  KeyBytes: TBytes;
+begin
+  // Hash is created from hash of CollectionID property combined with hash of
+  // Key property after converting to a byte array in UTF8 format.
+  PartialHash := fCollectionID.Hash;
+  KeyBytes := TEncoding.UTF8.GetBytes(fKey);
+  Result := BobJenkinsHash(KeyBytes[0], Length(KeyBytes), PartialHash);
+end;
+
 class operator TSnippetID.NotEqual(const SID1, SID2: TSnippetID): Boolean;
 begin
   Result := not (SID1 = SID2);
+end;
+
+procedure TSnippetID.SetCollectionID(const AValue: TCollectionID);
+begin
+  Assert(not AValue.IsNull, 'TSnippetID.SetCollectionID: Value is null');
+  fCollectionID := AValue.Clone;
+end;
+
+procedure TSnippetID.SetKey(const AValue: string);
+begin
+  fKey := StrTrim(AValue);
+  Assert(fKey <> '', 'TSnippetID.SetKey: Value is whitespace or empty');
+end;
+
+{ TSnippetID.TComparer }
+
+function TSnippetID.TComparer.Compare(const Left, Right: TSnippetID): Integer;
+begin
+  Result := Left.CompareTo(Right);
+end;
+
+function TSnippetID.TComparer.Equals(const Left, Right: TSnippetID): Boolean;
+begin
+  Result := Left = Right;
+end;
+
+function TSnippetID.TComparer.GetHashCode(const Value: TSnippetID): Integer;
+begin
+  Result := Value.Hash;
 end;
 
 { TSnippetIDList }
@@ -224,14 +288,7 @@ end;
 constructor TSnippetIDList.Create;
 begin
   inherited;
-  fList := TList<TSnippetID>.Create(
-    TDelegatedComparer<TSnippetID>.Create(
-      function(const Left, Right: TSnippetID): Integer
-      begin
-        Result := Left.CompareTo(Right);
-      end
-    )
-  );
+  fList := TList<TSnippetID>.Create(TSnippetID.TComparer.Create);
 end;
 
 destructor TSnippetIDList.Destroy;

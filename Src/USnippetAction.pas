@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Custom action used to request display of a snippet by name.
+ * Custom action used to request display of a snippet by key and collection ID.
 }
 
 
@@ -19,8 +19,12 @@ uses
   // Delphi
   Classes,
   // Project
+  DB.UCollections,
   IntfNotifier;
 
+
+{TODO -cVault: Combine the two TSnippetAction properties into a single
+        TSnippetID property.}
 
 type
 
@@ -28,16 +32,15 @@ type
   ///  Custom action used to request display of a snippet.
   ///  </summary>
   ///  <remarks>
-  ///  Required snippet is uniquely identified by its name and whether it is
-  ///  user defined or not.
+  ///  Required snippet is uniquely identified by its key and collection ID.
   ///  </remarks>
   TSnippetAction = class(TBasicAction, ISetNotifier)
   strict private
     var
-      ///  <summary>Value of SnippetName property.</summary>
-      fSnippetName: string;
-      ///  <summary>Value of UserDefined property.</summary>
-      fUserDefined: Boolean;
+      ///  <summary>Value of Key property.</summary>
+      fKey: string;
+      ///  <summary>Value of CollectionID property.</summary>
+      fCollectionID: TCollectionID;
       ///  <summary>Value of NewTab property.</summary>
       fNewTab: Boolean;
       ///  <summary>Reference to Notifier object.</summary>
@@ -56,12 +59,12 @@ type
     ///  <summary>Stores reference to given notifier object.</summary>
     ///  <remarks>Implements ISetNotifier.SetNotifier</remarks>
     procedure SetNotifier(const Notifier: INotifier);
-    ///  <summary>Name of snippet to be displayed.</summary>
-    property SnippetName: string read fSnippetName write fSnippetName;
-    ///  <summary>Flag indicating whether snippet to be displayed is user
-    ///  defined.</summary>
-    property UserDefined: Boolean read fUserDefined write fUserDefined;
-    ///  <summary>Flag indicating if snippet is to be displayed in new detail
+    ///  <summary>Key of snippet to be displayed.</summary>
+    property Key: string read fKey write fKey;
+    ///  <summary>ID of the collection containing the snippet to be displayed.
+    ///  </summary>
+    property CollectionID: TCollectionID read fCollectionID write fCollectionID;
+    ///  <summary>Flag indicating if snippet is to be displayed in a new detail
     ///  pane tab.</summary>
     property NewTab: Boolean read fNewTab write fNewTab;
   end;
@@ -72,7 +75,9 @@ implementation
 
 uses
   // Project
-  DB.UMain, DB.USnippet, UView;
+  DB.UMain,
+  DB.USnippet,
+  UView;
 
 
 { TSnippetAction }
@@ -82,9 +87,11 @@ var
   Snippet: TSnippet;    // snippet to be displayed
 begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
-  Assert(SnippetName <> '', ClassName + '.Execute: SnippetName not provided');
-  Snippet := Database.Snippets.Find(SnippetName, UserDefined);
-  Assert(Assigned(Snippet), ClassName + '.Execute: SnippetName not valid');
+  Assert(Key <> '', ClassName + '.Execute: Key not provided');
+
+  Snippet := Database.Snippets.Find(Key, fCollectionID);
+  Assert(Assigned(Snippet), ClassName + '.Execute: Key not valid');
+
   // Create a view item for snippet and get notifier to display it
   fNotifier.ShowViewItem(TViewFactory.CreateSnippetView(Snippet), NewTab);
   Result := False;

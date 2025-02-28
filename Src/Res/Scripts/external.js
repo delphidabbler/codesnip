@@ -22,24 +22,15 @@ function configCompilers() {
 }
 
 /*
- * Calls external object to get host application to display Update Database
- * dialog box.
- *  @return False.
- */
-function updateDbase() {
-  external.UpdateDbase();
-  return false;
-}
-
-/*
  * Calls external object to get host application to display a named snippet.
- *  @param string snippet [in] Name of snippet to be displayed.
- *  @param boolean userdefined [in] Whether snippet is user defined.
+ *  @param string snippet [in] Key of snippet to be displayed.
+ *  @param string collectionId [in] Hex string representation of collection
+ *    to which the snippet belongs.
  *  @return False.
  */
-function displaySnippet(snippet, userdefined) {
+function displaySnippet(snippet, collectionId) {
   var e = window.event;
-  external.DisplaySnippet(snippet, userdefined, e.ctrlKey);
+  external.DisplaySnippet(snippet, collectionId, e.ctrlKey);
   return false;
 }
 
@@ -56,22 +47,13 @@ function displayCategory(catid) {
 
 /*
  * Calls external object to get host application to edit a named snippet.
- *  @param string snippet [in] Name of snippet to be edited. Must be user
+ *  @param string snippet [in] Key of snippet to be edited. Must be user
  *    defined.
+ *  @param string collectionId [in] Hex string representation of collection
  *  @return False.
  */
-function editSnippet(snippet) {
-  external.EditSnippet(snippet);
-  return false;
-}
-
-/*
- * Calls external object to get host application to start Snippets Editor ready
- * for a new snippet to be entered.
- *  @return False.
- */
-function newSnippet() {
-  external.NewSnippet();
+function editSnippet(snippet, collectionId) {
+  external.EditSnippet(snippet, collectionId);
   return false;
 }
 

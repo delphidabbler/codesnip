@@ -20,6 +20,7 @@ uses
   // Delphi
   ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Windows, ActnList,
   // Project
+  DB.UCollections,
   DB.USnippet, FmGenericViewDlg, UBaseObjects, USearch, USnippetIDs,
   USnippetsTVDraw;
 
@@ -65,12 +66,17 @@ type
       strict private
         fRootID: TSnippetID;  // ID of snippet whose dependency nodes displayed
       strict protected
-        function IsUserDefinedNode(const Node: TTreeNode): Boolean;
+
+        ///  <summary>Gets the collection ID, if any, associated with a  tree
+        ///  node.</summary>
+        ///  <param name="Node"><c>TTreeNode</c> [in] Node to be checked.
+        ///  </param>
+        ///  <returns><c>TCollectionID</c>. Associated collection ID. If
+        ///  <c>Node</c> has no associated collection then a null collection ID
+        ///  is returned.</returns>
+        function GetCollectionID(const Node: TTreeNode): TCollectionID;
           override;
-          {Checks if a node represents a user defined snippets object.
-            @param Node [in] Node to be checked.
-            @return True if node represents user defined object, False if not.
-          }
+
         function IsErrorNode(const Node: TTreeNode): Boolean;
           override;
           {Checks if a node represents an error condition.
@@ -158,9 +164,15 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics,
+  SysUtils,
+  Graphics,
   // Project
-  DB.UMain, DB.USnippetKind, UBox, UColours, UCtrlArranger, UFontHelper,
+  DB.UMain,
+  DB.USnippetKind,
+  UBox,
+  UColours,
+  UCtrlArranger,
+  UFontHelper,
   UPreferences;
 
 {$R *.dfm}
@@ -387,8 +399,8 @@ resourcestring
 begin
   if fDisplayName <> '' then
     Exit(fDisplayName);
-  if fSnippetID.Name <> '' then
-    Exit(fSnippetID.Name);
+  if fSnippetID.Key <> '' then
+    Exit(fSnippetID.Key);
   Result := sUntitled;
 end;
 
@@ -398,16 +410,18 @@ var
   LB: TListBox;
   Canvas: TCanvas;
 
-  function IsUserDefinedItem: Boolean;
+  function ExtractCollectionItem: TCollectionID;
   begin
-    Result := (LB.Items.Objects[Index] as TBox<Boolean>).Value;
+    Result := (LB.Items.Objects[Index] as TBox<TCollectionID>).Value;
   end;
 
 begin
   LB := Control as TListBox;
   Canvas := LB.Canvas;
   if not (odSelected in State) then
-    Canvas.Font.Color := Preferences.DBHeadingColours[IsUserDefinedItem];
+    Canvas.Font.Color := Preferences.GetSnippetHeadingColour(
+      ExtractCollectionItem
+    );
   Canvas.TextRect(
     Rect,
     Rect.Left + 2,
@@ -444,7 +458,7 @@ begin
         Assert(Assigned(ASnippet),
           ClassName + '.PopulateRequiredByList: Snippet id not found');
         lbDependents.Items.AddObject(
-          ASnippet.DisplayName, TBox<Boolean>.Create(ASnippet.UserDefined)
+          ASnippet.DisplayName, TBox<TCollectionID>.Create(ASnippet.CollectionID)
         );
       end;
     end;
@@ -494,6 +508,15 @@ begin
   fRootID := RootID;
 end;
 
+function TDependenciesDlg.TTVDraw.GetCollectionID(
+  const Node: TTreeNode): TCollectionID;
+begin
+  if not Assigned(Node.Data) then
+    Result := TCollectionID.CreateNull
+  else
+    Result := TSnippet(Node.Data).CollectionID;
+end;
+
 function TDependenciesDlg.TTVDraw.IsErrorNode(
   const Node: TTreeNode): Boolean;
   {Checks if a node represents an error condition.
@@ -502,19 +525,6 @@ function TDependenciesDlg.TTVDraw.IsErrorNode(
   }
 begin
   Result := Assigned(Node.Data) and (TSnippet(Node.Data).ID = fRootID);
-end;
-
-function TDependenciesDlg.TTVDraw.IsUserDefinedNode(
-  const Node: TTreeNode): Boolean;
-  {Checks if a node represents a user defined snippets object.
-    @param Node [in] Node to be checked.
-    @return True if node represents user defined object, False if not.
-  }
-begin
-  if not Assigned(Node.Data) then
-    Result := True
-  else
-    Result := TSnippet(Node.Data).UserDefined;
 end;
 
 end.

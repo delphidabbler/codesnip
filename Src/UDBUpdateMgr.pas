@@ -100,6 +100,7 @@ uses
   IOUtils,
   // Project
   DB.UMetaData,
+  DBIO.MetaData.DCSC,
   UAppInfo,
   UFileUpdater,
   UStrUtils,
@@ -192,7 +193,7 @@ begin
     raise EDBUpdateValidationError.CreateFmt(sEmptyDirError, [Dir]);
 
   // Check contents
-  MetaData := TMainDBMetaDataFactory.UpdateMetaDataInstance(Dir);
+  MetaData := TUpdateDBMetaData.Create(Dir);
 
   // check if data files are recognised as valid database
   if not MetaData.IsRecognised then

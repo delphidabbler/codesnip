@@ -19,9 +19,18 @@ interface
 
 uses
   // Delphi
-  Controls, StdCtrls, Classes,
+  Controls,
+  StdCtrls,
+  Classes,
+  Graphics,
+  Generics.Collections,
   // Project
-  FrPrefsBase, UColorBoxEx, UColorDialogEx, UPreferences;
+  DB.UCollections,
+  FrPrefsBase,
+  UCollectionListAdapter,
+  UColorBoxEx,
+  UColorDialogEx,
+  UPreferences;
 
 
 type
@@ -31,8 +40,8 @@ type
     cbOverviewTree: TComboBox;
     chkHideEmptySections: TCheckBox;
     chkSnippetsInNewTab: TCheckBox;
-    lblMainColour: TLabel;
-    lblUserColour: TLabel;
+    lblGroupHeadingColour: TLabel;
+    lblCollectionColours: TLabel;
     btnDefColours: TButton;
     lblSourceBGColour: TLabel;
     lblOverviewFontSize: TLabel;
@@ -40,19 +49,29 @@ type
     lblDetailFontSize: TLabel;
     cbDetailFontSize: TComboBox;
     lblHiliterInfo: TLabel;
+    cbCollection: TComboBox;
     procedure chkHideEmptySectionsClick(Sender: TObject);
     procedure btnDefColoursClick(Sender: TObject);
     procedure FontSizeChange(Sender: TObject);
+    procedure cbCollectionChange(Sender: TObject);
   strict private
     var
       ///  <summary>Flag indicating if changes affect UI.</summary>
       fUIChanged: Boolean;
-      fMainColourBox: TColorBoxEx;
-      fMainColourDlg: TColorDialogEx;
-      fUserColourBox: TColorBoxEx;
-      fUserColourDlg: TColorDialogEx;
+
+      ///  <summary>Local copy of snippet heading / tree node colour for each
+      ///  collection.</summary>
+      fSnippetHeadingColours: TDictionary<TCollectionID,TColor>;
+
+      fGroupHeadingColourBox: TColorBoxEx;
+      fGroupHeadingColourDlg: TColorDialogEx;
+      fSnippetHeadingColourBox: TColorBoxEx;
+      fSnippetHeadingColourDlg: TColorDialogEx;
       fSourceBGColourBox: TColorBoxEx;
       fSourceBGColourDlg: TColorDialogEx;
+
+      fCollList: TCollectionListAdapter;
+
     procedure SelectOverviewTreeState(const State: TOverviewStartState);
       {Selects combo box item associated with a overview treeview startup state.
         @param State [in] Startup state to be selected.
@@ -62,15 +81,23 @@ type
         @param State [in] State for which description is required.
         @return Required description.
       }
-    function CreateCustomColourBox(const ColourDlg: TColorDialogEx):
+    function CreateCustomColourBox(const ColourDlg: TColorDialogEx;
+      ChangeHandler: TNotifyEvent):
       TColorBoxEx;
     procedure ColourBoxChangeHandler(Sender: TObject);
+    procedure SnippetHeadingColourBoxChange(Sender: TObject);
     procedure PopulateFontSizeCombos;
+    procedure SetTabOrder;
+    function SelectedCollectionID: TCollectionID;
   public
     constructor Create(AOwner: TComponent); override;
-      {Class constructor. Sets up frame and populates controls.
+      {Object constructor. Sets up frame and populates controls.
         @param AOwner [in] Component that owns frame.
       }
+
+    ///  <summary>Object destructor. Frees owned objects.</summary>
+    destructor Destroy; override;
+
     procedure Activate(const Prefs: IPreferences; const Flags: UInt64);
       override;
       {Called when page activated. Updates controls.
@@ -105,9 +132,16 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Math, Graphics, ExtCtrls,
+  SysUtils,
+  Generics.Defaults,
+  Math,
+  ExtCtrls,
   // Project
-  FmPreferencesDlg, UColours, UCtrlArranger, UFontHelper, UGraphicUtils,
+  FmPreferencesDlg,
+  UColours,
+  UCtrlArranger,
+  UFontHelper,
+  UGraphicUtils,
   UMessageBox;
 
 
@@ -127,91 +161,141 @@ procedure TDisplayPrefsFrame.Activate(const Prefs: IPreferences;
   {Called when page activated. Updates controls.
     @param Prefs [in] Object that provides info used to update controls.
   }
+var
+  Collection: TCollection;
 begin
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  Assert(cbCollection.ItemIndex >= 0,
+    ClassName + '.Activate: no default collection found in cbCollection');
   SelectOverviewTreeState(Prefs.OverviewStartState);
   chkHideEmptySections.OnClick := nil;  // prevent OnClick when Checked set
   chkHideEmptySections.Checked := not Prefs.ShowEmptySections;
   chkHideEmptySections.OnClick := chkHideEmptySectionsClick;
   chkSnippetsInNewTab.Checked := Prefs.ShowNewSnippetsInNewTabs;
-  fMainColourBox.Selected := Prefs.DBHeadingColours[False];
-  fUserColourBox.Selected := Prefs.DBHeadingColours[True];
+  fGroupHeadingColourBox.Selected := Prefs.GroupHeadingColour;
+  fSnippetHeadingColours.Clear;
+  for Collection in TCollections.Instance do
+    fSnippetHeadingColours.Add(
+      Collection.UID, Prefs.GetSnippetHeadingColour(Collection.UID)
+    );
+  fSnippetHeadingColourBox.Selected :=
+    Prefs.GetSnippetHeadingColour(SelectedCollectionID);
   fSourceBGColourBox.Selected := Prefs.SourceCodeBGcolour;
-  Prefs.DBHeadingCustomColours[False].CopyTo(fMainColourDlg.CustomColors, True);
-  Prefs.DBHeadingCustomColours[True].CopyTo(fUserColourDlg.CustomColors, True);
+  Prefs.GroupHeadingCustomColours.CopyTo(
+    fGroupHeadingColourDlg.CustomColors, True
+  );
   Prefs.SourceCodeBGCustomColours.CopyTo(fSourceBGColourDlg.CustomColors, True);
   cbOverviewFontSize.Tag := Prefs.OverviewFontSize; // store font size in .Tag
   cbOverviewFontSize.Text := IntToStr(Prefs.OverviewFontSize);
   cbDetailFontSize.Tag := Prefs.DetailFontSize;     // store font size in .Tag
   cbDetailFontSize.Text := IntToStr(Prefs.DetailFontSize);
+
 end;
 
 procedure TDisplayPrefsFrame.ArrangeControls;
   {Arranges controls on frame. Called after frame has been sized.
   }
 begin
+  // Align controls on left
   TCtrlArranger.AlignLefts(
     [
-      lblOverviewTree, chkHideEmptySections, chkSnippetsInNewTab,
-      lblMainColour, lblUserColour, lblSourceBGColour, btnDefColours,
-      lblOverviewFontSize, lblDetailFontSize, lblHiliterInfo
+      lblOverviewTree, chkSnippetsInNewTab, chkHideEmptySections,
+      lblGroupHeadingColour, lblCollectionColours, lblSourceBGColour,
+      btnDefColours, lblOverviewFontSize, lblDetailFontSize, lblHiliterInfo
     ],
     0
   );
+  // Align collections combo indented from left
+  cbCollection.Left := 8;
+
+  // Align controls on right: make sure they are all to right of everything
+  // on left that is on same line as any of them.
   TCtrlArranger.AlignLefts(
     [
-      cbOverviewTree, fMainColourBox, fUserColourBox, fSourceBGColourBox,
-      cbOverviewFontSize, cbDetailFontSize
+      cbOverviewTree, fGroupHeadingColourBox, fSnippetHeadingColourBox,
+      fSourceBGColourBox, cbOverviewFontSize, cbDetailFontSize
     ],
     TCtrlArranger.RightOf(
-      [lblOverviewTree, lblMainColour, lblUserColour, lblSourceBGColour],
+      [
+        lblOverviewTree, lblGroupHeadingColour, cbCollection, lblSourceBGColour,
+        lblOverviewFontSize, lblDetailFontSize
+      ],
       8
     )
   );
+
+  // Align rows:
+  // 1st row
   TCtrlArranger.AlignVCentres(3, [lblOverviewTree, cbOverviewTree]);
+  // 2nd row
   TCtrlArranger.MoveBelow(
     [lblOverviewTree, cbOverviewTree], chkSnippetsInNewTab, 12
   );
+  chkSnippetsInNewTab.Width := Self.Width - 16;
+  // 3rd row
   TCtrlArranger.MoveBelow(chkSnippetsInNewTab, chkHideEmptySections, 8);
+  chkHideEmptySections.Width := Self.Width - 16;
+  // 4th row
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(chkHideEmptySections, 12),
-    [lblMainColour, fMainColourBox]
+    [lblGroupHeadingColour, fGroupHeadingColourBox]
   );
-  TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblMainColour, fMainColourBox], 6),
-    [lblUserColour, fUserColourBox]
+  // 5th row
+  TCtrlArranger.MoveBelow(
+    [lblGroupHeadingColour, fGroupHeadingColourBox],
+    lblCollectionColours,
+    12
   );
+  // 6th row
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblUserColour, fUserColourBox], 6),
+    TCtrlArranger.BottomOf(lblCollectionColours, 6),
+    [cbCollection, fSnippetHeadingColourBox]
+  );
+  // 7th row
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf([cbCollection, fSnippetHeadingColourBox], 18),
     [lblSourceBGColour, fSourceBGColourBox]
   );
+  // 8th row
   TCtrlArranger.MoveBelow(
-    [lblSourceBGColour, fSourceBGColourBox], btnDefColours, 6
+    [lblSourceBGColour, fSourceBGColourBox], btnDefColours, 12
   );
+  // 9th row
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(btnDefColours, 12),
     [lblOverviewFontSize, cbOverviewFontSize]
   );
+  // 10th row
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(cbOverviewFontSize, 8),
+    TCtrlArranger.BottomOf([lblOverviewFontSize, cbOverviewFontSize], 8),
     [lblDetailFontSize, cbDetailFontSize]
   );
+  // 11th row
   TCtrlArranger.MoveBelow(
     [lblDetailFontSize, cbDetailFontSize], lblHiliterInfo, 12
   );
   lblHiliterInfo.Width := Self.ClientWidth;
   TCtrlArranger.SetLabelHeight(lblHiliterInfo);
-  chkHideEmptySections.Width := Self.Width - 16;
-  chkSnippetsInNewTab.Width := Self.Width - 16;
 end;
 
 procedure TDisplayPrefsFrame.btnDefColoursClick(Sender: TObject);
+var
+  Collection: TCollection;
 begin
   // Restores default heading and source code background colours in colour
   // combo boxes
-  fMainColourBox.Selected := clMainSnippet;
-  fUserColourBox.Selected := clUserSnippet;
+  fGroupHeadingColourBox.Selected := clDefGroupHeading;
+  fSnippetHeadingColourBox.Selected := clDefSnippetHeading;
+  for Collection in TCollections.Instance do
+    fSnippetHeadingColours[Collection.UID] := clDefSnippetHeading;
   fSourceBGColourBox.Selected := clSourceBg;
   fUIChanged := True;
+end;
+
+procedure TDisplayPrefsFrame.cbCollectionChange(Sender: TObject);
+begin
+  fSnippetHeadingColourBox.Selected :=
+    fSnippetHeadingColours[SelectedCollectionID];
 end;
 
 procedure TDisplayPrefsFrame.chkHideEmptySectionsClick(Sender: TObject);
@@ -234,6 +318,7 @@ constructor TDisplayPrefsFrame.Create(AOwner: TComponent);
   }
 resourcestring
   sHeadingColourDlgTitle = 'Heading Colour';
+  sGroupHeadingColourDlgTitle = 'Group Heading Colour';
   sSourceBGColourDlgTitle = 'Source Code Background Colour';
 var
   OTStateIdx: TOverviewStartState;  // loops thru each overview tree start state
@@ -246,28 +331,42 @@ begin
       OverviewTreeStateDesc(OTStateIdx), TObject(OTStateIdx)
     );
   // Create colour dialogue boxes
-  fMainColourDlg := TColorDialogEx.Create(Self);
-  fMainColourDlg.Title := sHeadingColourDlgTitle;
-  fUserColourDlg := TColorDialogEx.Create(Self);
-  fUserColourDlg.Title := sHeadingColourDlgTitle;
+  fGroupHeadingColourDlg := TColorDialogEx.Create(Self);
+  fGroupHeadingColourDlg.Title := sGroupHeadingColourDlgTitle;
+  fSnippetHeadingColourDlg := TColorDialogEx.Create(Self);
+  fSnippetHeadingColourDlg.Title := sHeadingColourDlgTitle;
   fSourceBGColourDlg := TColorDialogEx.Create(Self);
   fSourceBGColourDlg.Title := sSourceBGColourDlgTitle;
   // Create colour combo boxes
-  fMainColourBox := CreateCustomColourBox(fMainColourDlg);
-  fMainColourBox.TabOrder := 3;
-  lblMainColour.FocusControl := fMainColourBox;
-  fUserColourBox := CreateCustomColourBox(fUserColourDlg);
-  fUserColourBox.TabOrder := 4;
-  lblUserColour.FocusControl := fUserColourBox;
-  fSourceBGColourBox := CreateCustomColourBox(fSourceBGColourDlg);
-  fSourceBGColourBox.TabOrder := 5;
+  fGroupHeadingColourBox := CreateCustomColourBox(
+    fGroupHeadingColourDlg, ColourBoxChangeHandler
+  );
+  lblGroupHeadingColour.FocusControl := fGroupHeadingColourBox;
+  fSnippetHeadingColourBox := CreateCustomColourBox(
+    fSnippetHeadingColourDlg, SnippetHeadingColourBoxChange
+  );
+  fSnippetHeadingColourBox.OnChange := SnippetHeadingColourBoxChange;
+  lblCollectionColours.FocusControl := cbCollection;
+  fSourceBGColourBox := CreateCustomColourBox(
+    fSourceBGColourDlg, ColourBoxChangeHandler
+  );
   lblSourceBGColour.FocusControl := fSourceBGColourBox;
 
   PopulateFontSizeCombos;
+
+  fSnippetHeadingColours := TDictionary<TCollectionID,TColor>.Create(
+    TCollectionID.TComparer.Create
+  );
+
+  fCollList := TCollectionListAdapter.Create;
+  fCollList.ToStrings(cbCollection.Items);
+  Assert(cbCollection.Items.Count > 0, ClassName + '.Create: no collections');
+
+  SetTabOrder;
 end;
 
 function TDisplayPrefsFrame.CreateCustomColourBox(
-  const ColourDlg: TColorDialogEx): TColorBoxEx;
+  const ColourDlg: TColorDialogEx; ChangeHandler: TNotifyEvent): TColorBoxEx;
 begin
   // Create and initialise custom color combo box
   Result := TColorBoxEx.Create(Self);  // automatically freed
@@ -281,28 +380,31 @@ begin
   Result.ItemHeight := 16;
   if Assigned(ColourDlg) then
     Result.ColorDialog := ColourDlg;
-  Result.OnChange := ColourBoxChangeHandler;
+  Result.OnChange := ChangeHandler;
 end;
 
 procedure TDisplayPrefsFrame.Deactivate(const Prefs: IPreferences);
   {Called when page is deactivated. Stores information entered by user.
     @param Prefs [in] Object used to store information.
   }
+var
+  Collection: TCollection;
 begin
   Prefs.ShowNewSnippetsInNewTabs := chkSnippetsInNewTab.Checked;
   Prefs.ShowEmptySections := not chkHideEmptySections.Checked;
   Prefs.OverviewStartState := TOverviewStartState(
     cbOverviewTree.Items.Objects[cbOverviewTree.ItemIndex]
   );
-  Prefs.DBHeadingColours[False] := fMainColourBox.Selected;
-  Prefs.DBHeadingColours[True] := fUserColourBox.Selected;
+  Prefs.GroupHeadingColour := fGroupHeadingColourBox.Selected;
   Prefs.SourceCodeBGcolour := fSourceBGColourBox.Selected;
-  Prefs.DBHeadingCustomColours[False].CopyFrom(
-    fMainColourDlg.CustomColors, True
+  Prefs.GroupHeadingCustomColours.CopyFrom(
+    fGroupHeadingColourDlg.CustomColors, True
   );
-  Prefs.DBHeadingCustomColours[True].CopyFrom(
-    fUserColourDlg.CustomColors, True
-  );
+
+  for Collection in TCollections.Instance do
+    Prefs.SetSnippetHeadingColour(
+      Collection.UID, fSnippetHeadingColours[Collection.UID]
+    );
   Prefs.SourceCodeBGCustomColours.CopyFrom(
     fSourceBGColourDlg.CustomColors, True
   );
@@ -310,6 +412,13 @@ begin
   // default font size
   Prefs.OverviewFontSize := StrToIntDef(cbOverviewFontSize.Text, -1);
   Prefs.DetailFontSize := StrToIntDef(cbDetailFontSize.Text, -1);
+end;
+
+destructor TDisplayPrefsFrame.Destroy;
+begin
+  fCollList.Free;
+  fSnippetHeadingColours.Free;
+  inherited;
 end;
 
 function TDisplayPrefsFrame.DisplayName: string;
@@ -400,6 +509,13 @@ begin
   TFontHelper.ListCommonFontSizes(cbDetailFontSize.Items);
 end;
 
+function TDisplayPrefsFrame.SelectedCollectionID: TCollectionID;
+begin
+  Assert(cbCollection.ItemIndex >= 0,
+    ClassName + '.SelectedCollectionID: no collection selected');
+  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
+end;
+
 procedure TDisplayPrefsFrame.SelectOverviewTreeState(
   const State: TOverviewStartState);
   {Selects combo box item associated with a overview treeview startup state.
@@ -416,6 +532,27 @@ begin
       Break;
     end;
   end;
+end;
+
+procedure TDisplayPrefsFrame.SetTabOrder;
+begin
+  cbOverviewTree.TabOrder := 0;
+  chkSnippetsInNewTab.TabOrder := 1;
+  chkHideEmptySections.TabOrder := 2;
+  fGroupHeadingColourBox.TabOrder := 3;
+  cbCollection.TabOrder := 4;
+  fSnippetHeadingColourBox.TabOrder := 5;
+  fSourceBGColourBox.TabOrder := 6;
+  btnDefColours.TabOrder := 7;
+  cbOverviewFontSize.TabOrder := 8;
+  cbDetailFontSize.TabOrder := 9;
+end;
+
+procedure TDisplayPrefsFrame.SnippetHeadingColourBoxChange(Sender: TObject);
+begin
+  ColourBoxChangeHandler(Sender);
+  fSnippetHeadingColours[SelectedCollectionID] :=
+    fSnippetHeadingColourBox.Selected
 end;
 
 function TDisplayPrefsFrame.UIUpdated: Boolean;

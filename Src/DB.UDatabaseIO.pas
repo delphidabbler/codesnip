@@ -21,48 +21,69 @@ interface
 
 uses
   // Project
-  DB.UCategory, DB.UMain, DB.USnippet, UBaseObjects, UExceptions;
+  DB.UCollections,
+  DB.UCategory,
+  DB.UMain,
+  DB.USnippet,
+  UBaseObjects,
+  UExceptions;
 
 
 type
 
-  {
-  IDatabaseLoader:
-    Interface to object that can load data into the Database object from
-    storage.
-  }
-  IDatabaseLoader = interface(IInterface)
+  ///  <summary>Interface to objects that can load data into a collection within
+  ///  the database from storage in a supported data format.</summary>
+  IDataFormatLoader = interface(IInterface)
     ['{C6AF94FC-F56F-44AE-9E79-3B0CD0BB21D4}']
+    ///  <summary>Loads data from storage into a collection within the database.
+    ///  </summary>
+    ///  <param name="SnipList"><c>TSnippetList</c> [in] Receives information
+    ///  about each snippet in the collection.</param>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] Receives information
+    ///  about each category in the collection.</param>
+    ///  <param name="DBDataItemFactory"><c>DBDataItemFactory</c> [in] Object
+    ///  used to create new categories and snippets.</param>
     procedure Load(const SnipList: TSnippetList;
       const Categories: TCategoryList;
       const DBDataItemFactory: IDBDataItemFactory);
-      {Loads data from storage and updates database object.
-        @param SnipList [in] Receives information about each snippet in the
-          database.
-        @param Categories [in] Receives information about each category in the
-          database.
-        @param DBDataItemFactory [in] Object used to create new categories and
-          snippets.
-      }
   end;
 
-  {
-  IDatabaseWriter:
-    Interface to object that can write data from the user-defined component of
-    the Database object to storage.
-  }
-  IDatabaseWriter = interface(IInterface)
+  ///  <summary>Interface to objects that can save data from a collection within
+  ///  the database into storage in a supported data format.</summary>
+  IDataFormatSaver = interface(IInterface)
     ['{F46EE2E3-68A7-4877-9E04-192D15D29BB1}']
-    procedure Write(const SnipList: TSnippetList;
+    ///  <summary>Saves data to storage.</summary>
+    ///  <param name="SnipList"><c>TSnippetList</c> [in] Contains information
+    ///  about each snippet to be saved.</param>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] Contains information
+    ///  about each category to be saved.</param>
+    ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
+    ///  obtain details of the data to be stored.</param>
+    procedure Save(const SnipList: TSnippetList;
       const Categories: TCategoryList; const Provider: IDBDataProvider);
-      {Writes data from Database object to storage.
-        @param SnipList [in] Contains information about each snippet in the
-          database.
-        @param Categories [in] Contains information about each category in the
-          database.
-        @param Privider [in] Object used to obtain details of the data to be
-          written to the Database object
-      }
+  end;
+
+  ///  <summary>Interface to object that can save global category information,
+  ///  regardless of any categories saved with collections.</summary>
+  IGlobalCategoryLoader = interface(IInterface)
+    ['{0029F641-FAC4-43C8-A412-F70554BDCF28}']
+     ///  <summary>Loads categories data from global storage.</summary>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] Receives information
+    ///  about each category loaded.</param>
+    ///  <param name="DBDataItemFactory"><c>IDBDataItemFactory</c> [in] Object
+    ///  used to create new categories.</param>
+   procedure Load(const Categories: TCategoryList;
+      const DBDataItemFactory: IDBDataItemFactory);
+  end;
+
+  ///  <summary>Interface to object that can load global category information,
+  ///  regardless of any categories loaded with collections.</summary>
+  IGlobalCategorySaver = interface(IInterface)
+    ['{D967E4FC-32FA-47F8-9BE0-4B25C7215CCA}']
+    ///  <summary>Saves category data to global storage.</summary>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] Contains information
+    ///  about each category to be saved.</param>
+    procedure Save(const Categories: TCategoryList);
   end;
 
   {
@@ -72,19 +93,26 @@ type
   }
   TDatabaseIOFactory = class(TNoConstructObject)
   public
-    class function CreateMainDBLoader: IDatabaseLoader;
-      {Creates an object to use to load the main database.
-        @return Required object instance.
-      }
-    class function CreateUserDBLoader: IDatabaseLoader;
-      {Creates an object to use to load the user database.
-        @return Required object instance.
-      }
-    class function CreateWriter: IDatabaseWriter;
-      {Create an object that can write user defined data from the Database
-      object to storage.
-        @return Required object instance.
-      }
+    ///  <summary>Creates and returns an object to be used to load the given
+    ///  collection's data in the correct format. Nil is returned if no loader
+    ///  object is supported.</summary>
+    class function CreateDBLoader(const Collection: TCollection):
+      IDataFormatLoader;
+
+    ///  <summary>Creates and returns an object to be used to save the given
+    ///  collection's data in the correct format. Nil is return if no saver
+    ///  object is supported.</summary>
+    class function CreateDBSaver(const Collection: TCollection):
+      IDataFormatSaver;
+
+    ///  <summary>Creates and returns an object to be used to load a list of
+    ///  globally stored categories.</summary>
+    class function CreateGlobalCategoryLoader: IGlobalCategoryLoader;
+
+    ///  <summary>Creates and returns an object to be used to save a list of
+    ///  categories to global storage.</summary>
+    class function CreateGlobalCategorySaver: IGlobalCategorySaver;
+
   end;
 
   {
@@ -100,9 +128,21 @@ implementation
 uses
   // Delphi
   SysUtils,
+  Generics.Collections,
+  IOUtils,
   // Project
-  DBIO.UFileIOIntf, DBIO.UIniDataReader, DBIO.UNulDataReader, DBIO.UXMLDataIO,
-  UAppInfo, UConsts, UIStringList, UReservedCategories, USnippetIDs;
+  DB.DataFormats,
+  DB.IO.DataFormat.Native,
+  DBIO.UCategoryIO,
+  DBIO.UFileIOIntf,
+  DBIO.UIniData,
+  DBIO.UNulDataReader,
+  DBIO.UXMLDataIO,
+  UAppInfo,
+  UConsts,
+  UIStringList,
+  USnippetIDs,
+  UUserDBBackup;
 
 
 type
@@ -118,12 +158,13 @@ type
     Abstract base class for objects that can load data into the Database object
     from storage.
   }
-  TDatabaseLoader = class(TInterfacedObject, IDatabaseLoader)
+  TDatabaseLoader = class(TInterfacedObject, IDataFormatLoader)
   strict private
     fReader: IDataReader;         // Object used to read data from storage
     fSnipList: TSnippetList;      // Receives list of snippets
     fCategories: TCategoryList;   // Receives list of categories
     fFactory: IDBDataItemFactory; // Object creates new categories and snippets
+    fCollection: TCollection;     // Collection being loaded
     procedure LoadSnippets(const Cat: TCategory);
       {Loads all snippets in a category.
         @param Cat [in] Category to be loaded.
@@ -144,29 +185,25 @@ type
       reader must be created.
         @return Reader object instance.
       }
-    function FindSnippet(const SnippetName: string;
-      const SnipList: TSnippetList): TSnippet; virtual; abstract;
-      {Finds the snippet object with a specified name.
-        @param SnippetName [in] Name of required snippet.
+    function FindSnippet(const SnippetKey: string;
+      const SnipList: TSnippetList): TSnippet; virtual;
+      {Finds the snippet object with a specified key.
+        @param SnippetKey [in] Key of required snippet.
         @param SnipList [in] List of snippets to search.
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
     function IsNativeSnippet(const Snippet: TSnippet): Boolean;
-      virtual; abstract;
+      virtual;
       {Checks if a snippet is native (belongs) to the database being read.
         @param Snippet [in] Snippet to test.
         @return True if snippet is native, False if not.
-      }
-    function IsUserDatabase: Boolean; virtual; abstract;
-      {Checks if the database is the user database.
-        @return True if the database is the user database, False if not.
       }
     function ErrorMessageHeading: string; virtual; abstract;
       {Returns heading to use in error messages. Should identify the database.
         @return Required heading.
       }
-    procedure LoadCategories; virtual;
+    procedure LoadCategories;
       {Loads all categories from storage.
       }
     procedure CreateCategory(const CatID: string;
@@ -177,8 +214,10 @@ type
       }
     property Categories: TCategoryList read fCategories;
       {Reference to category list}
+    property Collection: TCollection read fCollection;
   public
-    { IDatabaseLoader method }
+    constructor Create(const ACollection: TCollection);
+    { IDataFormatLoader method }
     procedure Load(const SnipList: TSnippetList;
       const Categories: TCategoryList;
       const DBDataItemFactory: IDBDataItemFactory);
@@ -193,33 +232,16 @@ type
   end;
 
   {
-  TMainDatabaseLoader:
+  TDCSCV2FormatLoader:
     Class that updates Database object with data read from main database.
   }
-  TMainDatabaseLoader = class(TDatabaseLoader, IDatabaseLoader)
+  TDCSCV2FormatLoader = class(TDatabaseLoader, IDataFormatLoader)
   strict protected
     function CreateReader: IDataReader; override;
       {Creates reader object. If main database doesn't exist a nul reader is
       created.
         @return Reader object instance.
       }
-    function FindSnippet(const SnippetName: string;
-      const SnipList: TSnippetList): TSnippet; override;
-      {Finds the snippet object with a specified name in the main database.
-        @param SnippetName [in] Name of required snippet.
-        @param SnipList [in] List of snippets to search.
-        @return Reference to required snippet object or nil if snippet is not
-          found.
-      }
-    function IsNativeSnippet(const Snippet: TSnippet): Boolean; override;
-      {Checks if a snippet is native (belongs) to the main database.
-        @param Snippet [in] Snippet to test.
-        @return True if snippet is native, False if not.
-      }
-    function IsUserDatabase: Boolean; override;
-      {Checks if the database is the user database.
-        @return False - this is not the user database.
-      }
     function ErrorMessageHeading: string; override;
       {Returns heading to use in error messages. Identifies main database.
         @return Required heading.
@@ -227,108 +249,264 @@ type
   end;
 
   {
-  TUserDatabaseLoader:
+  TNativeV4FormatLoader:
     Class that updates Database object with data read from user database.
   }
-  TUserDatabaseLoader = class(TDatabaseLoader, IDatabaseLoader)
+  TNativeV4FormatLoader = class(TDatabaseLoader, IDataFormatLoader)
   strict protected
     function CreateReader: IDataReader; override;
       {Creates reader object. If user database doesn't exist a nul reader is
       created.
         @return Reader object instance.
       }
-    function FindSnippet(const SnippetName: string;
-      const SnipList: TSnippetList): TSnippet; override;
-      {Finds the snippet object with a specified name. If snippet is not in this
-      (user) database the main database is searched.
-        @param SnippetName [in] Name of required snippet.
-        @param SnipList [in] List of snippets to search.
-        @return Reference to required snippet object or nil if snippet is not
-          found.
+    function ErrorMessageHeading: string; override;
+      {Returns heading to use in error messages. Identifies main database.
+        @return Required heading.
       }
-    function IsNativeSnippet(const Snippet: TSnippet): Boolean; override;
-      {Checks if a snippet is native (belongs) to the user database.
-        @param Snippet [in] Snippet to test.
-        @return True if snippet is native, False if not.
-      }
-    function IsUserDatabase: Boolean; override;
-      {Checks if the database is the user database.
-        @return True - this is the user database.
+  end;
+
+  TNativeVaultFormatLoader = class(TDatabaseLoader, IDataFormatLoader)
+  strict protected
+    function CreateReader: IDataReader; override;
+      {Creates reader object. If user database doesn't exist a nul reader is
+      created.
+        @return Reader object instance.
       }
     function ErrorMessageHeading: string; override;
       {Returns heading to use in error messages. Identifies main database.
         @return Required heading.
       }
-    procedure LoadCategories; override;
-      {Loads all categories from storage and adds user category if not present.
-      }
   end;
 
-  {
-  TDatabaseWriter:
-    Object used to write data from user database to storage.
-  }
-  TDatabaseWriter = class(TInterfacedObject,
-    IDatabaseWriter
+  ///  <summary>Base for classes that save a collection to storage.</summary>
+  TFormatSaver = class abstract (TInterfacedObject,
+    IDataFormatSaver
   )
   strict private
-    fWriter: IDataWriter;             // Object used to write to storage
-    fSnipList: TSnippetList;          // List of snippets to be written
-    fCategories: TCategoryList;       // List of categories to be written
-    fProvider: IDBDataProvider;       // Object used to get data to be written
-    function CreateWriter: IDataWriter;
-      {Creates object that can write data for user-defined database to storage.
-        @return Requied writer object.
-      }
-    procedure WriteCategories;
-      {Writes information about categories to storage.
-      }
+    var
+      fWriter: IDataWriter;             // Object used to write to storage
+      fSnipList: TSnippetList;          // List of snippets to be written
+      fCategories: TCategoryList;       // List of categories to be written
+      fProvider: IDBDataProvider;       // Object used to get data to be written
+      fCollection: TCollection;         // Collection being written
+
+    ///  <summary>Writes information about all snippets belonging to the
+    ///  collection.</summary>
     procedure WriteSnippets;
-      {Writes information about all snippets to storage.
-      }
-  public
-    { IDatabaseWriter method }
-    procedure Write(const SnipList: TSnippetList;
+
+    ///  <summary>Writes information about categories relevant to the
+    ///  collection.</summary>
+    procedure WriteCategories;
+
+  strict protected
+
+    ///  <summary>Saves collection to storage.</summary>
+    ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
+    ///  in the database.</param>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] List of all
+    ///  categories in the database.</param>
+    ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
+    ///  obtain details of the data to be stored.</param>
+    procedure DoSave(const SnipList: TSnippetList;
       const Categories: TCategoryList;
-      const Provider: IDBDataProvider);
-      {Writes data from Database object to storage.
-        @param SnipList [in] Contains information about each snippet in the
-          database.
-        @param Categories [in] Contains information about each category in the
-          database.
-        @param Provider [in] Object used to obtain details of the data to be
-          written from the Database object
-      }
+      const Provider: IDBDataProvider
+    );
+
+    ///  <summary>Creates an object that can write data to storage in the
+    ///  required format.</summary>
+    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
+    function CreateWriter: IDataWriter; virtual; abstract;
+
+    ///  <summary>Collection being saved.</summary>
+    property Collection: TCollection read fCollection;
+
+  public
+    ///  <summary>Creates object that can save the given collection.</summary>
+    constructor Create(const ACollection: TCollection);
+
+    ///  <summary>Saves data to storage.</summary>
+    ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
+    ///  in the database.</param>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] List of all
+    ///  categories in the database.</param>
+    ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
+    ///  obtain details of the data to be stored.</param>
+    ///  <remarks>Method of IDataFormatSaver.</remarks>
+    procedure Save(const SnipList: TSnippetList;
+      const Categories: TCategoryList;
+      const Provider: IDBDataProvider); virtual; abstract;
+  end;
+
+  ///  <summary>Class used to write data from a collection to storage in the
+  ///  DelphiDabbler Code Snippets v2 data format.</summary>
+  TDCSCV2FormatSaver = class(TFormatSaver,
+    IDataFormatSaver
+  )
+  strict private
+    var
+      fBakFile: string;                 // Backup file used in case of failure
+
+    ///  <summary>Backup current data.</summary>
+    procedure Backup;
+
+    ///  <summary>Restore current data.</summary>
+    procedure Restore;
+
+  strict protected
+
+    ///  <summary>Creates an object that can write data to storage in
+    ///  DelphiDabbler Code Snippets v2 data format.</summary>
+    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
+    function CreateWriter: IDataWriter; override;
+
+  public
+
+    ///  <summary>Creates object that can save the given collection.</summary>
+    constructor Create(const ACollection: TCollection);
+
+    ///  <summary>Saves data to storage.</summary>
+    ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
+    ///  in the database.</param>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] List of all
+    ///  categories in the database.</param>
+    ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
+    ///  obtain details of the data to be stored.</param>
+    ///  <remarks>Method of IDataFormatSaver.</remarks>
+    procedure Save(const SnipList: TSnippetList;
+      const Categories: TCategoryList;
+      const Provider: IDBDataProvider); override;
+  end;
+
+  ///  <summary>Class used to write data from a collection to storage in
+  ///  CodeSnip's native v4 data format.</summary>
+  TNativeV4FormatSaver = class(TFormatSaver,
+    IDataFormatSaver
+  )
+  strict protected
+
+    ///  <summary>Creates an object that can write data to storage in
+    ///  CodeSnip's native v4 data format.</summary>
+    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
+    function CreateWriter: IDataWriter; override;
+
+  public
+
+    ///  <summary>Saves data to storage.</summary>
+    ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
+    ///  in the database.</param>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] List of all
+    ///  categories in the database.</param>
+    ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
+    ///  obtain details of the data to be stored.</param>
+    ///  <remarks>Method of IDataFormatSaver.</remarks>
+    procedure Save(const SnipList: TSnippetList;
+      const Categories: TCategoryList;
+      const Provider: IDBDataProvider); override;
+  end;
+
+  TNativeVaultFormatSaver = class(TFormatSaver,
+    IDataFormatSaver
+  )
+  strict protected
+
+    ///  <summary>Creates an object that can write data to storage in
+    ///  CodeSnip's native v4 data format.</summary>
+    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
+    function CreateWriter: IDataWriter; override;
+
+  public
+
+    ///  <summary>Saves data to storage.</summary>
+    ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
+    ///  in the database.</param>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] List of all
+    ///  categories in the database.</param>
+    ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
+    ///  obtain details of the data to be stored.</param>
+    ///  <remarks>Method of IDataFormatSaver.</remarks>
+    procedure Save(const SnipList: TSnippetList;
+      const Categories: TCategoryList;
+      const Provider: IDBDataProvider); override;
+  end;
+
+  ///  <summary>Class used to save global category information, regardless of
+  ///  any categories saved with collections.</summary>
+  TGlobalCategoryLoader = class(TInterfacedObject, IGlobalCategoryLoader)
+  public
+    ///  <summary>Loads categories data from global storage.</summary>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] Receives information
+    ///  about each category loaded.</param>
+    ///  <param name="DBDataItemFactory"><c>IDBDataItemFactory</c> [in] Object
+    ///  used to create new categories.</param>
+    ///  <remarks>Method of <c>IGlobalCategoryLoader</c>.</remarks>
+    procedure Load(const Categories: TCategoryList;
+      const DBDataItemFactory: IDBDataItemFactory);
+  end;
+
+  ///  <summary>Class used to save global category information, regardless of
+  ///  any categories saved with collections.</summary>
+  TGlobalCategorySaver = class(TInterfacedObject, IGlobalCategorySaver)
+  public
+    ///  <summary>Saves category data to global storage.</summary>
+    ///  <param name="Categories"><c>TCategoryList</c> [in] Contains information
+    ///  about each category to be saved.</param>
+    ///  <remarks>Method of <c>IGlobalCategorySaver</c>.</remarks>
+    procedure Save(const Categories: TCategoryList);
   end;
 
 { TDatabaseIOFactory }
 
-class function TDatabaseIOFactory.CreateMainDBLoader: IDatabaseLoader;
-  {Creates an object to use to load the main database.
-    @return Required object instance.
-  }
+class function TDatabaseIOFactory.CreateDBLoader(const Collection: TCollection):
+  IDataFormatLoader;
 begin
-  Result := TMainDatabaseLoader.Create;
+  {TODO -cUDatabaseIO: Revise database loaders to get file path and other
+          info from collection instead of hard wiring it.}
+  case Collection.Storage.Format of
+    TDataFormatKind.DCSC_v2:
+      Result := TDCSCV2FormatLoader.Create(Collection);
+    TDataFormatKind.Native_v4:
+      Result := TNativeV4FormatLoader.Create(Collection);
+    TDataFormatKind.Native_Vault:
+      Result := TNativeVaultFormatLoader.Create(Collection);
+    else
+      Result := nil;
+  end;
 end;
 
-class function TDatabaseIOFactory.CreateUserDBLoader: IDatabaseLoader;
-  {Creates an object to use to load the user database.
-    @return Required object instance.
-  }
+class function TDatabaseIOFactory.CreateDBSaver(
+  const Collection: TCollection): IDataFormatSaver;
 begin
-  Result := TUserDatabaseLoader.Create;
+  case Collection.Storage.Format of
+    TDataFormatKind.DCSC_v2:
+      Result := TDCSCV2FormatSaver.Create(Collection);
+    TDataFormatKind.Native_v4:
+      Result := TNativeV4FormatSaver.Create(Collection);
+    TDataFormatKind.Native_Vault:
+      Result := TNativeVaultFormatSaver.Create(Collection);
+    else
+      Result := nil;
+  end;
 end;
 
-class function TDatabaseIOFactory.CreateWriter: IDatabaseWriter;
-  {Create an object that can write user defined data from the Database object to
-  storage.
-    @return Required object instance.
-  }
+class function TDatabaseIOFactory.CreateGlobalCategoryLoader:
+  IGlobalCategoryLoader;
 begin
-  Result := TDatabaseWriter.Create;
+  Result := TGlobalCategoryLoader.Create;
+end;
+
+class function TDatabaseIOFactory.CreateGlobalCategorySaver:
+  IGlobalCategorySaver;
+begin
+  Result := TGlobalCategorySaver.Create;
 end;
 
 { TDatabaseLoader }
+
+constructor TDatabaseLoader.Create(const ACollection: TCollection);
+begin
+  inherited Create;
+  fCollection := ACollection;
+end;
 
 procedure TDatabaseLoader.CreateCategory(const CatID: string;
   const CatData: TCategoryData);
@@ -337,7 +515,13 @@ procedure TDatabaseLoader.CreateCategory(const CatID: string;
     @param CatData [in] Properties of category.
   }
 begin
-  fCategories.Add(fFactory.CreateCategory(CatID, IsUserDatabase, CatData));
+  fCategories.Add(fFactory.CreateCategory(CatID, CatData));
+end;
+
+function TDatabaseLoader.FindSnippet(const SnippetKey: string;
+  const SnipList: TSnippetList): TSnippet;
+begin
+  Result := SnipList.Find(SnippetKey, Collection.UID);
 end;
 
 procedure TDatabaseLoader.HandleException(const E: Exception);
@@ -352,6 +536,11 @@ begin
     raise EDatabaseLoader.Create(ErrorMessageHeading + EOL2 + E.Message)
   else
     raise E;
+end;
+
+function TDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
+begin
+  Result := Snippet.CollectionID = Collection.UID;
 end;
 
 procedure TDatabaseLoader.Load(const SnipList: TSnippetList;
@@ -425,20 +614,20 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
 
   // ---------------------------------------------------------------------------
   procedure LoadSnippetReferences(const RefList: TSnippetList;
-    const RefNames: IStringList);
-    {Creates a snippet list from names of snippets in a string list. If no
-    snippet with a given name is found no matching entry is added to snippet
+    const RefKeys: IStringList);
+    {Creates a snippet list from keys of snippets in a string list. If no
+    snippet with a given key is found no matching entry is added to snippet
     list.
       @param RefList [in] List to receive referenced snippets.
-      @param RefNames [in] List of snippet names.
+      @param RefKeys [in] List of snippet keys.
     }
   var
-    RefName: string;        // referenced snippet name
+    RefKey: string;         // referenced snippet key
     Reference: TSnippet;    // referenced snippet object
   begin
-    for RefName in RefNames do
+    for RefKey in RefKeys do
     begin
-      Reference := FindSnippet(RefName, fSnipList);
+      Reference := FindSnippet(RefKey, fSnipList);
       if Assigned(Reference) then
         RefList.Add(Reference);
     end;
@@ -447,12 +636,12 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
 
 begin
   LoadSnippetReferences(
-    Snippet.Depends, fReader.GetSnippetDepends(Snippet.Name)
+    Snippet.Depends, fReader.GetSnippetDepends(Snippet.Key)
   );
   LoadSnippetReferences(
-    Snippet.XRef, fReader.GetSnippetXRefs(Snippet.Name)
+    Snippet.XRef, fReader.GetSnippetXRefs(Snippet.Key)
   );
-  fReader.GetSnippetUnits(Snippet.Name).CopyTo(Snippet.Units);
+  fReader.GetSnippetUnits(Snippet.Key).CopyTo(Snippet.Units);
 end;
 
 procedure TDatabaseLoader.LoadSnippets(const Cat: TCategory);
@@ -460,24 +649,24 @@ procedure TDatabaseLoader.LoadSnippets(const Cat: TCategory);
     @param Cat [in] Category to be loaded.
   }
 var
-  SnippetNames: IStringList;    // list of names of snippets in category
+  SnippetKeys: IStringList;     // list of keys of snippets in category
   SnippetProps: TSnippetData;   // properties of a snippet
-  SnippetName: string;          // each name in name list
+  SnippetKey: string;           // each key in key list
   Snippet: TSnippet;            // references a snippet object
 begin
   FillChar(SnippetProps, SizeOf(SnippetProps), 0);
-  // Get names of all snippets in category
-  SnippetNames := fReader.GetCatSnippets(Cat.ID);
-  // Process each snippet name in list
-  for SnippetName in SnippetNames do
+  // Get keys of all snippets in category
+  SnippetKeys := fReader.GetCatSnippets(Cat.ID);
+  // Process each snippet key in list
+  for SnippetKey in SnippetKeys do
   begin
     // Check if snippet exists in current database and add it to list if not
-    Snippet := fSnipList.Find(SnippetName, IsUserDatabase);
+    Snippet := fSnipList.Find(SnippetKey, Collection.UID);
     if not Assigned(Snippet) then
     begin
-      fReader.GetSnippetProps(SnippetName, SnippetProps);
+      fReader.GetSnippetProps(SnippetKey, SnippetProps);
       Snippet := fFactory.CreateSnippet(
-        SnippetName, IsUserDatabase, SnippetProps
+        SnippetKey, Collection.UID, SnippetProps
       );
       fSnipList.Add(Snippet);
     end;
@@ -487,20 +676,20 @@ begin
   end;
 end;
 
-{ TMainDatabaseLoader }
+{ TDCSCV2FormatLoader }
 
-function TMainDatabaseLoader.CreateReader: IDataReader;
+function TDCSCV2FormatLoader.CreateReader: IDataReader;
   {Creates reader object. If main database doesn't exist a nul reader is
   created.
     @return Reader object instance.
   }
 begin
-  Result := TIniDataReader.Create(TAppInfo.AppDataDir);
+  Result := TIniDataReader.Create(Collection.Storage.Directory);
   if not Result.DatabaseExists then
     Result := TNulDataReader.Create;
 end;
 
-function TMainDatabaseLoader.ErrorMessageHeading: string;
+function TDCSCV2FormatLoader.ErrorMessageHeading: string;
   {Returns heading to use in error messages. Identifies main database.
     @return Required heading.
   }
@@ -510,49 +699,20 @@ begin
   Result := sError;
 end;
 
-function TMainDatabaseLoader.FindSnippet(const SnippetName: string;
-  const SnipList: TSnippetList): TSnippet;
-  {Finds the snippet object with a specified name in the main database.
-    @param SnippetName [in] Name of required snippet.
-    @param SnipList [in] List of snippets to search.
-    @return Reference to required snippet object or nil if snippet is not found.
-  }
-begin
-  // We only search main database
-  Result := SnipList.Find(SnippetName, False);
-end;
+{ TNativeV4FormatLoader }
 
-function TMainDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
-  {Checks if a snippet is native (belongs) to the main database.
-    @param Snippet [in] Snippet to test.
-    @return True if snippet is native, False if not.
-  }
-begin
-  Result := not Snippet.UserDefined;
-end;
-
-function TMainDatabaseLoader.IsUserDatabase: Boolean;
-  {Checks if the database is the user database.
-    @return False - this is not the user database.
-  }
-begin
-  Result := False;
-end;
-
-{ TUserDatabaseLoader }
-
-function TUserDatabaseLoader.CreateReader: IDataReader;
+function TNativeV4FormatLoader.CreateReader: IDataReader;
   {Creates reader object. If user database doesn't exist a nul reader is
   created.
     @return Reader object instance.
   }
 begin
-  Result := TXMLDataReader.Create(TAppInfo.UserDataDir);
+  Result := TXMLDataReader.Create(Collection.Storage.Directory);
   if not Result.DatabaseExists then
     Result := TNulDataReader.Create;
 end;
 
-function TUserDatabaseLoader.ErrorMessageHeading: string;
+function TNativeV4FormatLoader.ErrorMessageHeading: string;
   {Returns heading to use in error messages. Identifies main database.
     @return Required heading.
   }
@@ -562,79 +722,35 @@ begin
   Result := sError;
 end;
 
-function TUserDatabaseLoader.FindSnippet(const SnippetName: string;
-  const SnipList: TSnippetList): TSnippet;
-  {Finds the snippet object with a specified name. If snippet is not in this
-  (user) database the main database is searched.
-    @param SnippetName [in] Name of required snippet.
-    @param SnipList [in] List of snippets to search.
-    @return Reference to required snippet object or nil if snippet is not found.
-  }
+{ TNativeVaultFormatLoader }
+
+function TNativeVaultFormatLoader.CreateReader: IDataReader;
 begin
-  // Search in user database
-  Result := SnipList.Find(SnippetName, True);
-  if not Assigned(Result) then
-    // Not in user database: try main database
-    Result := SnipList.Find(SnippetName, False);
+  Result := TNativeDataReader.Create(Collection.Storage.Directory);
+  if not Result.DatabaseExists then
+    Result := TNulDataReader.Create;
 end;
 
-function TUserDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
-  {Checks if a snippet is native (belongs) to the user database.
-    @param Snippet [in] Snippet to test.
-    @return True if snippet is native, False if not.
-  }
+function TNativeVaultFormatLoader.ErrorMessageHeading: string;
+resourcestring
+  sError = 'Error loading the collection %0:s using the %1:s data format:';
 begin
-  Result := Snippet.UserDefined;
+  Result := Format(
+    sError,
+    [Collection.Name, TDataFormatInfo.GetName(Collection.Storage.Format)]
+  );
 end;
 
-function TUserDatabaseLoader.IsUserDatabase: Boolean;
-  {Checks if the database is the user database.
-    @return True - this is the user database.
-  }
+{ TFormatSaver }
+
+constructor TFormatSaver.Create(const ACollection: TCollection);
 begin
-  Result := True;
+  inherited Create;
+  fCollection := ACollection;
 end;
 
-procedure TUserDatabaseLoader.LoadCategories;
-  {Loads all categories from storage and adds user and imports categories if not
-  present.
-  }
-var
-  ResCatIdx: Integer;                 // loops thru all reserved categories
-  ResCatInfo: TReservedCategoryInfo;  // info about a reserved category
-begin
-  // Get all categories from storage
-  inherited;
-  // Add default user-defined categories if not present
-  for ResCatIdx := 0 to Pred(TReservedCategories.Count) do
-  begin
-    ResCatInfo := TReservedCategories.Info(ResCatIdx);
-    if Categories.Find(ResCatInfo.Name) = nil then
-      CreateCategory(ResCatInfo.Name, ResCatInfo.Data);
-  end;
-end;
-
-{ TDatabaseWriter }
-
-function TDatabaseWriter.CreateWriter: IDataWriter;
-  {Creates object that can write data for user-defined items from Database to
-  storage.
-    @return Requied writer object.
-  }
-begin
-  Result := TXMLDataWriter.Create(TAppInfo.UserDataDir);
-end;
-
-procedure TDatabaseWriter.Write(const SnipList: TSnippetList;
+procedure TFormatSaver.DoSave(const SnipList: TSnippetList;
   const Categories: TCategoryList; const Provider: IDBDataProvider);
-  {Writes data from Database object to storage.
-    @param SnipList [in] Contains information about each snippet in the
-      database.
-    @param Categories [in] Contains information about each category in the
-      database.
-    @param Provider [in] Object used to obtain details of the Database data to
-      be written.
-  }
 begin
   fSnipList := SnipList;
   fCategories := Categories;
@@ -646,41 +762,36 @@ begin
   fWriter.Finalise;
 end;
 
-procedure TDatabaseWriter.WriteCategories;
-  {Writes information about categories to storage.
-  }
+procedure TFormatSaver.WriteCategories;
 var
   Cat: TCategory;         // loops through each category
   Props: TCategoryData;   // category properties
-  SnipList: IStringList;  // list of names of snippets in a category
+  SnipList: IStringList;  // list of keys of snippets in a category
 begin
   for Cat in fCategories do
   begin
-    Props := fProvider.GetCategoryProps(Cat);
-    fWriter.WriteCatProps(Cat.ID, Props);
     SnipList := fProvider.GetCategorySnippets(Cat);
-    fWriter.WriteCatSnippets(Cat.ID, SnipList);
+    // only write category info when not empty
+    if SnipList.Count > 0 then
+    begin
+      Props := fProvider.GetCategoryProps(Cat);
+      fWriter.WriteCatProps(Cat.ID, Props);
+      fWriter.WriteCatSnippets(Cat.ID, SnipList);
+    end;
   end;
 end;
 
-procedure TDatabaseWriter.WriteSnippets;
-  {Writes information about all snippets to storage.
-  }
+procedure TFormatSaver.WriteSnippets;
 
-  // ---------------------------------------------------------------------------
+  // Adds snippet keys from IDList to a string list
   function IDListToStrings(const IDList: ISnippetIDList): IStringList;
-    {Copies snippet names from a snippet ID list to a string list.
-      @param IDList [in] Snippet ID List to be copied.
-      @return String list containing names.
-    }
   var
     ID: TSnippetID; // each id in snippet id list
   begin
     Result := TIStringList.Create;
     for ID in IDList do
-      Result.Add(ID.Name);
+      Result.Add(ID.Key);
   end;
-  // ---------------------------------------------------------------------------
 
 var
   Snippet: TSnippet;        // loops through each snippet in list
@@ -689,18 +800,149 @@ var
 begin
   for Snippet in fSnipList do
   begin
-    // Only write user-defined snippets
-    if Snippet.UserDefined then
+    if Snippet.CollectionID = fCollection.UID then
     begin
       // Get and write a snippet's properties
       Props := fProvider.GetSnippetProps(Snippet);
-      fWriter.WriteSnippetProps(Snippet.Name, Props);
+      fWriter.WriteSnippetProps(Snippet.Key, Props);
       // Get and write a snippet's references
       Refs := fProvider.GetSnippetRefs(Snippet);
-      fWriter.WriteSnippetUnits(Snippet.Name, Refs.Units);
-      fWriter.WriteSnippetDepends(Snippet.Name, IDListToStrings(Refs.Depends));
-      fWriter.WriteSnippetXRefs(Snippet.Name, IDListToStrings(Refs.XRef));
+      fWriter.WriteSnippetUnits(Snippet.Key, Refs.Units);
+      fWriter.WriteSnippetDepends(Snippet.Key, IDListToStrings(Refs.Depends));
+      fWriter.WriteSnippetXRefs(Snippet.Key, IDListToStrings(Refs.XRef));
     end;
+  end;
+end;
+
+{ TDCSCV2FormatSaver }
+
+procedure TDCSCV2FormatSaver.Backup;
+var
+  FB: TUserDBBackup;  // TODO -cRefactoring: this is correct class (will change)
+begin
+  FB := TUserDBBackup.Create(fBakFile, Collection);
+  try
+    FB.Backup;
+  finally
+    FB.Free;
+  end;
+end;
+
+constructor TDCSCV2FormatSaver.Create(const ACollection: TCollection);
+begin
+  inherited Create(ACollection);
+  // Find a temp file name in system temp directory that doesn't yet exist
+  repeat
+    fBakFile := TPath.Combine(
+      TPath.GetTempPath, '~codesnip-' + TPath.GetGUIDFileName
+    );
+  until not TFile.Exists(fBakFile);
+end;
+
+function TDCSCV2FormatSaver.CreateWriter: IDataWriter;
+begin
+  Result := TIniDataWriter.Create(Collection.Storage.Directory);
+end;
+
+procedure TDCSCV2FormatSaver.Restore;
+var
+  FB: TUserDBBackup;
+begin
+  FB := TUserDBBackup.Create(fBakFile, Collection);
+  try
+    FB.Restore;
+  finally
+    FB.Free;
+  end;
+end;
+
+procedure TDCSCV2FormatSaver.Save(const SnipList: TSnippetList;
+  const Categories: TCategoryList; const Provider: IDBDataProvider);
+begin
+  Backup;
+  try
+    try
+      DoSave(SnipList, Categories, Provider);
+    except
+      Restore;
+      raise ExceptObject;
+    end;
+  finally
+    TFile.Delete(fBakFile);
+  end;
+end;
+
+{ TNativeV4FormatSaver }
+
+function TNativeV4FormatSaver.CreateWriter: IDataWriter;
+begin
+  Result := TXMLDataWriter.Create(Collection.Storage.Directory);
+end;
+
+procedure TNativeV4FormatSaver.Save(const SnipList: TSnippetList;
+  const Categories: TCategoryList; const Provider: IDBDataProvider);
+begin
+  {TODO -cVault: Backup and restore this collection per the DCSC v2 loader}
+  DoSave(SnipList, Categories, Provider);
+end;
+
+{ TNativeVaultFormatSaver }
+
+function TNativeVaultFormatSaver.CreateWriter: IDataWriter;
+begin
+  Result := TNativeDataWriter.Create(Collection.Storage.Directory);
+end;
+
+procedure TNativeVaultFormatSaver.Save(const SnipList: TSnippetList;
+  const Categories: TCategoryList; const Provider: IDBDataProvider);
+begin
+  DoSave(SnipList, Categories, Provider);
+end;
+
+{ TGlobalCategoryLoader }
+
+procedure TGlobalCategoryLoader.Load(const Categories: TCategoryList;
+  const DBDataItemFactory: IDBDataItemFactory);
+var
+  Reader: TCategoryReader;
+  CatInfo: TCategoryReader.TCategoryIDAndData;
+  Cat: TCategory;
+begin
+  if not TFile.Exists(TAppInfo.UserCategoriesFileName) then
+    Exit;
+  Reader := TCategoryReader.Create(TAppInfo.UserCategoriesFileName);
+  try
+    for CatInfo in Reader.Read do
+    begin
+      Cat := Categories.Find(CatInfo.Key);
+      if not Assigned(Cat) then
+      begin
+        Categories.Add(
+          DBDataItemFactory.CreateCategory(CatInfo.Key, CatInfo.Value)
+        )
+      end
+      else
+      begin
+        if Cat.Description <> CatInfo.Value.Desc then
+          Cat.Update(CatInfo.Value);
+      end;
+    end;
+  finally
+    Reader.Free;
+  end;
+end;
+
+{ TGlobalCategorySaver }
+
+procedure TGlobalCategorySaver.Save(const Categories: TCategoryList);
+var
+  Writer: TCategoryWriter;
+begin
+  Writer := TCategoryWriter.Create(TAppInfo.UserCategoriesFileName);
+  try
+    Writer.Write(Categories);
+  finally
+    Writer.Free;
   end;
 end;
 

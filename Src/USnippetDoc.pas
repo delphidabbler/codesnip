@@ -21,6 +21,7 @@ uses
   // Delphi
   Classes,
   // Project
+  DB.UCollections,
   ActiveText.UMain, Compilers.UGlobals, DB.USnippet, UEncodings, UIStringList;
 
 
@@ -53,19 +54,22 @@ type
     ///  information for given snippet.</summary>
     function CompilerInfo(const Snippet: TSnippet): TCompileDocInfoArray;
     ///  <summary>Generates and returns a string containing information about
-    ///  the main database.</summary>
-    function MainDBInfo: string;
+    ///  the given collection.</summary>
+    ///  <remarks>Information includes license and copyright information if
+    ///  the collection's data format supports it.</remarks>
+    function CollectionInfo(const ACollectionID: TCollectionID): string;
   strict protected
     ///  <summary>Initialise document.</summary>
     ///  <remarks>Does nothing. Descendant classes should perform any required
     ///  initialisation here.</remarks>
     procedure InitialiseDoc; virtual;
-    ///  <summary>Output given heading, i.e. snippet name. Can be user defined
-    ///  or from main database.</summary>
-    ///  <remarks>Heading may be rendered differently depending on whether user
-    ///  defined or not.</remarks>
-    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
-      virtual; abstract;
+
+    ///  <summary>Output given heading, i.e. snippet name for snippet from a
+    ///  given collection..</summary>
+    ///  <remarks>Heading may be rendered differently depending on the snippet's
+    ///  collection.</remarks>
+    procedure RenderHeading(const Heading: string;
+      const ACollectionID: TCollectionID); virtual; abstract;
     ///  <summary>Output given snippet description.</summary>
     procedure RenderDescription(const Desc: IActiveText); virtual; abstract;
     ///  <summary>Output given source code.</summary>
@@ -88,9 +92,8 @@ type
     ///  <remarks>Active text must be interpreted in a manner that makes sense
     ///  for document format.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); virtual; abstract;
-    ///  <summary>Output given information about code snippets database.
-    ///  </summary>
-    procedure RenderDBInfo(const Text: string); virtual; abstract;
+    ///  <summary>Output given information about a collection.</summary>
+    procedure RenderCollectionInfo(const Text: string); virtual; abstract;
     ///  <summary>Finalise document and return content as encoded data.
     ///  </summary>
     ///  <remarks>Descendant classes should perform any required finalisation
@@ -116,14 +119,34 @@ uses
   Generics.Collections,
   // Project
   Compilers.UCompilers,
+  DB.DataFormats,
   DB.UMain,
   DB.UMetaData,
   DB.USnippetKind,
+  DBIO.MetaData.DCSC,
   UStrUtils,
   UUrl;
 
 
 { TSnippetDoc }
+
+function TSnippetDoc.CollectionInfo(const ACollectionID: TCollectionID): string;
+resourcestring
+  sCollectionInfo = 'A snippet from the "%s" collection.';
+var
+  MetaData: IDBMetaData;
+  Collection: TCollection;
+begin
+  Collection := TCollections.Instance.GetCollection(ACollectionID);
+  Result := Format(sCollectionInfo, [Collection.Name]);
+  MetaData := TMetaDataFactory.CreateInstance(Collection.Storage);
+  if mdcLicense in MetaData.GetCapabilities then
+  begin
+    Result := Result + ' ' + MetaData.GetLicenseInfo.NameWithURL + '.';
+    if (mdcCopyright in MetaData.GetCapabilities) then
+      Result := Result + ' ' + MetaData.GetCopyrightInfo.ToString + '.';
+  end;
+end;
 
 function TSnippetDoc.CommaList(const List: IStringList): string;
 resourcestring
@@ -178,7 +201,7 @@ begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   // generate document
   InitialiseDoc;
-  RenderHeading(Snippet.DisplayName, Snippet.UserDefined);
+  RenderHeading(Snippet.DisplayName, Snippet.CollectionID);
   RenderDescription(Snippet.Description);
   RenderSourceCode(Snippet.SourceCode);
   RenderTitledText(
@@ -200,32 +223,13 @@ begin
   end;
   if Snippet.Extra.HasContent then
     RenderExtra(Snippet.Extra);
-  if not Snippet.UserDefined then
-    // database info written only if snippet is from main database
-    RenderDBInfo(MainDBInfo);
+  RenderCollectionInfo(CollectionInfo(Snippet.CollectionID));
   Result := FinaliseDoc;
 end;
 
 procedure TSnippetDoc.InitialiseDoc;
 begin
   // Do nothing
-end;
-
-function TSnippetDoc.MainDBInfo: string;
-resourcestring
-  sMainDBInfo = 'A snippet from the DelphiDabbler Code Snippets Database '
-   + '(%0:s), licensed under the %1:s.';
-var
-  DBMetaData: IDBMetaData;
-begin
-  DBMetaData := TMainDBMetaDataFactory.MainDBMetaDataInstance;
-  Result := Format(
-    sMainDBInfo,
-    [
-      TURL.CodeSnipRepo,
-      DBMetaData.GetLicenseInfo.NameWithURL
-    ]
-  );
 end;
 
 function TSnippetDoc.SnippetsToStrings(const SnippetList: TSnippetList):

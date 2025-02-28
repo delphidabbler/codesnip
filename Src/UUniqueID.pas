@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a static class that generates globally unique id strings.
+ * Implements a generator of globally unique ids.
 }
 
 
@@ -16,22 +16,36 @@ interface
 
 
 uses
-  // Project
-  UBaseObjects;
+  // Delphi
+  SysUtils;
 
 
 type
 
-  {
-  TUniqueID:
-    Static class that generates globally unique id strings.
-  }
-  TUniqueID = class(TNoConstructObject)
+  ///  <summary>Generator of globally unique ids.</summary>
+  TUniqueID = record
+  strict private
+
+    ///  <summary>Generates a new GUID and returns it as an array of bytes.
+    ///  </summary>
+    class function NewUID: TBytes; static;
+
   public
-    class function Generate: string;
-      {Generates a 32 digit globally unique id string of hex characters.
-        @return Required unique id.
-      }
+
+    ///  <summary>Generates a globally unique string of 32 hexadecimal
+    ///  characters.</summary>
+    class function Generate: string; static;
+    {TODO -cClarity: Rename above method as GenerateHex}
+
+    ///  <summary>Generates a globally unique string of 32 alphabetical
+    ///  characters.</summary>
+    ///  <remarks>
+    ///  <para>The returned string comprises the letters 'A' to 'S', omitting
+    ///  'I' and 'O'.</para>
+    ///  <para>The string is a valid Pascal identifier.</para>
+    ///  </remarks>
+    class function GenerateAlpha: string; static;
+
   end;
 
 
@@ -39,34 +53,51 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils;
+  // Project
+  UUtils;
 
 
 { TUniqueID }
 
 class function TUniqueID.Generate: string;
-  {Generates a 32 digit globally unique id string of hex characters.
-    @return Required unique id.
-  }
-type
-  TGUIDFragment = LongWord; // part of a TGUID
-  TGUIDFragments =          // array of TGUID parts - assume same size as TGUID
-    array[1..SizeOf(TGUID) div SizeOf(TGUIDFragment)] of TGUIDFragment;
 var
-  GUID: TGUID;    // generated GUID
-  Idx: Integer;   // loops through parts of GUID as an array
+  Bytes: TBytes;
+  B: Byte;
 begin
-  Assert(SizeOf(TGUID) = SizeOf(TGUIDFragments),
-    ClassName + '.Generate: Size of TGUID <> size of TGUIDFragments');
-  // get a GUID
-  CreateGUID(GUID);
+  Bytes := NewUID;
   Result := '';
-  // crack GUID into parts and build result from hex representation of the parts
-  for Idx := Low(TGUIDFragments) to High(TGUIDFragments) do
-    Result := Result + IntToHex(
-      TGUIDFragments(GUID)[Idx], 2 * SizeOf(TGUIDFragment)
-    );
+  for B in Bytes do
+    Result := Result + IntToHex(B, 2);
+end;
+
+class function TUniqueID.GenerateAlpha: string;
+type
+  TNybble = 0..15;
+const
+  AlphaMap: array[TNybble] of Char = (
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+    'J', 'K', 'L', 'M', 'P', 'Q', 'R', 'S'
+  );
+var
+  Bytes: TBytes;
+  B: Byte;
+begin
+  Bytes := NewUID;
+  Result := '';
+  for B in Bytes do
+  begin
+    Result := Result
+      + AlphaMap[TNybble(B shr 4)]
+      + AlphaMap[TNybble(B and $0F)];
+  end;
+end;
+
+class function TUniqueID.NewUID: TBytes;
+var
+  GUID: TGUID;
+begin
+  CreateGUID(GUID);
+  Result := GUIDToBytes(GUID);
 end;
 
 end.

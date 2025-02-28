@@ -51,7 +51,7 @@ uses
 const
   ///  <summary>Watermark for selection files. Uses characters that will be
   ///  interpreted wrongly if the file is not in UTF8 format.</summary>
-  SelectionFileWatermark = #$25BA + ' CodeSnip Selections v1 ' + #$25C4;
+  SelectionFileWatermark = #$25BA + ' CodeSnip Selections v2 ' + #$25C4;
 
 { TSelectionIOMgr }
 

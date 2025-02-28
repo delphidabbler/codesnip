@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * General utility routines.
 }
@@ -172,14 +172,50 @@ function IsEqualBytes(const BA1, BA2: TBytes; const Count: Cardinal):
 ///  <remarks>If both arrays are empty they are considered equal.</remarks>
 function IsEqualBytes(const BA1, BA2: TBytes): Boolean; overload;
 
+///  <summary>Converts a TGUID record into an array of bytes.</summary>
+///  <param name="AGUID">TGUID [in] GUID to be converted.</param>
+///  <returns>TBytes. Required byte array.</returns>
+function GUIDToBytes(const AGUID: TGUID): TBytes;
+
 ///  <summary>Attempts to convert string S into a Word value.</summary>
 ///  <param name="S">string [in] String to be converted.</param>
-///  <param name="W">Cardinal [out] Value of converted string. Undefined if
+///  <param name="W">Word [out] Value of converted string. Undefined if
 ///  conversion fails.</param>
 ///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
 ///  <remarks>String must represent a non-negative integer that is representable
 ///  as a Word.</remarks>
 function TryStrToWord(const S: string; out W: Word): Boolean;
+
+///  <summary>Attempts to convert string S into a Byye value.</summary>
+///  <param name="S">string [in] String to be converted.</param>
+///  <param name="B">Byte [out] Value of converted string. Undefined if
+///  conversion fails.</param>
+///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
+///  <remarks>String must represent a non-negative integer that is representable
+///  as a Byte.</remarks>
+function TryStrToByte(const S: string; out B: Byte): Boolean;
+
+///  <summary>Converts a byte array to a string that is a concatentation of the
+///  hex representation of the bytes of the array.</summary>
+///  <param name="BA">TBytes [in] Byte array to convert.</param>
+///  <returns>string. String of hex digits or empty string if BA is empty.
+///  </returns>
+///  <remarks>The returned string is twice the length of BA, since each byte
+///  occupies two hex digits.</remarks>
+function BytesToHexString(const BA: TBytes): string;
+
+///  <summary>Attempts to convert a string of hex digits to an array of bytes.
+///  </summary>
+///  <param name="AHexStr">string [in] String of hex digits. Alphabetic
+///  characters can be either upper or lower case.</param>
+///  <param name="ABytes">TBytes [out] Array of bytes converted from string.
+///  Undefined if conversion fails.</param>
+///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
+///  <remarks>String must be composed of valid hex digits, with two characters
+///  per byte. Therefore the string must have an even number of characters.
+///  </remarks>
+function TryHexStringToBytes(const AHexStr: string; out ABytes: TBytes):
+  Boolean;
 
 
 implementation
@@ -461,6 +497,19 @@ begin
   Result := True;
 end;
 
+function GUIDToBytes(const AGUID: TGUID): TBytes;
+type
+  TGUIDCracker = array[1..SizeOf(TGUID) div SizeOf(Byte)] of Byte;
+var
+  Idx: Integer;
+begin
+  Assert(SizeOf(TGUID) = SizeOf(TGUIDCracker),
+    'GUIDToBytes: Size of TGUID <> size of TGUIDCracker');
+  SetLength(Result, SizeOf(TGUIDCracker));
+  for Idx := Low(TGUIDCracker) to High(TGUIDCracker) do
+    Result[Idx - Low(TGUIDCracker)] := TGUIDCracker(AGUID)[Idx];
+end;
+
 function TryStrToWord(const S: string; out W: Word): Boolean;
 var
   I: Integer;
@@ -471,6 +520,54 @@ begin
   if (I < 0) or (I > High(Word)) then
     Exit(False);
   W := Word(I);
+end;
+
+function TryStrToByte(const S: string; out B: Byte): Boolean;
+var
+  I: Integer;
+begin
+  Result := TryStrToInt(S, I);
+  if not Result then
+    Exit;
+  if (I < Low(Byte)) or (I > High(Byte)) then
+    Exit(False);
+  B := Byte(I);
+end;
+
+function BytesToHexString(const BA: TBytes): string;
+var
+  B: Byte;
+begin
+  Result := '';
+  for B in BA do
+    Result := Result + IntToHex(B, 2);
+end;
+
+function TryHexStringToBytes(const AHexStr: string; out ABytes: TBytes):
+  Boolean;
+const
+  HexByteStrLength = 2;
+var
+  HexByteStart: Integer;
+  HexByteStr: string;
+  ResIdx: Integer;
+  ConvertedByte: Byte;
+begin
+  Result := True;
+  if Length(AHexStr) mod HexByteStrLength <> 0 then
+    Exit(False);
+  SetLength(ABytes, Length(AHexStr) div HexByteStrLength);
+  ResIdx := 0;
+  HexByteStart := 1;
+  while HexByteStart < Length(AHexStr) do
+  begin
+    HexByteStr := Copy(AHexStr, HexByteStart, HexByteStrLength);
+    if not TryStrToByte('$' + HexByteStr, ConvertedByte) then
+      Exit(False);
+    ABytes[ResIdx] := ConvertedByte;
+    Inc(HexByteStart, HexByteStrLength);
+    Inc(ResIdx);
+  end;
 end;
 
 end.

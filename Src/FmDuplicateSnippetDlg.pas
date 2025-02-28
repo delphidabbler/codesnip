@@ -19,7 +19,9 @@ uses
   // Delphi
   SysUtils, Controls, StdCtrls, ExtCtrls, Classes,
   // Project
+  DB.UCollections,
   DB.USnippet, FmGenericOKDlg, UBaseObjects, UCategoryListAdapter,
+  UCollectionListAdapter,
   UIStringList;
 
 
@@ -28,10 +30,10 @@ type
     cbCategory: TComboBox;
     chkEdit: TCheckBox;
     edDisplayName: TEdit;
-    edUniqueName: TEdit;
     lblCategory: TLabel;
     lblDisplayName: TLabel;
-    lblUniqueName: TLabel;
+    lblCollection: TLabel;
+    cbCollection: TComboBox;
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -51,9 +53,14 @@ type
     var
       fSnippet: TSnippet;
       fCatList: TCategoryListAdapter;
+      fCollList: TCollectionListAdapter;
       fOptions: TPersistentOptions;
-    function DisallowedNames: IStringList;
-    function UniqueSnippetName(const BaseName: string): string;
+      fSnippetKey: string;
+    ///  <summary>Returns the ID of the collection selected in the collections
+    ///  drop down list, or the null collection ID if no collection is selected.
+    ///  </summary>
+    function SelectedCollectionID: TCollectionID;
+    function SelectedCategoryID: string;
     procedure ValidateData;
     procedure HandleException(const E: Exception);
     procedure UpdateDatabase;
@@ -77,10 +84,22 @@ uses
   // Delphi
   Math,
   // Project
-  DB.UCategory, DB.UMain, UCtrlArranger, UExceptions, UMessageBox, USettings,
-  USnippetValidator, UStructs, UStrUtils, UUserDBMgr;
+  DB.UCategory,
+  DB.UMain,
+  UCtrlArranger,
+  UExceptions,
+  UMessageBox,
+  USettings,
+  USnippetIDs,
+  USnippetValidator,
+  UStructs,
+  UStrUtils,
+  UUserDBMgr;
 
 {$R *.dfm}
+
+{TODO -cTidy: Re-order methods alphabetically}
+{TODO -cRefactor: Add method to get display name from ctrl and strip whitespace}
 
 { TDuplicateSnippetDlg }
 
@@ -90,19 +109,21 @@ begin
 
   TCtrlArranger.AlignLefts(
     [
-      lblUniqueName, lblDisplayName, lblCategory, edUniqueName, edDisplayName,
-      cbCategory, chkEdit
+      lblDisplayName, edDisplayName,
+      lblCategory, cbCategory,
+      lblCollection, cbCollection,
+      chkEdit
     ],
     0
   );
 
-  lblUniqueName.Top := 0;
-  TCtrlArranger.MoveBelow(lblUniqueName, edUniqueName, 4);
-  TCtrlArranger.MoveBelow(edUniqueName, lblDisplayName, 8);
+  lblDisplayName.Top := 0;
   TCtrlArranger.MoveBelow(lblDisplayName, edDisplayName, 4);
   TCtrlArranger.MoveBelow(edDisplayName, lblCategory, 8);
   TCtrlArranger.MoveBelow(lblCategory, cbCategory, 4);
-  TCtrlArranger.MoveBelow(cbCategory, chkEdit, 20);
+  TCtrlArranger.MoveBelow(cbCategory, lblCollection, 8);
+  TCtrlArranger.MoveBelow(lblCollection, cbCollection, 4);
+  TCtrlArranger.MoveBelow(cbCollection, chkEdit, 20);
 
   pnlBody.ClientWidth := Max(
     TCtrlArranger.TotalControlWidth(pnlBody) + 8,
@@ -117,6 +138,9 @@ procedure TDuplicateSnippetDlg.btnOKClick(Sender: TObject);
 begin
   try
     ValidateData;
+    fSnippetKey := (Database as IDatabaseEdit).GetUniqueSnippetKey(
+      SelectedCollectionID
+    );
     UpdateDatabase;
   except
     on E: Exception do
@@ -124,23 +148,12 @@ begin
   end;
 end;
 
-function TDuplicateSnippetDlg.DisallowedNames: IStringList;
-var
-  Snippet: TSnippet;
-begin
-  Result := TIStringList.Create;
-  Result.CaseSensitive := False;
-  for Snippet in Database.Snippets do
-    if Snippet.UserDefined then
-      Result.Add(Snippet.Name);
-end;
-
 class function TDuplicateSnippetDlg.Execute(const AOwner: TComponent;
   const ASnippet: TSnippet): Boolean;
 var
   Dlg: TDuplicateSnippetDlg;
 resourcestring
-  sCaption = 'Duplicate %s';   // dialog box caption
+  sCaption = 'Duplicate "%s"';   // dialogue box caption
 begin
   Assert(Assigned(ASnippet), ClassName + '.Execute: ASnippet is nil');
   Dlg := InternalCreate(AOwner);
@@ -176,81 +189,83 @@ end;
 procedure TDuplicateSnippetDlg.InitForm;
 var
   SnippetCat: TCategory;
+  SnippetColl: TCollection;
 begin
   inherited;
-  edUniqueName.Text := UniqueSnippetName(fSnippet.Name);
-  edDisplayName.Text := StrIf(
-    StrSameStr(fSnippet.Name, fSnippet.DisplayName), '', fSnippet.DisplayName
-  );
+  edDisplayName.Text := fSnippet.DisplayName;
+
   fCatList.ToStrings(cbCategory.Items);
+  fCollList.ToStrings(cbCollection.Items);
+  Assert(cbCategory.Items.Count > 0, ClassName + '.InitForm: no categories');
+  Assert(cbCollection.Items.Count > 0, ClassName + '.InitForm: no collections');
+
   SnippetCat := Database.Categories.Find(fSnippet.Category);
-  if Assigned(SnippetCat) then
-    cbCategory.ItemIndex := cbCategory.Items.IndexOf(SnippetCat.Description)
-  else
-    cbCategory.ItemIndex := -1;
+  Assert(Assigned(SnippetCat), ClassName + '.InitForm: invalid category');
+  cbCategory.ItemIndex := cbCategory.Items.IndexOf(SnippetCat.Description);
+
+  SnippetColl := TCollections.Instance.GetCollection(fSnippet.CollectionID);
+  cbCollection.ItemIndex := cbCollection.Items.IndexOf(SnippetColl.Name);
+
   chkEdit.Checked := fOptions.EditSnippetOnClose;
 end;
 
-function TDuplicateSnippetDlg.UniqueSnippetName(const BaseName: string): string;
-var
-  ExistingNames: IStringList;
-  Postfix: Cardinal;
+function TDuplicateSnippetDlg.SelectedCategoryID: string;
 begin
-  ExistingNames := DisallowedNames;
-  if not ExistingNames.Contains(BaseName) then
-    Exit(BaseName);
-  // BaseName exists: find number to append to it to make name unique
-  Postfix := 1;
-  repeat
-    Inc(PostFix);
-    Result := BaseName + IntToStr(PostFix);
-  until not ExistingNames.Contains(Result);
+  Assert(cbCategory.ItemIndex >= 0,
+    ClassName + '.SelectedCategoryID: no category selected');
+  Result := fCatList.CatID(cbCategory.ItemIndex);
+end;
+
+function TDuplicateSnippetDlg.SelectedCollectionID: TCollectionID;
+begin
+  Assert(cbCollection.ItemIndex >= 0,
+    ClassName + '.SelectedCollectionID: no collection selected');
+  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
 end;
 
 procedure TDuplicateSnippetDlg.UpdateDatabase;
-var
-  UniqueName: string;
-  DisplayName: string;
 begin
-  UniqueName := StrTrim(edUniqueName.Text);
-  DisplayName := StrTrim(edDisplayName.Text);
   (Database as IDatabaseEdit).DuplicateSnippet(
     fSnippet,
-    UniqueName,
-    StrIf(StrSameStr(UniqueName, DisplayName), '', DisplayName),
-    fCatList.CatID(cbCategory.ItemIndex)
+    fSnippetKey,
+    SelectedCollectionID,
+    StrTrim(edDisplayName.Text),
+    SelectedCategoryID
   );
 end;
 
 procedure TDuplicateSnippetDlg.ValidateData;
-var
-  ErrMsg: string;
-  ErrSel: TSelection;
 resourcestring
   sNoCategory = 'You must choose a category';
+  sNoCollection = 'You must choose a collection';
+  sNoDisplayName = 'You must provide a display name';
 begin
-  if not TSnippetValidator.ValidateName(
-    StrTrim(edUniqueName.Text), True, ErrMsg, ErrSel
-  ) then
-    raise EDataEntry.Create(ErrMsg, edUniqueName, ErrSel);
+  if StrTrim(edDisplayName.Text) = '' then
+    raise EDataEntry.Create(sNoDisplayName, edDisplayName);
   if cbCategory.ItemIndex = -1 then
     raise EDataEntry.Create(sNoCategory, cbCategory);
+  if cbCollection.ItemIndex = -1 then
+    raise EDataEntry.Create(sNoCollection, cbCollection);
 end;
 
 procedure TDuplicateSnippetDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fCatList := TCategoryListAdapter.Create(Database.Categories);
+  fCollList := TCollectionListAdapter.Create;
   fOptions := TPersistentOptions.Create;
 end;
 
 procedure TDuplicateSnippetDlg.FormDestroy(Sender: TObject);
 begin
   if (ModalResult = mrOK) and chkEdit.Checked then
-    TUserDBMgr.EditSnippet(StrTrim(edUniqueName.Text));
+    TUserDBMgr.EditSnippet(
+      TSnippetID.Create(fSnippetKey, SelectedCollectionID)
+    );
   fOptions.EditSnippetOnClose := chkEdit.Checked;
   inherited;
   fOptions.Free;
+  fCollList.Free;
   fCatList.Free;
 end;
 

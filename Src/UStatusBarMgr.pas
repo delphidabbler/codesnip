@@ -118,9 +118,14 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Forms,
+  SysUtils,
+  Forms,
   // Project
-  DB.UMain, UQuery, USearch, UStructs;
+  DB.UCollections,
+  DB.UMain,
+  UQuery,
+  USearch,
+  UStructs;
 
 
 { TStatusBarMgr }
@@ -345,28 +350,29 @@ procedure TStatusBarMgr.ShowSnippetsInfo;
   }
 var
   TotalSnippets: Integer;     // number of snippets in database
-  TotalUserSnippets: Integer; // number of snippets in user database
-  TotalMainSnippets: Integer; // number of snippets in main database
+  TotalCollections: Integer;  // number of collections in database
 resourcestring
   // status bar message strings
   sSnippet = 'snippet';
   sSnippets = 'snippets';
-  sStats = '%0:d %1:s (%2:d main / %3:d user defined)';
+  sCollection = 'collection';
+  sCollections = 'collections';
+  sStats = '%0:d %1:s in %2:d %3:s';
 const
   SnippetsStr: array[Boolean] of string = (sSnippet, sSnippets);
+  CollectionsStr: array[Boolean] of string = (sCollection, sCollections);
 begin
   // Calculate database stats
   TotalSnippets := Database.Snippets.Count;
-  TotalUserSnippets := Database.Snippets.Count(True);
-  TotalMainSnippets := TotalSnippets - TotalUserSnippets;
+  TotalCollections := TCollections.Instance.Count;
   // Build display text and display it
   fStatusBar.Panels[cDBPanel].Text := Format(
     sStats,
     [
       TotalSnippets,
       SnippetsStr[TotalSnippets <> 1],
-      TotalMainSnippets,
-      TotalUserSnippets
+      TotalCollections,
+      CollectionsStr[TotalCollections <> 1]
     ]
   );
 end;

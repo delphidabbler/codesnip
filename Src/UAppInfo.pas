@@ -36,10 +36,12 @@ type
     const ProgramName = 'CodeSnip-p';
     {$ENDIF}
       {Name of program}
-    const FullProgramName = CompanyName + ' CodeSnip';
+    const FullProgramName = CompanyName + ' CodeSnip.Vault';
       {Full name of program, including company name}
     const ProgramID = 'codesnip';
+      {TODO -cVault: Remove unused ProgramID const}
       {Machine readable identifier of program}
+  public
     class function UserAppDir: string;
       {Gets the CodeSnip data directory stored within the user's application
       data directory.
@@ -51,25 +53,31 @@ type
         @return Full path to common application data directory.
       }
     class function AppDataDir: string;
+      {TODO -cCollections: Remove AppDataDir method: used for "main" database}
       {Returns the directory where CodeSnip stores the "database" files.
         @return Full path to database sub directory.
       }
-    class function UserDataDir: string;
-      {Returns the directory where CodeSnip stores the user's "database" files.
-        @return Full path to database sub directory.
-      }
-    class function DefaultUserDataDir: string;
-      {Returns the default directory where CodeSnip stores the uer's "database"
-      files.
-        @return Full path to required directory.
-      }
-    class procedure ChangeUserDataDir(const NewDir: string);
-      {Changes directory where CodeSnip stores the user's "database" files and
-      records it in the user config file.
-      Does nothing on portable edition since it does not permit the user
-      database to be moved.
-        @param NewDir [in] New directory.
-      }
+
+    ///  <summary>Returns the path where collections are recommended to be
+    ///  stored for the current user.</summary>
+    ///  <remarks>
+    ///  <para>Collections each have their own sub-directory of this directory.
+    ///  </para>
+    ///  <para>The user may ignore this recommendation and install collections
+    ///  anywhere they choose.</para>
+    ///  </remarks>
+    class function UserCollectionsDir: string;
+
+    ///  <summary>Returns the path where the Default collection is recommended
+    ///  to be stored for the current user.</summary>
+    ///  <remarks>
+    ///  <para>If the Default collection is not present then CodeSnip will
+    ///  automatically create it in this directory.</para>
+    ///  <para>The user may move the Default collection anywhere they choose.
+    ///  </para>
+    ///  </remarks>
+    class function UserDefaultCollectionDir: string;
+
     class function AppExeFilePath: string;
       {Returns fully specified name of program's executable file.
         @return Name of file.
@@ -88,6 +96,15 @@ type
     class function UserConfigFileName: string;
       {Returns fully specified name of per-user config file.
       }
+
+    ///  <summary>Returns fully specified name of the current user's global
+    ///  categories file.</summary>
+    class function UserCategoriesFileName: string;
+
+    ///  <summary>Returns fully specified name of the current user's favourites
+    ///  file.</summary>
+    class function UserFavouritesFileName: string;
+
     class function ProgramReleaseInfo: string;
       {Gets information about the current program release. Includes any special
       build information if present in version information.
@@ -115,6 +132,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  DB.UCollections,
   USettings,
   UStrUtils,
   USystemInfo,
@@ -156,28 +174,6 @@ begin
   Result := ParamStr(0);
 end;
 
-class procedure TAppInfo.ChangeUserDataDir(const NewDir: string);
-  {Changes directory where CodeSnip stores the user's "database" files and
-  records it in the user config file.
-  Does nothing on portable edition since it does not permit the user database
-  to be moved.
-    @param NewDir [in] New directory.
-  }
-{$IFNDEF PORTABLE}
-var
-  Section: ISettingsSection;
-{$ENDIF}
-begin
-  {$IFNDEF PORTABLE}
-  Section := Settings.ReadSection(ssDatabase);
-  if StrSameText(ExcludeTrailingPathDelimiter(NewDir), DefaultUserDataDir) then
-    Section.DeleteItem('UserDataDir')
-  else
-    Section.SetString('UserDataDir', NewDir);
-  Section.Save;
-  {$ENDIF}
-end;
-
 class function TAppInfo.CommonAppDir: string;
   {Gets the CodeSnip data directory stored within the common application data
   directory.
@@ -185,22 +181,9 @@ class function TAppInfo.CommonAppDir: string;
   }
 begin
   {$IFNDEF PORTABLE}
-  Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.4';
+  Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.Vault';
   {$ELSE}
-  Result := AppExeDir + '\AppData';
-  {$ENDIF}
-end;
-
-class function TAppInfo.DefaultUserDataDir: string;
-  {Returns the default directory where CodeSnip stores the uer's "database"
-  files.
-    @return Full path to required directory.
-  }
-begin
-  {$IFNDEF PORTABLE}
-  Result := UserAppDir + '\UserDatabase';
-  {$ELSE}
-  Result := UserAppDir + '\UserDB';
+  Result := AppExeDir + '\AppData.Vault';
   {$ENDIF}
 end;
 
@@ -218,7 +201,7 @@ var
 begin
   ProductVer := TVersionInfo.ProductVerNum;
   Result := Format(
-    'CodeSnip v%d.%d.%d', [ProductVer.V1, ProductVer.V2, ProductVer.V3]
+    'CodeSnip.Vault v%d.%d.%d', [ProductVer.V1, ProductVer.V2, ProductVer.V3]
   );
   {$IFDEF PORTABLE}
   Result := Result + ' (Portable Edition)'
@@ -259,10 +242,20 @@ class function TAppInfo.UserAppDir: string;
   }
 begin
   {$IFNDEF PORTABLE}
-  Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.4';
+  Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.Vault';
   {$ELSE}
   Result := CommonAppDir;
   {$ENDIF}
+end;
+
+class function TAppInfo.UserCategoriesFileName: string;
+begin
+  Result := UserAppDir + '\Categories';
+end;
+
+class function TAppInfo.UserCollectionsDir: string;
+begin
+  Result := UserAppDir + '\Collections';
 end;
 
 class function TAppInfo.UserConfigFileName: string;
@@ -270,21 +263,14 @@ begin
   Result := UserAppDir + '\User.config';
 end;
 
-class function TAppInfo.UserDataDir: string;
-  {Returns the directory where CodeSnip stores the user's "database" files.
-    @return Full path to database sub directory.
-  }
-{$IFNDEF PORTABLE}
-var
-  Section: ISettingsSection;  // persistent storage where code is recorded
-{$ENDIF}
+class function TAppInfo.UserDefaultCollectionDir: string;
 begin
-  {$IFNDEF PORTABLE}
-  Section := Settings.ReadSection(ssDatabase);
-  Result := Section.GetString('UserDataDir', DefaultUserDataDir);
-  {$ELSE}
-  Result := DefaultUserDataDir;
-  {$ENDIF}
+  Result := UserCollectionsDir + '\Default';
+end;
+
+class function TAppInfo.UserFavouritesFileName: string;
+begin
+  Result := UserAppDir + '\Favourites';
 end;
 
 end.

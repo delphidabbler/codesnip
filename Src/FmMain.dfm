@@ -615,18 +615,18 @@ inherited MainForm: TMainForm
     end
     object actBackupDatabase: TAction
       Category = 'Database'
-      Caption = 'Backup User Database...'
-      Hint = 'Backup user database|Backup the user-defined snippet database'
+      Caption = 'Backup Collection Data...'
+      Hint = 'Backup a collection|Backup a collection'#39's data files'
       ImageIndex = 33
       OnExecute = actBackupDatabaseExecute
-      OnUpdate = ActNonEmptyUserDBUpdate
+      OnUpdate = ActNonEmptyDBUpdate
     end
     object actRestoreDatabase: TAction
       Category = 'Database'
-      Caption = 'Restore User Database...'
+      Caption = 'Restore Collection Data...'
       Hint = 
-        'Restore user database|Restore the user-defined snippet database ' +
-        'from a backup'
+        'Restore a collection|Restore a collection'#39's data files from a ba' +
+        'ckup'
       ImageIndex = 32
       OnExecute = actRestoreDatabaseExecute
     end
@@ -845,12 +845,12 @@ inherited MainForm: TMainForm
     end
     object actMoveUserDatabase: TAction
       Category = 'Database'
-      Caption = 'Move User Database...'
+      Caption = 'Move Collection Data Files...'
       Hint = 
-        'Move user database|Move the user-defined snippet database to a n' +
-        'ew directory'
+        'Move a collection|Move a collection'#39's data files to a new direct' +
+        'ory'
       OnExecute = actMoveUserDatabaseExecute
-      OnUpdate = ActNonEmptyUserDBUpdate
+      OnUpdate = ActNonEmptyDBUpdate
     end
     object actSWAGImport: TAction
       Category = 'Snippets'
@@ -870,12 +870,12 @@ inherited MainForm: TMainForm
     end
     object actDeleteUserDatabase: TAction
       Category = 'Database'
-      Caption = 'Delete User Database...'
+      Caption = 'Delete All Snippets From Collection'
       Hint = 
-        'Delete User Database|Deletes the user'#39's snippets database - USE ' +
-        'WITH CAUTION'
+        'Delete All Snippets From A Collection|Deletes all the snippets f' +
+        'rom a selected collection - USE WITH CAUTION'
       OnExecute = actDeleteUserDatabaseExecute
-      OnUpdate = ActNonEmptyUserDBUpdate
+      OnUpdate = ActNonEmptyDBUpdate
     end
   end
   object mnuMain: TMainMenu

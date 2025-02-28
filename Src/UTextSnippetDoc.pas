@@ -20,6 +20,7 @@ uses
   // Delphi
   Classes,
   // Project
+  DB.UCollections,
   ActiveText.UMain, UEncodings, UIStringList, USnippetDoc;
 
 
@@ -44,12 +45,13 @@ type
   strict protected
     ///  <summary>Initialises plain text document.</summary>
     procedure InitialiseDoc; override;
-    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
-    ///  user defined or from main database.</summary>
-    ///  <remarks>Heading is output the same whether user defined or not, so
-    ///  UserDefined parameter is ignored.</remarks>
-    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
-      override;
+
+    ///  <summary>Output given heading, i.e. snippet name for snippet from a
+    ///  given collection.</summary>
+    ///  <remarks>Heading is output the same regardless of the snippet's
+    ///  collection.</remarks>
+    procedure RenderHeading(const Heading: string;
+      const ACollectionID: TCollectionID); override;
     ///  <summary>Interprets and adds given snippet description to document.
     ///  </summary>
     ///  <remarks>Active text is converted to word-wrapped plain text
@@ -76,9 +78,8 @@ type
     ///  <remarks>Active text is converted to word-wrapped plain text
     ///  paragraphs.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); override;
-    ///  <summary>Adds given information about code snippets database to
-    ///  document.</summary>
-    procedure RenderDBInfo(const Text: string); override;
+    ///  <summary>Output given information about a collection.</summary>
+    procedure RenderCollectionInfo(const Text: string); override;
     ///  <summary>Finalises document and returns content as encoded data.
     ///  </summary>
     function FinaliseDoc: TEncodedData; override;
@@ -124,6 +125,12 @@ begin
   end;
 end;
 
+procedure TTextSnippetDoc.RenderCollectionInfo(const Text: string);
+begin
+  fWriter.WriteLine;
+  fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
+end;
+
 procedure TTextSnippetDoc.RenderCompilerInfo(const Heading: string;
   const Info: TCompileDocInfoArray);
 var
@@ -144,12 +151,6 @@ begin
     );
 end;
 
-procedure TTextSnippetDoc.RenderDBInfo(const Text: string);
-begin
-  fWriter.WriteLine;
-  fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
-end;
-
 procedure TTextSnippetDoc.RenderDescription(const Desc: IActiveText);
 begin
   fWriter.WriteLine;
@@ -165,7 +166,7 @@ begin
 end;
 
 procedure TTextSnippetDoc.RenderHeading(const Heading: string;
-  const UserDefined: Boolean);
+  const ACollectionID: TCollectionID);
 begin
   fWriter.WriteLine(Heading);
 end;

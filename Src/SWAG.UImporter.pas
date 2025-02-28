@@ -21,6 +21,8 @@ uses
   Generics.Collections,
   // Project
   ActiveText.UMain,
+  DB.UCategory,
+  DB.UCollections,
   DB.USnippet,
   SWAG.UCommon;
 
@@ -41,6 +43,11 @@ type
       ///  </param>
       TProgressCallback = reference to procedure (
         const SWAGPacket: TSWAGPacket);
+    const
+      {TODO -cVault: Let user select or create a category rather than imposing
+              this one}
+      ///  <summary>ID of category used to import snippets.</summary>
+      SWAGCatID = '_swag_';
     var
       ///  <summary>List of SWAG packets to be imported.</summary>
       fImportList: TList<TSWAGPacket>;
@@ -57,7 +64,10 @@ type
       TSnippetEditData;
     ///  <summary>Imports (i.e. adds) the given SWAG packet into the user
     ///  database as a CodeSnip format snippet.</summary>
-    procedure ImportPacketAsSnippet(const SWAGPacket: TSWAGPacket);
+    procedure ImportPacketAsSnippet(const ACollectionID: TCollectionID;
+      const SWAGPacket: TSWAGPacket);
+
+    class procedure EnsureSWAGCategoryExists;
   public
     ///  <summary>Constructs new object instance.</summary>
     constructor Create;
@@ -76,11 +86,8 @@ type
     ///  called after each SWAG packet is imported.</param>
     ///  <remarks>The packets that are imported are those that have been
     ///  recorded by calling IncludePacket.</remarks>
-    procedure Import(const Callback: TProgressCallback = nil);
-    ///  <summary>Creates and returns a valid CodeSnip snippet name, based on
-    ///  the given SWAG packet ID, that is unique in the user database.
-    ///  </summary>
-    class function MakeValidSnippetName(SWAGPacketID: Cardinal): string;
+    procedure Import(const ACollectionID: TCollectionID;
+      const Callback: TProgressCallback = nil);
     ///  <summary>Description of the category in the user database used for all
     ///  imported SWAG packets.</summary>
     class function SWAGCategoryDesc: string;
@@ -94,10 +101,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UCategory,
   DB.UMain,
   DB.USnippetKind,
-  UReservedCategories,
   USnippetValidator;
 
 
@@ -136,7 +141,7 @@ function TSWAGImporter.BuildSnippetInfo(const SWAGPacket: TSWAGPacket):
 begin
   Result.Init;
   Result.Props.Kind := skFreeform;
-  Result.Props.Cat := TReservedCategories.SWAGCatID;
+  Result.Props.Cat := SWAGCatID;
   Result.Props.Desc := BuildDescription;
   Result.Props.SourceCode := SWAGPacket.SourceCode;
   Result.Props.HiliteSource := not SWAGPacket.IsDocument;
@@ -149,12 +154,29 @@ constructor TSWAGImporter.Create;
 begin
   inherited Create;
   fImportList := TList<TSWAGPacket>.Create;
+  EnsureSWAGCategoryExists;
 end;
 
 destructor TSWAGImporter.Destroy;
 begin
   fImportList.Free;
   inherited;
+end;
+
+class procedure TSWAGImporter.EnsureSWAGCategoryExists;
+resourcestring
+  SWAGCatDesc = 'SWAG Imports';
+var
+  SWAGCatData: TCategoryData;
+  SWAGCat: TCategory;
+begin
+  SWAGCat := Database.Categories.Find(SWAGCatID);
+  if not Assigned(SWAGCat) then
+  begin
+    SWAGCatData.Init;
+    SWAGCatData.Desc := SWAGCatDesc;
+    (Database as IDatabaseEdit).AddCategory(SWAGCatID, SWAGCatData);
+  end;
 end;
 
 function TSWAGImporter.ExtraBoilerplate: IActiveText;
@@ -234,7 +256,8 @@ begin
   Result := fExtraBoilerplate;
 end;
 
-procedure TSWAGImporter.Import(const Callback: TProgressCallback);
+procedure TSWAGImporter.Import(const ACollectionID: TCollectionID;
+  const Callback: TProgressCallback);
 var
   SWAGPacket: TSWAGPacket;
 begin
@@ -242,41 +265,26 @@ begin
   begin
     if Assigned(Callback) then
       Callback(SWAGPacket);
-    ImportPacketAsSnippet(SWAGPacket);
+    ImportPacketAsSnippet(ACollectionID, SWAGPacket);
   end;
 end;
 
-procedure TSWAGImporter.ImportPacketAsSnippet(const SWAGPacket: TSWAGPacket);
+procedure TSWAGImporter.ImportPacketAsSnippet(
+  const ACollectionID: TCollectionID; const SWAGPacket: TSWAGPacket);
 var
-  SnippetName: string;                // unique name of new snippet
+  SnippetKey: string;                // unique ID of new snippet
   SnippetDetails: TSnippetEditData;   // data describing new snippet
 begin
-  SnippetName := MakeValidSnippetName(SWAGPacket.ID);
+  SnippetKey := (Database as IDatabaseEdit).GetUniqueSnippetKey(ACollectionID);
   SnippetDetails := BuildSnippetInfo(SWAGPacket);
-  (Database as IDatabaseEdit).AddSnippet(SnippetName, SnippetDetails);
+  (Database as IDatabaseEdit).AddSnippet(
+    SnippetKey, ACollectionID, SnippetDetails
+  );
 end;
 
 procedure TSWAGImporter.IncludePacket(const SWAGPacket: TSWAGPacket);
 begin
   fImportList.Add(SWAGPacket);
-end;
-
-class function TSWAGImporter.MakeValidSnippetName(SWAGPacketID: Cardinal):
-  string;
-var
-  Appendix: Integer;
-  RootName: string;
-begin
-  RootName := 'SWAG_' + IntToStr(SWAGPacketID);
-  Assert(IsValidIdent(RootName, False), ClassName
-    + '.MakeValidSnippetName: RootName is not a valid snippet identifier');
-  Result := RootName;
-  Appendix := 0;
-  while not TSnippetValidator.ValidateName(Result, True) do
-  begin
-    Inc(Appendix);
-    Result := RootName + '_' + IntToStr(Appendix);
-  end;
 end;
 
 procedure TSWAGImporter.Reset;
@@ -285,13 +293,9 @@ begin
 end;
 
 class function TSWAGImporter.SWAGCategoryDesc: string;
-var
-  Cat: TCategory; // reserved SWAG category in code snippets database
 begin
-  Cat := Database.Categories.Find(TReservedCategories.SWAGCatID);
-  Assert(Assigned(Cat),
-    ClassName + '.SWAGCategoryDesc: Can''t find SWAG category');
-  Result := Cat.Description;
+  EnsureSWAGCategoryExists;
+  Result := Database.Categories.Find(SWAGCatID).Description;
 end;
 
 end.

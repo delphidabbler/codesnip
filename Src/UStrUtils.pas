@@ -21,6 +21,7 @@ interface
 
 uses
   // Delphi
+  SysUtils,
   Classes,
   // Project
   UConsts;
@@ -116,6 +117,12 @@ function StrStartsText(const SubStr, Str: UnicodeString): Boolean;
 ///  </summary>
 function StrReplace(const Str, FindStr, ReplaceStr: UnicodeString):
   UnicodeString;
+
+///  <summary>Replaces all occurences in <c>Str</c> of characters for which
+///  predicate <c>Condition</c> returns <c>True</c> with character
+///  <c>ReplaceCh</c> and returns the modified string.</summary>
+function StrReplaceChar(const Str: string; const Condition: TPredicate<Char>;
+  const ReplaceCh: Char): string;
 
 ///  <summary>Trims leading and trailing white space characters from a string.
 ///  </summary>
@@ -289,12 +296,52 @@ function StrOfChar(const Ch: Char; const Count: Word): string;
 ///  <remarks>If Count is zero then an empty string is returned.</remarks>
 function StrOfSpaces(const Count: Word): string;
 
+///  <summary>Escapes specified characters in a string using C format escape
+///  sequences.</summary>
+///  <param name="S"><c>string</c> [in] String to be escaped.</param>
+///  <param name="EscapeChars"><c>string</c> [in] String of characters to be
+///  used in the escape sequence.</param>
+///  <param name="EscapableChars"><c>string</c> [in] String of characters to be
+///  escaped.</param>
+///  <returns><c>string</c>. String with all characters from
+///  <c>EscapableChars</c> replaced by a backslash followed by the character at
+///  the same index in <c>EscapeChars</c></returns>
+///  <remarks>
+///  <para>NOTE: The backslash symbol is always escaped regardless of whether it
+///  is included in <c>EscapeChars</c> and <c>EscapableChars</c>.</para>
+///  <para><c>EscapeChars</c> and <c>EscapableChars</c> must be the same
+///  length.</para>
+///  </remarks>
+function StrCEscapeStr(const S: string; EscapeChars, EscapableChars: string):
+  string;
+
+///  <summary>Un-escapes a string containing C format escape sequences.
+///  </summary>
+///  <param name="S"><c>string</c> [in] String to be un-escaped.</param>
+///  <param name="EscapeChars"><c>string</c> [in] String of characters used in
+///  the escape sequences.</param>
+///  <param name="EscapableChars"><c>string</c> [in] String of characters to be
+///  used to replace the escape sequences.</param>
+///  <returns><c>string</c>. String with all escape sequences comprising a
+///  backslash followed by a character from <c>EscapeChars</c> replaced by a
+///  corresponding character from <c>EscapableChars</c>.</returns>
+///  <remarks>
+///  <para>NOTE: The backslash symbol is always unescaped regardless of whether
+///  it is included in <c>EscapeChars</c> and <c>EscapableChars</c>.</para>
+///  <para><c>EscapeChars</c> and <c>EscapableChars</c> must be the same
+///  length.</para>
+///  </remarks>
+function StrCUnEscapeStr(const S: string; EscapeChars, EscapableChars: string):
+  string;
+
+
 implementation
 
 
 uses
   // Delphi
-  SysUtils, StrUtils, Character;
+  StrUtils,
+  Character;
 
 { Internal helper routines }
 
@@ -620,6 +667,19 @@ begin
   Result := StrUtils.AnsiReplaceStr(Str, FindStr, ReplaceStr);
 end;
 
+function StrReplaceChar(const Str: string; const Condition: TPredicate<Char>;
+  const ReplaceCh: Char): string;
+var
+  Idx: Integer;
+begin
+  SetLength(Result, Length(Str));
+  for Idx := 1 to Length(Str) do
+    if Condition(Str[Idx]) then
+      Result[Idx] := ReplaceCh
+    else
+      Result[Idx] := Str[Idx];
+end;
+
 function StrSameStr(const Left, Right: UnicodeString): Boolean;
 begin
   Result := SysUtils.AnsiSameStr(Left, Right);
@@ -942,6 +1002,111 @@ end;
 function StrOfSpaces(const Count: Word): string;
 begin
   Result := StrOfChar(' ', Count);
+end;
+
+function StrCEscapeStr(const S: string; EscapeChars, EscapableChars: string):
+  string;
+const
+  cEscChar = '\';       // the C escape character
+var
+  EscCount: Integer;    // count of escaped characters in string
+  Idx: Integer;         // loops thru string
+  PRes: PChar;          // points to chars in result string
+  EscCharPos: Integer;  // position of esc chars in EscapeChars & EscapableChars
+begin
+  Assert(Length(EscapeChars) = Length(EscapableChars),
+    'StrCEscapeStr: EscapeChars & EscapableChars are different lengths');
+  // Ensure '\' get escaped
+  if StrPos(cEscChar, EscapeChars) = 0 then
+    EscapeChars := cEscChar + EscapeChars;
+  if StrPos(cEscChar, EscapableChars) = 0 then
+    EscapableChars := cEscChar + EscapableChars;
+  // Check for empty string and treat specially
+  // (empty string crashes main code)
+  if S = '' then
+  begin
+    Result := '';
+    Exit;
+  end;
+  // Count escapable characters in string
+  EscCount := 0;
+  for Idx := 1 to Length(S) do
+  begin
+    if SysUtils.AnsiPos(S[Idx], EscapableChars) > 0 then
+      Inc(EscCount);
+  end;
+  // Set size of result string and get pointer to it
+  SetLength(Result, Length(S) + EscCount);
+  PRes := PChar(Result);
+  // Replace escapable chars with the escaped version
+  for Idx := 1 to Length(S) do
+  begin
+    EscCharPos := SysUtils.AnsiPos(S[Idx], EscapableChars);
+    if EscCharPos > 0 then
+    begin
+      PRes^ := cEscChar;
+      Inc(PRes);
+      PRes^ := EscapeChars[EscCharPos];
+    end
+    else
+      PRes^ := S[Idx];
+    Inc(PRes);
+  end;
+end;
+
+function StrCUnEscapeStr(const S: string; EscapeChars, EscapableChars: string):
+  string;
+const
+  cEscChar = '\';       // the C escape character
+var
+  EscCount: Integer;    // counts escaped characters in string
+  Idx: Integer;         // loops thru source string
+  PRes: PChar;          // points to chars in result string
+  EscCharPos: Integer;  // position of esc chars in EscapeChars & EscapableChars
+begin
+  Assert(Length(EscapeChars) = Length(EscapableChars),
+    'StrCUnEscapeStr: EscapeChars & EscapableChars are different lengths');
+  // Ensure '\' get unescaped
+  if StrPos(cEscChar, EscapeChars) = 0 then
+    EscapeChars := cEscChar + EscapeChars;
+  if StrPos(cEscChar, EscapableChars) = 0 then
+    EscapableChars := cEscChar + EscapableChars;
+  // Count escape sequences
+  EscCount := 0;
+  Idx := 1;
+  while Idx < Length(S) do  // don't count '\' if last character
+  begin
+    if S[Idx] = cEscChar then
+    begin
+      Inc(EscCount);
+      Inc(Idx);
+    end;
+    Inc(Idx);
+  end;
+  // Set length of result string and get pointer to it
+  SetLength(Result, Length(S) - EscCount);
+  PRes := PChar(Result);
+  // Replace escaped chars with literal ones
+  Idx := 1;
+  while Idx <= Length(S) do
+  begin
+    // check for escape char (unless last char when treat literally)
+    if (S[Idx] = cEscChar) and (Idx <> Length(S)) then
+    begin
+      // we have an escape char
+      Inc(Idx); // skip over '\'
+      // get index of escaped char (0 if not valid)
+      EscCharPos := SysUtils.AnsiPos(S[Idx], EscapeChars);
+      if EscCharPos > 0 then
+        PRes^ := EscapableChars[EscCharPos]
+      else
+        PRes^ := S[Idx];  // invalid escape char: copy literally
+    end
+    else
+      PRes^ := S[Idx];
+    Inc(Idx);
+    Inc(PRes);
+  end;
 end;
 
 end.
