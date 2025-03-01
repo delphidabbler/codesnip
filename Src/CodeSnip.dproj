@@ -590,6 +590,7 @@
 			</DCCReference>
 			<DCCReference Include="DB.DataFormats.pas"/>
 			<DCCReference Include="DB.IO.DataFormat.Native.pas"/>
+			<DCCReference Include="DB.MetaData.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

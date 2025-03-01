@@ -381,7 +381,8 @@ uses
   DBIO.MetaData.DCSC in 'DBIO.MetaData.DCSC.pas',
   FmCollectionBackup in 'FmCollectionBackup.pas' {CollectionBackupDlg},
   DB.DataFormats in 'DB.DataFormats.pas',
-  DB.IO.DataFormat.Native in 'DB.IO.DataFormat.Native.pas';
+  DB.IO.DataFormat.Native in 'DB.IO.DataFormat.Native.pas',
+  DB.MetaData in 'DB.MetaData.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
