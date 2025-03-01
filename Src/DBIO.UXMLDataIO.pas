@@ -20,7 +20,12 @@ uses
   // Delphi
   XMLIntf,
   // Project
-  DB.UCategory, DB.USnippet, DBIO.UFileIOIntf, UIStringList, UREMLDataIO,
+  DB.MetaData,
+  DB.UCategory,
+  DB.USnippet,
+  DBIO.UFileIOIntf,
+  UIStringList,
+  UREMLDataIO,
   UXMLDocumentEx;
 
 
@@ -231,6 +236,17 @@ type
         @param SnippetKey [in] Snippet's key.
         @param XRefs [in] List of snippet keys.
       }
+
+    ///  <summary>Writes the collection's meta data.</summary>
+    ///  <param name="AMetaData"><c>TMetaData</c> [in] Meta data to be written.
+    ///  </param>
+    ///  <remarks>
+    ///  <para>This data format does not support metadata, so this method does
+    ///  nothing.</para>
+    ///  <para>Method of <c>IDataWriter</c>.</para>
+    ///  </remarks>
+    procedure WriteMetaData(const AMetaData: TMetaData);
+
     procedure Finalise;
       {Finalises the database. Always called after all other methods.
       }
@@ -856,6 +872,11 @@ begin
   except
     HandleException(ExceptObject);
   end;
+end;
+
+procedure TXMLDataWriter.WriteMetaData(const AMetaData: TMetaData);
+begin
+  // Do nothing: meta data not supported.
 end;
 
 procedure TXMLDataWriter.WriteNameList(const Parent: IXMLNode; const ListName,

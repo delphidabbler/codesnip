@@ -153,6 +153,12 @@ type
   }
   TDatabaseLoaderClass = class of TDatabaseLoader;
 
+  {TODO -cRefactoring: Would a better method be to have a single TDatabaseLoader
+                     class that is passed a reader object in its constructor,
+                     rather than have sub-classes that simply create the
+                     required reader object?}
+  {TODO -cRefactoring: Rename TDatabaseLoader to TFormatLoader or similar}
+
   {
   TDatabaseLoader:
     Abstract base class for objects that can load data into the Database object
@@ -278,6 +284,13 @@ type
       }
   end;
 
+  {TODO -cRefactoring: Would a better method be to have a single TFormatSaver
+                       class that is passed a writer object in its constructor,
+                       rather than have sub-classes that simply create the
+                       required writer object?
+                       Would need to make sure all .Save methods in sub-classes
+                       are identical first. }
+
   ///  <summary>Base for classes that save a collection to storage.</summary>
   TFormatSaver = class abstract (TInterfacedObject,
     IDataFormatSaver
@@ -297,6 +310,9 @@ type
     ///  <summary>Writes information about categories relevant to the
     ///  collection.</summary>
     procedure WriteCategories;
+
+    ///  <summary>Writes the collection's meta data, if supported.</summary>
+    procedure WriteMetaData;
 
   strict protected
 
@@ -759,6 +775,7 @@ begin
   fWriter.Initialise;
   WriteCategories;
   WriteSnippets;
+  WriteMetaData;
   fWriter.Finalise;
 end;
 
@@ -779,6 +796,11 @@ begin
       fWriter.WriteCatSnippets(Cat.ID, SnipList);
     end;
   end;
+end;
+
+procedure TFormatSaver.WriteMetaData;
+begin
+  fWriter.WriteMetaData(fCollection.MetaData);
 end;
 
 procedure TFormatSaver.WriteSnippets;

@@ -26,6 +26,7 @@ uses
   IniFiles,
   // Project
   ActiveText.UMain,
+  DB.MetaData,
   DB.UCategory,
   DB.USnippet,
   DBIO.UFileIOIntf,
@@ -304,6 +305,11 @@ type
     ///  unformatted, single line, REML string.</summary>
     function ActiveTextToREML(AActiveText: IActiveText): string;
 
+    procedure WriteTextFile(const AFileName, AText: string); overload;
+
+    procedure WriteTextFile(const AFileName: string; const ALines: IStringList);
+      overload;
+
   public
 
     ///  <summary>Object constructor.</summary>
@@ -377,6 +383,12 @@ type
     procedure WriteSnippetXRefs(const SnippetKey: string;
       const XRefs: IStringList);
 
+    ///  <summary>Writes the collection's meta data.</summary>
+    ///  <param name="AMetaData"><c>TMetaData</c> [in] Meta data to be written.
+    ///  </param>
+    ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
+    procedure WriteMetaData(const AMetaData: TMetaData);
+
     ///  <summary>Finalises the output. Always called after all other methods.
     ///  </summary>
     ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
@@ -409,6 +421,12 @@ uses
 const
   // Name of master file that defines database
   cMasterFileName = 'categories.ini';
+  // Names of meta data files
+  VersionFileName = 'VERSION';
+  LicenseFileName = 'LICENSE';
+  LicenseInfoFileName = 'LICENSE-INFO';
+  ContributorsFileName = 'CONTRIBUTORS';
+  AcknowledgementsFileName = 'TESTERS';
   // Names of values in categories ini file
   cMasterIniName = 'Ini';             // name of category ini file
   cMasterDescName = 'Desc';           // category description
@@ -916,6 +934,43 @@ begin
   // Do nothing
 end;
 
+procedure TIniDataWriter.WriteMetaData(const AMetaData: TMetaData);
+begin
+  WriteTextFile(
+    VersionFileName,
+    Format(
+      '%0:d.%1:d.%2:d',
+      [AMetaData.Version.V1, AMetaData.Version.V2, AMetaData.Version.V3]
+    )
+  );
+
+  WriteTextFile(LicenseFileName, AMetaData.LicenseInfo.Text);
+
+  WriteTextFile(
+    LicenseInfoFileName,
+    Format(
+      'LicenseName=%0:s' + EOL +
+      'LicenseSPDX=%1:s' + EOL +
+      'LicenseURL=%2:s' + EOL +
+      'CopyrightDate=%3:s' + EOL +
+      'CopyrightHolder=%4:s' + EOL +
+      'CopyrightHolderURL=%5:s' + EOL,
+      [
+        AMetaData.LicenseInfo.Name,
+        AMetaData.LicenseInfo.SPDX,
+        AMetaData.LicenseInfo.URL,
+        AMetaData.CopyrightInfo.Date,
+        AMetaData.CopyrightInfo.Holder,
+        AMetaData.CopyrightInfo.HolderURL
+      ]
+    )
+  );
+
+  WriteTextFile(ContributorsFileName, AMetaData.CopyrightInfo.Contributors);
+
+  WriteTextFile(AcknowledgementsFileName, AMetaData.Acknowledgements);
+end;
+
 procedure TIniDataWriter.WriteSnippetDepends(const SnippetKey: string;
   const Depends: IStringList);
 begin
@@ -1006,7 +1061,9 @@ begin
     // test info: only write if not basic
     {TODO -cVault: Add support for AdvancedTest .Level & .URL}
     if Props.TestInfo <> stiBasic then
-      fCurrentCatIni.WriteString(SnippetKey, cTestInfoName, TestInfo[Props.TestInfo]);
+      fCurrentCatIni.WriteString(
+        SnippetKey, cTestInfoName, TestInfo[Props.TestInfo]
+      );
 
   except
 
@@ -1038,6 +1095,22 @@ begin
   fCurrentCatIni.WriteString(
     SnippetKey, cXRefName, XRefs.GetText(',', False)
   );
+end;
+
+procedure TIniDataWriter.WriteTextFile(const AFileName, AText: string);
+begin
+  TFileIO.WriteAllText(MakePath(AFileName), AText, TEncoding.UTF8, True);
+end;
+
+procedure TIniDataWriter.WriteTextFile(const AFileName: string;
+  const ALines: IStringList);
+var
+  Content: string;
+begin
+  Content := ALines.GetText(EOL, False);
+  if not StrIsEmpty(Content) then
+    Content := Content + EOL;
+  WriteTextFile(AFileName, Content);
 end;
 
 { TIniDataWriter.TUTF8IniFile }

@@ -19,6 +19,7 @@ uses
   XMLIntf,
   // Project
   Compilers.UGlobals,
+  DB.MetaData,
   DB.UCategory,
   DB.USnippet,
   DB.USnippetKind,
@@ -429,6 +430,12 @@ type
     ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
     procedure WriteSnippetXRefs(const SnippetKey: string;
       const XRefs: IStringList);
+
+    ///  <summary>Writes the collection's meta data.</summary>
+    ///  <param name="AMetaData"><c>TMetaData</c> [in] Meta data to be written.
+    ///  </param>
+    ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
+    procedure WriteMetaData(const AMetaData: TMetaData);
 
     ///  <summary>Finalises the collection write.</summary>
     ///  <remarks>
@@ -1056,6 +1063,55 @@ begin
   ListNode := XMLDoc.CreateElement(AParent, AListNodeName);
   for Item in AItems do
     XMLDoc.CreateElement(ListNode, AItemNodeName, Item);
+end;
+
+procedure TNativeDataWriter.WriteMetaData(const AMetaData: TMetaData);
+var
+  LicenseNode: IXMLNode;
+  CopyrightNode: IXMLNode;
+begin
+  // Write license info
+  LicenseNode := XMLDoc.CreateElement(fRootNode, LicenseNodeName);
+  LicenseNode.Attributes[LicenseNodeSPDXAttr] := AMetaData.LicenseInfo.SPDX;
+  LicenseNode.Attributes[LicenseNodeNameAttr] := AMetaData.LicenseInfo.Name;
+  LicenseNode.Attributes[LicenseNodeURLAttr] := AMetaData.LicenseInfo.URL;
+  if StrIsEmpty(AMetaData.LicenseInfo.Text) then
+    LicenseNode.Attributes[LicenseNodeLicenseFileAttr] := ''
+  else
+  begin
+    // license text file: license text is written to a UTF-8 encoded file with
+    // no BOM and filename is stored in XML
+    LicenseNode.Attributes[LicenseNodeLicenseFileAttr] := LicenseTextFileName;
+    TFileIO.WriteAllText(
+      FilePath(LicenseTextFileName),
+      AMetaData.LicenseInfo.Text,
+      TEncoding.UTF8,
+      False
+    );
+  end;
+
+  CopyrightNode := XMLDoc.CreateElement(fRootNode, CopyrightNodeName);
+  CopyrightNode.Attributes[CopyrightNodeDateAttr] :=
+    AMetaData.CopyrightInfo.Date;
+  CopyrightNode.Attributes[CopyrightNodeHolderAttr] :=
+    AMetaData.CopyrightInfo.Holder;
+  CopyrightNode.Attributes[CopyrightNodeURLAttr]
+    := AMetaData.CopyrightInfo.HolderURL;
+  if AMetaData.CopyrightInfo.Contributors.Count > 0 then
+    WriteEnclosedList(
+      CopyrightNode,
+      CopyrightContributorsListNodeName,
+      CopyrightContributorsListItemNodeName,
+      AMetaData.CopyrightInfo.Contributors
+    );
+
+  WriteEnclosedList(
+    fRootNode,
+    AcknowledgementsListNodeName,
+    AcknowledgementsListItemNodeName,
+    AMetaData.Acknowledgements
+  );
+
 end;
 
 procedure TNativeDataWriter.WriteReferenceList(const ASnippetKey,
