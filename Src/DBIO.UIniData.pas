@@ -92,10 +92,20 @@ type
       fIniCache: TIniFileCache;
       ///  <summary>Reads DB files using correct encoding.</summary>
       fFileReader: TMainDBFileReader;
+      ///  <summary>Data format version number.</summary>
+      fVersion: TVersionNumber;
+    const
+      SupportedMajorVersion = 2;
+  strict private
     ///  <summary>
     ///  Returns fully specified name of database master file.
     ///  </summary>
     function MasterFileName: string;
+    ///  <summary>Reads data format version from file.</summary>
+    ///  <remarks>Stores result in <c>fVersion</c>. Detects DCSC versions 1 and
+    ///  later. <c>fVersion</c> is set to null if the version can't be
+    ///  determined.</remarks>
+    procedure ReadVersionNumber;
     ///  <summary>
     ///  Returns ID of category associated with a snippet.
     ///  </summary>
@@ -442,12 +452,17 @@ const
   // Name of master file that defines database
   cMasterFileName = 'categories.ini';
 
-  // Names of meta data files
+  // Names of v2 meta data files
   VersionFileName = 'VERSION';
   LicenseFileName = 'LICENSE';
   LicenseInfoFileName = 'LICENSE-INFO';
   ContributorsFileName = 'CONTRIBUTORS';
   AcknowledgementsFileName = 'TESTERS';
+
+  // Names of v1 meta data files
+  ContributorsFileNameV1 = 'contrib.txt';
+  AcknowledgementsFileNameV1 = 'testers.txt';
+
 
   // Names of keys in license info file
   LicenseInfoLicenseNameKey = 'LicenseName';
@@ -500,6 +515,10 @@ begin
 end;
 
 constructor TIniDataReader.Create(const DBDir: string);
+resourcestring
+  // Error messages
+  sVersionNotSpecified = 'Format version number not specified';
+  sVersionNotSupported = 'Format version %s is not supported';
 begin
   inherited Create;
   fDBDir := DBDir;
@@ -509,6 +528,11 @@ begin
     fFileReader := TMainDBFileReader.Create(MasterFileName);
     fIniCache := TIniFileCache.Create(fFileReader);
     try
+      ReadVersionNumber;
+      if fVersion.IsNull then
+        raise EDataIO.Create(sVersionNotSpecified);
+      if fVersion.V1 <> SupportedMajorVersion then
+        raise EDataIO.CreateFmt(sVersionNotSupported, [string(fVersion)]);
       fMasterIni := TDatabaseIniFile.Create(fFileReader, MasterFileName);
       fCatIDs := TStringList.Create;
       fSnippetCatMap := TSnippetCatMap.Create(TTextEqualityComparer.Create);
@@ -609,12 +633,8 @@ var
   LicenseText: string;
   LicenseFileInfo: TStringDynArray;
   Contributors: IStringList;
-  VerStr: string;
-  Version: TVersionNumber;
 begin
-  VerStr := StrTrim(ReadFileText(VersionFileName));
-  if not TVersionNumber.TryStrToVersionNumber(VerStr, Version) then
-    Version := TVersionNumber.Nul;
+
   LicenseText := StrTrimRight(ReadFileText(LicenseFileName));
   LicenseFileInfo := ReadFileLines(LicenseInfoFileName);
   Contributors := TIStringList.Create(ReadFileLines(ContributorsFileName));
@@ -623,7 +643,7 @@ begin
     TMetaDataCap.Version, TMetaDataCap.License, TMetaDataCap.Copyright,
     TMetaDataCap.Acknowledgements
   ]);
-  Result.Version := Version;
+  Result.Version := fVersion; // this was read in constructor
   SL := TStringList.Create;
   try
     StrArrayToStrList(LicenseFileInfo, SL);
@@ -912,6 +932,28 @@ begin
   Result := TFileIO.ReadAllText(
     DataFile(FileName), GetFileEncoding(FileName), True
   );
+end;
+
+procedure TIniDataReader.ReadVersionNumber;
+var
+  VersionStr: string;
+begin
+  if DataFileExists(VersionFileName) then
+  begin
+    // Version file exists. Read and parse it. Set to null if invalid
+    VersionStr := StrTrim(ReadFileText(VersionFileName));
+    if not TVersionNumber.TryStrToVersionNumber(VersionStr, fVersion) then
+      fVersion := TVersionNumber.Nul;
+  end
+  else
+  begin
+    // No version file. Check if v1 present. Set to null if v1 not detected
+    if DataFileExists(ContributorsFileNameV1)
+      and DataFileExists(AcknowledgementsFileNameV1) then
+      fVersion := TVersionNumber.Create(1, 0, 0, 0)
+    else
+      fVersion := TVersionNumber.Nul;
+  end;
 end;
 
 function TIniDataReader.SnippetToCat(const SnippetKey: string): string;
