@@ -78,6 +78,11 @@ type
         @param SnippetKey [in] Snippet's key.
         @return List of unit names.
       }
+
+    ///  <summary>Gets the collection's meta data.</summary>
+    ///  <returns><c>TMetaData</c>. The required meta data. May be null if meta
+    ///  data is not supported or not present.</returns>
+    function GetMetaData: TMetaData;
   end;
 
   {

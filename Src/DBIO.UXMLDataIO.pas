@@ -155,6 +155,14 @@ type
         @param SnippetKey [in] Key of required snippet.
         @return List of unit names.
       }
+
+    ///  <summary>Gets the collection's meta data.</summary>
+    ///  <returns><c>TMetaData</c>. Null value.</returns>
+    ///  <remarks>
+    ///  <para>Meta data is not supported by the data format.</para>
+    ///  <para>Method of <c>IDataReader</c>.</para>
+    ///  </remarks>
+    function GetMetaData: TMetaData;
   end;
 
   {
@@ -510,6 +518,12 @@ begin
   except
     HandleCorruptDatabase(ExceptObject);
   end;
+end;
+
+function TXMLDataReader.GetMetaData: TMetaData;
+begin
+  // Meta data not supported by this data format
+  Result := TMetaData.CreateNull;
 end;
 
 function TXMLDataReader.GetSnippetDepends(const SnippetKey: string):

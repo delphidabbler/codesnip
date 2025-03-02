@@ -593,6 +593,8 @@ begin
       if IsNativeSnippet(Snippet) then
         LoadReferences(Snippet);
     end;
+    // Get collection's meta data
+    fCollection.MetaData := fReader.GetMetaData;
   except
     on E: Exception do
       HandleException(E);
