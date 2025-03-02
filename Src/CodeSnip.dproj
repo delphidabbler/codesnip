@@ -69,7 +69,6 @@
 			<DCCReference Include="DB.UCategory.pas"/>
 			<DCCReference Include="DB.UDatabaseIO.pas"/>
 			<DCCReference Include="DB.UMain.pas"/>
-			<DCCReference Include="DB.UMetaData.pas"/>
 			<DCCReference Include="DB.USnippet.pas"/>
 			<DCCReference Include="DB.USnippetKind.pas"/>
 			<DCCReference Include="DBIO.UFileIOIntf.pas"/>
@@ -584,7 +583,6 @@
 			<DCCReference Include="UTabSeparatedFileIO.pas"/>
 			<DCCReference Include="DBIO.UCategoryIO.pas"/>
 			<DCCReference Include="UCollectionListAdapter.pas"/>
-			<DCCReference Include="DBIO.MetaData.DCSC.pas"/>
 			<DCCReference Include="FmCollectionBackup.pas">
 				<Form>CollectionBackupDlg</Form>
 			</DCCReference>
