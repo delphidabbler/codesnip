@@ -99,12 +99,12 @@ uses
   // Delphi
   IOUtils,
   // Project
-  DB.UMetaData,
-  DBIO.MetaData.DCSC,
   UAppInfo,
   UFileUpdater,
+  UIOUtils,
   UStrUtils,
-  UUtils;
+  UUtils,
+  UVersionInfo;
 
 
 { TDBUpdateMgr }
@@ -159,9 +159,14 @@ resourcestring
   sUnsupportedDatabaseError = 'Database in "%0:s" is version %1:s. This '
     + 'version is not currently supported by CodeSnip.';
   sCurruptDatabaseError = 'The update database in "%s" is corrupt';
+const
+  VersionFileName = 'VERSION';
 var
   Dir: string;
-  MetaData: IDBMetaData;
+  VersionFilePath: string;
+  VersionStr: string;
+  Version: TVersionNumber;
+
 begin
   Assert(UpdateDir <> '',
     ClassName + '.ValidateUpdate: UpdateDir cannot be empty string');
@@ -192,23 +197,26 @@ begin
   if TDirectory.IsEmpty(Dir) then
     raise EDBUpdateValidationError.CreateFmt(sEmptyDirError, [Dir]);
 
-  // Check contents
-  MetaData := TUpdateDBMetaData.Create(Dir);
+  // Version file must exist
+  VersionFilePath := TPath.Combine(Dir, VersionFileName);
+  if not TFile.Exists(TPath.Combine(Dir, VersionFilePath)) then
+    raise EDBUpdateValidationError.Create(sInvalidDatabaseError);
 
-  // check if data files are recognised as valid database
-  if not MetaData.IsRecognised then
-    raise EDBUpdateValidationError.CreateFmt(sUnrecognisedDatabaseError, [Dir]);
-
-  // seems to be valid database: check if it's a supported version
-  if not MetaData.IsSupportedVersion then
+  // Version file must contain a valid version string
+  VersionStr := TFileIO.ReadAllText(VersionFilePath, TEncoding.UTF8, True);
+  if not TVersionNumber.TryStrToVersionNumber(VersionStr, Version) then
     raise EDBUpdateValidationError.CreateFmt(
-      sUnsupportedDatabaseError, [Dir, string(MetaData.GetVersion)]
+      sUnrecognisedDatabaseError, [Dir]
     );
 
-  // database version supported: check if required meta data files and master db
-  // file are present
-  if MetaData.IsCorrupt
-    or not TFile.Exists(Dir + PathDelim + 'categories.ini', False) then
+  // Version must be supported
+  if Version.V1 <> 2 then
+    raise EDBUpdateValidationError.CreateFmt(
+      sUnsupportedDatabaseError, [Dir, string(Version)]
+    );
+
+  // Master db file must exist
+  if not TFile.Exists(Dir + PathDelim + 'categories.ini', False) then
     raise EDBUpdateValidationError.CreateFmt(sCurruptDatabaseError, [Dir]);
 end;
 
