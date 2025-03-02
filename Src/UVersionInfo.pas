@@ -49,6 +49,10 @@ type
     V2: Word;   // Minor version number
     V3: Word;   // Revision version number
     V4: Word;   // Build number
+
+    ///  <summary>Creates an instance of the record with the given version
+    ///  numbers.</summary>
+    constructor Create(const AV1, AV2, AV3, AV4: Word);
     ///  <summary>Checks if this version number is Null.</summary>
     ///  <returns>Boolean. True if null, False otherwise.</returns>
     function IsNull: Boolean;
@@ -276,6 +280,14 @@ begin
 end;
 
 { TVersionNumber }
+
+constructor TVersionNumber.Create(const AV1, AV2, AV3, AV4: Word);
+begin
+  V1 := AV1;
+  V2 := AV2;
+  V3 := AV3;
+  V4 := AV4;
+end;
 
 class operator TVersionNumber.Equal(Ver1, Ver2: TVersionNumber): Boolean;
   {Operator overload that compares two version numbers to check for equality.
