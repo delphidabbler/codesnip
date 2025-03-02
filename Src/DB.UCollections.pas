@@ -21,6 +21,7 @@ uses
   Generics.Defaults,
 
   DB.DataFormats,
+  DB.MetaData,
   UEncodings,
   UExceptions,
   USettings,
@@ -69,6 +70,8 @@ type
       fUID: TCollectionID;
       fName: string;
       fStorage: TDataStorageDetails;
+      fMetaData: TMetaData;
+      procedure SetMetaData(const AValue: TMetaData);
   public
     type
       TComparer = class(TInterfacedObject,
@@ -97,6 +100,11 @@ type
     ///  <summary>Collection storage information.</summary>
     property Storage: TDataStorageDetails
       read fStorage;
+    ///  <summary>Meta data associated with the collection.</summary>
+    ///  <remarks>Meta data is read from and written to the associated storage.
+    ///  </remarks>
+    property MetaData: TMetaData
+      read fMetaData write SetMetaData;
     ///  <summary>Checks if this record's fields are valid.</summary>
     function IsValid: Boolean;
     ///  <summary>Checks if this record is the default collection.</summary>
@@ -195,6 +203,11 @@ begin
   Result := not fUID.IsNull
     and (fName <> '')
     and (fStorage.Format <> TDataFormatKind.Error);
+end;
+
+procedure TCollection.SetMetaData(const AValue: TMetaData);
+begin
+  fMetaData := AValue.Clone;
 end;
 
 { TCollections }
