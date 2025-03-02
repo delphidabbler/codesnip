@@ -1052,39 +1052,34 @@ begin
 end;
 
 procedure TIniDataWriter.WriteMetaData(const AMetaData: TMetaData);
+var
+  VersionStr: string;
+  KVPairs: TStringList;
+  LicenseInfo: IStringList;
 begin
-  WriteTextFile(
-    VersionFileName,
-    Format(
-      '%0:d.%1:d.%2:d',
-      [AMetaData.Version.V1, AMetaData.Version.V2, AMetaData.Version.V3]
-    )
+  VersionStr := Format(
+    '%0:d.%1:d.%2:d',
+    [AMetaData.Version.V1, AMetaData.Version.V2, AMetaData.Version.V3]
   );
+  KVPairs := TStringList.Create;
+  try
+    KVPairs.Values[LicenseInfoLicenseNameKey] := AMetaData.LicenseInfo.Name;
+    KVPairs.Values[LicenseInfoLicenseSPDXKey] := AMetaData.LicenseInfo.SPDX;
+    KVPairs.Values[LicenseInfoLicenseURLKey] := AMetaData.LicenseInfo.URL;
+    KVPairs.Values[LicenseInfoCopyrightDateKey] := AMetaData.CopyrightInfo.Date;
+    KVPairs.Values[LicenseInfoCopyrightHolderKey] :=
+      AMetaData.CopyrightInfo.Holder;
+    KVPairs.Values[LicenseInfoCopyrightHolderURLKey] :=
+      AMetaData.CopyrightInfo.HolderURL;
+    LicenseInfo := TIStringList.Create(KVPairs);
+  finally
+    KVPairs.Free;
+  end;
 
+  WriteTextFile(VersionFileName, VersionStr);
   WriteTextFile(LicenseFileName, AMetaData.LicenseInfo.Text);
-
-  WriteTextFile(
-    LicenseInfoFileName,
-    Format(
-      'LicenseName=%0:s' + EOL +
-      'LicenseSPDX=%1:s' + EOL +
-      'LicenseURL=%2:s' + EOL +
-      'CopyrightDate=%3:s' + EOL +
-      'CopyrightHolder=%4:s' + EOL +
-      'CopyrightHolderURL=%5:s' + EOL,
-      [
-        AMetaData.LicenseInfo.Name,
-        AMetaData.LicenseInfo.SPDX,
-        AMetaData.LicenseInfo.URL,
-        AMetaData.CopyrightInfo.Date,
-        AMetaData.CopyrightInfo.Holder,
-        AMetaData.CopyrightInfo.HolderURL
-      ]
-    )
-  );
-
+  WriteTextFile(LicenseInfoFileName, LicenseInfo);
   WriteTextFile(ContributorsFileName, AMetaData.CopyrightInfo.Contributors);
-
   WriteTextFile(AcknowledgementsFileName, AMetaData.Acknowledgements);
 end;
 
