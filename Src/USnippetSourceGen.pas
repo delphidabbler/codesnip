@@ -20,8 +20,8 @@ uses
   // Delphi
   Generics.Collections,
   // Project
+  DB.MetaData,
   DB.UCollections,
-  DB.UMetaData,
   UBaseObjects,
   UIStringList,
   USourceGen,
@@ -97,10 +97,10 @@ uses
   DB.DataFormats,
   DB.USnippet,
   DB.USnippetKind,
-  DBIO.MetaData.DCSC,
   UConsts,
   UAppInfo,
   UQuery,
+  UStrUtils,
   UUtils;
 
 
@@ -111,7 +111,7 @@ function TSnippetSourceGen.BuildHeaderComments: IStringList;
     @return String list containing comments.
   }
 var
-  DBMetaData: IDBMetaData;
+  MetaData: TMetaData;
   Collection: TCollection;
   Credits: string;
 resourcestring
@@ -124,13 +124,15 @@ resourcestring
 
   function CreditsLine(const ACollection: TCollection): string;
   begin
-    DBMetaData := TMetaDataFactory.CreateInstance(ACollection.Storage);
+    MetaData := ACollection.MetaData;
     Result := '';
-    if mdcLicense in DBMetaData.GetCapabilities then
+    if TMetaDataCap.License in MetaData.Capabilities then
+      Result := Result + StrMakeSentence(MetaData.LicenseInfo.NameWithURL);
+    if TMetaDataCap.Copyright in MetaData.Capabilities then
     begin
-      Result := Result + DBMetaData.GetLicenseInfo.NameWithURL + '.';
-      if (mdcCopyright in DBMetaData.GetCapabilities) then
-        Result := Result + ' ' + DBMetaData.GetCopyrightInfo.ToString + '.';
+      if not StrIsEmpty(Result) then
+        Result := Result + ' ';
+      Result := Result + StrMakeSentence(MetaData.CopyrightInfo.ToString);
     end;
   end;
 
