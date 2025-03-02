@@ -64,6 +64,11 @@ type
     ///  <summary>Returns a deep copy of this record.</summary>
     function Clone: TLicenseInfo;
 
+    ///  <summary>Checks if the record is null.</summary>
+    ///  <remarks>A null record is one where <c>Name</c>, <c>SPDX</c>,
+    ///  <c>URL</c> and <c>Text</c> properties are all empty strings.</remarks>
+    function IsNull: Boolean;
+
     ///  <summary>Name of license.</summary>
     property Name: string read fName;
 
@@ -112,6 +117,12 @@ type
 
     ///  <summary>Returns a deep copy of this record.</summary>
     function Clone: TCopyrightInfo;
+
+    ///  <summary>Checks if the record is null.</summary>
+    ///  <remarks>A null record is one where <c>Date</c>, <c>Holder</c> and
+    ///  <c>HolderURL</c> properties are empty strings and <c>Contributors</c>
+    ///  list is empty.</remarks>
+    function IsNull: Boolean;
 
     ///  <summary>Copyright date.</summary>
     ///  <remarks>May be a single year or a range: e.g. 2020 or 2012-2016.
@@ -227,6 +238,12 @@ begin
   Result := TLicenseInfo.Create('', '', '', '');
 end;
 
+function TLicenseInfo.IsNull: Boolean;
+begin
+  Result := StrIsEmpty(fName) and StrIsEmpty(fSPDX) and StrIsEmpty(fURL)
+    and StrIsEmpty(fText);
+end;
+
 function TLicenseInfo.NameWithURL: string;
 begin
   Result := fName;
@@ -261,6 +278,12 @@ end;
 function TCopyrightInfo.GetContributors: IStringList;
 begin
   Result := TIStringList.Create(fContributors);
+end;
+
+function TCopyrightInfo.IsNull: Boolean;
+begin
+  Result := StrIsEmpty(fDate) and StrIsEmpty(fHolder) and StrIsEmpty(fHolderURL)
+    and (fContributors.Count = 0);
 end;
 
 function TCopyrightInfo.ToString: string;
