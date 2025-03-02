@@ -64,7 +64,7 @@ type
 
   ECollectionID = class(ECodeSnip);
 
-  TCollection = record
+  TCollection = class
   strict private
     var
       fUID: TCollectionID;
@@ -116,6 +116,7 @@ type
     var
       fItems: TList<TCollection>;
     function GetItem(const Idx: Integer): TCollection;
+    procedure DoUpdate(const Idx: Integer; const ACollection: TCollection);
     class function GetInstance: TCollections; static;
   strict protected
     procedure Initialize; override;
@@ -226,11 +227,15 @@ begin
   if Idx < 0 then
     fItems.Add(ACollection)
   else
-    fItems[Idx] := ACollection;
+    DoUpdate(Idx, ACollection);
 end;
 
 procedure TCollections.Clear;
+var
+  Idx: Integer;
 begin
+  for Idx := Pred(fItems.Count) downto 0 do
+    DoUpdate(Idx, nil); // frees and nils item with given index
   fItems.Clear;
 end;
 
@@ -270,12 +275,26 @@ begin
     raise EArgumentException.Create(sCantDelete);
   Idx := IndexOfID(AUID);
   if Idx >= 0 then
+  begin
+    DoUpdate(Idx, nil); // frees and nils item with given index
     fItems.Delete(Idx);
+  end;
+end;
+
+procedure TCollections.DoUpdate(const Idx: Integer;
+  const ACollection: TCollection);
+var
+  OldEntry: TCollection;
+begin
+  OldEntry := fItems[Idx];
+  fItems[Idx] := ACollection;
+  OldEntry.Free;
 end;
 
 procedure TCollections.Finalize;
 begin
   Save;
+  Clear;
   fItems.Free;
 end;
 
@@ -357,7 +376,7 @@ var
 begin
   Idx := IndexOfID(ACollection.UID);
   if Idx >= 0 then
-    fItems[Idx] := ACollection;
+    DoUpdate(Idx, ACollection);
 end;
 
 { TCollectionID }
