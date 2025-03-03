@@ -62,7 +62,7 @@ type
     class operator NotEqual(Left, Right: TVaultID): Boolean;
   end;
 
-  ECollectionID = class(ECodeSnip);
+  EVaultID = class(ECodeSnip);
 
   TCollection = class
   strict private
@@ -426,7 +426,7 @@ var
   ConvertedBytes: TBytes;
 begin
   if not TryHexStringToBytes(AHexStr, ConvertedBytes) then
-    raise ECollectionID.Create(SBadHexString);
+    raise EVaultID.Create(SBadHexString);
   Result := TVaultID.Create(ConvertedBytes);
 end;
 

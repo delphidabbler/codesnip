@@ -110,7 +110,7 @@ begin
     except
       on E: ETabSeparatedReader do
         raise ESnippetIDListFileReader.Create(E);
-      on E: ECollectionID do
+      on E: EVaultID do
         raise ESnippetIDListFileReader.Create(E);
       else
         raise;
