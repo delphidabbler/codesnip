@@ -157,7 +157,7 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.DisplaySnippet(
-        Key, TCollectionID.CreateFromHexString(CollectionIDAsHex), NewTab
+        Key, TVaultID.CreateFromHexString(CollectionIDAsHex), NewTab
       );
   except
     HandleException;
@@ -172,7 +172,7 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.EditSnippet(
-        Key, TCollectionID.CreateFromHexString(CollectionIDAsHex)
+        Key, TVaultID.CreateFromHexString(CollectionIDAsHex)
       );
   except
     HandleException;

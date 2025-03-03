@@ -33,6 +33,10 @@ inherited AboutDlg: TAboutDlg
       OnMouseDown = pcDetailMouseDown
       object tsProgram: TTabSheet
         Caption = 'About The Program'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmProgram: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -66,6 +70,10 @@ inherited AboutDlg: TAboutDlg
       object tsCollections: TTabSheet
         Caption = 'About Collections'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         DesignSize = (
           401
           190)
@@ -104,6 +112,10 @@ inherited AboutDlg: TAboutDlg
       object tsPaths: TTabSheet
         Caption = 'Paths && Files'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         DesignSize = (
           401
           190)

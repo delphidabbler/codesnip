@@ -106,7 +106,7 @@ begin
   inherited;
   frmWarning.Initialise('dlg-dbdelete.html');
   fCollList.ToStrings(cbCollection.Items);
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
 end;
 
 class function TDeleteUserDBDlg.Execute(AOwner: TComponent;

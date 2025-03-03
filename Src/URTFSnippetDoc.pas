@@ -77,11 +77,11 @@ type
     ///  <summary>Initialises rich text document.</summary>
     procedure InitialiseDoc; override;
     ///  <summary>Output given heading, i.e. snippet name for snippet from a
-    ///  given collection..</summary>
-    ///  <remarks>Heading is coloured according the the snippet's collection.
+    ///  given vault.</summary>
+    ///  <remarks>Heading is coloured according the the snippet's vault.
     ///  </remarks>
     procedure RenderHeading(const Heading: string;
-      const ACollectionID: TCollectionID); override;
+      const ACollectionID: TVaultID); override;
     ///  <summary>Adds given snippet description to document.</summary>
     ///  <remarks>Active text formatting is observed and styled to suit
     ///  document.</remarks>
@@ -421,7 +421,7 @@ begin
 end;
 
 procedure TRTFSnippetDoc.RenderHeading(const Heading: string;
-  const ACollectionID: TCollectionID);
+  const ACollectionID: TVaultID);
 begin
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.SetFontSize(HeadingFontSize);

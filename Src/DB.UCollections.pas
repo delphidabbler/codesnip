@@ -29,37 +29,37 @@ uses
 
 type
 
-  TCollectionID = record
+  TVaultID = record
   strict private
     var
       fID: TBytes;
   public
     type
       TComparer = class(TInterfacedObject,
-        IComparer<TCollectionID>, IEqualityComparer<TCollectionID>
+        IComparer<TVaultID>, IEqualityComparer<TVaultID>
       )
       public
-        function Compare(const Left, Right: TCollectionID): Integer;
-        function Equals(const Left, Right: TCollectionID): Boolean;
+        function Compare(const Left, Right: TVaultID): Integer;
+        function Equals(const Left, Right: TVaultID): Boolean;
           reintroduce;
-        function GetHashCode(const Value: TCollectionID): Integer;
+        function GetHashCode(const Value: TVaultID): Integer;
           reintroduce;
       end;
     constructor Create(const ABytes: TBytes); overload;
     constructor Create(const AStr: string); overload;
     constructor Create(const AGUID: TGUID); overload;
-    class function CreateFromHexString(const AHexStr: string): TCollectionID;
+    class function CreateFromHexString(const AHexStr: string): TVaultID;
       static;
-    class function CreateNull: TCollectionID; static;
-    class function Default: TCollectionID; static;
-    function Clone: TCollectionID;
+    class function CreateNull: TVaultID; static;
+    class function Default: TVaultID; static;
+    function Clone: TVaultID;
     function ToArray: TBytes;
     function ToHexString: string;
     function IsNull: Boolean;
     function Hash: Integer;
-    class function Compare(Left, Right: TCollectionID): Integer; static;
-    class operator Equal(Left, Right: TCollectionID): Boolean;
-    class operator NotEqual(Left, Right: TCollectionID): Boolean;
+    class function Compare(Left, Right: TVaultID): Integer; static;
+    class operator Equal(Left, Right: TVaultID): Boolean;
+    class operator NotEqual(Left, Right: TVaultID): Boolean;
   end;
 
   ECollectionID = class(ECodeSnip);
@@ -67,7 +67,7 @@ type
   TCollection = class
   strict private
     var
-      fUID: TCollectionID;
+      fUID: TVaultID;
       fName: string;
       fStorage: TDataStorageDetails;
       fMetaData: TMetaData;
@@ -85,14 +85,14 @@ type
           reintroduce;
       end;
     ///  <summary>Creates a collection record.</summary>
-    ///  <param name="AUID"><c>TCollectionID</c> [in] Unique ID of the
+    ///  <param name="AUID"><c>TVaultID</c> [in] Unique ID of the
     ///  collection. Must not be null.</param>
     ///  <param name="AName"><c>string</c> [in] Name of collection. Should be
     ///  unique. Must not be empty or only whitespace.</param>
-    constructor Create(const AUID: TCollectionID; const AName: string;
+    constructor Create(const AUID: TVaultID; const AName: string;
       const AStorage: TDataStorageDetails);
     ///  <summary>Collection identifier. Must be unique.</summary>
-    property UID: TCollectionID
+    property UID: TVaultID
       read fUID;
     ///  <summary>Collection name. Must be unique.</summary>
     property Name: string read
@@ -124,19 +124,19 @@ type
   public
     class property Instance: TCollections read GetInstance;
     function GetEnumerator: TEnumerator<TCollection>;
-    function IndexOfID(const AUID: TCollectionID): Integer;
-    function ContainsID(const AUID: TCollectionID): Boolean;
+    function IndexOfID(const AUID: TVaultID): Integer;
+    function ContainsID(const AUID: TVaultID): Boolean;
     function ContainsName(const AName: string): Boolean;
-    function GetCollection(const AUID: TCollectionID): TCollection;
+    function GetCollection(const AUID: TVaultID): TCollection;
     function Default: TCollection;
     procedure Add(const ACollection: TCollection);
     procedure Update(const ACollection: TCollection);
     procedure AddOrUpdate(const ACollection: TCollection);
-    procedure Delete(const AUID: TCollectionID);
+    procedure Delete(const AUID: TVaultID);
     procedure Clear;
     procedure Save;
     function ToArray: TArray<TCollection>;
-    function GetAllIDs: TArray<TCollectionID>;
+    function GetAllIDs: TArray<TVaultID>;
     function Count: Integer;
     property Items[const Idx: Integer]: TCollection read GetItem; default;
   end;
@@ -175,7 +175,7 @@ resourcestring
 
 { TCollection }
 
-constructor TCollection.Create(const AUID: TCollectionID; const AName: string;
+constructor TCollection.Create(const AUID: TVaultID; const AName: string;
   const AStorage: TDataStorageDetails);
 var
   TrimmedName: string;
@@ -194,7 +194,7 @@ end;
 
 function TCollection.IsDefault: Boolean;
 begin
-  Result := UID = TCollectionID.Default;
+  Result := UID = TVaultID.Default;
 end;
 
 function TCollection.IsValid: Boolean;
@@ -239,7 +239,7 @@ begin
   fItems.Clear;
 end;
 
-function TCollections.ContainsID(const AUID: TCollectionID):
+function TCollections.ContainsID(const AUID: TVaultID):
   Boolean;
 begin
   Result := IndexOfID(AUID) >= 0;
@@ -262,16 +262,16 @@ end;
 
 function TCollections.Default: TCollection;
 begin
-  Result := GetCollection(TCollectionID.Default);
+  Result := GetCollection(TVaultID.Default);
 end;
 
-procedure TCollections.Delete(const AUID: TCollectionID);
+procedure TCollections.Delete(const AUID: TVaultID);
 resourcestring
   sCantDelete = 'Cannot delete the default collection';
 var
   Idx: Integer;
 begin
-  if TCollectionID.Default = AUID then
+  if TVaultID.Default = AUID then
     raise EArgumentException.Create(sCantDelete);
   Idx := IndexOfID(AUID);
   if Idx >= 0 then
@@ -298,7 +298,7 @@ begin
   fItems.Free;
 end;
 
-function TCollections.GetAllIDs: TArray<TCollectionID>;
+function TCollections.GetAllIDs: TArray<TVaultID>;
 var
   Idx: Integer;
 begin
@@ -307,7 +307,7 @@ begin
     Result[Idx] := fItems[Idx].UID;
 end;
 
-function TCollections.GetCollection(const AUID: TCollectionID): TCollection;
+function TCollections.GetCollection(const AUID: TVaultID): TCollection;
 var
   Idx: Integer;
 begin
@@ -332,7 +332,7 @@ begin
   Result := fItems[Idx];
 end;
 
-function TCollections.IndexOfID(const AUID: TCollectionID): Integer;
+function TCollections.IndexOfID(const AUID: TVaultID): Integer;
 var
   Idx: Integer;
 begin
@@ -347,10 +347,10 @@ begin
   fItems := TList<TCollection>.Create;
   TCollectionsPersist.Load(Self);
   // Ensure there is always at least the default collection present
-  if not ContainsID(TCollectionID.Default) then
+  if not ContainsID(TVaultID.Default) then
     Add(
       TCollection.Create(
-        TCollectionID.Default,
+        TVaultID.Default,
         'Default',
         TDataStorageDetails.Create(
           TDataFormatInfo.DefaultFormat,
@@ -379,24 +379,24 @@ begin
     DoUpdate(Idx, ACollection);
 end;
 
-{ TCollectionID }
+{ TVaultID }
 
-constructor TCollectionID.Create(const ABytes: TBytes);
+constructor TVaultID.Create(const ABytes: TBytes);
 begin
   fID := System.Copy(ABytes);
 end;
 
-constructor TCollectionID.Create(const AStr: string);
+constructor TVaultID.Create(const AStr: string);
 begin
   fID := TEncoding.UTF8.GetBytes(AStr);
 end;
 
-function TCollectionID.Clone: TCollectionID;
+function TVaultID.Clone: TVaultID;
 begin
-  Result := TCollectionID.Create(fID);
+  Result := TVaultID.Create(fID);
 end;
 
-class function TCollectionID.Compare(Left, Right: TCollectionID): Integer;
+class function TVaultID.Compare(Left, Right: TVaultID): Integer;
 var
   CompareLength: Integer;
   Idx: Integer;
@@ -415,83 +415,83 @@ begin
     Exit(1);
 end;
 
-constructor TCollectionID.Create(const AGUID: TGUID);
+constructor TVaultID.Create(const AGUID: TGUID);
 begin
   fID := System.Copy(GUIDToBytes(AGUID));
 end;
 
-class function TCollectionID.CreateFromHexString(
-  const AHexStr: string): TCollectionID;
+class function TVaultID.CreateFromHexString(
+  const AHexStr: string): TVaultID;
 var
   ConvertedBytes: TBytes;
 begin
   if not TryHexStringToBytes(AHexStr, ConvertedBytes) then
     raise ECollectionID.Create(SBadHexString);
-  Result := TCollectionID.Create(ConvertedBytes);
+  Result := TVaultID.Create(ConvertedBytes);
 end;
 
-class function TCollectionID.CreateNull: TCollectionID;
+class function TVaultID.CreateNull: TVaultID;
 var
   NullID: TBytes;
 begin
   SetLength(NullID, 0);
-  Result := TCollectionID.Create(NullID);
+  Result := TVaultID.Create(NullID);
 end;
 
-class function TCollectionID.Default: TCollectionID;
+class function TVaultID.Default: TVaultID;
 begin
   // Default collection is an empty GUID = 16 zero bytes
-  Result := TCollectionID.Create(TGUID.Empty);
+  Result := TVaultID.Create(TGUID.Empty);
 end;
 
-class operator TCollectionID.Equal(Left, Right: TCollectionID):
+class operator TVaultID.Equal(Left, Right: TVaultID):
   Boolean;
 begin
   Result := IsEqualBytes(Left.fID, Right.fID);
 end;
 
-function TCollectionID.Hash: Integer;
+function TVaultID.Hash: Integer;
 begin
   Result := BobJenkinsHash(fID[0], Length(fID), 0);
 end;
 
-function TCollectionID.IsNull: Boolean;
+function TVaultID.IsNull: Boolean;
 begin
   Result := Length(fID) = 0;
 end;
 
-class operator TCollectionID.NotEqual(Left, Right: TCollectionID):
+class operator TVaultID.NotEqual(Left, Right: TVaultID):
   Boolean;
 begin
   Result := not IsEqualBytes(Left.fID, Right.fID);
 end;
 
-function TCollectionID.ToArray: TBytes;
+function TVaultID.ToArray: TBytes;
 begin
   Result := System.Copy(fID);
 end;
 
-function TCollectionID.ToHexString: string;
+function TVaultID.ToHexString: string;
 begin
   Result := BytesToHexString(fID);
 end;
 
-{ TCollectionID.TComparer }
+{ TVaultID.TComparer }
 
-function TCollectionID.TComparer.Compare(const Left,
-  Right: TCollectionID): Integer;
+function TVaultID.TComparer.Compare(const Left,
+  Right: TVaultID): Integer;
 begin
-  Result := TCollectionID.Compare(Left, Right);
+  Result := TVaultID.Compare(Left, Right);
 end;
 
-function TCollectionID.TComparer.Equals(const Left,
-  Right: TCollectionID): Boolean;
+function TVaultID.TComparer.Equals(const Left,
+  Right: TVaultID): Boolean;
 begin
   Result := Left = Right;
 end;
 
-function TCollectionID.TComparer.GetHashCode(
-  const Value: TCollectionID): Integer;
+function TVaultID.TComparer.GetHashCode(
+  const Value: TVaultID): Integer;
 begin
   Result := Value.Hash;
 end;
@@ -515,13 +515,13 @@ class procedure TCollectionsPersist.LoadCollection(const AOrdinal: Cardinal;
   const ACollections: TCollections);
 var
   ConfigSection: ISettingsSection;
-  UID: TCollectionID;
+  UID: TVaultID;
   Name: string;
   Collection: TCollection;
   StorageDetails: TDataStorageDetails;
 begin
   ConfigSection := Settings.ReadSection(ssCollection, IntToStr(AOrdinal));
-  UID := TCollectionID.Create(ConfigSection.GetBytes(UIDKey));
+  UID := TVaultID.Create(ConfigSection.GetBytes(UIDKey));
   if ACollections.ContainsID(UID) then
     // Don't load a duplicate collection
     Exit;
@@ -570,7 +570,7 @@ end;
 
 function TCollection.TComparer.Compare(const Left, Right: TCollection): Integer;
 begin
-  Result := TCollectionID.Compare(Left.UID, Right.UID);
+  Result := TVaultID.Compare(Left.UID, Right.UID);
 end;
 
 function TCollection.TComparer.Equals(const Left, Right: TCollection): Boolean;

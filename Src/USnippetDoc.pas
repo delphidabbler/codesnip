@@ -54,10 +54,10 @@ type
     ///  information for given snippet.</summary>
     function CompilerInfo(const Snippet: TSnippet): TCompileDocInfoArray;
     ///  <summary>Generates and returns a string containing information about
-    ///  the given collection.</summary>
+    ///  the given vault.</summary>
     ///  <remarks>Information includes license and copyright information if
-    ///  the collection's data format supports it.</remarks>
-    function CollectionInfo(const ACollectionID: TCollectionID): string;
+    ///  the vault's data format supports it.</remarks>
+    function CollectionInfo(const ACollectionID: TVaultID): string;
   strict protected
     ///  <summary>Initialise document.</summary>
     ///  <remarks>Does nothing. Descendant classes should perform any required
@@ -65,11 +65,11 @@ type
     procedure InitialiseDoc; virtual;
 
     ///  <summary>Output given heading, i.e. snippet name for snippet from a
-    ///  given collection..</summary>
+    ///  given vault.</summary>
     ///  <remarks>Heading may be rendered differently depending on the snippet's
-    ///  collection.</remarks>
+    ///  vault.</remarks>
     procedure RenderHeading(const Heading: string;
-      const ACollectionID: TCollectionID); virtual; abstract;
+      const ACollectionID: TVaultID); virtual; abstract;
     ///  <summary>Output given snippet description.</summary>
     procedure RenderDescription(const Desc: IActiveText); virtual; abstract;
     ///  <summary>Output given source code.</summary>
@@ -129,7 +129,7 @@ uses
 
 { TSnippetDoc }
 
-function TSnippetDoc.CollectionInfo(const ACollectionID: TCollectionID): string;
+function TSnippetDoc.CollectionInfo(const ACollectionID: TVaultID): string;
 resourcestring
   sCollectionInfo = 'A snippet from the "%s" collection.';
 var

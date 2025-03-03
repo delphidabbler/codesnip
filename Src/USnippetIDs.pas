@@ -34,9 +34,9 @@ type
     var
       ///  <summary>Value of Key property.</summary>
       fKey: string;
-      fCollectionID: TCollectionID;
+      fCollectionID: TVaultID;
     procedure SetKey(const AValue: string);
-    procedure SetCollectionID(const AValue: TCollectionID);
+    procedure SetCollectionID(const AValue: TVaultID);
   public
     type
       TComparer = class(TInterfacedObject,
@@ -53,15 +53,15 @@ type
     ///  <summary>Snippet's key.</summary>
     property Key: string read fKey write SetKey;
 
-    ///  <summary>ID of the collection to which a snippet with this ID belongs.
+    ///  <summary>ID of the vault to which a snippet with this ID belongs.
     ///  </summary>
     ///  <remarks>ID must not be null.</remarks>
-    property CollectionID: TCollectionID
+    property CollectionID: TVaultID
       read fCollectionID write SetCollectionID;
 
     ///  <summary>Creates a record with given property values.</summary>
     ///  <remarks><c>ACollectionID</c> must not be null.</remarks>
-    constructor Create(const AKey: string; const ACollectionID: TCollectionID);
+    constructor Create(const AKey: string; const ACollectionID: TVaultID);
 
     ///  <summary>Creates copy of given snippet ID</summary>
     constructor Clone(const Src: TSnippetID);
@@ -191,11 +191,11 @@ function TSnippetID.CompareTo(const SID: TSnippetID): Integer;
 begin
   Result := CompareKeys(Key, SID.Key);
   if Result = 0 then
-    Result := TCollectionID.Compare(CollectionID, SID.CollectionID);
+    Result := TVaultID.Compare(CollectionID, SID.CollectionID);
 end;
 
 constructor TSnippetID.Create(const AKey: string;
-  const ACollectionID: TCollectionID);
+  const ACollectionID: TVaultID);
 begin
   SetKey(AKey);
   SetCollectionID(ACollectionID);
@@ -223,7 +223,7 @@ begin
   Result := not (SID1 = SID2);
 end;
 
-procedure TSnippetID.SetCollectionID(const AValue: TCollectionID);
+procedure TSnippetID.SetCollectionID(const AValue: TVaultID);
 begin
   Assert(not AValue.IsNull, 'TSnippetID.SetCollectionID: Value is null');
   fCollectionID := AValue.Clone;

@@ -52,9 +52,8 @@ type
     ///  <returns><c>TCollection</c>. Required collection.</returns>
     function Collection(const AIndex: Integer): TCollection;
 
-    ///  <summary>Gets list index of the collection with the specified UID.
-    ///  </summary>
-    function IndexOfUID(const AUID: TCollectionID): Integer;
+    ///  <summary>Gets list index of the vault with the specified UID.</summary>
+    function IndexOfUID(const AUID: TVaultID): Integer;
   end;
 
 implementation
@@ -96,7 +95,7 @@ begin
   inherited;
 end;
 
-function TCollectionListAdapter.IndexOfUID(const AUID: TCollectionID): Integer;
+function TCollectionListAdapter.IndexOfUID(const AUID: TVaultID): Integer;
 var
   Idx: Integer;
 begin

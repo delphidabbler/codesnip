@@ -63,9 +63,9 @@ type
       }
 
     ///  <summary>Selects all snippets from the given collection.</summary>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> ID of the required
-    ///  collection.</param>
-    procedure SelectDB(const ACollectionID: TCollectionID);
+    ///  <param name="ACollectionID"><c>TVaultID</c> ID of the required vault.
+    ///  </param>
+    procedure SelectDB(const ACollectionID: TVaultID);
 
     ///  <summary>Populates collections pop-up menu with menu items.</summary>
     procedure PopulateCollectionsMenu;
@@ -278,7 +278,7 @@ begin
     AddMenuItem(Collection);
 end;
 
-procedure TSelectionSearchDlg.SelectDB(const ACollectionID: TCollectionID);
+procedure TSelectionSearchDlg.SelectDB(const ACollectionID: TVaultID);
 var
   Snippet: TSnippet;          // references each snippet in database
   SnippetList: TSnippetList;  // list of selected snippets

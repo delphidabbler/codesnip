@@ -165,17 +165,17 @@ type
 
     ///  <summary>Gets the heading / tree node colour used for snippets from a
     ///  specified collection.</summary>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of required
-    ///  collection.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of required vault.
+    ///  </param>
     ///  <returns>TColor. Required colour.</returns>
-    function GetSnippetHeadingColour(const ACollectionID: TCollectionID):
+    function GetSnippetHeadingColour(const ACollectionID: TVaultID):
       TColor;
     ///  <summary>Sets heading / tree node colour used for snippets from a
     ///  specified collection.</summary>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of required
-    ///  collection.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of required vault.
+    ///  </param>
     ///  <param name="Value"><c>TColor</c>. Required colour.</param>
-    procedure SetSnippetHeadingColour(const ACollectionID: TCollectionID;
+    procedure SetSnippetHeadingColour(const ACollectionID: TVaultID;
       const Value: TColor);
 
     ///  <summary>Gets custom colours available for snippet headings / tree
@@ -365,8 +365,8 @@ type
       ///  </summary>
       fGroupHeadingCustomColours: IStringList;
       ///  <summary>Records colour to be used for snippet headings and tree
-      ///  nodes for each collection.</summary>
-      fSnippetHeadingColours: TDictionary<TCollectionID,TColor>;
+      ///  nodes for each vault.</summary>
+      fSnippetHeadingColours: TDictionary<TVaultID,TColor>;
       ///  <summary>Records custom colours available for snippet heading and
       ///  tree nodes.</summary>
       fSnippetHeadingCustomColours: IStringList;
@@ -531,21 +531,20 @@ type
     procedure SetGroupHeadingCustomColours(const AColours: IStringList);
 
     ///  <summary>Gets the heading / tree node colour used for snippets from a
-    ///  specified collection.</summary>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of required
-    ///  collection.</param>
+    ///  specified vault.</summary>
+    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of required vault.
+    ///  </param>
     ///  <returns>TColor. Required colour.</returns>
     ///  <remarks>Method of <c>IPreferences</c>.</remarks>
-    function GetSnippetHeadingColour(const ACollectionID: TCollectionID):
-      TColor;
+    function GetSnippetHeadingColour(const ACollectionID: TVaultID): TColor;
 
     ///  <summary>Sets heading / tree node colour used for snippets from a
     ///  specified collection.</summary>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of required
-    ///  collection.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of required vault.
+    ///  </param>
     ///  <param name="Value"><c>TColor</c>. Required colour.</param>
     ///  <remarks>Method of <c>IPreferences</c>.</remarks>
-    procedure SetSnippetHeadingColour(const ACollectionID: TCollectionID;
+    procedure SetSnippetHeadingColour(const ACollectionID: TVaultID;
       const Value: TColor);
 
     ///  <summary>Gets custom colours available for snippet headings / tree
@@ -774,8 +773,8 @@ begin
   fNamedHiliteAttrs := THiliteAttrsFactory.CreateNamedAttrs;
   fHiliteCustomColours := TIStringList.Create;
   fWarnings := TWarnings.Create;
-  fSnippetHeadingColours := TDictionary<TCollectionID,TColor>.Create(
-    TCollectionID.TComparer.Create
+  fSnippetHeadingColours := TDictionary<TVaultID,TColor>.Create(
+    TVaultID.TComparer.Create
   );
   fPageStructures := TSnippetPageStructures.Create;
   TDefaultPageStructures.SetDefaults(fPageStructures);
@@ -874,7 +873,7 @@ begin
 end;
 
 function TPreferences.GetSnippetHeadingColour(
-  const ACollectionID: TCollectionID): TColor;
+  const ACollectionID: TVaultID): TColor;
 begin
   if fSnippetHeadingColours.ContainsKey(ACollectionID) then
     Result := fSnippetHeadingColours[ACollectionID]
@@ -1006,7 +1005,7 @@ begin
 end;
 
 procedure TPreferences.SetSnippetHeadingColour(
-  const ACollectionID: TCollectionID; const Value: TColor);
+  const ACollectionID: TVaultID; const Value: TColor);
 begin
   fSnippetHeadingColours.AddOrSetValue(ACollectionID, Value);
 end;

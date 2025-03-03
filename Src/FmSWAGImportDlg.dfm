@@ -25,6 +25,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmIntro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -55,6 +59,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFolder'
         ImageIndex = 4
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblFolder: TLabel
           Left = 0
           Top = 8
@@ -248,6 +256,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFinish'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmOutro: THTMLTpltDlgFrame
           Left = 0
           Top = 0

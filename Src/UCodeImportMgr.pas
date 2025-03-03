@@ -109,7 +109,7 @@ type
       ///  <summary>Value of ImportInfo property.</summary>
       fImportInfoList: TImportInfoList;
       ///  <summary>Value of RequestCollectionCallback property.</summary>
-      fRequestCollectionCallback: TFunc<TCollectionID>;
+      fRequestCollectionCallback: TFunc<TVaultID>;
     ///  <summary>Initialises import information list with details of snippets
     ///  read from import file.</summary>
     procedure InitImportInfoList;
@@ -134,11 +134,10 @@ type
     ///  <summary>List of information describing if and how to import snippets
     ///  in import file. Permits customisation of import.</summary>
     property ImportInfo: TImportInfoList read fImportInfoList;
-    ///  <summary>Callback that gets the ID of the collection that will receive
-    ///  the imported snippets.</summary>
-    ///  <remarks>Defaults to the "user" collection ID if not assigned.
-    ///  </remarks>
-    property RequestCollectionCallback: TFunc<TCollectionID>
+    ///  <summary>Callback that gets the ID of the vault that will receive the
+    ///  imported snippets.</summary>
+    ///  <remarks>Defaults to the default vault ID if not assigned.</remarks>
+    property RequestCollectionCallback: TFunc<TVaultID>
       read fRequestCollectionCallback write fRequestCollectionCallback;
   end;
 
@@ -174,9 +173,9 @@ begin
   SetLength(fSnippetInfoList, 0);
   fImportInfoList := TImportInfoList.Create;
   // set default event handler
-  fRequestCollectionCallback := function: TCollectionID
+  fRequestCollectionCallback := function: TVaultID
     begin
-      Result := TCollectionID.Default;
+      Result := TVaultID.Default;
     end;
 end;
 
@@ -257,7 +256,7 @@ var
   Editor: IDatabaseEdit;                  // object used to update user database
   SnippetInfo: TSnippetInfo;         // info about each snippet from import file
   ImportInfo: TImportInfo;       // info about how / whether to import a snippet
-  CollectionID: TCollectionID;          // collection into which we're importing
+  CollectionID: TVaultID;               // collection into which we're importing
   SavedRefs: TList<TSavedReferences>;   // preserved references for each snippet
   SavedRef: TSavedReferences;                        // each record in Refs list
   SnippetDataNoRefs: TSnippetEditData;   // snippet data with references cleared

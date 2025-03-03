@@ -1,9 +1,9 @@
 inherited OverviewFrame: TOverviewFrame
   inherited pnlTitle: TPanel
     inherited lblTitle: TLabel
-      Width = 54
+      Width = 53
       Caption = 'Overview'
-      ExplicitWidth = 54
+      ExplicitWidth = 53
     end
     object tbarOverview: TToolBar
       Left = 224

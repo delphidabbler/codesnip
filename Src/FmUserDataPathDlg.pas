@@ -236,7 +236,7 @@ begin
   frmProgress.Visible := False;
   frmProgress.Range := TRange.Create(0, 100);
   fCollList.ToStrings(cbCollection.Items);
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
 end;
 
 procedure TUserDataPathDlg.CopyFileHandler(Sender: TObject;

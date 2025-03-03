@@ -47,11 +47,11 @@ type
     procedure InitialiseDoc; override;
 
     ///  <summary>Output given heading, i.e. snippet name for snippet from a
-    ///  given collection.</summary>
+    ///  given vault.</summary>
     ///  <remarks>Heading is output the same regardless of the snippet's
     ///  collection.</remarks>
     procedure RenderHeading(const Heading: string;
-      const ACollectionID: TCollectionID); override;
+      const ACollectionID: TVaultID); override;
     ///  <summary>Interprets and adds given snippet description to document.
     ///  </summary>
     ///  <remarks>Active text is converted to word-wrapped plain text
@@ -166,7 +166,7 @@ begin
 end;
 
 procedure TTextSnippetDoc.RenderHeading(const Heading: string;
-  const ACollectionID: TCollectionID);
+  const ACollectionID: TVaultID);
 begin
   fWriter.WriteLine(Heading);
 end;

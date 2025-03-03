@@ -79,10 +79,9 @@ type
         ///  node.</summary>
         ///  <param name="Node"><c>TTreeNode</c> [in] Node to be checked.
         ///  </param>
-        ///  <returns><c>TCollectionID</c>. Associated collection ID. If
-        ///  <c>Node</c> has no associated collection then a null collection ID
-        ///  is returned.</returns>
-        function GetCollectionID(const Node: TTreeNode): TCollectionID;
+        ///  <returns><c>TVaultID</c>. Associated vault ID. If <c>Node</c> has
+        ///  no associated vault then a null vault ID is returned.</returns>
+        function GetCollectionID(const Node: TTreeNode): TVaultID;
           override;
 
         function IsSectionHeadNode(const Node: TTreeNode): Boolean;
@@ -965,7 +964,7 @@ end;
 { TOverviewFrame.TTVDraw }
 
 function TOverviewFrame.TTVDraw.GetCollectionID(const Node: TTreeNode):
-  TCollectionID;
+  TVaultID;
 var
   ViewItem: IView;              // view item represented by node
   SnippetView: ISnippetView;    // view item if node represents a snippet
@@ -975,7 +974,7 @@ begin
   if Supports(ViewItem, ISnippetView, SnippetView) then
     Result := SnippetView.Snippet.CollectionID
   else
-    Result := TCollectionID.CreateNull;
+    Result := TVaultID.CreateNull;
 end;
 
 function TOverviewFrame.TTVDraw.IsSectionHeadNode(

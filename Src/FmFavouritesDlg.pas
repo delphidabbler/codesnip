@@ -580,7 +580,7 @@ end;
 procedure TFavouritesDlg.LVCustomDrawItem(Sender: TCustomListView;
   Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
 var
-  CollectionID: TCollectionID;
+  CollectionID: TVaultID;
 begin
   CollectionID := (Item as TFavouriteListItem).Favourite.SnippetID.CollectionID;
   fLVFavs.Canvas.Font.Color := Preferences.GetSnippetHeadingColour(

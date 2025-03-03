@@ -67,14 +67,13 @@ type
         fRootID: TSnippetID;  // ID of snippet whose dependency nodes displayed
       strict protected
 
-        ///  <summary>Gets the collection ID, if any, associated with a  tree
-        ///  node.</summary>
+        ///  <summary>Gets the vault ID, if any, associated with a tree node.
+        ///  </summary>
         ///  <param name="Node"><c>TTreeNode</c> [in] Node to be checked.
         ///  </param>
-        ///  <returns><c>TCollectionID</c>. Associated collection ID. If
-        ///  <c>Node</c> has no associated collection then a null collection ID
-        ///  is returned.</returns>
-        function GetCollectionID(const Node: TTreeNode): TCollectionID;
+        ///  <returns><c>TVaultID</c>. Associated vault ID. If <c>Node</c> has
+        ///  no associated vault then a null vault ID is returned.</returns>
+        function GetCollectionID(const Node: TTreeNode): TVaultID;
           override;
 
         function IsErrorNode(const Node: TTreeNode): Boolean;
@@ -410,9 +409,9 @@ var
   LB: TListBox;
   Canvas: TCanvas;
 
-  function ExtractCollectionItem: TCollectionID;
+  function ExtractCollectionItem: TVaultID;
   begin
-    Result := (LB.Items.Objects[Index] as TBox<TCollectionID>).Value;
+    Result := (LB.Items.Objects[Index] as TBox<TVaultID>).Value;
   end;
 
 begin
@@ -458,7 +457,7 @@ begin
         Assert(Assigned(ASnippet),
           ClassName + '.PopulateRequiredByList: Snippet id not found');
         lbDependents.Items.AddObject(
-          ASnippet.DisplayName, TBox<TCollectionID>.Create(ASnippet.CollectionID)
+          ASnippet.DisplayName, TBox<TVaultID>.Create(ASnippet.CollectionID)
         );
       end;
     end;
@@ -509,10 +508,10 @@ begin
 end;
 
 function TDependenciesDlg.TTVDraw.GetCollectionID(
-  const Node: TTreeNode): TCollectionID;
+  const Node: TTreeNode): TVaultID;
 begin
   if not Assigned(Node.Data) then
-    Result := TCollectionID.CreateNull
+    Result := TVaultID.CreateNull
   else
     Result := TSnippet(Node.Data).CollectionID;
 end;

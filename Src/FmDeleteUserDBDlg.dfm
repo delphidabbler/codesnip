@@ -35,6 +35,7 @@ inherited DeleteUserDBDlg: TDeleteUserDBDlg
       Height = 210
       Align = alTop
       TabOrder = 0
+      TabStop = True
       ExplicitWidth = 369
       ExplicitHeight = 210
       inherited pnlBrowser: TPanel

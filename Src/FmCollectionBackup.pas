@@ -115,7 +115,7 @@ procedure TCollectionBackupDlg.ConfigForm;
 begin
   inherited;
   fCollList.ToStrings(cbCollection.Items);
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
 end;
 
 class function TCollectionBackupDlg.Execute(AOwner: TComponent;

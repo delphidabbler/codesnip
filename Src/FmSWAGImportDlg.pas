@@ -155,10 +155,10 @@ type
     ///  <summary>Retrieves import directory name from edit control where it is
     ///  entered.</summary>
     function GetDirNameFromEditCtrl: string;
-    ///  <summary>Retrieves collection specified by user that applies to
-    ///  imported snippets.</summary>
-    ///  <returns><c>TCollectionID</c>. The required collection ID.</returns>
-    function SelectedCollectionID: TCollectionID;
+    ///  <summary>Retrieves vault specified by user that applies to imported
+    ///  snippets.</summary>
+    ///  <returns><c>TVaultID</c>. The required vault ID.</returns>
+    function SelectedCollectionID: TVaultID;
     ///  <summary>Validates entries on the wizard page identified by the given
     ///  page index.</summary>
     procedure ValidatePage(const PageIdx: Integer);
@@ -535,9 +535,9 @@ begin
   fCollList.ToStrings(cbCollection.Items);
   Assert(cbCollection.Items.Count > 0,
     ClassName + '.ConfigForm: no collections');
-  Assert(TCollections.Instance.ContainsID(TCollectionID.Default),
+  Assert(TCollections.Instance.ContainsID(TVaultID.Default),
     ClassName + '.ConfigForm: default collection not found');
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
   Assert(cbCollection.ItemIndex >= 0,
     ClassName + '.ConfigForm: default collection not in cbCollection');
 end;
@@ -871,7 +871,7 @@ begin
   );
 end;
 
-function TSWAGImportDlg.SelectedCollectionID: TCollectionID;
+function TSWAGImportDlg.SelectedCollectionID: TVaultID;
 begin
   Assert(cbCollection.ItemIndex >= 0,
     ClassName + '.SelectedCollectionID: no collection selected');

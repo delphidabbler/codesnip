@@ -56,10 +56,9 @@ type
       fCollList: TCollectionListAdapter;
       fOptions: TPersistentOptions;
       fSnippetKey: string;
-    ///  <summary>Returns the ID of the collection selected in the collections
-    ///  drop down list, or the null collection ID if no collection is selected.
-    ///  </summary>
-    function SelectedCollectionID: TCollectionID;
+    ///  <summary>Returns the ID of the vault selected in the collections drop
+    ///  down list, or the null vault ID if no vault is selected.</summary>
+    function SelectedCollectionID: TVaultID;
     function SelectedCategoryID: string;
     procedure ValidateData;
     procedure HandleException(const E: Exception);
@@ -216,7 +215,7 @@ begin
   Result := fCatList.CatID(cbCategory.ItemIndex);
 end;
 
-function TDuplicateSnippetDlg.SelectedCollectionID: TCollectionID;
+function TDuplicateSnippetDlg.SelectedCollectionID: TVaultID;
 begin
   Assert(cbCollection.ItemIndex >= 0,
     ClassName + '.SelectedCollectionID: no collection selected');

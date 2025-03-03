@@ -61,7 +61,7 @@ type
 
       ///  <summary>Local copy of snippet heading / tree node colour for each
       ///  collection.</summary>
-      fSnippetHeadingColours: TDictionary<TCollectionID,TColor>;
+      fSnippetHeadingColours: TDictionary<TVaultID,TColor>;
 
       fGroupHeadingColourBox: TColorBoxEx;
       fGroupHeadingColourDlg: TColorDialogEx;
@@ -88,7 +88,7 @@ type
     procedure SnippetHeadingColourBoxChange(Sender: TObject);
     procedure PopulateFontSizeCombos;
     procedure SetTabOrder;
-    function SelectedCollectionID: TCollectionID;
+    function SelectedCollectionID: TVaultID;
   public
     constructor Create(AOwner: TComponent); override;
       {Object constructor. Sets up frame and populates controls.
@@ -164,7 +164,7 @@ procedure TDisplayPrefsFrame.Activate(const Prefs: IPreferences;
 var
   Collection: TCollection;
 begin
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
   Assert(cbCollection.ItemIndex >= 0,
     ClassName + '.Activate: no default collection found in cbCollection');
   SelectOverviewTreeState(Prefs.OverviewStartState);
@@ -354,8 +354,8 @@ begin
 
   PopulateFontSizeCombos;
 
-  fSnippetHeadingColours := TDictionary<TCollectionID,TColor>.Create(
-    TCollectionID.TComparer.Create
+  fSnippetHeadingColours := TDictionary<TVaultID,TColor>.Create(
+    TVaultID.TComparer.Create
   );
 
   fCollList := TCollectionListAdapter.Create;
@@ -509,7 +509,7 @@ begin
   TFontHelper.ListCommonFontSizes(cbDetailFontSize.Items);
 end;
 
-function TDisplayPrefsFrame.SelectedCollectionID: TCollectionID;
+function TDisplayPrefsFrame.SelectedCollectionID: TVaultID;
 begin
   Assert(cbCollection.ItemIndex >= 0,
     ClassName + '.SelectedCollectionID: no collection selected');

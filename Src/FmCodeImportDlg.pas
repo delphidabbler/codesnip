@@ -117,9 +117,9 @@ type
     procedure UpdateDatabase;
     ///  <summary>Displays names of imported snippets on finish page.</summary>
     procedure PresentResults;
-    ///  <summary>Gets the ID of the collection into which all snippets are to
-    ///  be imported.</summary>
-    function GetCollectionID: TCollectionID;
+    ///  <summary>Gets the ID of the vault into which all snippets are to be
+    ///  imported.</summary>
+    function GetCollectionID: TVaultID;
   strict protected
     ///  <summary>Protected constructor that sets up object to use given import
     ///  manager object.</summary>
@@ -305,7 +305,7 @@ begin
     TObject(lvImports.Items[Idx].Data).Free;
 end;
 
-function TCodeImportDlg.GetCollectionID: TCollectionID;
+function TCodeImportDlg.GetCollectionID: TVaultID;
 begin
   Assert(cbCollection.ItemIndex >= 0,
     ClassName + '.GetCollectionID: no collection selected');
@@ -339,9 +339,9 @@ procedure TCodeImportDlg.InitForm;
 begin
   fCollList.ToStrings(cbCollection.Items);
   Assert(cbCollection.Items.Count > 0, ClassName + '.InitForm: no collections');
-  Assert(TCollections.Instance.ContainsID(TCollectionID.Default),
+  Assert(TCollections.Instance.ContainsID(TVaultID.Default),
     ClassName + '.InitForm: default collection not found');
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
   Assert(cbCollection.ItemIndex >= 0,
     ClassName + '.InitForm: default collection name not in cbCollection');
 

@@ -324,7 +324,7 @@ begin
   end;
   // Load collections into combo box & select default collection
   fCollList.ToStrings(cbCollection.Items);
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
   DisplayCollectionInfo(fCollList.Collection(cbCollection.ItemIndex));
   // Set collections treeview and paths scrollbox background colours
   tvCollectionInfo.Color := ThemeServicesEx.GetTabBodyColour;

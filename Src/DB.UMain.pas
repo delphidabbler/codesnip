@@ -129,13 +129,13 @@ type
     ///  <summary>Creates a new snippet object.</summary>
     ///  <param name="Key"><c>string</c> [in] New snippet's key. Must not
     ///  exist in database</param>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection
-    ///  containing the snippet.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> [in] Vault containing the
+    ///  snippet.</param>
     ///  <param name="Props"><c>TSnippetData</c> [in] Record describing
     ///  snippet's properties.</param>
     ///  <returns>Instance of new snippet with no references.</returns>
-    function CreateSnippet(const Key: string;
-      const ACollectionID: TCollectionID; const Props: TSnippetData): TSnippet;
+    function CreateSnippet(const Key: string; const ACollectionID: TVaultID;
+      const Props: TSnippetData): TSnippet;
 
   end;
 
@@ -183,10 +183,10 @@ type
 
     ///  <summary>Creates a new snippet key that is unique within the given
     ///  collection.</summary>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> ID of collection that
-    ///  the new key must be unique within.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> ID of vault that the new
+    ///  key must be unique within.</param>
     ///  <returns><c>string</c> containing the key.</returns>
-    function GetUniqueSnippetKey(const ACollectionID: TCollectionID): string;
+    function GetUniqueSnippetKey(const ACollectionID: TVaultID): string;
 
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
@@ -222,12 +222,12 @@ type
 
     ///  <summary>Adds a new snippet to the database.</summary>
     ///  <param name="AKey"><c>string</c> [in] New snippet's key.</param>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of collection
-    ///  that the new snippet will belong to.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of vault that the
+    ///  new snippet will belong to.</param>
     ///  <param name="AData"><c>TSnippetEditData</c> [in] Record storing the new
     ///  snippet's properties and references.</param>
     ///  <returns><c>TSnippet</c>. Reference to the new snippet.</returns>
-    function AddSnippet(const AKey: string; const ACollectionID: TCollectionID;
+    function AddSnippet(const AKey: string; const ACollectionID: TVaultID;
       const AData: TSnippetEditData): TSnippet;
 
     ///  <summary>Duplicates a snippet in the database.</summary>
@@ -235,8 +235,8 @@ type
     ///  </param>
     ///  <param name="ANewKey"><c>string</c> [in] Key to be used for duplicated
     ///  snippet.</param>
-    ///  <param name="ANewCollectionID"><c>TCollectionID</c> [in] ID of
-    ///  collection the duplicated snippet belongs to.</param>
+    ///  <param name="ANewCollectionID"><c>TVaultID</c> [in] ID of vault the
+    ///  duplicated snippet belongs to.</param>
     ///  <param name="ANewDisplayName"><c>string</c> [in] Display name of the
     ///  duplicated snippet.</param>
     ///  <param name="ACatID"><c>string</c> [in] ID of the category to which the
@@ -244,21 +244,21 @@ type
     ///  <returns><c>TSnippet</c>. Reference to the duplicated snippet.
     ///  </returns>
     function DuplicateSnippet(const ASnippet: TSnippet; const ANewKey: string;
-      const ANewCollectionID: TCollectionID; const ANewDisplayName: string;
+      const ANewCollectionID: TVaultID; const ANewDisplayName: string;
       const ACatID: string): TSnippet;
 
     ///  <summary>Creates a new temporary snippet without adding it to the
     ///  database.</summary>
     ///  <param name="AKey"><c>string</c> [in] The new nippet's key.</param>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of the
-    ///  collection to which the new snippet belongs.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of the vault to
+    ///  which the new snippet belongs.</param>
     ///  <param name="AData"><c>TSnippetEditData</c> [in] Record storing the new
     ///  snippet's properties and references.</param>
     ///  <returns><c>TSnippet</c> Reference to new snippet.</returns>
     ///  <remarks>The returned snippet must not be added to the database.
     ///  </remarks>
     function CreateTempSnippet(const AKey: string;
-      const ACollectionID: TCollectionID; const AData: TSnippetEditData):
+      const ACollectionID: TVaultID; const AData: TSnippetEditData):
       TSnippet; overload;
 
     function CreateTempSnippet(const Snippet: TSnippet): TSnippet; overload;
@@ -354,13 +354,13 @@ type
     ///  <summary>Creates a new snippet object.</summary>
     ///  <param name="Key"><c>string</c> [in] New snippet's key. Must not
     ///  exist in database</param>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection
-    ///  containing the snippet.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> [in] Vault containing the
+    ///  snippet.</param>
     ///  <param name="Props"><c>TSnippetData</c> [in] Record describing
     ///  snippet's properties.</param>
     ///  <returns>Instance of new snippet with no references.</returns>
     function CreateSnippet(const Key: string;
-      const ACollectionID: TCollectionID; const Props: TSnippetData): TSnippet;
+      const ACollectionID: TVaultID; const Props: TSnippetData): TSnippet;
 
   end;
 
@@ -417,23 +417,17 @@ type
     ///  <summary>Adds a new snippet to the database. Assumes the snippet is
     ///  not already in the database.</summary>
     ///  <param name="AKey"><c>string</c> [in] New snippet's key.</param>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of collection
-    ///  that the new snippet will belong to.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of vault that the
+    ///  new snippet will belong to.</param>
     ///  <param name="AData"><c>TSnippetEditData</c> [in] Record storing the new
     ///  snippet's properties and references.</param>
     ///  <returns><c>TSnippet</c>. Reference to the new snippet.</returns>
     ///  <exception><c>ECodeSnip</c> raised if the snippet's category does not
     ///  exist.</exception>
     function InternalAddSnippet(const AKey: string;
-      const ACollectionID: TCollectionID; const AData: TSnippetEditData):
+      const ACollectionID: TVaultID; const AData: TSnippetEditData):
       TSnippet;
-      {Adds a new snippet to the user database. Assumes snippet not already in
-      user database.
-        @param SnippetKey [in] New snippet's key.
-        @param Data [in] Properties and references of new snippet.
-        @return Reference to new snippet object.
-        @except Exception raised if
-      }
+
     procedure InternalDeleteSnippet(const Snippet: TSnippet);
       {Deletes a snippet from the user database.
         @param Snippet [in] Snippet to delete from database.
@@ -498,11 +492,11 @@ type
 
     ///  <summary>Creates a new snippet key that is unique within the given
     ///  collection.</summary>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> ID of collection that
-    ///  the new key must be unique within.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> ID of vault that the new
+    ///  key must be unique within.</param>
     ///  <returns><c>string</c> containing the key.</returns>
     ///  <remarks>Method of <c>IDatabaseEdit</c>.</remarks>
-    function GetUniqueSnippetKey(const ACollectionID: TCollectionID): string;
+    function GetUniqueSnippetKey(const ACollectionID: TVaultID): string;
 
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
@@ -541,13 +535,13 @@ type
 
     ///  <summary>Adds a new snippet to the database.</summary>
     ///  <param name="AKey"><c>string</c> [in] New snippet's key.</param>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of collection
-    ///  that the new snippet will belong to.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of vault that the
+    ///  new snippet will belong to.</param>
     ///  <param name="AData"><c>TSnippetEditData</c> [in] Record storing the new
     ///  snippet's properties and references.</param>
     ///  <returns><c>TSnippet</c>. Reference to the new snippet.</returns>
     ///  <remarks>Method of <c>IDatabaseEdit</c>.</remarks>
-    function AddSnippet(const AKey: string; const ACollectionID: TCollectionID;
+    function AddSnippet(const AKey: string; const ACollectionID: TVaultID;
       const AData: TSnippetEditData): TSnippet;
 
     ///  <summary>Duplicates a snippet in the database.</summary>
@@ -555,8 +549,8 @@ type
     ///  </param>
     ///  <param name="ANewKey"><c>string</c> [in] Key to be used for duplicated
     ///  snippet.</param>
-    ///  <param name="ANewCollectionID"><c>TCollectionID</c> [in] ID of
-    ///  collection the duplicated snippet belongs to.</param>
+    ///  <param name="ANewCollectionID"><c>TVaultID</c> [in] ID of the vault the
+    ///  duplicated snippet belongs to.</param>
     ///  <param name="ANewDisplayName"><c>string</c> [in] Display name of the
     ///  duplicated snippet.</param>
     ///  <param name="ACatID"><c>string</c> [in] ID of the category to which the
@@ -565,14 +559,14 @@ type
     ///  </returns>
     ///  <remarks>Method of <c>IDatabaseEdit</c>.</remarks>
     function DuplicateSnippet(const ASnippet: TSnippet; const ANewKey: string;
-      const ANewCollectionID: TCollectionID; const ANewDisplayName: string;
+      const ANewCollectionID: TVaultID; const ANewDisplayName: string;
       const ACatID: string): TSnippet;
 
     ///  <summary>Creates a new temporary snippet without adding it to the
     ///  database.</summary>
     ///  <param name="AKey"><c>string</c> [in] The new nippet's key.</param>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of the
-    ///  collection to which the new snippet belongs.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of the vault to
+    ///  which the new snippet belongs.</param>
     ///  <param name="AData"><c>TSnippetEditData</c> [in] Record storing the new
     ///  snippet's properties and references.</param>
     ///  <returns><c>TSnippet</c> Reference to new snippet.</returns>
@@ -581,7 +575,7 @@ type
     ///  <para>Method of <c>IDatabaseEdit</c>.</para>
     ///  </remarks>
     function CreateTempSnippet(const AKey: string;
-      const ACollectionID: TCollectionID; const AData: TSnippetEditData):
+      const ACollectionID: TVaultID; const AData: TSnippetEditData):
       TSnippet; overload;
 
     function CreateTempSnippet(const Snippet: TSnippet): TSnippet; overload;
@@ -636,18 +630,18 @@ type
   TCollectionDataProvider = class(TInterfacedObject, IDBDataProvider)
   strict private
     var
-      fCollectionID: TCollectionID; // Collection on which to operate
+      fCollectionID: TVaultID;      // Vault on which to operate
       fSnippets: TSnippetList;      // All snippets in the whole database
       fCategories: TCategoryList;   // All categories in the whole database
   public
     ///  <summary>Object constructor. Sets up data provider.</summary>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] Collection for
-    ///  which to provide data.</param>
+    ///  <param name="ACollectionID"><c>TVaultID</c> [in] Vault for which to
+    ///  provide data.</param>
     ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
     ///  in the database.</param>
     ///  <param name="Categories"><c>TCategoryList</c> [in] List of all
     ///  categories in the database.</param>
-    constructor Create(const ACollectionID: TCollectionID;
+    constructor Create(const ACollectionID: TVaultID;
       const SnipList: TSnippetList;
       const Categories: TCategoryList);
 
@@ -733,8 +727,8 @@ begin
   fChangeEvents.AddHandler(Handler);
 end;
 
-function TDatabase.AddSnippet(const AKey: string;
-  const ACollectionID: TCollectionID; const AData: TSnippetEditData): TSnippet;
+function TDatabase.AddSnippet(const AKey: string; const ACollectionID: TVaultID;
+  const AData: TSnippetEditData): TSnippet;
 resourcestring
   // Error message
   sKeyExists = 'Snippet with key "%s" already exists in collection';
@@ -794,7 +788,7 @@ begin
 end;
 
 function TDatabase.CreateTempSnippet(const AKey: string;
-  const ACollectionID: TCollectionID; const AData: TSnippetEditData): TSnippet;
+  const ACollectionID: TVaultID; const AData: TSnippetEditData): TSnippet;
 begin
   Result := TTempSnippet.Create(AKey, ACollectionID, AData.Props);
   (Result as TTempSnippet).UpdateRefs(AData.Refs, fSnippets);
@@ -871,7 +865,7 @@ begin
 end;
 
 function TDatabase.DuplicateSnippet(const ASnippet: TSnippet;
-  const ANewKey: string; const ANewCollectionID: TCollectionID;
+  const ANewKey: string; const ANewCollectionID: TVaultID;
   const ANewDisplayName: string; const ACatID: string): TSnippet;
 var
   Data: TSnippetEditData;
@@ -994,8 +988,7 @@ begin
   Result := fSnippets;
 end;
 
-function TDatabase.GetUniqueSnippetKey(
-  const ACollectionID: TCollectionID): string;
+function TDatabase.GetUniqueSnippetKey(const ACollectionID: TVaultID): string;
 var
   SnippetsInCollection: TSnippetList;
   Snippet: TSnippet;
@@ -1031,7 +1024,7 @@ begin
 end;
 
 function TDatabase.InternalAddSnippet(const AKey: string;
-  const ACollectionID: TCollectionID; const AData: TSnippetEditData): TSnippet;
+  const ACollectionID: TVaultID; const AData: TSnippetEditData): TSnippet;
 var
   Cat: TCategory; // category object containing new snippet
 resourcestring
@@ -1297,14 +1290,14 @@ begin
 end;
 
 function TDBDataItemFactory.CreateSnippet(const Key: string;
-  const ACollectionID: TCollectionID; const Props: TSnippetData): TSnippet;
+  const ACollectionID: TVaultID; const Props: TSnippetData): TSnippet;
 begin
   Result := TSnippetEx.Create(Key, ACollectionID, Props);
 end;
 
 { TCollectionDataProvider }
 
-constructor TCollectionDataProvider.Create(const ACollectionID: TCollectionID;
+constructor TCollectionDataProvider.Create(const ACollectionID: TVaultID;
   const SnipList: TSnippetList; const Categories: TCategoryList);
 begin
   inherited Create;

@@ -85,7 +85,7 @@ resourcestring
 var
   Key: string;
   CollectionHex: string;
-  CollectionID: TCollectionID;
+  CollectionID: TVaultID;
 begin
   Key := StrTrim(AFields[0]);
   if Key = '' then
@@ -93,7 +93,7 @@ begin
   CollectionHex := StrTrim(AFields[1]);
   if CollectionHex = '' then
     raise ESnippetIDListFileReader.Create(sBadFileFormat);
-  CollectionID := TCollectionID.CreateFromHexString(CollectionHex);
+  CollectionID := TVaultID.CreateFromHexString(CollectionHex);
   fSnippetIDs.Add(TSnippetID.Create(Key, CollectionID));
 end;
 

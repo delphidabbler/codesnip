@@ -272,7 +272,7 @@ begin
   for Snippet in SnipList do
     fSnippetKeyMap.Add(
       Snippet.ID,
-      (Database as IDatabaseEdit).GetUniqueSnippetKey(TCollectionID.Default)
+      (Database as IDatabaseEdit).GetUniqueSnippetKey(TVaultID.Default)
     );
 end;
 
@@ -422,7 +422,7 @@ procedure TCodeImporter.Execute(const Data: TBytes);
       // Note: in building snippet ID list we assume each snippet is from the
       // default collection. It may not be, but there is no way of telling
       // from XML.
-      Depends.Add(TSnippetID.Create(SnippetName, TCollectionID.Default));
+      Depends.Add(TSnippetID.Create(SnippetName, TVaultID.Default));
   end;
 
   // Reads description node and converts to active text.

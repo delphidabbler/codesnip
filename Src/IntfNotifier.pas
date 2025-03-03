@@ -33,12 +33,12 @@ type
     ///  <summary>Displays a snippet.</summary>
     ///  <param name="Key">WideString [in] Required snippet's key.
     ///  </param>
-    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
-    ///  collection.</param>
+    ///  <param name="ACollectionID">TVaultID [in] ID of the snippet's vault.
+    ///  </param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
-    procedure DisplaySnippet(const Key: WideString;
-      ACollectionID: TCollectionID; NewTab: WordBool);
+    procedure DisplaySnippet(const Key: WideString; ACollectionID: TVaultID;
+      NewTab: WordBool);
 
     ///  <summary>Displays a category.</summary>
     ///  <param name="CatId">WideString [in] ID of required category.</param>
@@ -66,10 +66,10 @@ type
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
     ///  <param name="Key">WideString [in] Snippet's key.</param>
-    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
-    ///  collection.</param>
+    ///  <param name="ACollectionID">TVaultID [in] ID of the snippet's vault.
+    ///  </param>
     procedure EditSnippet(const Key: WideString;
-      const ACollectionID: TCollectionID);
+      const ACollectionID: TVaultID);
 
     ///  <summary>Displays news items from the CodeSnip news feed.</summary>
     procedure ShowNews;

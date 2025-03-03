@@ -178,13 +178,13 @@ type
     fMemoCaretPosDisplayMgr: TMemoCaretPosDisplayMgr;
                                     // Manages display of memo caret positions
 
-    ///  <summary>Returns the ID of the collection that applies to a new or
-    ///  existing snippet.</summary>
-    ///  <returns><c>TCollectionID</c>. The required collection ID.</returns>
-    ///  <remarks>For a new snippet the return value is the collection to be
-    ///  applied to the snippet. For an existing snippet this is collection to
-    ///  which the snippet already belongs.</remarks>
-    function SelectedCollectionID: TCollectionID;
+    ///  <summary>Returns the ID of the vault that applies to a new or existing
+    ///  snippet.</summary>
+    ///  <returns><c>TVaultID</c>. The required vault ID.</returns>
+    ///  <remarks>For a new snippet the return value is the vault to be applied
+    ///  to the snippet. For an existing snippet this is the value to which the
+    ///  snippet already belongs.</remarks>
+    function SelectedCollectionID: TVaultID;
 
     ///  <summary>Returns a snippet key that is unique with the current
     ///  snippet collection.</summary>
@@ -892,7 +892,7 @@ begin
     cbCategories.ItemIndex := fCatList.IndexOf(TCategory.DefaultID);
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
-    cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+    cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
     Assert(cbCollection.ItemIndex >= 0,
       ClassName + '.InitControls: No default collection in cbCollection');
     cbCollection.Visible := True; // can select collection of new snippet
@@ -978,7 +978,7 @@ begin
   fCollList.ToStrings(cbCollection.Items);
 end;
 
-function TSnippetsEditorDlg.SelectedCollectionID: TCollectionID;
+function TSnippetsEditorDlg.SelectedCollectionID: TVaultID;
 begin
   // If editing existing snippet ID then the collection cannot be edited
   if Assigned(fSnippet) then

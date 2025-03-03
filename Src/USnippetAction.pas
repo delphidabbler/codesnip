@@ -40,7 +40,7 @@ type
       ///  <summary>Value of Key property.</summary>
       fKey: string;
       ///  <summary>Value of CollectionID property.</summary>
-      fCollectionID: TCollectionID;
+      fCollectionID: TVaultID;
       ///  <summary>Value of NewTab property.</summary>
       fNewTab: Boolean;
       ///  <summary>Reference to Notifier object.</summary>
@@ -63,7 +63,7 @@ type
     property Key: string read fKey write fKey;
     ///  <summary>ID of the collection containing the snippet to be displayed.
     ///  </summary>
-    property CollectionID: TCollectionID read fCollectionID write fCollectionID;
+    property CollectionID: TVaultID read fCollectionID write fCollectionID;
     ///  <summary>Flag indicating if snippet is to be displayed in a new detail
     ///  pane tab.</summary>
     property NewTab: Boolean read fNewTab write fNewTab;

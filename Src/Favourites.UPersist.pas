@@ -99,13 +99,13 @@ begin
         procedure (AFields: TArray<string>)
         var
           Key: string;
-          CollectionID: TCollectionID;
+          CollectionID: TVaultID;
           LastAccess: TDateTime;
         begin
           if Length(AFields) <> 3 then
             raise EFavouritesPersist.Create(sBadFormat);
           Key := StrTrim(AFields[0]);
-          CollectionID := TCollectionID.CreateFromHexString(
+          CollectionID := TVaultID.CreateFromHexString(
             StrTrim(AFields[1])
           );
           LastAccess := StrToDateTime(StrTrim(AFields[2]), DateFormatSettings);
