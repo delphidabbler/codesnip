@@ -495,7 +495,7 @@ var
   Count: Integer;
   Idx: Integer;
 begin
-  ConfigSection := Settings.ReadSection(ssCollections);
+  ConfigSection := Settings.ReadSection(ssVaults);
   Count := ConfigSection.GetInteger(CountKey, 0);
   for Idx := 0 to Pred(Count) do
     LoadVault(Idx, AVaults);
@@ -510,7 +510,7 @@ var
   Vault: TVault;
   StorageDetails: TDataStorageDetails;
 begin
-  ConfigSection := Settings.ReadSection(ssCollection, IntToStr(AOrdinal));
+  ConfigSection := Settings.ReadSection(ssVault, IntToStr(AOrdinal));
   UID := TVaultID.Create(ConfigSection.GetBytes(UIDKey));
   if AVaults.ContainsID(UID) then
     // Don't load a duplicate vault
@@ -533,7 +533,7 @@ var
   Idx: Integer;
 begin
   // Save number of vaults
-  ConfigSection := Settings.EmptySection(ssCollections);
+  ConfigSection := Settings.EmptySection(ssVaults);
   ConfigSection.SetInteger(CountKey, AVaults.Count);
   ConfigSection.Save;
   // Save each vault's properties in its own section
@@ -547,7 +547,7 @@ var
   ConfigSection: ISettingsSection;
 begin
   // Save info about vault format in its own section
-  ConfigSection := Settings.EmptySection(ssCollection, IntToStr(AOrdinal));
+  ConfigSection := Settings.EmptySection(ssVault, IntToStr(AOrdinal));
   ConfigSection.SetBytes(UIDKey, AVault.UID.ToArray);
   ConfigSection.SetString(NameKey, AVault.Name);
   ConfigSection.SetInteger(StorageFormatKey, Ord(AVault.Storage.Format));

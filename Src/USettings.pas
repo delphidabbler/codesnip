@@ -178,14 +178,13 @@ type
   ///  <para>-ssWindowState - info about the size and state of various
   ///  windows</para>
   ///  <para>-ssCompilers - info about all compilers</para>
-  ///  <para>-ssCollections - info about all snippet collections</para>
-  ///  <para>-ssCollection - info about a specific snippet collection</para>
+  ///  <para>-ssVaults - info about all snippet vaults</para>
+  ///  <para>-ssVault - info about a specific snippet vault</para>
   ///  </summary>
   TSettingsSectionId = (
-    ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo,
-    ssPreferences, ssUnits, ssDuplicateSnippet,
-    ssFavourites, ssWindowState, ssCompilers, ssCollections,
-    ssCollection
+    ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo, ssPreferences,
+    ssUnits, ssDuplicateSnippet, ssFavourites, ssWindowState, ssCompilers,
+    ssVaults, ssVault
   );
 
 type
@@ -579,8 +578,8 @@ const
     'Favourites',       // ssFavourites
     'WindowState',      // ssWindowState
     'Compilers',        // ssCompilers
-    'Collections',      // ssCollections
-    'Collection'        // ssCollection
+    'Vaults',           // ssVaults
+    'Vault'             // ssVault
   );
 begin
   Result := cSectionNames[Id];
