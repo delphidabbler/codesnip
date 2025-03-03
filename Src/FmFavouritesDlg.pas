@@ -353,9 +353,7 @@ begin
   LI := fLVFavs.Selected as TFavouriteListItem;
   SelectedSnippet := LI.Favourite.SnippetID;
   fNotifier.DisplaySnippet(
-    SelectedSnippet.Key,
-    SelectedSnippet.CollectionID,
-    chkNewTab.Checked
+    SelectedSnippet.Key, SelectedSnippet.VaultID, chkNewTab.Checked
   );
   fFavourites.Touch(SelectedSnippet);
   fLVFavs.Selected := FindListItem(SelectedSnippet);
@@ -591,7 +589,7 @@ procedure TFavouritesDlg.LVCustomDrawItem(Sender: TCustomListView;
 var
   CollectionID: TVaultID;
 begin
-  CollectionID := (Item as TFavouriteListItem).Favourite.SnippetID.CollectionID;
+  CollectionID := (Item as TFavouriteListItem).Favourite.SnippetID.VaultID;
   fLVFavs.Canvas.Font.Color := Preferences.GetSnippetHeadingColour(
     CollectionID
   );

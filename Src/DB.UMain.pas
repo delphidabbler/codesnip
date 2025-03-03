@@ -1229,7 +1229,7 @@ begin
     InternalDeleteSnippet(ASnippet);
     // add new, post-update snippet with same key & collection ID as old snippet
     Result := InternalAddSnippet(
-      PreservedSnippetID.Key, PreservedSnippetID.CollectionID, AData
+      PreservedSnippetID.Key, PreservedSnippetID.VaultID, AData
     );
 
     // add updated snippet to referrer lists of referring snippets

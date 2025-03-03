@@ -241,7 +241,7 @@ procedure TCodeImportMgr.UpdateDatabase;
     for SnippetID in ARefs do
     begin
       if fImportInfoList.FindByKey(SnippetID.Key, Info) and not Info.Skip then
-        Result.Add(TSnippetID.Create(Info.NewKey, SnippetID.CollectionID));
+        Result.Add(TSnippetID.Create(Info.NewKey, SnippetID.VaultID));
     end;
   end;
 

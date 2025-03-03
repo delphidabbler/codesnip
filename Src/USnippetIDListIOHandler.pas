@@ -145,7 +145,7 @@ begin
   try
     try
       for SnippetID in SnippetIDs do
-        TSVWriter.WriteLine([SnippetID.Key, SnippetID.CollectionID.ToHexString]);
+        TSVWriter.WriteLine([SnippetID.Key, SnippetID.VaultID.ToHexString]);
     finally
       TSVWriter.Free;
     end;

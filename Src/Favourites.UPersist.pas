@@ -145,7 +145,7 @@ begin
         TSVWriter.WriteLine(
           [
             Fav.SnippetID.Key,
-            Fav.SnippetID.CollectionID.ToHexString,
+            Fav.SnippetID.VaultID.ToHexString,
             DateTimeToStr(Fav.LastAccessed, DateFormatSettings)
           ]
         );

@@ -28,15 +28,16 @@ uses
 type
 
   ///  <summary>Record that uniquely identifies a code snippet.</summary>
-  ///  <remarks>Comprises the snippet's key and collection.</remarks>
+  ///  <remarks>Comprises the snippet's key and vault ID.</remarks>
   TSnippetID = record
   strict private
     var
       ///  <summary>Value of Key property.</summary>
       fKey: string;
-      fCollectionID: TVaultID;
+      ///  <summary>Value of VaultID property.</summary>
+      fVaultID: TVaultID;
     procedure SetKey(const AValue: string);
-    procedure SetCollectionID(const AValue: TVaultID);
+    procedure SetVaultID(const AValue: TVaultID);
   public
     type
       TComparer = class(TInterfacedObject,
@@ -55,13 +56,13 @@ type
 
     ///  <summary>ID of the vault to which a snippet with this ID belongs.
     ///  </summary>
-    ///  <remarks>ID must not be null.</remarks>
-    property CollectionID: TVaultID
-      read fCollectionID write SetCollectionID;
+    ///  <remarks><c>VaultID</c> must not be null.</remarks>
+    property VaultID: TVaultID
+      read fVaultID write SetVaultID;
 
     ///  <summary>Creates a record with given property values.</summary>
-    ///  <remarks><c>ACollectionID</c> must not be null.</remarks>
-    constructor Create(const AKey: string; const ACollectionID: TVaultID);
+    ///  <remarks><c>AVaultID</c> must not be null.</remarks>
+    constructor Create(const AKey: string; const AVaultID: TVaultID);
 
     ///  <summary>Creates copy of given snippet ID</summary>
     constructor Clone(const Src: TSnippetID);
@@ -179,7 +180,7 @@ uses
 
 constructor TSnippetID.Clone(const Src: TSnippetID);
 begin
-  Create(Src.Key, Src.CollectionID);
+  Create(Src.Key, Src.VaultID);
 end;
 
 class function TSnippetID.CompareKeys(const Left, Right: string): Integer;
@@ -191,14 +192,13 @@ function TSnippetID.CompareTo(const SID: TSnippetID): Integer;
 begin
   Result := CompareKeys(Key, SID.Key);
   if Result = 0 then
-    Result := TVaultID.Compare(CollectionID, SID.CollectionID);
+    Result := TVaultID.Compare(VaultID, SID.VaultID);
 end;
 
-constructor TSnippetID.Create(const AKey: string;
-  const ACollectionID: TVaultID);
+constructor TSnippetID.Create(const AKey: string; const AVaultID: TVaultID);
 begin
   SetKey(AKey);
-  SetCollectionID(ACollectionID);
+  SetVaultID(AVaultID);
 end;
 
 class operator TSnippetID.Equal(const SID1, SID2: TSnippetID): Boolean;
@@ -211,9 +211,9 @@ var
   PartialHash: Integer;
   KeyBytes: TBytes;
 begin
-  // Hash is created from hash of CollectionID property combined with hash of
-  // Key property after converting to a byte array in UTF8 format.
-  PartialHash := fCollectionID.Hash;
+  // Hash is created from hash of VaultID property combined with hash of Key
+  // property after converting to a byte array in UTF8 format.
+  PartialHash := fVaultID.Hash;
   KeyBytes := TEncoding.UTF8.GetBytes(fKey);
   Result := BobJenkinsHash(KeyBytes[0], Length(KeyBytes), PartialHash);
 end;
@@ -223,16 +223,16 @@ begin
   Result := not (SID1 = SID2);
 end;
 
-procedure TSnippetID.SetCollectionID(const AValue: TVaultID);
-begin
-  Assert(not AValue.IsNull, 'TSnippetID.SetCollectionID: Value is null');
-  fCollectionID := AValue.Clone;
-end;
-
 procedure TSnippetID.SetKey(const AValue: string);
 begin
   fKey := StrTrim(AValue);
   Assert(fKey <> '', 'TSnippetID.SetKey: Value is whitespace or empty');
+end;
+
+procedure TSnippetID.SetVaultID(const AValue: TVaultID);
+begin
+  Assert(not AValue.IsNull, 'TSnippetID.SetVaultID: Value is null');
+  fVaultID := AValue.Clone;
 end;
 
 { TSnippetID.TComparer }

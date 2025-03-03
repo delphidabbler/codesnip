@@ -782,7 +782,7 @@ function TSnippetList.Find(const SnippetID: TSnippetID): TSnippet;
     @return Reference to required snippet or nil if not found.
   }
 begin
-  Result := Find(SnippetID.Key, SnippetID.CollectionID);
+  Result := Find(SnippetID.Key, SnippetID.VaultID);
 end;
 
 function TSnippetList.GetEnumerator: TEnumerator<TSnippet>;
