@@ -142,9 +142,9 @@ end;
 
 procedure TUserDBMove.SetNewDBDirectory(Sender: TObject);
 var
-  Collections: TCollections;
+  Collections: TVaults;
 begin
-  Collections := TCollections.Instance;
+  Collections := TVaults.Instance;
   // record new location BEFORE deleting old directory
   fCollection.Storage.Directory := fDestDir;
   Collections.Update(fCollection);

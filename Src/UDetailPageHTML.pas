@@ -426,14 +426,14 @@ begin
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
-  CollectionCount := TCollections.Instance.Count;
+  CollectionCount := TVaults.Instance.Count;
   Tplt.ResolvePlaceholderHTML(
     'CollectionCount', IntToStr(CollectionCount)
   );
 
   CollectionList := TStringBuilder.Create;
   try
-    for Collection in TCollections.Instance do
+    for Collection in TVaults.Instance do
       CollectionList.AppendLine(
         THTML.CompoundTag(
           'li',

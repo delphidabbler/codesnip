@@ -364,7 +364,7 @@ const
 begin
   // Calculate database stats
   TotalSnippets := Database.Snippets.Count;
-  TotalCollections := TCollections.Instance.Count;
+  TotalCollections := TVaults.Instance.Count;
   // Build display text and display it
   fStatusBar.Panels[cDBPanel].Text := Format(
     sStats,

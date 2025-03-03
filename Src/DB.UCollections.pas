@@ -111,27 +111,27 @@ type
     function IsDefault: Boolean;
   end;
 
-  TCollections = class sealed(TSingleton)
+  TVaults = class sealed(TSingleton)
   strict private
     var
       fItems: TList<TVault>;
     function GetItem(const Idx: Integer): TVault;
-    procedure DoUpdate(const Idx: Integer; const ACollection: TVault);
-    class function GetInstance: TCollections; static;
+    procedure DoUpdate(const Idx: Integer; const AVault: TVault);
+    class function GetInstance: TVaults; static;
   strict protected
     procedure Initialize; override;
     procedure Finalize; override;
   public
-    class property Instance: TCollections read GetInstance;
+    class property Instance: TVaults read GetInstance;
     function GetEnumerator: TEnumerator<TVault>;
     function IndexOfID(const AUID: TVaultID): Integer;
     function ContainsID(const AUID: TVaultID): Boolean;
     function ContainsName(const AName: string): Boolean;
     function GetCollection(const AUID: TVaultID): TVault;
     function Default: TVault;
-    procedure Add(const ACollection: TVault);
-    procedure Update(const ACollection: TVault);
-    procedure AddOrUpdate(const ACollection: TVault);
+    procedure Add(const AVault: TVault);
+    procedure Update(const AVault: TVault);
+    procedure AddOrUpdate(const AVault: TVault);
     procedure Delete(const AUID: TVaultID);
     procedure Clear;
     procedure Save;
@@ -152,10 +152,10 @@ type
     class procedure SaveCollection(const AOrdinal: Cardinal;
       const ACollection: TVault); static;
     class procedure LoadCollection(const AOrdinal: Cardinal;
-      const ACollections: TCollections); static;
+      const ACollections: TVaults); static;
   public
-    class procedure Save(const ACollections: TCollections); static;
-    class procedure Load(const ACollections: TCollections); static;
+    class procedure Save(const ACollections: TVaults); static;
+    class procedure Load(const ACollections: TVaults); static;
   end;
 
 implementation
@@ -211,26 +211,26 @@ begin
   fMetaData := AValue.Clone;
 end;
 
-{ TCollections }
+{ TVaults }
 
-procedure TCollections.Add(const ACollection: TVault);
+procedure TVaults.Add(const AVault: TVault);
 begin
-  if not ContainsID(ACollection.UID) then
-    fItems.Add(ACollection);
+  if not ContainsID(AVault.UID) then
+    fItems.Add(AVault);
 end;
 
-procedure TCollections.AddOrUpdate(const ACollection: TVault);
+procedure TVaults.AddOrUpdate(const AVault: TVault);
 var
   Idx: Integer;
 begin
-  Idx := IndexOfID(ACollection.UID);
+  Idx := IndexOfID(AVault.UID);
   if Idx < 0 then
-    fItems.Add(ACollection)
+    fItems.Add(AVault)
   else
-    DoUpdate(Idx, ACollection);
+    DoUpdate(Idx, AVault);
 end;
 
-procedure TCollections.Clear;
+procedure TVaults.Clear;
 var
   Idx: Integer;
 begin
@@ -239,13 +239,13 @@ begin
   fItems.Clear;
 end;
 
-function TCollections.ContainsID(const AUID: TVaultID):
+function TVaults.ContainsID(const AUID: TVaultID):
   Boolean;
 begin
   Result := IndexOfID(AUID) >= 0;
 end;
 
-function TCollections.ContainsName(const AName: string): Boolean;
+function TVaults.ContainsName(const AName: string): Boolean;
 var
   Collection: TVault;
 begin
@@ -255,17 +255,17 @@ begin
       Exit(True);
 end;
 
-function TCollections.Count: Integer;
+function TVaults.Count: Integer;
 begin
   Result := fItems.Count;
 end;
 
-function TCollections.Default: TVault;
+function TVaults.Default: TVault;
 begin
   Result := GetCollection(TVaultID.Default);
 end;
 
-procedure TCollections.Delete(const AUID: TVaultID);
+procedure TVaults.Delete(const AUID: TVaultID);
 resourcestring
   sCantDelete = 'Cannot delete the default collection';
 var
@@ -281,24 +281,23 @@ begin
   end;
 end;
 
-procedure TCollections.DoUpdate(const Idx: Integer;
-  const ACollection: TVault);
+procedure TVaults.DoUpdate(const Idx: Integer; const AVault: TVault);
 var
   OldEntry: TVault;
 begin
   OldEntry := fItems[Idx];
-  fItems[Idx] := ACollection;
+  fItems[Idx] := AVault;
   OldEntry.Free;
 end;
 
-procedure TCollections.Finalize;
+procedure TVaults.Finalize;
 begin
   Save;
   Clear;
   fItems.Free;
 end;
 
-function TCollections.GetAllIDs: TArray<TVaultID>;
+function TVaults.GetAllIDs: TArray<TVaultID>;
 var
   Idx: Integer;
 begin
@@ -307,7 +306,7 @@ begin
     Result[Idx] := fItems[Idx].UID;
 end;
 
-function TCollections.GetCollection(const AUID: TVaultID): TVault;
+function TVaults.GetCollection(const AUID: TVaultID): TVault;
 var
   Idx: Integer;
 begin
@@ -317,22 +316,22 @@ begin
   Result := fItems[Idx];
 end;
 
-function TCollections.GetEnumerator: TEnumerator<TVault>;
+function TVaults.GetEnumerator: TEnumerator<TVault>;
 begin
   Result := fItems.GetEnumerator;
 end;
 
-class function TCollections.GetInstance: TCollections;
+class function TVaults.GetInstance: TVaults;
 begin
-  Result := TCollections.Create;
+  Result := TVaults.Create;
 end;
 
-function TCollections.GetItem(const Idx: Integer): TVault;
+function TVaults.GetItem(const Idx: Integer): TVault;
 begin
   Result := fItems[Idx];
 end;
 
-function TCollections.IndexOfID(const AUID: TVaultID): Integer;
+function TVaults.IndexOfID(const AUID: TVaultID): Integer;
 var
   Idx: Integer;
 begin
@@ -342,7 +341,7 @@ begin
       Exit(Idx);
 end;
 
-procedure TCollections.Initialize;
+procedure TVaults.Initialize;
 begin
   fItems := TList<TVault>.Create;
   TCollectionsPersist.Load(Self);
@@ -360,23 +359,23 @@ begin
     );
 end;
 
-procedure TCollections.Save;
+procedure TVaults.Save;
 begin
   TCollectionsPersist.Save(Self);
 end;
 
-function TCollections.ToArray: TArray<TVault>;
+function TVaults.ToArray: TArray<TVault>;
 begin
   Result := fItems.ToArray;
 end;
 
-procedure TCollections.Update(const ACollection: TVault);
+procedure TVaults.Update(const AVault: TVault);
 var
   Idx: Integer;
 begin
-  Idx := IndexOfID(ACollection.UID);
+  Idx := IndexOfID(AVault.UID);
   if Idx >= 0 then
-    DoUpdate(Idx, ACollection);
+    DoUpdate(Idx, AVault);
 end;
 
 { TVaultID }
@@ -499,7 +498,7 @@ end;
 { TCollectionsPersist }
 
 class procedure TCollectionsPersist.Load(
-  const ACollections: TCollections);
+  const ACollections: TVaults);
 var
   ConfigSection: ISettingsSection;
   Count: Integer;
@@ -512,7 +511,7 @@ begin
 end;
 
 class procedure TCollectionsPersist.LoadCollection(const AOrdinal: Cardinal;
-  const ACollections: TCollections);
+  const ACollections: TVaults);
 var
   ConfigSection: ISettingsSection;
   UID: TVaultID;
@@ -538,7 +537,7 @@ begin
 end;
 
 class procedure TCollectionsPersist.Save(const
-  ACollections: TCollections);
+  ACollections: TVaults);
 var
   ConfigSection: ISettingsSection;
   Idx: Integer;

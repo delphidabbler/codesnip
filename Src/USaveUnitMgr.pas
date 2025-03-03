@@ -277,10 +277,10 @@ begin
   fSourceGen := TSourceGen.Create;
   fSourceGen.IncludeSnippets(Snips);
 
-  // Count the number of collections containing snippet in the list
+  // Count the number of vaults containing snippet in the list
   for Snippet in Snips do
   begin
-    Collection := TCollections.Instance.GetCollection(Snippet.CollectionID);
+    Collection := TVaults.Instance.GetCollection(Snippet.CollectionID);
     if not fCollections.Contains(Collection) then
       fCollections.Add(Collection);
   end;

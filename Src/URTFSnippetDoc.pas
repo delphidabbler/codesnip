@@ -174,7 +174,7 @@ begin
   fBuilder.ColourTable.Add(clWarningText);
   fBuilder.ColourTable.Add(clVarText);
   fBuilder.ColourTable.Add(clExternalLink);
-  for Collection in TCollections.Instance do
+  for Collection in TVaults.Instance do
     fBuilder.ColourTable.Add(
       Preferences.GetSnippetHeadingColour(Collection.UID)
     );

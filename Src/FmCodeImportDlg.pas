@@ -339,7 +339,7 @@ procedure TCodeImportDlg.InitForm;
 begin
   fCollList.ToStrings(cbCollection.Items);
   Assert(cbCollection.Items.Count > 0, ClassName + '.InitForm: no collections');
-  Assert(TCollections.Instance.ContainsID(TVaultID.Default),
+  Assert(TVaults.Instance.ContainsID(TVaultID.Default),
     ClassName + '.InitForm: default collection not found');
   cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
   Assert(cbCollection.ItemIndex >= 0,

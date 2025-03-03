@@ -1080,8 +1080,8 @@ begin
   // to this unit
   DataItemFactory := TDBDataItemFactory.Create;
   try
-    // Load all collections
-    for Collection in TCollections.Instance do
+    // Load all vaults
+    for Collection in TVaults.Instance do
     begin
       CollectionLoader := TDatabaseIOFactory.CreateDBLoader(Collection);
       if Assigned(CollectionLoader) then
@@ -1122,8 +1122,8 @@ begin
   // Save categories
   CatSaver := TDatabaseIOFactory.CreateGlobalCategorySaver;
   CatSaver.Save(fCategories);
-  // Save all collections
-  for Collection in TCollections.Instance do
+  // Save all vaults
+  for Collection in TVaults.Instance do
   begin
     Provider := TCollectionDataProvider.Create(
       Collection.UID, fSnippets, fCategories

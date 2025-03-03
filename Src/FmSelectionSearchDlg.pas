@@ -273,7 +273,7 @@ procedure TSelectionSearchDlg.PopulateCollectionsMenu;
 var
   Collection: TVault;
 begin
-  for Collection in TCollections.Instance do
+  for Collection in TVaults.Instance do
     AddMenuItem(Collection);
 end;
 

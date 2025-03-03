@@ -106,7 +106,7 @@ begin
   fBuilder.FontTable.Add(MainFontName, rgfSwiss, 0);
   fBuilder.FontTable.Add(MonoFontName, rgfModern, 0);
   // Set up colour table
-  for Collection in TCollections.Instance do
+  for Collection in TVaults.Instance do
     fBuilder.ColourTable.Add(
       Preferences.GetSnippetHeadingColour(Collection.UID)
     );

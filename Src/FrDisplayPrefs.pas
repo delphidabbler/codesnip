@@ -174,7 +174,7 @@ begin
   chkSnippetsInNewTab.Checked := Prefs.ShowNewSnippetsInNewTabs;
   fGroupHeadingColourBox.Selected := Prefs.GroupHeadingColour;
   fSnippetHeadingColours.Clear;
-  for Collection in TCollections.Instance do
+  for Collection in TVaults.Instance do
     fSnippetHeadingColours.Add(
       Collection.UID, Prefs.GetSnippetHeadingColour(Collection.UID)
     );
@@ -286,7 +286,7 @@ begin
   // combo boxes
   fGroupHeadingColourBox.Selected := clDefGroupHeading;
   fSnippetHeadingColourBox.Selected := clDefSnippetHeading;
-  for Collection in TCollections.Instance do
+  for Collection in TVaults.Instance do
     fSnippetHeadingColours[Collection.UID] := clDefSnippetHeading;
   fSourceBGColourBox.Selected := clSourceBg;
   fUIChanged := True;
@@ -401,7 +401,7 @@ begin
     fGroupHeadingColourDlg.CustomColors, True
   );
 
-  for Collection in TCollections.Instance do
+  for Collection in TVaults.Instance do
     Prefs.SetSnippetHeadingColour(
       Collection.UID, fSnippetHeadingColours[Collection.UID]
     );

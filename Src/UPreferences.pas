@@ -748,7 +748,7 @@ begin
   Self.fShowNewSnippetsInNewTabs := SrcPref.ShowNewSnippetsInNewTabs;
   Self.fGroupHeadingColour := SrcPref.GetGroupHeadingColour;
   Self.fGroupHeadingCustomColours := SrcPref.GetGroupHeadingCustomColours;
-  for Collection in TCollections.Instance do
+  for Collection in TVaults.Instance do
     Self.SetSnippetHeadingColour(
       Collection.UID, SrcPref.GetSnippetHeadingColour(Collection.UID)
     );
@@ -1073,7 +1073,7 @@ begin
   NewPref.ShowNewSnippetsInNewTabs := Self.fShowNewSnippetsInNewTabs;
   NewPref.GroupHeadingColour := Self.fGroupHeadingColour;
   NewPref.GroupHeadingCustomColours := Self.fGroupHeadingCustomColours;
-  for Collection in TCollections.Instance do
+  for Collection in TVaults.Instance do
     NewPref.SetSnippetHeadingColour(
       Collection.UID, Self.GetSnippetHeadingColour(Collection.UID)
     );
@@ -1131,7 +1131,7 @@ begin
   );
 
   fSnippetHeadingColours.Clear;
-  for Collection in TCollections.Instance do
+  for Collection in TVaults.Instance do
   begin
     fSnippetHeadingColours.AddOrSetValue(
       Collection.UID,
@@ -1228,7 +1228,7 @@ begin
     'GroupHeadingCustomColour%d',
     fGroupHeadingCustomColours
   );
-  for Collection in TCollections.Instance do
+  for Collection in TVaults.Instance do
   begin
     if fSnippetHeadingColours.ContainsKey(Collection.UID) then
       Storage.SetInteger(

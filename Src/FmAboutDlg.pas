@@ -311,7 +311,7 @@ begin
   fPathInfoBoxes.Add(
     CreatePathInfoBox(sInstallPathGpCaption, TAppInfo.AppExeDir, 1)
   );
-  for Collection in TCollections.Instance do
+  for Collection in TVaults.Instance do
   begin
     Inc(TabIdx);
     fPathInfoBoxes.Add(
