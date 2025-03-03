@@ -185,8 +185,7 @@ type
   strict private
     fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
-    fCollList:
-      TCollectionListAdapter;       // Accesses sorted list of collections
+    fCollList: TVaultListAdapter;   // Accesses sorted list of collections
     fSnipKindList:
       TSnipKindListAdapter;         // Accesses sorted list of snippet kinds
     fEditData: TSnippetEditData;    // Record storing a snippet's editable data
@@ -822,7 +821,7 @@ procedure TSnippetsEditorDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fCatList := TCategoryListAdapter.Create(Database.Categories);
-  fCollList := TCollectionListAdapter.Create;
+  fCollList := TVaultListAdapter.Create;
   fSnipKindList := TSnipKindListAdapter.Create;
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fMemoCaretPosDisplayMgr := TMemoCaretPosDisplayMgr.Create;
@@ -1010,7 +1009,7 @@ begin
     Result := fSnippet.VaultID
   else
     // Editing new snippet: chosing collection is permitted
-    Result := fCollList.Collection(cbCollection.ItemIndex).UID;
+    Result := fCollList.Vault(cbCollection.ItemIndex).UID;
 end;
 
 procedure TSnippetsEditorDlg.SetAllCompilerResults(

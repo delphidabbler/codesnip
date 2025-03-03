@@ -78,7 +78,7 @@ type
       fControlStateMgr: TControlStateMgr;
       ///  <summary>Object used to provide and interogate a sorted list of
       ///  collection names displated in <c>cbCollection</c>.</summary>
-      fCollList: TCollectionListAdapter;
+      fCollList: TVaultListAdapter;
     ///  <summary>Sets visibility of all child controls of a parent control.
     ///  </summary>
     ///  <param name="ParentCtrl">TWinControl [in] Parent of affected controls.
@@ -176,7 +176,7 @@ begin
   actMove.Enabled := (NewDirFromEditCtrl <> '')
     and not StrSameText(
       NewDirFromEditCtrl,
-      fCollList.Collection(cbCollection.ItemIndex).Storage.Directory
+      fCollList.Vault(cbCollection.ItemIndex).Storage.Directory
     )
     and Self.Enabled;
 end;
@@ -279,7 +279,7 @@ begin
     frmProgress.Show(ProgressHostCtrl);
     try
       fMover.MoveTo(
-        fCollList.Collection(cbCollection.ItemIndex), NewDir
+        fCollList.Vault(cbCollection.ItemIndex), NewDir
       );
     except
       on E: Exception do
@@ -319,7 +319,7 @@ begin
   fMover.OnCopyFile := CopyFileHandler;
   fMover.OnDeleteFile := DeleteFileHandler;
   fControlStateMgr := TControlStateMgr.Create(Self);
-  fCollList := TCollectionListAdapter.Create;
+  fCollList := TVaultListAdapter.Create;
 end;
 
 procedure TUserDataPathDlg.FormDestroy(Sender: TObject);

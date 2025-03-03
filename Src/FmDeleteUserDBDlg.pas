@@ -46,7 +46,7 @@ type
     var
       fPermissionGranted: Boolean;
       fCollection: TVault;
-      fCollList: TCollectionListAdapter;
+      fCollList: TVaultListAdapter;
     function SelectedCollection: TVault;
     function IsValidPassword: Boolean;
   strict protected
@@ -128,7 +128,7 @@ end;
 procedure TDeleteUserDBDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fCollList := TCollectionListAdapter.Create;
+  fCollList := TVaultListAdapter.Create;
 end;
 
 procedure TDeleteUserDBDlg.FormDestroy(Sender: TObject);
@@ -151,7 +151,7 @@ end;
 
 function TDeleteUserDBDlg.SelectedCollection: TVault;
 begin
-  Result := fCollList.Collection(cbCollection.ItemIndex);
+  Result := fCollList.Vault(cbCollection.ItemIndex);
 end;
 
 end.

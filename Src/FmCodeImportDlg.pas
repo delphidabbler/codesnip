@@ -84,7 +84,7 @@ type
       ///  <summary>Object that populates <c>cbCollection</c> with an
       ///  alphabetical list of collection names and manages interaction with
       ///  it.</summary>
-      fCollList: TCollectionListAdapter;
+      fCollList: TVaultListAdapter;
     ///  <summary>Validates entries on wizard pages indetified by the page
     ///  index.</summary>
     procedure ValidatePage(const PageIdx: Integer);
@@ -291,7 +291,7 @@ end;
 procedure TCodeImportDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fCollList := TCollectionListAdapter.Create;
+  fCollList := TVaultListAdapter.Create;
 end;
 
 procedure TCodeImportDlg.FormDestroy(Sender: TObject);
@@ -309,7 +309,7 @@ function TCodeImportDlg.GetCollectionID: TVaultID;
 begin
   Assert(cbCollection.ItemIndex >= 0,
     ClassName + '.GetCollectionID: no collection selected');
-  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
+  Result := fCollList.Vault(cbCollection.ItemIndex).UID;
 end;
 
 function TCodeImportDlg.GetFileNameFromEditCtrl: string;

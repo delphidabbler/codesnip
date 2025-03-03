@@ -70,7 +70,7 @@ type
       fSourceBGColourBox: TColorBoxEx;
       fSourceBGColourDlg: TColorDialogEx;
 
-      fCollList: TCollectionListAdapter;
+      fCollList: TVaultListAdapter;
 
     procedure SelectOverviewTreeState(const State: TOverviewStartState);
       {Selects combo box item associated with a overview treeview startup state.
@@ -358,7 +358,7 @@ begin
     TVaultID.TComparer.Create
   );
 
-  fCollList := TCollectionListAdapter.Create;
+  fCollList := TVaultListAdapter.Create;
   fCollList.ToStrings(cbCollection.Items);
   Assert(cbCollection.Items.Count > 0, ClassName + '.Create: no collections');
 
@@ -513,7 +513,7 @@ function TDisplayPrefsFrame.SelectedCollectionID: TVaultID;
 begin
   Assert(cbCollection.ItemIndex >= 0,
     ClassName + '.SelectedCollectionID: no collection selected');
-  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
+  Result := fCollList.Vault(cbCollection.ItemIndex).UID;
 end;
 
 procedure TDisplayPrefsFrame.SelectOverviewTreeState(

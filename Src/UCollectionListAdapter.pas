@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2024, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a class that adapts a list of snippet collections by providing an
+ * Implements a class that adapts a list of snippet vaults by providing an
  * alternative interface to the list, sorted by description. Designed for use
  * with GUI controls.
 }
@@ -23,34 +23,34 @@ uses
 
 type
 
-  ///  <summary>Class that adapts a list of snippet collections by providing an
+  ///  <summary>Class that adapts a list of snippet vaults by providing an
   ///  alternative interface to the list, sorted by description. Designed for
   ///  use with GUI controls.</summary>
-  TCollectionListAdapter = class(TObject)
+  TVaultListAdapter = class(TObject)
   strict private
     var
-      fCollectionList: TSortedList<TVault>;
+      fVaultList: TSortedList<TVault>;
 
   public
 
-    ///  <summary>Object constructor. Sets up object with sorted list of
-    ///  collections.</summary>
+    ///  <summary>Object constructor. Sets up object with a sorted list of
+    ///  vaults.</summary>
     constructor Create;
 
     ///  <summary>Object destructor. Tears down object.</summary>
     destructor Destroy; override;
 
-    ///  <summary>Copies collection descriptions to a string list.</summary>
+    ///  <summary>Copies vault descriptions to a string list.</summary>
     ///  <param name="AStrings"><c>TStrings</c> [in] String list that receives
-    ///  collection descriptions.</param>
+    ///  vault descriptions.</param>
     procedure ToStrings(const AStrings: TStrings);
 
-    ///  <summary>Gets the collection at a specified index in the sorted list.
+    ///  <summary>Gets the vault at a specified index in the sorted list.
     ///  </summary>
-    ///  <param name="AIndex"><c>Integer</c> [in] Index of required collection.
+    ///  <param name="AIndex"><c>Integer</c> [in] Index of required vault.
     ///  </param>
     ///  <returns><c>TVault</c>. Required vault.</returns>
-    function Collection(const AIndex: Integer): TVault;
+    function Vault(const AIndex: Integer): TVault;
 
     ///  <summary>Gets list index of the vault with the specified UID.</summary>
     function IndexOfUID(const AUID: TVaultID): Integer;
@@ -65,19 +65,14 @@ uses
   // Project
   UStrUtils;
 
-{ TCollectionListAdapter }
+{ TVaultListAdapter }
 
-function TCollectionListAdapter.Collection(const AIndex: Integer): TVault;
-begin
-  Result := fCollectionList[AIndex];
-end;
-
-constructor TCollectionListAdapter.Create;
+constructor TVaultListAdapter.Create;
 var
-  Collection: TVault;
+  Vault: TVault;
 begin
   inherited Create;
-  fCollectionList := TSortedList<TVault>.Create(
+  fVaultList := TSortedList<TVault>.Create(
     TDelegatedComparer<TVault>.Create(
       function (const Left, Right: TVault): Integer
       begin
@@ -85,32 +80,37 @@ begin
       end
     )
   );
-  for Collection in TVaults.Instance do
-    fCollectionList.Add(Collection);
+  for Vault in TVaults.Instance do
+    fVaultList.Add(Vault);
 end;
 
-destructor TCollectionListAdapter.Destroy;
+destructor TVaultListAdapter.Destroy;
 begin
-  fCollectionList.Free;
+  fVaultList.Free;
   inherited;
 end;
 
-function TCollectionListAdapter.IndexOfUID(const AUID: TVaultID): Integer;
+function TVaultListAdapter.IndexOfUID(const AUID: TVaultID): Integer;
 var
   Idx: Integer;
 begin
   Result := -1;
-  for Idx := 0 to Pred(fCollectionList.Count) do
-    if fCollectionList[Idx].UID = AUID then
+  for Idx := 0 to Pred(fVaultList.Count) do
+    if fVaultList[Idx].UID = AUID then
       Exit(Idx);
 end;
 
-procedure TCollectionListAdapter.ToStrings(const AStrings: TStrings);
+procedure TVaultListAdapter.ToStrings(const AStrings: TStrings);
 var
-  Collection: TVault;
+  Vault: TVault;
 begin
-  for Collection in fCollectionList do
-    AStrings.Add(Collection.Name);
+  for Vault in fVaultList do
+    AStrings.Add(Vault.Name);
+end;
+
+function TVaultListAdapter.Vault(const AIndex: Integer): TVault;
+begin
+  Result := fVaultList[AIndex];
 end;
 
 end.

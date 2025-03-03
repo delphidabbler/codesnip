@@ -122,7 +122,7 @@ type
       fPathInfoBoxes: TList<TPathInfoBox>;
       ///  <summary>Provides a sorted list of collection names for display in
       ///  the collections combo box.</summary>
-      fCollList: TCollectionListAdapter;
+      fCollList: TVaultListAdapter;
     ///  <summary>Handles title frame's OnHTMLEvent event. Checks for mouse
     ///  events relating to display of the easter egg and acts accordingly.
     ///  </summary>
@@ -277,7 +277,7 @@ end;
 
 procedure TAboutDlg.cbCollectionChange(Sender: TObject);
 begin
-  DisplayCollectionInfo(fCollList.Collection(cbCollection.ItemIndex));
+  DisplayCollectionInfo(fCollList.Vault(cbCollection.ItemIndex));
 end;
 
 procedure TAboutDlg.ConfigForm;
@@ -325,7 +325,7 @@ begin
   // Load collections into combo box & select default collection
   fCollList.ToStrings(cbCollection.Items);
   cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
-  DisplayCollectionInfo(fCollList.Collection(cbCollection.ItemIndex));
+  DisplayCollectionInfo(fCollList.Vault(cbCollection.ItemIndex));
   // Set collections treeview and paths scrollbox background colours
   tvCollectionInfo.Color := ThemeServicesEx.GetTabBodyColour;
   sbPaths.Color := ThemeServicesEx.GetTabBodyColour;
@@ -468,7 +468,7 @@ end;
 procedure TAboutDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fCollList := TCollectionListAdapter.Create;
+  fCollList := TVaultListAdapter.Create;
   fPathInfoBoxes := TList<TPathInfoBox>.Create;
   frmTitle.OnBuildCSS := UpdateTitleCSS;
   frmProgram.OnBuildCSS := UpdateProgramTabCSS;

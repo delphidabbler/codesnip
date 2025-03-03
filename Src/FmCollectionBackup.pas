@@ -40,7 +40,7 @@ type
     var
       fFileName: string;
       fCollection: TVault;
-      fCollList: TCollectionListAdapter;
+      fCollList: TVaultListAdapter;
     function GetFilePathFromEditCtrl: string;
   strict protected
     procedure ConfigForm; override;
@@ -108,7 +108,7 @@ end;
 procedure TCollectionBackupDlg.btnOKClick(Sender: TObject);
 begin
   fFileName := GetFilePathFromEditCtrl;
-  fCollection := fCollList.Collection(cbCollection.ItemIndex);
+  fCollection := fCollList.Vault(cbCollection.ItemIndex);
 end;
 
 procedure TCollectionBackupDlg.ConfigForm;
@@ -135,7 +135,7 @@ end;
 procedure TCollectionBackupDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fCollList := TCollectionListAdapter.Create;
+  fCollList := TVaultListAdapter.Create;
 end;
 
 procedure TCollectionBackupDlg.FormDestroy(Sender: TObject);

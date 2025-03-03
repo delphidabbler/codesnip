@@ -60,7 +60,7 @@ type
     var
       fSnippet: TSnippet;
       fCatList: TCategoryListAdapter;
-      fCollList: TCollectionListAdapter;
+      fCollList: TVaultListAdapter;
       fOptions: TPersistentOptions;
       fSnippetKey: string;
     ///  <summary>Returns the ID of the vault selected in the collections drop
@@ -226,7 +226,7 @@ function TDuplicateSnippetDlg.SelectedCollectionID: TVaultID;
 begin
   Assert(cbCollection.ItemIndex >= 0,
     ClassName + '.SelectedCollectionID: no collection selected');
-  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
+  Result := fCollList.Vault(cbCollection.ItemIndex).UID;
 end;
 
 procedure TDuplicateSnippetDlg.UpdateDatabase;
@@ -258,7 +258,7 @@ procedure TDuplicateSnippetDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fCatList := TCategoryListAdapter.Create(Database.Categories);
-  fCollList := TCollectionListAdapter.Create;
+  fCollList := TVaultListAdapter.Create;
   fOptions := TPersistentOptions.Create;
 end;
 
