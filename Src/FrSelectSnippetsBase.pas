@@ -23,9 +23,9 @@ uses
   Classes,
   ComCtrls,
   // Project
-  DB.UCollections,
   DB.UCategory,
   DB.USnippet,
+  DB.Vaults,
   FrCheckedTV,
   USnippetsTVDraw;
 

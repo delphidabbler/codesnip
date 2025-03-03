@@ -181,9 +181,9 @@ uses
   XMLDom,
   // Project
   ActiveText.UMain,
-  DB.UCollections,
   DB.UMain,
   DB.USnippetKind,
+  DB.Vaults,
   UAppInfo,
   USnippetExtraHelper,
   UStructs,

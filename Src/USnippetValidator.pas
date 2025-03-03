@@ -18,9 +18,9 @@ interface
 uses
   // Project
   ActiveText.UMain,
-  DB.UCollections,
   DB.USnippet,
   DB.USnippetKind,
+  DB.Vaults,
   UBaseObjects,
   UStructs;
 

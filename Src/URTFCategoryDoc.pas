@@ -90,7 +90,10 @@ implementation
 
 uses
   // Project
-  ActiveText.UMain, DB.UCollections, UColours, UPreferences;
+  ActiveText.UMain,
+  DB.Vaults,
+  UColours,
+  UPreferences;
 
 
 { TRTFCategoryDoc }

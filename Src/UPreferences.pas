@@ -19,9 +19,15 @@ uses
   // Delphi
   Graphics,
   // Project
-  DB.UCollections,
-  Hiliter.UGlobals, UIStringList, UMeasurement, UPrintInfo,
-  USnippetPageStructure, USourceFileInfo, USourceGen, UWarnings;
+  DB.Vaults,
+  Hiliter.UGlobals,
+  UIStringList,
+  UMeasurement,
+  UPrintInfo,
+  USnippetPageStructure,
+  USourceFileInfo,
+  USourceGen,
+  UWarnings;
 
 
 type

@@ -18,11 +18,22 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes, Buttons, Menus,
+  Forms,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
+  Buttons,
+  Menus,
   // Project
-  DB.UCollections,
-  DB.USnippet, FmGenericOKDlg, FrCheckedTV, FrSelectSnippets,
-  FrSelectSnippetsBase, UBaseObjects, USearch;
+  DB.USnippet,
+  DB.Vaults,
+  FmGenericOKDlg,
+  FrCheckedTV,
+  FrSelectSnippets,
+  FrSelectSnippetsBase,
+  UBaseObjects,
+  USearch;
 
 
 type

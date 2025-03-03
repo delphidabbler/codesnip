@@ -22,7 +22,7 @@ uses
   ExtCtrls,
   Classes,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   FmGenericOKDlg,
   FrBrowserBase,
   FrHTMLDlg,

@@ -271,11 +271,20 @@ implementation
 
 uses
   // Delphi
-  SysUtils, DateUtils, Windows, Graphics,
+  SysUtils,
+  DateUtils,
+  Windows,
+  Graphics,
   // Project
-  DB.UCollections,
-  DB.UMain, DB.USnippet, UCtrlArranger, UMessageBox, UPreferences, USettings,
-  UStructs, UStrUtils;
+  DB.UMain,
+  DB.USnippet,
+  DB.Vaults,
+  UCtrlArranger,
+  UMessageBox,
+  UPreferences,
+  USettings,
+  UStructs,
+  UStrUtils;
 
 {$R *.dfm}
 

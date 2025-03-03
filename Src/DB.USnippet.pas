@@ -24,8 +24,8 @@ uses
   // Project
   ActiveText.UMain,
   Compilers.UGlobals,
-  DB.UCollections,
   DB.USnippetKind,
+  DB.Vaults,
   UContainers,
   UIStringList,
   USnippetIDs;

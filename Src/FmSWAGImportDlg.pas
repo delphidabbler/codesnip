@@ -28,7 +28,7 @@ uses
   Classes,
   Generics.Collections,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   FmWizardDlg,
   FrBrowserBase,
   FrFixedHTMLDlg,

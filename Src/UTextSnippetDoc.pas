@@ -20,8 +20,11 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCollections,
-  ActiveText.UMain, UEncodings, UIStringList, USnippetDoc;
+  ActiveText.UMain,
+  DB.Vaults,
+  UEncodings,
+  UIStringList,
+  USnippetDoc;
 
 
 type

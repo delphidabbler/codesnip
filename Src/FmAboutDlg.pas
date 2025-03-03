@@ -28,7 +28,7 @@ uses
   // Project
   Browser.UHTMLEvents,
   DB.MetaData,
-  DB.UCollections,
+  DB.Vaults,
   FmGenericViewDlg,
   FrBrowserBase,
   FrHTMLDlg,

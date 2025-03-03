@@ -18,7 +18,7 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UContainers;
 
 type

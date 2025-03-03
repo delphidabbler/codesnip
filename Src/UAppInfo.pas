@@ -132,7 +132,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   USettings,
   UStrUtils,
   USystemInfo,

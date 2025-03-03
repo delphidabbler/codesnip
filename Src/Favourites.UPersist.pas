@@ -58,8 +58,8 @@ uses
   IOUtils,
   Classes,
   /// Project
-  DB.UCollections,
   DB.UMain,
+  DB.Vaults,
   UAppInfo,
   UConsts,
   UIOUtils,

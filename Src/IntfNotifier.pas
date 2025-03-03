@@ -20,7 +20,7 @@ uses
   // Delphi
   Classes, ActiveX, Windows,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UView;
 
 

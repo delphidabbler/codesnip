@@ -579,7 +579,7 @@
 			</DCCReference>
 			<DCCReference Include="ClassHelpers.UGraphics.pas"/>
 			<DCCReference Include="ClassHelpers.UActions.pas"/>
-			<DCCReference Include="DB.UCollections.pas"/>
+			<DCCReference Include="DB.Vaults.pas"/>
 			<DCCReference Include="UTabSeparatedFileIO.pas"/>
 			<DCCReference Include="DBIO.UCategoryIO.pas"/>
 			<DCCReference Include="UCollectionListAdapter.pas"/>

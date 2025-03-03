@@ -115,13 +115,24 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Menus, Math,
+  SysUtils,
+  Menus,
+  Math,
   // Project
-  ActiveText.UHTMLRenderer, Browser.UHighlighter,
-  DB.UCollections,
-  Hiliter.UAttrs, Hiliter.UCSS,
-  Hiliter.UGlobals, UColours, UCSSUtils, UFontHelper, UPreferences, UQuery,
-  USystemInfo, UUtils, UWBCommandBars;
+  ActiveText.UHTMLRenderer,
+  Browser.UHighlighter,
+  DB.Vaults,
+  Hiliter.UAttrs,
+  Hiliter.UCSS,
+  Hiliter.UGlobals,
+  UColours,
+  UCSSUtils,
+  UFontHelper,
+  UPreferences,
+  UQuery,
+  USystemInfo,
+  UUtils,
+  UWBCommandBars;
 
 {$R *.dfm}
 

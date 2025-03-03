@@ -160,7 +160,7 @@ uses
   Graphics,
   Types {for inlining},
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UColours,
   UCtrlArranger,
   UFontHelper,

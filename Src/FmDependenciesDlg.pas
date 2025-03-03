@@ -18,10 +18,20 @@ interface
 
 uses
   // Delphi
-  ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Windows, ActnList,
+  ComCtrls,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
+  Windows,
+  ActnList,
   // Project
-  DB.UCollections,
-  DB.USnippet, FmGenericViewDlg, UBaseObjects, USearch, USnippetIDs,
+  DB.USnippet,
+  DB.Vaults,
+  FmGenericViewDlg,
+  UBaseObjects,
+  USearch,
+  USnippetIDs,
   USnippetsTVDraw;
 
 

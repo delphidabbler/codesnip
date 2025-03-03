@@ -130,7 +130,7 @@ uses
   SysUtils,
   Graphics,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UColours,
   UCtrlArranger,
   UPreferences,

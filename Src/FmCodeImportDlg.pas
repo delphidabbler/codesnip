@@ -25,7 +25,7 @@ uses
   ExtCtrls,
   Forms,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   FmWizardDlg,
   UBaseObjects,
   UCodeImportMgr,

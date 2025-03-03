@@ -121,8 +121,8 @@ uses
   SysUtils,
   Forms,
   // Project
-  DB.UCollections,
   DB.UMain,
+  DB.Vaults,
   UQuery,
   USearch,
   UStructs;

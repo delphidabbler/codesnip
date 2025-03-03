@@ -25,7 +25,7 @@ uses
   Graphics,
   Generics.Collections,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   FrPrefsBase,
   UCollectionListAdapter,
   UColorBoxEx,

@@ -373,7 +373,7 @@ uses
   FmRegisterCompilersDlg in 'FmRegisterCompilersDlg.pas' {RegisterCompilersDlg},
   ClassHelpers.UGraphics in 'ClassHelpers.UGraphics.pas',
   ClassHelpers.UActions in 'ClassHelpers.UActions.pas',
-  DB.UCollections in 'DB.UCollections.pas',
+  DB.Vaults in 'DB.Vaults.pas',
   UTabSeparatedFileIO in 'UTabSeparatedFileIO.pas',
   DBIO.UCategoryIO in 'DBIO.UCategoryIO.pas',
   UCollectionListAdapter in 'UCollectionListAdapter.pas',

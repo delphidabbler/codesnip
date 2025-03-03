@@ -22,7 +22,7 @@ uses
   Generics.Collections,
   Generics.Defaults,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UCodeImportExport,
   UExceptions,
   UIStringList;

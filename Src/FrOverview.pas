@@ -18,11 +18,25 @@ interface
 
 uses
   // Delphi
-  ComCtrls, Controls, Classes, Windows, ExtCtrls, StdCtrls, ToolWin, Menus,
+  ComCtrls,
+  Controls,
+  Classes,
+  Windows,
+  ExtCtrls,
+  StdCtrls,
+  ToolWin,
+  Menus,
   // Project
-  DB.UCollections,
-  DB.USnippet, FrTitled, IntfFrameMgrs, IntfNotifier, UCommandBars,
-  UOverviewTreeState, USnippetsTVDraw, UView, UViewItemTreeNode;
+  DB.USnippet,
+  DB.Vaults,
+  FrTitled,
+  IntfFrameMgrs,
+  IntfNotifier,
+  UCommandBars,
+  UOverviewTreeState,
+  USnippetsTVDraw,
+  UView,
+  UViewItemTreeNode;
 
 
 type

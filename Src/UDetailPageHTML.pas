@@ -68,9 +68,9 @@ uses
   // Project
   Compilers.UGlobals,
   Compilers.UCompilers,
-  DB.UCollections,
   DB.UMain,
   DB.USnippet,
+  DB.Vaults,
   UConsts,
   UContainers,
   UCSSUtils,

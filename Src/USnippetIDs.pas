@@ -22,7 +22,7 @@ uses
   Generics.Defaults,
   // Project
   IntfCommon,
-  DB.UCollections;
+  DB.Vaults;
 
 
 type

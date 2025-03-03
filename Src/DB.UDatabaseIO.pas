@@ -21,10 +21,10 @@ interface
 
 uses
   // Project
-  DB.UCollections,
   DB.UCategory,
   DB.UMain,
   DB.USnippet,
+  DB.Vaults,
   UBaseObjects,
   UExceptions;
 

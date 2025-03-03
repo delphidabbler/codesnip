@@ -21,8 +21,12 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCollections,
-  ActiveText.UMain, Compilers.UGlobals, DB.USnippet, UEncodings, UIStringList;
+  DB.Vaults,
+  ActiveText.UMain,
+  Compilers.UGlobals,
+  DB.USnippet,
+  UEncodings,
+  UIStringList;
 
 
 type

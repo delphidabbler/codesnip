@@ -21,7 +21,7 @@ uses
   Generics.Collections,
   // Project
   DB.MetaData,
-  DB.UCollections,
+  DB.Vaults,
   UBaseObjects,
   UIStringList,
   USourceGen,

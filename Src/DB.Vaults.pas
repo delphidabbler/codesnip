@@ -9,7 +9,7 @@
 }
 
 
-unit DB.UCollections;
+unit DB.Vaults;
 
 {$ScopedEnums ON}
 
@@ -97,9 +97,9 @@ type
     ///  <remarks>Meta data is read from and written to the associated storage.
     ///  </remarks>
     property MetaData: TMetaData read fMetaData write SetMetaData;
-    ///  <summary>Checks if this record's fields are valid.</summary>
+    ///  <summary>Checks if this object's fields are valid.</summary>
     function IsValid: Boolean;
-    ///  <summary>Checks if this record is the default vault.</summary>
+    ///  <summary>Checks if this object is the default vault.</summary>
     function IsDefault: Boolean;
   end;
 

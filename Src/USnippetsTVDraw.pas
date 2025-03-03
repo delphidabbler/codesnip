@@ -20,7 +20,7 @@ uses
   // Delphi
   ComCtrls,
   // Project
-  DB.UCollections;
+  DB.Vaults;
 
 
 type

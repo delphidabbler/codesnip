@@ -133,7 +133,7 @@ uses
   // Delphi
   IOUtils,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UAppInfo,
   UBrowseForFolderDlg,
   UCtrlArranger,

@@ -21,7 +21,7 @@ uses
   StdCtrls,
   ExtCtrls,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   FmGenericOKDlg,
   UCollectionListAdapter;
 

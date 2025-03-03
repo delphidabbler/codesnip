@@ -19,7 +19,7 @@ uses
   // Delphi
   Classes, ActiveX,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   IntfNotifier,
   UView;
 

@@ -22,8 +22,8 @@ uses
   // Project
   ActiveText.UMain,
   DB.UCategory,
-  DB.UCollections,
   DB.USnippet,
+  DB.Vaults,
   SWAG.UCommon;
 
 

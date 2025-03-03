@@ -103,7 +103,7 @@ uses
   Graphics,
   StdCtrls,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UColours,
   UGraphicUtils,
   UPreferences;

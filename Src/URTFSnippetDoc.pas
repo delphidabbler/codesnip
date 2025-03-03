@@ -18,9 +18,15 @@ interface
 
 uses
   // Project
-  DB.UCollections,
-  ActiveText.UMain, ActiveText.URTFRenderer, Hiliter.UGlobals, UEncodings,
-  UIStringList, USnippetDoc, URTFBuilder, URTFStyles;
+  ActiveText.UMain,
+  ActiveText.URTFRenderer,
+  DB.Vaults,
+  Hiliter.UGlobals,
+  UEncodings,
+  UIStringList,
+  USnippetDoc,
+  URTFBuilder,
+  URTFStyles;
 
 
 type

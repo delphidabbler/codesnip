@@ -17,10 +17,17 @@ interface
 
 uses
   // Delphi
-  SysUtils, Controls, StdCtrls, ExtCtrls, Classes,
+  SysUtils,
+  Controls,
+  StdCtrls,
+  ExtCtrls,
+  Classes,
   // Project
-  DB.UCollections,
-  DB.USnippet, FmGenericOKDlg, UBaseObjects, UCategoryListAdapter,
+  DB.USnippet,
+  DB.Vaults,
+  FmGenericOKDlg,
+  UBaseObjects,
+  UCategoryListAdapter,
   UCollectionListAdapter,
   UIStringList;
 

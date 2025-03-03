@@ -96,9 +96,9 @@ uses
   Windows {for inlining},
   IOUtils,
   // Project
-  DB.UCollections,
   DB.UMain,
   DB.USnippet,
+  DB.Vaults,
   FmAddCategoryDlg,
   FmCollectionBackup,
   FmDeleteCategoryDlg,

@@ -65,7 +65,7 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UStrUtils,
   UTabSeparatedFileIO;
 
