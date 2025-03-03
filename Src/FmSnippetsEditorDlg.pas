@@ -891,7 +891,7 @@ begin
     frmDescription.ActiveText := fSnippet.Description;
     edDisplayName.Text := fSnippet.DisplayName;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
-    cbCollection.ItemIndex := fCollList.IndexOfUID(fSnippet.CollectionID);
+    cbCollection.ItemIndex := fCollList.IndexOfUID(fSnippet.VaultID);
     cbCollection.Visible := False;  // can't change existing snippet collection
     lblCollectionInfo.Caption := cbCollection.Text;
     lblCollectionInfo.Visible := True;
@@ -1007,7 +1007,7 @@ begin
   // If editing existing snippet ID then the collection cannot be edited
   if Assigned(fSnippet) then
     // Editing existing snippet: can't change collection
-    Result := fSnippet.CollectionID
+    Result := fSnippet.VaultID
   else
     // Editing new snippet: chosing collection is permitted
     Result := fCollList.Collection(cbCollection.ItemIndex).UID;
@@ -1076,7 +1076,7 @@ begin
   }
   for Snippet in Database.Snippets do
   begin
-    if Snippet.CollectionID <> SelectedCollectionID then
+    if Snippet.VaultID <> SelectedCollectionID then
       Continue;
     if Snippet.ID <> EditSnippetID then
     begin

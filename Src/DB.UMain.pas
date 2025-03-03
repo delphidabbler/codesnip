@@ -781,7 +781,7 @@ begin
     ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
   Data := (Snippet as TSnippetEx).GetEditData;
   Result := TTempSnippet.Create(
-    Snippet.Key, Snippet.CollectionID, (Snippet as TSnippetEx).GetProps);
+    Snippet.Key, Snippet.VaultID, (Snippet as TSnippetEx).GetProps);
   (Result as TTempSnippet).UpdateRefs(
     (Snippet as TSnippetEx).GetReferences, fSnippets
   );
@@ -1000,7 +1000,7 @@ begin
   try
     // Build list of all snippets in collection
     for Snippet in fSnippets do
-      if Snippet.CollectionID = ACollectionID then
+      if Snippet.VaultID = ACollectionID then
         SnippetsInCollection.Add(Snippet);
     repeat
       Result := TUniqueID.GenerateAlpha;
@@ -1319,7 +1319,7 @@ var
 begin
   Result := TIStringList.Create;
   for Snippet in Cat.Snippets do
-    if Snippet.CollectionID = fCollectionID then
+    if Snippet.VaultID = fCollectionID then
       Result.Add(Snippet.Key);
 end;
 

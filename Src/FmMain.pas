@@ -798,7 +798,7 @@ begin
   Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actEditSnippetExecute: Can''t edit current view item');
   Snippet := (fMainDisplayMgr.CurrentView as ISnippetView).Snippet;
-  fNotifier.EditSnippet(Snippet.Key, Snippet.CollectionID);
+  fNotifier.EditSnippet(Snippet.Key, Snippet.VaultID);
   // display of updated snippet is handled by snippets change event handler
 end;
 

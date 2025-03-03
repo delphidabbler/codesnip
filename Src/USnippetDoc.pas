@@ -206,7 +206,7 @@ begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   // generate document
   InitialiseDoc;
-  RenderHeading(Snippet.DisplayName, Snippet.CollectionID);
+  RenderHeading(Snippet.DisplayName, Snippet.VaultID);
   RenderDescription(Snippet.Description);
   RenderSourceCode(Snippet.SourceCode);
   RenderTitledText(
@@ -228,7 +228,7 @@ begin
   end;
   if Snippet.Extra.HasContent then
     RenderExtra(Snippet.Extra);
-  RenderCollectionInfo(CollectionInfo(Snippet.CollectionID));
+  RenderCollectionInfo(CollectionInfo(Snippet.VaultID));
   Result := FinaliseDoc;
 end;
 

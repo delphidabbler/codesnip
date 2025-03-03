@@ -394,7 +394,7 @@ var
 begin
   if Supports(AView, ISnippetView, SnippetView) then
     Result := Preferences.GetSnippetHeadingColour(
-      SnippetView.Snippet.CollectionID
+      SnippetView.Snippet.VaultID
     )
   else
     Result := Preferences.GroupHeadingColour;

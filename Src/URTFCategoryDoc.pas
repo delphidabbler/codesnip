@@ -235,7 +235,7 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(SubHeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
-  SetColour(Preferences.GetSnippetHeadingColour(Snippet.CollectionID));
+  SetColour(Preferences.GetSnippetHeadingColour(Snippet.VaultID));
   fBuilder.AddText(Snippet.DisplayName);
   fBuilder.EndPara;
   fBuilder.EndGroup;

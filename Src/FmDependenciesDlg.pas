@@ -467,7 +467,7 @@ begin
         Assert(Assigned(ASnippet),
           ClassName + '.PopulateRequiredByList: Snippet id not found');
         lbDependents.Items.AddObject(
-          ASnippet.DisplayName, TBox<TVaultID>.Create(ASnippet.CollectionID)
+          ASnippet.DisplayName, TBox<TVaultID>.Create(ASnippet.VaultID)
         );
       end;
     end;
@@ -523,7 +523,7 @@ begin
   if not Assigned(Node.Data) then
     Result := TVaultID.CreateNull
   else
-    Result := TSnippet(Node.Data).CollectionID;
+    Result := TSnippet(Node.Data).VaultID;
 end;
 
 function TDependenciesDlg.TTVDraw.IsErrorNode(

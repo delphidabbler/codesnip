@@ -209,7 +209,7 @@ begin
   Assert(Assigned(SnippetCat), ClassName + '.InitForm: invalid category');
   cbCategory.ItemIndex := cbCategory.Items.IndexOf(SnippetCat.Description);
 
-  SnippetColl := TVaults.Instance.GetVault(fSnippet.CollectionID);
+  SnippetColl := TVaults.Instance.GetVault(fSnippet.VaultID);
   cbCollection.ItemIndex := cbCollection.Items.IndexOf(SnippetColl.Name);
 
   chkEdit.Checked := fOptions.EditSnippetOnClose;

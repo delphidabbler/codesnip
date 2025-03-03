@@ -207,7 +207,7 @@ begin
   // Create javascript link enclosing snippet key
   Result := JSALink(
     TJavaScript.LiteralFunc(
-      'displaySnippet', [Snippet.Key, Snippet.CollectionID.ToHexString]
+      'displaySnippet', [Snippet.Key, Snippet.VaultID.ToHexString]
     ),
     'snippet-link',
     Snippet.DisplayName

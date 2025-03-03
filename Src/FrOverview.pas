@@ -986,7 +986,7 @@ begin
   // TODO -cBug: Exception reported as issue #70 could have moved here
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
   if Supports(ViewItem, ISnippetView, SnippetView) then
-    Result := SnippetView.Snippet.CollectionID
+    Result := SnippetView.Snippet.VaultID
   else
     Result := TVaultID.CreateNull;
 end;

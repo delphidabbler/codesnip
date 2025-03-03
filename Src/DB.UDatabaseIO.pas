@@ -554,7 +554,7 @@ end;
 
 function TDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
 begin
-  Result := Snippet.CollectionID = Collection.UID;
+  Result := Snippet.VaultID = Collection.UID;
 end;
 
 procedure TDatabaseLoader.Load(const SnipList: TSnippetList;
@@ -822,7 +822,7 @@ var
 begin
   for Snippet in fSnipList do
   begin
-    if Snippet.CollectionID = fCollection.UID then
+    if Snippet.VaultID = fCollection.UID then
     begin
       // Get and write a snippet's properties
       Props := fProvider.GetSnippetProps(Snippet);

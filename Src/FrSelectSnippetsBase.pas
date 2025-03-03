@@ -281,7 +281,7 @@ var
 begin
   SnipObj := TObject(Node.Data);
   if SnipObj is TSnippet then
-    Result := (SnipObj as TSnippet).CollectionID
+    Result := (SnipObj as TSnippet).VaultID
   else
     Result := TVaultID.CreateNull
 end;

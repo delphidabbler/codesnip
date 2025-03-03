@@ -132,14 +132,14 @@ type
     fCategory: string;                      // Name of snippet's category
     fDescription: IActiveText;              // Description of snippet
     fSourceCode: string;                    // Snippet source code
-    fKey: string;                           // Snippet key: unique in collection
+    fKey: string;                           // Snippet key: unique in vault
     fDisplayName: string;                   // Display name of snippet
     fUnits: TStringList;                    // List of required units
     fDepends: TSnippetList;                 // List of required snippets
     fXRef: TSnippetList;                    // List of cross-referenced snippets
     fExtra: IActiveText;                    // Further information for snippet
     fCompatibility: TCompileResults;        // Snippet's compiler compatibility
-    fCollectionID: TVaultID;                // Snippet's vault ID
+    fVaultID: TVaultID;                     // Snippet's vault ID
     fHiliteSource: Boolean;                 // If source is syntax highlighted
     fTestInfo: TSnippetTestInfo;            // Level of testing of snippet
     function GetID: TSnippetID;
@@ -166,13 +166,13 @@ type
   public
 
     ///  <summary>Object constructor. Sets up snippet object with given property
-    ///  values belonging to a specified collection.</summary>
+    ///  values belonging to a specified vault.</summary>
     ///  <param name="AKey"><c>string</c> [in] Snippet's key.</param>
-    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of vault to which
-    ///  the snippet belongs. ID must not be null.</param>
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of vault to which the
+    ///  snippet belongs. Must not be null.</param>
     ///  <param name="Props"><c>TSnippetData</c> [in] Values of snippet
     ///  properties.</param>
-    constructor Create(const AKey: string; const ACollectionID: TVaultID;
+    constructor Create(const AKey: string; const AVaultID: TVaultID;
       const Props: TSnippetData);
 
     destructor Destroy; override;
@@ -185,13 +185,14 @@ type
     ///  this snippet is less than <c>Snippets</c> or +ve if this snippet is
     ///  greater than <c>Snippet</c>.</returns>
     function CompareTo(const Snippet: TSnippet): Integer;
+
+    ///  <summary>Checks if this snippet is same as another snippet. Snippets
+    ///  are considered equal if they have the same key and vault ID.</summary>
+    ///  <param name="Snippet"><c>TSnippet</c> [in] Snippet being compared.
+    ///  </param>
+    ///  <returns><c>Boolean</c>.True if snippets are equal, False if not.
+    ///  </returns>
     function IsEqual(const Snippet: TSnippet): Boolean;
-      {Checks if this snippet is same as another snippet. Snippets are
-      considered equal if they have the same key and come from the same
-      collection.
-        @param Snippet [in] Snippet being compared.
-        @return True if snippets are equal, False if not.
-      }
     function CanCompile: Boolean;
       {Checks if snippet can be compiled.
         @return True if compilation supported and False if not.
@@ -227,7 +228,7 @@ type
     property XRef: TSnippetList read fXRef;
       {List of cross referenced snippets in database}
     ///  <summary>ID of vault to which the snippet belongs.</summary>
-    property CollectionID: TVaultID read fCollectionID;
+    property VaultID: TVaultID read fVaultID;
   end;
 
   {
@@ -284,16 +285,16 @@ type
         @return Snippet at specified index in list.
       }
 
-    ///  <summary>Finds a snippet in the list with whose key and collection ID
-    ///  match.</summary>
+    ///  <summary>Finds a snippet in the list with whose key and vault ID match.
+    ///  </summary>
     ///  <param name="SnippetKey"><c>string</c> [in] Snippet's key.</param>
-    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of vault to which
-    ///  the snippet belongs.</param>
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of vault to which the
+    ///  snippet belongs.</param>
     ///  <param name="Index"><c>Integer</c>. [out] Set to the index of the
     ///  required snippet in the list. Valid only if the snippet was found.
     ///  </param>
     ///  <returns><c>Boolean</c>. True if snippet found, False if not.</returns>
-    function Find(const SnippetKey: string; const ACollectionID: TVaultID;
+    function Find(const SnippetKey: string; const AVaultID: TVaultID;
       out Index: Integer): Boolean; overload;
 
   strict protected
@@ -329,15 +330,15 @@ type
         @return Reference to required snippet or nil if not found.
       }
 
-    ///  <summary>Finds a snippet in the list with whose key and collection ID
-    ///  match.</summary>
+    ///  <summary>Finds a snippet in the list with whose key and vault ID match.
+    ///  </summary>
     ///  <param name="SnippetKey"><c>string</c> [in] Snippet's key.</param>
-    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of vault to which
-    ///  the snippet belongs.</param>
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of vault to which the
+    ///  snippet belongs.</param>
     ///  <returns><c>TSnippet</c>. Reference to the required snippet or nil if
     ///  not found.</returns>
-    function Find(const SnippetKey: string;
-      const ACollectionID: TVaultID): TSnippet; overload;
+    function Find(const SnippetKey: string; const AVaultID: TVaultID): TSnippet;
+      overload;
 
     function Contains(const Snippet: TSnippet): Boolean;
       {Checks whether list contains a specified snippet.
@@ -359,11 +360,11 @@ type
       }
 
     ///  <summary>Counts number of snippets in list that belong to a specified
-    ///  collection.</summary>
-    ///  <param name="ACollectionID"><c>TVaultID</c> [in] Required vault.
+    ///  vault.</summary>
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of required vault.
     ///  </param>
-    ///  <returns><c>Integer</c> Number of snippets in the collection.</returns>
-    function Count(const ACollectionID: TVaultID): Integer; overload;
+    ///  <returns><c>Integer</c> Number of snippets in the vault.</returns>
+    function Count(const AVaultID: TVaultID): Integer; overload;
 
     function Count: Integer; overload;
       {Counts number of snippets in list.
@@ -375,11 +376,11 @@ type
       }
 
     ///  <summary>Checks if the sub-set of snippets in the list belonging to a
-    ///  specified collection is empty.</summary>
-    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of vault.</param>
+    ///  specified vault is empty.</summary>
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of vault.</param>
     ///  <returns><c>Boolean</c> True if the subset is empty, False otherwise.
     ///  </returns>
-    function IsEmpty(const ACollectionID: TVaultID): Boolean; overload;
+    function IsEmpty(const AVaultID: TVaultID): Boolean; overload;
 
     property Items[Idx: Integer]: TSnippet read GetItem; default;
       {List of snippets}
@@ -441,13 +442,13 @@ begin
   Result := Self.ID.CompareTo(Snippet.ID);
 end;
 
-constructor TSnippet.Create(const AKey: string;
-  const ACollectionID: TVaultID; const Props: TSnippetData);
+constructor TSnippet.Create(const AKey: string; const AVaultID: TVaultID;
+  const Props: TSnippetData);
 begin
   Assert(ClassType <> TSnippet,
     ClassName + '.Create: must only be called from descendants.');
-  Assert(not ACollectionID.IsNull,
-    ClassName + '.Create: ACollectionID is null');
+  Assert(not AVaultID.IsNull,
+    ClassName + '.Create: AVaultID is null');
   inherited Create;
   // Record simple property values
   SetKey(AKey);
@@ -457,8 +458,8 @@ begin
   // Create snippets lists for Depends and XRef properties
   fDepends := TSnippetListEx.Create;
   fXRef := TSnippetListEx.Create;
-  // The following property added to support multiple snippet collections
-  fCollectionID := ACollectionID.Clone;
+  // The following property added to support multiple snippet vaults
+  fVaultID := AVaultID.Clone;
 end;
 
 destructor TSnippet.Destroy;
@@ -491,7 +492,7 @@ function TSnippet.GetID: TSnippetID;
     @return Required ID.
   }
 begin
-  Result := TSnippetID.Create(fKey, fCollectionID);
+  Result := TSnippetID.Create(fKey, fVaultID);
 end;
 
 function TSnippet.Hash: Integer;
@@ -501,11 +502,6 @@ begin
 end;
 
 function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
-  {Checks if this snippet is same as another snippet. Snippets are considered
-  equal if they have the same key and come from the same collection.
-    @param Snippet [in] Snippet being compared.
-    @return True if snippets are equal, False if not.
-  }
 begin
   Result := CompareTo(Snippet) = 0;
 end;
@@ -709,13 +705,13 @@ begin
     end;
 end;
 
-function TSnippetList.Count(const ACollectionID: TVaultID): Integer;
+function TSnippetList.Count(const AVaultID: TVaultID): Integer;
 var
   Snippet: TSnippet;  // refers to all snippets in list
 begin
   Result := 0;
   for Snippet in Self do
-    if Snippet.CollectionID = ACollectionID then
+    if Snippet.VaultID = AVaultID then
       Inc(Result);
 end;
 
@@ -748,8 +744,8 @@ begin
   inherited;
 end;
 
-function TSnippetList.Find(const SnippetKey: string;
-  const ACollectionID: TVaultID; out Index: Integer): Boolean;
+function TSnippetList.Find(const SnippetKey: string; const AVaultID: TVaultID;
+  out Index: Integer): Boolean;
 var
   TempSnippet: TSnippet;  // temp snippet used to perform search
   NullData: TSnippetData;  // nul data used to create snippet
@@ -757,7 +753,7 @@ begin
   // We need a temporary snippet object in order to perform binary search using
   // object list's built in search
   NullData.Init;
-  TempSnippet := TTempSnippet.Create(SnippetKey, ACollectionID, NullData);
+  TempSnippet := TTempSnippet.Create(SnippetKey, AVaultID, NullData);
   try
     Result := fList.Find(TempSnippet, Index);
   finally
@@ -765,12 +761,12 @@ begin
   end;
 end;
 
-function TSnippetList.Find(const SnippetKey: string;
-  const ACollectionID: TVaultID): TSnippet;
+function TSnippetList.Find(const SnippetKey: string; const AVaultID: TVaultID):
+  TSnippet;
 var
   Idx: Integer; // index of snippet key in list
 begin
-  if Find(SnippetKey, ACollectionID, Idx) then
+  if Find(SnippetKey, AVaultID, Idx) then
     Result := Items[Idx]
   else
     Result := nil;
@@ -810,9 +806,9 @@ begin
   Result := Count = 0;
 end;
 
-function TSnippetList.IsEmpty(const ACollectionID: TVaultID): Boolean;
+function TSnippetList.IsEmpty(const AVaultID: TVaultID): Boolean;
 begin
-  Result := Count(ACollectionID) = 0;
+  Result := Count(AVaultID) = 0;
 end;
 
 function TSnippetList.IsEqual(const AList: TSnippetList): Boolean;

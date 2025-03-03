@@ -296,7 +296,7 @@ begin
   SnippetList := TSnippetList.Create;
   try
     for Snippet in Database.Snippets do
-      if Snippet.CollectionID = ACollectionID then
+      if Snippet.VaultID = ACollectionID then
         SnippetList.Add(Snippet);
     frmSelect.SelectedSnippets := SnippetList;
   finally

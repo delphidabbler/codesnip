@@ -515,7 +515,7 @@ begin
   Tplt.ResolvePlaceholderText(
     'EditEventHandler',
     TJavaScript.LiteralFunc(
-      'editSnippet', [GetSnippet.Key, GetSnippet.CollectionID.ToHexString]
+      'editSnippet', [GetSnippet.Key, GetSnippet.VaultID.ToHexString]
     )
   );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);

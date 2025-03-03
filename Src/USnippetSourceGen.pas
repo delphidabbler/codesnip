@@ -255,7 +255,7 @@ begin
     // view is single snippet: just record that
     Snippet := (View as ISnippetView).Snippet;
     fGenerator.IncludeSnippet(Snippet);
-    fCollections.Add(TVaults.Instance.GetVault(Snippet.CollectionID));
+    fCollections.Add(TVaults.Instance.GetVault(Snippet.VaultID));
   end
   else
   begin
@@ -266,7 +266,7 @@ begin
       fGenerator.IncludeSnippets(Snips);  // ignores freeform snippets
       for Snippet in Snips do
       begin
-        Collection := TVaults.Instance.GetVault(Snippet.CollectionID);
+        Collection := TVaults.Instance.GetVault(Snippet.VaultID);
         if not fCollections.Contains(Collection) then
           fCollections.Add(Collection);
       end;
