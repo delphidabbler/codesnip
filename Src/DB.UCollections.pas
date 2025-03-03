@@ -64,7 +64,7 @@ type
 
   EVaultID = class(ECodeSnip);
 
-  TCollection = class
+  TVault = class
   strict private
     var
       fUID: TVaultID;
@@ -75,13 +75,13 @@ type
   public
     type
       TComparer = class(TInterfacedObject,
-        IComparer<TCollection>, IEqualityComparer<TCollection>
+        IComparer<TVault>, IEqualityComparer<TVault>
       )
       public
-        function Compare(const Left, Right: TCollection): Integer;
-        function Equals(const Left, Right: TCollection): Boolean;
+        function Compare(const Left, Right: TVault): Integer;
+        function Equals(const Left, Right: TVault): Boolean;
           reintroduce;
-        function GetHashCode(const Value: TCollection): Integer;
+        function GetHashCode(const Value: TVault): Integer;
           reintroduce;
       end;
     ///  <summary>Creates a collection record.</summary>
@@ -114,31 +114,31 @@ type
   TCollections = class sealed(TSingleton)
   strict private
     var
-      fItems: TList<TCollection>;
-    function GetItem(const Idx: Integer): TCollection;
-    procedure DoUpdate(const Idx: Integer; const ACollection: TCollection);
+      fItems: TList<TVault>;
+    function GetItem(const Idx: Integer): TVault;
+    procedure DoUpdate(const Idx: Integer; const ACollection: TVault);
     class function GetInstance: TCollections; static;
   strict protected
     procedure Initialize; override;
     procedure Finalize; override;
   public
     class property Instance: TCollections read GetInstance;
-    function GetEnumerator: TEnumerator<TCollection>;
+    function GetEnumerator: TEnumerator<TVault>;
     function IndexOfID(const AUID: TVaultID): Integer;
     function ContainsID(const AUID: TVaultID): Boolean;
     function ContainsName(const AName: string): Boolean;
-    function GetCollection(const AUID: TVaultID): TCollection;
-    function Default: TCollection;
-    procedure Add(const ACollection: TCollection);
-    procedure Update(const ACollection: TCollection);
-    procedure AddOrUpdate(const ACollection: TCollection);
+    function GetCollection(const AUID: TVaultID): TVault;
+    function Default: TVault;
+    procedure Add(const ACollection: TVault);
+    procedure Update(const ACollection: TVault);
+    procedure AddOrUpdate(const ACollection: TVault);
     procedure Delete(const AUID: TVaultID);
     procedure Clear;
     procedure Save;
-    function ToArray: TArray<TCollection>;
+    function ToArray: TArray<TVault>;
     function GetAllIDs: TArray<TVaultID>;
     function Count: Integer;
-    property Items[const Idx: Integer]: TCollection read GetItem; default;
+    property Items[const Idx: Integer]: TVault read GetItem; default;
   end;
 
   TCollectionsPersist = record
@@ -150,7 +150,7 @@ type
       StorageFormatKey = 'Storage.Format';
       StorageDirectoryKey = 'Storage.Directory';
     class procedure SaveCollection(const AOrdinal: Cardinal;
-      const ACollection: TCollection); static;
+      const ACollection: TVault); static;
     class procedure LoadCollection(const AOrdinal: Cardinal;
       const ACollections: TCollections); static;
   public
@@ -173,9 +173,9 @@ uses
 resourcestring
   SBadHexString = 'Invalid Hex String.';
 
-{ TCollection }
+{ TVault }
 
-constructor TCollection.Create(const AUID: TVaultID; const AName: string;
+constructor TVault.Create(const AUID: TVaultID; const AName: string;
   const AStorage: TDataStorageDetails);
 var
   TrimmedName: string;
@@ -192,34 +192,34 @@ begin
   fStorage := AStorage;
 end;
 
-function TCollection.IsDefault: Boolean;
+function TVault.IsDefault: Boolean;
 begin
   Result := UID = TVaultID.Default;
 end;
 
-function TCollection.IsValid: Boolean;
+function TVault.IsValid: Boolean;
 begin
-  {TODO: Constructor enforces all these requirements, so #TCollection.IsValid
+  {TODO: Constructor enforces all these requirements, so #TVault.IsValid
   may not be needed.}
   Result := not fUID.IsNull
     and (fName <> '')
     and (fStorage.Format <> TDataFormatKind.Error);
 end;
 
-procedure TCollection.SetMetaData(const AValue: TMetaData);
+procedure TVault.SetMetaData(const AValue: TMetaData);
 begin
   fMetaData := AValue.Clone;
 end;
 
 { TCollections }
 
-procedure TCollections.Add(const ACollection: TCollection);
+procedure TCollections.Add(const ACollection: TVault);
 begin
   if not ContainsID(ACollection.UID) then
     fItems.Add(ACollection);
 end;
 
-procedure TCollections.AddOrUpdate(const ACollection: TCollection);
+procedure TCollections.AddOrUpdate(const ACollection: TVault);
 var
   Idx: Integer;
 begin
@@ -247,7 +247,7 @@ end;
 
 function TCollections.ContainsName(const AName: string): Boolean;
 var
-  Collection: TCollection;
+  Collection: TVault;
 begin
   Result := False;
   for Collection in fItems do
@@ -260,7 +260,7 @@ begin
   Result := fItems.Count;
 end;
 
-function TCollections.Default: TCollection;
+function TCollections.Default: TVault;
 begin
   Result := GetCollection(TVaultID.Default);
 end;
@@ -282,9 +282,9 @@ begin
 end;
 
 procedure TCollections.DoUpdate(const Idx: Integer;
-  const ACollection: TCollection);
+  const ACollection: TVault);
 var
-  OldEntry: TCollection;
+  OldEntry: TVault;
 begin
   OldEntry := fItems[Idx];
   fItems[Idx] := ACollection;
@@ -307,7 +307,7 @@ begin
     Result[Idx] := fItems[Idx].UID;
 end;
 
-function TCollections.GetCollection(const AUID: TVaultID): TCollection;
+function TCollections.GetCollection(const AUID: TVaultID): TVault;
 var
   Idx: Integer;
 begin
@@ -317,7 +317,7 @@ begin
   Result := fItems[Idx];
 end;
 
-function TCollections.GetEnumerator: TEnumerator<TCollection>;
+function TCollections.GetEnumerator: TEnumerator<TVault>;
 begin
   Result := fItems.GetEnumerator;
 end;
@@ -327,7 +327,7 @@ begin
   Result := TCollections.Create;
 end;
 
-function TCollections.GetItem(const Idx: Integer): TCollection;
+function TCollections.GetItem(const Idx: Integer): TVault;
 begin
   Result := fItems[Idx];
 end;
@@ -344,12 +344,12 @@ end;
 
 procedure TCollections.Initialize;
 begin
-  fItems := TList<TCollection>.Create;
+  fItems := TList<TVault>.Create;
   TCollectionsPersist.Load(Self);
   // Ensure there is always at least the default collection present
   if not ContainsID(TVaultID.Default) then
     Add(
-      TCollection.Create(
+      TVault.Create(
         TVaultID.Default,
         'Default',
         TDataStorageDetails.Create(
@@ -365,12 +365,12 @@ begin
   TCollectionsPersist.Save(Self);
 end;
 
-function TCollections.ToArray: TArray<TCollection>;
+function TCollections.ToArray: TArray<TVault>;
 begin
   Result := fItems.ToArray;
 end;
 
-procedure TCollections.Update(const ACollection: TCollection);
+procedure TCollections.Update(const ACollection: TVault);
 var
   Idx: Integer;
 begin
@@ -517,7 +517,7 @@ var
   ConfigSection: ISettingsSection;
   UID: TVaultID;
   Name: string;
-  Collection: TCollection;
+  Collection: TVault;
   StorageDetails: TDataStorageDetails;
 begin
   ConfigSection := Settings.ReadSection(ssCollection, IntToStr(AOrdinal));
@@ -533,7 +533,7 @@ begin
     ),
     ConfigSection.GetString(StorageDirectoryKey, '')
   );
-  Collection := TCollection.Create(UID, Name, StorageDetails);
+  Collection := TVault.Create(UID, Name, StorageDetails);
   ACollections.Add(Collection);
 end;
 
@@ -553,7 +553,7 @@ begin
 end;
 
 class procedure TCollectionsPersist.SaveCollection(const AOrdinal: Cardinal;
-  const ACollection: TCollection);
+  const ACollection: TVault);
 var
   ConfigSection: ISettingsSection;
 begin
@@ -566,19 +566,19 @@ begin
   ConfigSection.Save;
 end;
 
-{ TCollection.TComparer }
+{ TVault.TComparer }
 
-function TCollection.TComparer.Compare(const Left, Right: TCollection): Integer;
+function TVault.TComparer.Compare(const Left, Right: TVault): Integer;
 begin
   Result := TVaultID.Compare(Left.UID, Right.UID);
 end;
 
-function TCollection.TComparer.Equals(const Left, Right: TCollection): Boolean;
+function TVault.TComparer.Equals(const Left, Right: TVault): Boolean;
 begin
   Result := Left.UID = Right.UID;
 end;
 
-function TCollection.TComparer.GetHashCode(const Value: TCollection): Integer;
+function TVault.TComparer.GetHashCode(const Value: TVault): Integer;
 begin
   Result := Value.UID.Hash;
 end;

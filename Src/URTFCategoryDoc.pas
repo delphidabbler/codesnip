@@ -97,7 +97,7 @@ uses
 
 constructor TRTFCategoryDoc.Create(const UseColour: Boolean);
 var
-  Collection: TCollection;
+  Collection: TVault;
 begin
   inherited Create;
   fUseColour := UseColour;

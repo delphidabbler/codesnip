@@ -414,7 +414,7 @@ end;
 
 procedure TWelcomePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 var
-  Collection: TCollection;
+  Collection: TVault;
   CollectionCount: Integer;
   CollectionList: TStringBuilder;
   Compilers: ICompilers;

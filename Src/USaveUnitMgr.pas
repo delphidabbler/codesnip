@@ -45,9 +45,9 @@ type
       ///  <summary>Name of generated unit.</summary>
       ///  <remarks>If empty string a default name is used.</remarks>
       fUnitName: string;
-      ///  <summary>List of collections that have contributed snippets to the
-      ///  source code being generated.</summary>
-      fCollections: TList<TCollection>;
+      ///  <summary>List of vaults that have contributed snippets to the source
+      ///  code being generated.</summary>
+      fCollections: TList<TVault>;
     ///  <summary>Gets name of unit to be used in generated code.</summary>
     function UnitName: string;
     ///  <summary>Creates a string list containing comments to be written to
@@ -152,7 +152,7 @@ function TSaveUnitMgr.CreateHeaderComments: IStringList;
           generator code in USnippetSourceGen and in TSnippetDoc.CollectionInfo
           - extract common code.}
 
-  function CreditsLine(const ACollection: TCollection): string;
+  function CreditsLine(const ACollection: TVault): string;
   var
     MetaData: TMetaData;
   begin
@@ -171,7 +171,7 @@ function TSaveUnitMgr.CreateHeaderComments: IStringList;
   end;
 
 var
-  Collection: TCollection;
+  Collection: TVault;
   Credits: string;
 begin
   Result := TIStringList.Create;
@@ -266,12 +266,12 @@ end;
 constructor TSaveUnitMgr.InternalCreate(const Snips: TSnippetList);
 var
   Snippet: TSnippet;  // references each snippet in list
-  Collection: TCollection;
+  Collection: TVault;
 begin
   Assert(Assigned(Snips), ClassName + '.InternalCreate: Snips is nil');
   inherited InternalCreate;
 
-  fCollections := TList<TCollection>.Create(TCollection.TComparer.Create);
+  fCollections := TList<TVault>.Create(TVault.TComparer.Create);
 
   // Create source generator and initialize it with required snippets
   fSourceGen := TSourceGen.Create;

@@ -45,8 +45,8 @@ type
       fSourceDir: string;
       ///  <summary>Required new collection data directory.</summary>
       fDestDir: string;
-      ///  <summary>Collection to be moved.</summary>
-      fCollection: TCollection;
+      ///  <summary>Vault to be moved.</summary>
+      fCollection: TVault;
       ///  <summary>Instance of class used to perform directory move.</summary>
       fDirCopier: TDirectoryCopier;
     ///  <summary>Validates source and destination directories.</summary>
@@ -72,11 +72,11 @@ type
     constructor Create;
     ///  <summary>Destroys current object instance.</summary>
     destructor Destroy; override;
-    ///  <summary>Moves collection data from its current directory to the given
-    ///  new directory.</summary>
+    ///  <summary>Moves vault data from its current directory to the given new
+    ///  directory.</summary>
     ///  <exceptions>Raises EInOutError exceptions if an error occurs.
     ///  </exceptions>
-    procedure MoveTo(const ACollection: TCollection; const ADirectory: string);
+    procedure MoveTo(const ACollection: TVault; const ADirectory: string);
     ///  <summary>Event triggered just before file copying begins and once for
     ///  each file copied. Reports progress towards completion of copy
     ///  operation.</summary>
@@ -116,7 +116,7 @@ begin
   inherited;
 end;
 
-procedure TUserDBMove.MoveTo(const ACollection: TCollection;
+procedure TUserDBMove.MoveTo(const ACollection: TVault;
   const ADirectory: string);
 begin
   fCollection := ACollection;

@@ -131,10 +131,10 @@ type
     ///  information about the event.</param>
     procedure HTMLEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo);
-    ///  <summary>Displays any meta data associated with a collection.</summary>
-    ///  <param name="ACollection"><c>TCollection</c> [in] Collection for which
-    ///  meta data is to be displayed.</param>
-    procedure DisplayCollectionInfo(ACollection: TCollection);
+    ///  <summary>Displays any meta data associated with a vault.</summary>
+    ///  <param name="ACollection"><c>TVault</c> [in] Vault for which meta data
+    ///  is to be displayed.</param>
+    procedure DisplayCollectionInfo(ACollection: TVault);
     ///  <summary>Displays content of a config file in a dialogue box or an
     ///  error message if the file does not exist.</summary>
     ///  <param name="FileName">string [in] Name of config file to display.
@@ -298,7 +298,7 @@ procedure TAboutDlg.ConfigForm;
   end;
 
 var
-  Collection: TCollection;
+  Collection: TVault;
   TabIdx: Integer;
 resourcestring
   // Captions for custom controls
@@ -333,7 +333,7 @@ begin
   InitHTMLFrames;
 end;
 
-procedure TAboutDlg.DisplayCollectionInfo(ACollection: TCollection);
+procedure TAboutDlg.DisplayCollectionInfo(ACollection: TVault);
 var
   HasEntries: Boolean;
 

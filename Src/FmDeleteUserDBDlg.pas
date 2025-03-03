@@ -45,9 +45,9 @@ type
       cConfirmText = 'DELETE MY SNIPPETS';
     var
       fPermissionGranted: Boolean;
-      fCollection: TCollection;
+      fCollection: TVault;
       fCollList: TCollectionListAdapter;
-    function SelectedCollection: TCollection;
+    function SelectedCollection: TVault;
     function IsValidPassword: Boolean;
   strict protected
     ///  <summary>Protected constructor that sets up form.</summary>
@@ -55,7 +55,7 @@ type
     procedure ConfigForm; override;
     procedure ArrangeForm; override;
   public
-    class function Execute(AOwner: TComponent; out ACollection: TCollection): Boolean;
+    class function Execute(AOwner: TComponent; out ACollection: TVault): Boolean;
   end;
 
 implementation
@@ -110,7 +110,7 @@ begin
 end;
 
 class function TDeleteUserDBDlg.Execute(AOwner: TComponent;
-  out ACollection: TCollection): Boolean;
+  out ACollection: TVault): Boolean;
 var
   Dlg: TDeleteUserDBDlg;
 begin
@@ -149,7 +149,7 @@ begin
   Result := edConfirm.Text = cConfirmText;
 end;
 
-function TDeleteUserDBDlg.SelectedCollection: TCollection;
+function TDeleteUserDBDlg.SelectedCollection: TVault;
 begin
   Result := fCollList.Collection(cbCollection.ItemIndex);
 end;

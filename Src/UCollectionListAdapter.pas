@@ -29,7 +29,7 @@ type
   TCollectionListAdapter = class(TObject)
   strict private
     var
-      fCollectionList: TSortedList<TCollection>;
+      fCollectionList: TSortedList<TVault>;
 
   public
 
@@ -49,8 +49,8 @@ type
     ///  </summary>
     ///  <param name="AIndex"><c>Integer</c> [in] Index of required collection.
     ///  </param>
-    ///  <returns><c>TCollection</c>. Required collection.</returns>
-    function Collection(const AIndex: Integer): TCollection;
+    ///  <returns><c>TVault</c>. Required vault.</returns>
+    function Collection(const AIndex: Integer): TVault;
 
     ///  <summary>Gets list index of the vault with the specified UID.</summary>
     function IndexOfUID(const AUID: TVaultID): Integer;
@@ -67,19 +67,19 @@ uses
 
 { TCollectionListAdapter }
 
-function TCollectionListAdapter.Collection(const AIndex: Integer): TCollection;
+function TCollectionListAdapter.Collection(const AIndex: Integer): TVault;
 begin
   Result := fCollectionList[AIndex];
 end;
 
 constructor TCollectionListAdapter.Create;
 var
-  Collection: TCollection;
+  Collection: TVault;
 begin
   inherited Create;
-  fCollectionList := TSortedList<TCollection>.Create(
-    TDelegatedComparer<TCollection>.Create(
-      function (const Left, Right: TCollection): Integer
+  fCollectionList := TSortedList<TVault>.Create(
+    TDelegatedComparer<TVault>.Create(
+      function (const Left, Right: TVault): Integer
       begin
         Result := StrCompareText(Left.Name, Right.Name)
       end
@@ -107,7 +107,7 @@ end;
 
 procedure TCollectionListAdapter.ToStrings(const AStrings: TStrings);
 var
-  Collection: TCollection;
+  Collection: TVault;
 begin
   for Collection in fCollectionList do
     AStrings.Add(Collection.Name);

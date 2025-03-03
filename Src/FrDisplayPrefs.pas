@@ -162,7 +162,7 @@ procedure TDisplayPrefsFrame.Activate(const Prefs: IPreferences;
     @param Prefs [in] Object that provides info used to update controls.
   }
 var
-  Collection: TCollection;
+  Collection: TVault;
 begin
   cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
   Assert(cbCollection.ItemIndex >= 0,
@@ -280,7 +280,7 @@ end;
 
 procedure TDisplayPrefsFrame.btnDefColoursClick(Sender: TObject);
 var
-  Collection: TCollection;
+  Collection: TVault;
 begin
   // Restores default heading and source code background colours in colour
   // combo boxes
@@ -388,7 +388,7 @@ procedure TDisplayPrefsFrame.Deactivate(const Prefs: IPreferences);
     @param Prefs [in] Object used to store information.
   }
 var
-  Collection: TCollection;
+  Collection: TVault;
 begin
   Prefs.ShowNewSnippetsInNewTabs := chkSnippetsInNewTab.Checked;
   Prefs.ShowEmptySections := not chkHideEmptySections.Checked;

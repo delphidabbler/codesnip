@@ -731,7 +731,7 @@ end;
 procedure TPreferences.Assign(const Src: IInterface);
 var
   SrcPref: IPreferences;  // IPreferences interface of Src
-  Collection: TCollection;
+  Collection: TVault;
 begin
   // Get IPreferences interface of given object
   if not Supports(Src, IPreferences, SrcPref) then
@@ -1056,7 +1056,7 @@ end;
 function TPreferencesPersist.Clone: IInterface;
 var
   NewPref: IPreferences;  // reference to new object's IPreferences interface
-  Collection: TCollection;
+  Collection: TVault;
 begin
   // Create new object
   Result := TPreferences.Create;
@@ -1094,7 +1094,7 @@ end;
 constructor TPreferencesPersist.Create;
 var
   Storage: ISettingsSection;  // object used to access persistent storage
-  Collection: TCollection;
+  Collection: TVault;
 const
   // Default margin size in millimeters
   cPrintPageMarginSizeMM = 25.0;
@@ -1205,7 +1205,7 @@ end;
 destructor TPreferencesPersist.Destroy;
 var
   Storage: ISettingsSection;  // object used to access persistent storage
-  Collection: TCollection;
+  Collection: TVault;
 begin
   // Wreite meta section (no sub-section name)
   Storage := Settings.EmptySection(ssPreferences);

@@ -94,16 +94,14 @@ type
   TDatabaseIOFactory = class(TNoConstructObject)
   public
     ///  <summary>Creates and returns an object to be used to load the given
-    ///  collection's data in the correct format. Nil is returned if no loader
-    ///  object is supported.</summary>
-    class function CreateDBLoader(const Collection: TCollection):
-      IDataFormatLoader;
+    ///  vault's data in the correct format. Nil is returned if no loader object
+    ///  is supported.</summary>
+    class function CreateDBLoader(const Collection: TVault): IDataFormatLoader;
 
     ///  <summary>Creates and returns an object to be used to save the given
-    ///  collection's data in the correct format. Nil is return if no saver
-    ///  object is supported.</summary>
-    class function CreateDBSaver(const Collection: TCollection):
-      IDataFormatSaver;
+    ///  vaults's data in the correct format. Nil is return if no saver object
+    ///  is supported.</summary>
+    class function CreateDBSaver(const Collection: TVault): IDataFormatSaver;
 
     ///  <summary>Creates and returns an object to be used to load a list of
     ///  globally stored categories.</summary>
@@ -170,7 +168,7 @@ type
     fSnipList: TSnippetList;      // Receives list of snippets
     fCategories: TCategoryList;   // Receives list of categories
     fFactory: IDBDataItemFactory; // Object creates new categories and snippets
-    fCollection: TCollection;     // Collection being loaded
+    fCollection: TVault;          // Vault being loaded
     procedure LoadSnippets(const Cat: TCategory);
       {Loads all snippets in a category.
         @param Cat [in] Category to be loaded.
@@ -220,9 +218,9 @@ type
       }
     property Categories: TCategoryList read fCategories;
       {Reference to category list}
-    property Collection: TCollection read fCollection;
+    property Collection: TVault read fCollection;
   public
-    constructor Create(const ACollection: TCollection);
+    constructor Create(const ACollection: TVault);
     { IDataFormatLoader method }
     procedure Load(const SnipList: TSnippetList;
       const Categories: TCategoryList;
@@ -301,7 +299,7 @@ type
       fSnipList: TSnippetList;          // List of snippets to be written
       fCategories: TCategoryList;       // List of categories to be written
       fProvider: IDBDataProvider;       // Object used to get data to be written
-      fCollection: TCollection;         // Collection being written
+      fCollection: TVault;              // Vault being written
 
     ///  <summary>Writes information about all snippets belonging to the
     ///  collection.</summary>
@@ -334,11 +332,11 @@ type
     function CreateWriter: IDataWriter; virtual; abstract;
 
     ///  <summary>Collection being saved.</summary>
-    property Collection: TCollection read fCollection;
+    property Collection: TVault read fCollection;
 
   public
-    ///  <summary>Creates object that can save the given collection.</summary>
-    constructor Create(const ACollection: TCollection);
+    ///  <summary>Creates object that can save the given vault.</summary>
+    constructor Create(const ACollection: TVault);
 
     ///  <summary>Saves data to storage.</summary>
     ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
@@ -378,7 +376,7 @@ type
   public
 
     ///  <summary>Creates object that can save the given collection.</summary>
-    constructor Create(const ACollection: TCollection);
+    constructor Create(const ACollection: TVault);
 
     ///  <summary>Saves data to storage.</summary>
     ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
@@ -472,7 +470,7 @@ type
 
 { TDatabaseIOFactory }
 
-class function TDatabaseIOFactory.CreateDBLoader(const Collection: TCollection):
+class function TDatabaseIOFactory.CreateDBLoader(const Collection: TVault):
   IDataFormatLoader;
 begin
   {TODO -cUDatabaseIO: Revise database loaders to get file path and other
@@ -489,8 +487,8 @@ begin
   end;
 end;
 
-class function TDatabaseIOFactory.CreateDBSaver(
-  const Collection: TCollection): IDataFormatSaver;
+class function TDatabaseIOFactory.CreateDBSaver(const Collection: TVault):
+  IDataFormatSaver;
 begin
   case Collection.Storage.Format of
     TDataFormatKind.DCSC_v2:
@@ -518,7 +516,7 @@ end;
 
 { TDatabaseLoader }
 
-constructor TDatabaseLoader.Create(const ACollection: TCollection);
+constructor TDatabaseLoader.Create(const ACollection: TVault);
 begin
   inherited Create;
   fCollection := ACollection;
@@ -761,7 +759,7 @@ end;
 
 { TFormatSaver }
 
-constructor TFormatSaver.Create(const ACollection: TCollection);
+constructor TFormatSaver.Create(const ACollection: TVault);
 begin
   inherited Create;
   fCollection := ACollection;
@@ -852,7 +850,7 @@ begin
   end;
 end;
 
-constructor TDCSCV2FormatSaver.Create(const ACollection: TCollection);
+constructor TDCSCV2FormatSaver.Create(const ACollection: TVault);
 begin
   inherited Create(ACollection);
   // Find a temp file name in system temp directory that doesn't yet exist

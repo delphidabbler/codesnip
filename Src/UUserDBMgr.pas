@@ -181,27 +181,27 @@ type
           ///  <summary>Name of backup file to be restored.</summary>
           fBakFileName: string;
 
-          fCollection: TCollection;
+          fCollection: TVault;
       strict protected
         ///  <summary>Restores the user database from a backup.</summary>
         procedure Execute; override;
       public
         ///  <summary>Constructs a new, suspended, thread that can restore the
-        ///  database from the given backup file.</summary>
+        ///  given vault from the given backup file.</summary>
         constructor Create(const BakFileName: string;
-          const ACollection: TCollection);
+          const ACollection: TVault);
       end;
   public
-    ///  <summary>Performs a user database restoration operation from in a
-    ///  background thread and displays a wait diaogue box if the operation
-    ///  takes more than a given time to execute. Blocks until the thread
-    ///  terminates.</summary>
+    ///  <summary>Performs the restoration of a vault from a background thread
+    ///  and displays a wait diaogue box if the operation takes more than a
+    ///  given time to execute. Blocks until the thread terminates.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
     ///  box, over which it is aligned.</param>
     ///  <param name="BakFileName">string [in] Name of backup file to be
     ///  restored.</param>
+    ///  <param name="ACollection"><c>TVault</c> Vault being restored.</param>
     class procedure Execute(AOwner: TComponent; const BakFileName: string;
-      const ACollection: TCollection);
+      const ACollection: TVault);
   end;
 
 type
@@ -217,26 +217,27 @@ type
           ///  <summary>Name of backup file to be created.</summary>
           fBakFileName: string;
 
-          fCollection: TCollection;
+          fCollection: TVault;
       strict protected
         ///  <summary>Backs up the user database.</summary>
         procedure Execute; override;
       public
         ///  <summary>Constructs a new, suspended, thread that can backup the
-        ///  database to the given backup file.</summary>
+        ///  given vault to the given backup file.</summary>
         constructor Create(const BakFileName: string;
-          const ACollection: TCollection);
+          const ACollection: TVault);
       end;
   public
-    ///  <summary>Performs a user database backup operation from in a background
-    ///  thread and displays a wait diaogue box if the operation takes more than
-    ///  a given time to execute. Blocks until the thread terminates.</summary>
+    ///  <summary>Performs a vault backup operation in a background thread and
+    ///  displays a wait diaogue box if the operation takes more than a given
+    ///  time to execute. Blocks until the thread terminates.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
     ///  box, over which it is aligned.</param>
     ///  <param name="BakFileName">string [in] Name of backup file to be
     ///  created.</param>
+    ///  <param name="ACollection"><c>TVault</c> Vault being backed up.</param>
     class procedure Execute(AOwner: TComponent; const BakFileName: string;
-      const ACollection: TCollection);
+      const ACollection: TVault);
   end;
 
 { TUserDBMgr }
@@ -256,7 +257,7 @@ end;
 class procedure TUserDBMgr.BackupDatabase(ParentCtrl: TComponent);
 var
   FileName: string;
-  Collection: TCollection;
+  Collection: TVault;
 resourcestring
   sOverwritePrompt = '"%s" already exists. OK to overwrite?';
 begin
@@ -322,7 +323,7 @@ end;
 
 class function TUserDBMgr.DeleteDatabase: Boolean;
 var
-  CollectionToDelete: TCollection;
+  CollectionToDelete: TVault;
 begin
   if not TDeleteUserDBDlg.Execute(nil, CollectionToDelete) then
     Exit(False);
@@ -440,7 +441,7 @@ end;
 class function TUserDBMgr.RestoreDatabase(ParentCtrl: TComponent): Boolean;
 var
   FileName: string;
-  Collection: TCollection;
+  Collection: TVault;
 resourcestring
   sFileDoesNotExist = '"%s" does not exist.';
 begin
@@ -513,7 +514,7 @@ end;
 { TUserDBRestoreUI }
 
 class procedure TUserDBRestoreUI.Execute(AOwner: TComponent;
-  const BakFileName: string; const ACollection: TCollection);
+  const BakFileName: string; const ACollection: TVault);
 resourcestring
   // Caption for wait dialog
   sWaitCaption = 'Restoring database files...';
@@ -531,7 +532,7 @@ end;
 { TUserDBRestoreUI.TRestoreThread }
 
 constructor TUserDBRestoreUI.TRestoreThread.Create(const BakFileName: string;
-  const ACollection: TCollection);
+  const ACollection: TVault);
 begin
   inherited Create(True);
   fBakFileName := BakFileName;
@@ -553,7 +554,7 @@ end;
 { TUserDBBackupUI }
 
 class procedure TUserDBBackupUI.Execute(AOwner: TComponent;
-  const BakFileName: string; const ACollection: TCollection);
+  const BakFileName: string; const ACollection: TVault);
 resourcestring
   // Caption for wait dialog
   sWaitCaption = 'Backing up database...';
@@ -571,7 +572,7 @@ end;
 { TUserDBBackupUI.TBackupThread }
 
 constructor TUserDBBackupUI.TBackupThread.Create(const BakFileName: string;
-  const ACollection: TCollection);
+  const ACollection: TVault);
 begin
   inherited Create(True);
   fBakFileName := BakFileName;

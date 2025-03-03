@@ -39,7 +39,7 @@ type
   strict private
     var
       fFileName: string;
-      fCollection: TCollection;
+      fCollection: TVault;
       fCollList: TCollectionListAdapter;
     function GetFilePathFromEditCtrl: string;
   strict protected
@@ -47,7 +47,7 @@ type
     procedure ArrangeForm; override;
   public
     class function Execute(AOwner: TComponent;
-      out AFileName: string; out ACollection: TCollection): Boolean;
+      out AFileName: string; out ACollection: TVault): Boolean;
   end;
 
 implementation
@@ -119,7 +119,7 @@ begin
 end;
 
 class function TCollectionBackupDlg.Execute(AOwner: TComponent;
-  out AFileName: string; out ACollection: TCollection): Boolean;
+  out AFileName: string; out ACollection: TVault): Boolean;
 var
   Dlg: TCollectionBackupDlg;
 begin

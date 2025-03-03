@@ -26,21 +26,19 @@ uses
 
 type
 
-  {
-  TUserDBBackup:
-    Sealed class that can create and restore backups of the user database.
-    Backups are single files. See UFolderBackup for details of file format.
-  }
+  {TODO -cVault: Rename TUserDBBackup class and UUserDBBackup unit.}
+
+  ///  <summary>Sealed class that can create and restore backups of vaults.
+  ///  Backups are single files.</summary>
+  ///  <remarks>See <c>UFolderBackup</c> for details of the file format.
+  ///  </remarks>
   TUserDBBackup = class sealed(TFolderBackup)
   strict private
-    class function MakeFileID(const ACollection: TCollection): SmallInt;
+    class function MakeFileID(const ACollection: TVault): SmallInt;
   public
-    constructor Create(const BackupFile: string;
-      const ACollection: TCollection);
-      {Class constructor. Sets up object to backup user database to a specified
-      file.
-        @param BackupFile [in] Name of backup file.
-      }
+    ///  <summary>Object constructor. Sets up the object to backup the given
+    ///  vault to the given backup file.</summary>
+    constructor Create(const BackupFile: string; const ACollection: TVault);
   end;
 
 
@@ -57,11 +55,7 @@ uses
 { TUserDBBackup }
 
 constructor TUserDBBackup.Create(const BackupFile: string;
-  const ACollection: TCollection);
-  {Class constructor. Sets up object to backup user database to a specified
-  file.
-    @param BackupFile [in] Name of backup file.
-  }
+  const ACollection: TVault);
 begin
   inherited Create(
     ACollection.Storage.Directory,
@@ -71,7 +65,7 @@ begin
   );
 end;
 
-class function TUserDBBackup.MakeFileID(const ACollection: TCollection):
+class function TUserDBBackup.MakeFileID(const ACollection: TVault):
   SmallInt;
 begin
   // Backup file ID is $Fxxx where xxx is ordinal value of format kind.

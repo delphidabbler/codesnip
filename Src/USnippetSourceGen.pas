@@ -37,9 +37,9 @@ type
   }
   TSnippetSourceGen = class sealed(TNoPublicConstructObject)
   strict private
-    ///  <summary>List of collections that have contributed snippets to the
-    ///  source code being generated.</summary>
-    fCollections: TList<TCollection>;
+    ///  <summary>List of vaults that have contributed snippets to the source
+    ///  code being generated.</summary>
+    fCollections: TList<TVault>;
     fGenerator: TSourceGen;
       {Object used to generate the source code}
     procedure Initialize(View: IView);
@@ -112,7 +112,7 @@ function TSnippetSourceGen.BuildHeaderComments: IStringList;
   }
 var
   MetaData: TMetaData;
-  Collection: TCollection;
+  Collection: TVault;
   Credits: string;
 resourcestring
   // Comment to be included at top of snippet
@@ -122,7 +122,7 @@ resourcestring
   sCollectionList = 'The code was sourced from the following collections:';
   sCollectionCredit = 'Collection "%0:s" is licensed under the %1:s';
 
-  function CreditsLine(const ACollection: TCollection): string;
+  function CreditsLine(const ACollection: TVault): string;
   begin
     MetaData := ACollection.MetaData;
     Result := '';
@@ -247,7 +247,7 @@ procedure TSnippetSourceGen.Initialize(View: IView);
 var
   Snips: TSnippetList;  // list of snippets in a category to display
   Snippet: TSnippet;    // a snippet in Snips list
-  Collection: TCollection;
+  Collection: TVault;
 begin
   // Record required snippet(s)
   if Supports(View, ISnippetView) then
@@ -286,7 +286,7 @@ begin
   Assert(CanGenerate(View), ClassName + '.InternalCreate: View not supported');
   inherited InternalCreate;
   fGenerator := TSourceGen.Create;
-  fCollections := TList<TCollection>.Create(TCollection.TComparer.Create);
+  fCollections := TList<TVault>.Create(TVault.TComparer.Create);
   Initialize(View);
 end;
 

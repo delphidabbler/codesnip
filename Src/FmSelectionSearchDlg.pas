@@ -121,21 +121,20 @@ type
   TCollectionMenuItem = class(TMenuItem)
   strict private
     var
-      ///  <summary>Value of CompilerVer property</summary>
-      fCollection: TCollection;
+      ///  <summary>Value of Collection property</summary>
+      fCollection: TVault;
   public
     ///  <summary>Constructs a menu item with all required properties and event
     ///  handlers.</summary>
     ///  <param name="AOwner">TComponent [in] Menu item's owner.</param>
-    ///  <param name="ACollection"><c>TCollection</c> [in] Collection whose name
-    ///  is displayed in menu item.</param>
+    ///  <param name="ACollection"><c>TVault</c> [in] Vault whose name is
+    ///  displayed in menu item.</param>
     ///  <param name="AClickHandler">TNotifyEvent [in] Reference to an event
     ///  handler for menu item's OnClick event.</param>
-    constructor Create(AOwner: TComponent;  const ACollection: TCollection;
+    constructor Create(AOwner: TComponent; const ACollection: TVault;
       const AClickHandler: TNotifyEvent); reintroduce;
-    ///  <summary>Version number of compiler whose name is displayed in menu
-    ///  item's caption.</summary>
-    property Collection: TCollection read fCollection write fCollection;
+    ///  <summary>Vault whose name is displayed in the menu item.</summary>
+    property Collection: TVault read fCollection write fCollection;
   end;
 
 { TSelectionSearchDlg }
@@ -261,8 +260,8 @@ end;
 
 procedure TSelectionSearchDlg.PopulateCollectionsMenu;
 
-  ///  Adds a menu item for given collection to the pop-up menu.
-  procedure AddMenuItem(const ACollection: TCollection);
+  ///  Adds a menu item for given vault to the pop-up menu.
+  procedure AddMenuItem(const ACollection: TVault);
   begin
     mnuCollections.Items.Add(
       TCollectionMenuItem.Create(
@@ -272,7 +271,7 @@ procedure TSelectionSearchDlg.PopulateCollectionsMenu;
   end;
 
 var
-  Collection: TCollection;
+  Collection: TVault;
 begin
   for Collection in TCollections.Instance do
     AddMenuItem(Collection);
@@ -315,7 +314,7 @@ end;
 { TCollectionMenuItem }
 
 constructor TCollectionMenuItem.Create(AOwner: TComponent;
-  const ACollection: TCollection; const AClickHandler: TNotifyEvent);
+  const ACollection: TVault; const AClickHandler: TNotifyEvent);
 begin
   inherited Create(AOwner);
   Caption := ACollection.Name;

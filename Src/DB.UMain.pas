@@ -1070,7 +1070,7 @@ procedure TDatabase.Load;
 var
   DataItemFactory: IDBDataItemFactory;
   CollectionLoader: IDataFormatLoader;
-  Collection: TCollection;
+  Collection: TVault;
   CatLoader: IGlobalCategoryLoader;
 begin
   // Clear the database
@@ -1116,7 +1116,7 @@ procedure TDatabase.Save;
 var
   Provider: IDBDataProvider;
   CollectionSaver: IDataFormatSaver;
-  Collection: TCollection;
+  Collection: TVault;
   CatSaver: IGlobalCategorySaver;
 begin
   // Save categories

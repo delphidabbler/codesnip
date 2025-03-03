@@ -134,7 +134,7 @@ resourcestring
   sCollectionInfo = 'A snippet from the "%s" collection.';
 var
   MetaData: TMetaData;
-  Collection: TCollection;
+  Collection: TVault;
 begin
   Collection := TCollections.Instance.GetCollection(ACollectionID);
   MetaData := Collection.MetaData;

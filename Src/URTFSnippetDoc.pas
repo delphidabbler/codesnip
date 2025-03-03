@@ -163,7 +163,7 @@ end;
 
 procedure TRTFSnippetDoc.InitialiseDoc;
 var
-  Collection: TCollection;
+  Collection: TVault;
 begin
   // Create object used to build main rich text document
   fBuilder := TRTFBuilder.Create(0);  // Use default code page

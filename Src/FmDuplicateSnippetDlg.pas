@@ -188,7 +188,7 @@ end;
 procedure TDuplicateSnippetDlg.InitForm;
 var
   SnippetCat: TCategory;
-  SnippetColl: TCollection;
+  SnippetColl: TVault;
 begin
   inherited;
   edDisplayName.Text := fSnippet.DisplayName;
