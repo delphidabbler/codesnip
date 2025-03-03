@@ -27,8 +27,8 @@ uses
   DB.Vaults,
   FmGenericOKDlg,
   UBaseObjects,
-  UCategoryListAdapter,
-  UCollectionListAdapter,
+  UI.Adapters.CategoryList,
+  UI.Adapters.VaultList,
   UIStringList;
 
 

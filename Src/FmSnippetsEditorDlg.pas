@@ -41,17 +41,17 @@ uses
   FrFixedHTMLDlg,
   FrHTMLDlg,
   UBaseObjects,
-  UCategoryListAdapter,
-  UCollectionListAdapter,
   UCompileMgr,
   UCompileResultsLBMgr,
   UCSSBuilder,
   UMemoCaretPosDisplayMgr,
   UMemoHelper,
-  USnipKindListAdapter,
   USnippetsChkListMgr,
   UUnitsChkListMgr,
-  FmSnippetsEditorDlg.FrActiveTextEditor;
+  FmSnippetsEditorDlg.FrActiveTextEditor,
+  UI.Adapters.CategoryList,
+  UI.Adapters.SnippetKindList,
+  UI.Adapters.VaultList;
 
 
 type

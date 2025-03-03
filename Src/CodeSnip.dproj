@@ -392,7 +392,7 @@
 			<DCCReference Include="UBrowseForFolderDlg.pas"/>
 			<DCCReference Include="UBrowseProtocol.pas"/>
 			<DCCReference Include="UCategoryAction.pas"/>
-			<DCCReference Include="UCategoryListAdapter.pas"/>
+			<DCCReference Include="UI.Adapters.CategoryList.pas"/>
 			<DCCReference Include="ClassHelpers.UControls.pas"/>
 			<DCCReference Include="UClipboardHelper.pas"/>
 			<DCCReference Include="UCodeImportExport.pas"/>
@@ -515,7 +515,7 @@
 			<DCCReference Include="UShowCaseCtrl.pas"/>
 			<DCCReference Include="USimpleDispatch.pas"/>
 			<DCCReference Include="USingleton.pas"/>
-			<DCCReference Include="USnipKindListAdapter.pas"/>
+			<DCCReference Include="UI.Adapters.SnippetKindList.pas"/>
 			<DCCReference Include="USnippetAction.pas"/>
 			<DCCReference Include="USnippetDoc.pas"/>
 			<DCCReference Include="USnippetExtraHelper.pas"/>
@@ -582,7 +582,7 @@
 			<DCCReference Include="DB.Vaults.pas"/>
 			<DCCReference Include="UTabSeparatedFileIO.pas"/>
 			<DCCReference Include="DBIO.UCategoryIO.pas"/>
-			<DCCReference Include="UCollectionListAdapter.pas"/>
+			<DCCReference Include="UI.Adapters.VaultList.pas"/>
 			<DCCReference Include="FmCollectionBackup.pas">
 				<Form>CollectionBackupDlg</Form>
 			</DCCReference>

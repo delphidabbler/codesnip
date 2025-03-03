@@ -27,9 +27,9 @@ uses
   // Project
   DB.Vaults,
   FrPrefsBase,
-  UCollectionListAdapter,
   UColorBoxEx,
   UColorDialogEx,
+  UI.Adapters.VaultList,
   UPreferences;
 
 

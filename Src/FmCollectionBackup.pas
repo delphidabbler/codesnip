@@ -23,7 +23,7 @@ uses
   // Project
   DB.Vaults,
   FmGenericOKDlg,
-  UCollectionListAdapter;
+  UI.Adapters.VaultList;
 
 type
   TCollectionBackupDlg = class(TGenericOKDlg)

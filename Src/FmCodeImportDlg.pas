@@ -29,7 +29,7 @@ uses
   FmWizardDlg,
   UBaseObjects,
   UCodeImportMgr,
-  UCollectionListAdapter;
+  UI.Adapters.VaultList;
 
 type
   ///  <summary>

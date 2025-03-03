@@ -29,8 +29,8 @@ uses
   FmGenericViewDlg,
   FrProgress,
   UBaseObjects,
-  UCollectionListAdapter,
   UControlStateMgr,
+  UI.Adapters.VaultList,
   UUserDBMove;
 
 type

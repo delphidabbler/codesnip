@@ -35,12 +35,12 @@ uses
   FrHTMLDlg,
   FrHTMLTpltDlg,
   UBaseObjects,
-  UCollectionListAdapter,
   UContainers,
   UCSSBuilder,
   SWAG.UCommon,
   SWAG.UImporter,
-  SWAG.UReader;
+  SWAG.UReader,
+  UI.Adapters.VaultList;
 
 
 type

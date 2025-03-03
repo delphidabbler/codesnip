@@ -11,7 +11,7 @@
 }
 
 
-unit UCategoryListAdapter;
+unit UI.Adapters.CategoryList;
 
 
 interface

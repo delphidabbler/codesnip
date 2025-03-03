@@ -33,8 +33,8 @@ uses
   FrBrowserBase,
   FrHTMLDlg,
   FrHTMLTpltDlg,
-  UCollectionListAdapter,
   UCSSBuilder,
+  UI.Adapters.VaultList,
   UIStringList;
 
 

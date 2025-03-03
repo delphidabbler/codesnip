@@ -11,7 +11,7 @@
 }
 
 
-unit USnipKindListAdapter;
+unit UI.Adapters.SnippetKindList;
 
 
 interface

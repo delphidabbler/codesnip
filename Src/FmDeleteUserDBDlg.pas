@@ -28,7 +28,7 @@ uses
   FrHTMLDlg,
   FrFixedHTMLDlg,
   UBaseObjects,
-  UCollectionListAdapter;
+  UI.Adapters.VaultList;
 
 type
   TDeleteUserDBDlg = class(TGenericOKDlg, INoPublicConstruct)

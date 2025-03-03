@@ -10,7 +10,7 @@
  * with GUI controls.
 }
 
-unit UCollectionListAdapter;
+unit UI.Adapters.VaultList;
 
 interface
 
@@ -60,7 +60,6 @@ implementation
 
 uses
   // Delphi
-//  Windows {for inlining},
   Generics.Defaults,
   // Project
   UStrUtils;
