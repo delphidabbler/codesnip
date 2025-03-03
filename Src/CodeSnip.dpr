@@ -367,7 +367,7 @@ uses
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas',
-  FmDeleteUserDBDlg in 'FmDeleteUserDBDlg.pas' {DeleteVaultDlg},
+  UI.Forms.DeleteVaultDlg in 'UI.Forms.DeleteVaultDlg.pas' {DeleteVaultDlg},
   Compilers.UAutoDetect in 'Compilers.UAutoDetect.pas',
   Compilers.USettings in 'Compilers.USettings.pas',
   FmRegisterCompilersDlg in 'FmRegisterCompilersDlg.pas' {RegisterCompilersDlg},

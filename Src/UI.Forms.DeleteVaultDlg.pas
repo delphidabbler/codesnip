@@ -10,7 +10,7 @@
 }
 
 
-unit FmDeleteUserDBDlg;
+unit UI.Forms.DeleteVaultDlg;
 
 interface
 

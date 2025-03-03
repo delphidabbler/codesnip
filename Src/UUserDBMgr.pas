@@ -102,7 +102,7 @@ uses
   FmAddCategoryDlg,
   UI.Forms.BackupVaultDlg,
   FmDeleteCategoryDlg,
-  FmDeleteUserDBDlg,
+  UI.Forms.DeleteVaultDlg,
   FmDuplicateSnippetDlg,
   FmRenameCategoryDlg,
   FmSnippetsEditorDlg,

@@ -569,7 +569,7 @@
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
-			<DCCReference Include="FmDeleteUserDBDlg.pas">
+			<DCCReference Include="UI.Forms.DeleteVaultDlg.pas">
 				<Form>DeleteVaultDlg</Form>
 			</DCCReference>
 			<DCCReference Include="Compilers.UAutoDetect.pas"/>
