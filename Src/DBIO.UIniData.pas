@@ -20,17 +20,21 @@ interface
 
 uses
   // Delphi
+  SysUtils,
   Classes,
+  Types,
   Generics.Collections,
   Generics.Defaults,
   IniFiles,
   // Project
   ActiveText.UMain,
+  DB.MetaData,
   DB.UCategory,
   DB.USnippet,
   DBIO.UFileIOIntf,
   UIStringList,
-  UMainDBFileReader;
+  UMainDBFileReader,
+  UVersionInfo;
 
 
 type
@@ -88,10 +92,20 @@ type
       fIniCache: TIniFileCache;
       ///  <summary>Reads DB files using correct encoding.</summary>
       fFileReader: TMainDBFileReader;
+      ///  <summary>Data format version number.</summary>
+      fVersion: TVersionNumber;
+    const
+      SupportedMajorVersion = 2;
+  strict private
     ///  <summary>
     ///  Returns fully specified name of database master file.
     ///  </summary>
     function MasterFileName: string;
+    ///  <summary>Reads data format version from file.</summary>
+    ///  <remarks>Stores result in <c>fVersion</c>. Detects DCSC versions 1 and
+    ///  later. <c>fVersion</c> is set to null if the version can't be
+    ///  determined.</remarks>
+    procedure ReadVersionNumber;
     ///  <summary>
     ///  Returns ID of category associated with a snippet.
     ///  </summary>
@@ -117,6 +131,8 @@ type
     ///  </summary>
     ///  <param name="EObj">Exception object to be handled.</param>
     procedure HandleCorruptDatabase(const EObj: TObject);
+    ///  <summary>Returns encoding used by given meta file.</summary>
+    function GetFileEncoding(const FileName: string): TEncoding;
     ///  <summary>
     ///  Returns name of directory where the database is stored.
     ///  </summary>
@@ -125,6 +141,16 @@ type
     ///  Returns fully specified path to given file name.
     ///  </summary>
     function DataFile(const FileName: string): string;
+    ///  <summary>Checks if a given file exists in collection directory.
+    ///  </summary>
+    function DataFileExists(const FileName: string): Boolean;
+    ///  <summary>Reads all lines from given file and returns them as an array.
+    ///  </summary>
+    ///  <remarks>FileName must contain no path information.</remarks>
+    function ReadFileLines(const FileName: string): TStringDynArray;
+    ///  <summary>Reads all text from given file and returns it.</summary>
+    ///  <remarks>FileName must contain no path information.</remarks>
+    function ReadFileText(const FileName: string): string;
     ///  <summary>
     ///  Gets a list from ini file of all of items of a specified kind that are
     ///  referenced by a snippet.
@@ -205,6 +231,11 @@ type
     ///  <param name="SnippetKey">string [in] Snippet's key.</param>
     ///  <returns>IStringList containing unit names.</returns>
     function GetSnippetUnits(const SnippetKey: string): IStringList;
+    ///  <summary>Gets the collection's meta data.</summary>
+    ///  <returns><c>TMetaData</c>. The required meta data. Will be null if
+    ///  is no meta data present.</returns>
+    ///  <remarks>Method of <c>IDataReader</c>.</remarks>
+    function GetMetaData: TMetaData;
   end;
 
   ///  <summary>Write a collection to disk in the DelphiDabbler Code Snippets
@@ -304,6 +335,11 @@ type
     ///  unformatted, single line, REML string.</summary>
     function ActiveTextToREML(AActiveText: IActiveText): string;
 
+    procedure WriteTextFile(const AFileName, AText: string); overload;
+
+    procedure WriteTextFile(const AFileName: string; const ALines: IStringList);
+      overload;
+
   public
 
     ///  <summary>Object constructor.</summary>
@@ -377,6 +413,12 @@ type
     procedure WriteSnippetXRefs(const SnippetKey: string;
       const XRefs: IStringList);
 
+    ///  <summary>Writes the collection's meta data.</summary>
+    ///  <param name="AMetaData"><c>TMetaData</c> [in] Meta data to be written.
+    ///  </param>
+    ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
+    procedure WriteMetaData(const AMetaData: TMetaData);
+
     ///  <summary>Finalises the output. Always called after all other methods.
     ///  </summary>
     ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
@@ -389,13 +431,13 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
   IOUtils,
   // Project
   Compilers.UGlobals,
   DB.USnippetKind,
   UComparers,
   UConsts,
+  UEncodings,
   UExceptions,
   UIniDataLoader,
   UIOUtils,
@@ -409,6 +451,27 @@ uses
 const
   // Name of master file that defines database
   cMasterFileName = 'categories.ini';
+
+  // Names of v2 meta data files
+  VersionFileName = 'VERSION';
+  LicenseFileName = 'LICENSE';
+  LicenseInfoFileName = 'LICENSE-INFO';
+  ContributorsFileName = 'CONTRIBUTORS';
+  AcknowledgementsFileName = 'TESTERS';
+
+  // Names of v1 meta data files
+  ContributorsFileNameV1 = 'contrib.txt';
+  AcknowledgementsFileNameV1 = 'testers.txt';
+
+
+  // Names of keys in license info file
+  LicenseInfoLicenseNameKey = 'LicenseName';
+  LicenseInfoLicenseSPDXKey = 'LicenseSPDX';
+  LicenseInfoLicenseURLKey = 'LicenseURL';
+  LicenseInfoCopyrightDateKey = 'CopyrightDate';
+  LicenseInfoCopyrightHolderKey = 'CopyrightHolder';
+  LicenseInfoCopyrightHolderURLKey = 'CopyrightHolderURL';
+
   // Names of values in categories ini file
   cMasterIniName = 'Ini';             // name of category ini file
   cMasterDescName = 'Desc';           // category description
@@ -452,6 +515,10 @@ begin
 end;
 
 constructor TIniDataReader.Create(const DBDir: string);
+resourcestring
+  // Error messages
+  sVersionNotSpecified = 'Format version number not specified';
+  sVersionNotSupported = 'Format version %s is not supported';
 begin
   inherited Create;
   fDBDir := DBDir;
@@ -461,6 +528,11 @@ begin
     fFileReader := TMainDBFileReader.Create(MasterFileName);
     fIniCache := TIniFileCache.Create(fFileReader);
     try
+      ReadVersionNumber;
+      if fVersion.IsNull then
+        raise EDataIO.Create(sVersionNotSpecified);
+      if fVersion.V1 <> SupportedMajorVersion then
+        raise EDataIO.CreateFmt(sVersionNotSupported, [string(fVersion)]);
       fMasterIni := TDatabaseIniFile.Create(fFileReader, MasterFileName);
       fCatIDs := TStringList.Create;
       fSnippetCatMap := TSnippetCatMap.Create(TTextEqualityComparer.Create);
@@ -485,6 +557,11 @@ end;
 function TIniDataReader.DataFile(const FileName: string): string;
 begin
   Result := IncludeTrailingPathDelimiter(DataDir) + FileName;
+end;
+
+function TIniDataReader.DataFileExists(const FileName: string): Boolean;
+begin
+  Result := TFile.Exists(DataFile(FileName), False);
 end;
 
 destructor TIniDataReader.Destroy;
@@ -538,6 +615,56 @@ begin
   except
     HandleCorruptDatabase(ExceptObject);
   end;
+end;
+
+function TIniDataReader.GetFileEncoding(const FileName: string): TEncoding;
+begin
+  // Old v1 database meta files may be in the system default encodings, v1 and
+  // all v2 and later use UTF-8 with BOM.
+  if TFileIO.CheckBOM(DataFile(FileName), TEncoding.UTF8) then
+    Result := TEncoding.UTF8
+  else
+    Result := TEncoding.Default;
+end;
+
+function TIniDataReader.GetMetaData: TMetaData;
+var
+  SL: TStringList;
+  LicenseText: string;
+  LicenseFileInfo: TStringDynArray;
+  Contributors: IStringList;
+begin
+
+  LicenseText := StrTrimRight(ReadFileText(LicenseFileName));
+  LicenseFileInfo := ReadFileLines(LicenseInfoFileName);
+  Contributors := TIStringList.Create(ReadFileLines(ContributorsFileName));
+
+  Result := TMetaData.Create([
+    TMetaDataCap.Version, TMetaDataCap.License, TMetaDataCap.Copyright,
+    TMetaDataCap.Acknowledgements
+  ]);
+  Result.Version := fVersion; // this was read in constructor
+  SL := TStringList.Create;
+  try
+    StrArrayToStrList(LicenseFileInfo, SL);
+    Result.LicenseInfo := TLicenseInfo.Create(
+      SL.Values[LicenseInfoLicenseNameKey],
+      SL.Values[LicenseInfoLicenseSPDXKey],
+      SL.Values[LicenseInfoLicenseURLKey],
+      LicenseText
+    );
+    Result.CopyrightInfo := TCopyrightInfo.Create(
+      SL.Values[LicenseInfoCopyrightDateKey],
+      SL.Values[LicenseInfoCopyrightHolderKey],
+      SL.Values[LicenseInfoCopyrightHolderURLKey],
+      Contributors
+    );
+  finally
+    SL.Free;
+  end;
+  Result.Acknowledgements := TIStringList.Create(
+    ReadFileLines(AcknowledgementsFileName)
+  );
 end;
 
 function TIniDataReader.GetSnippetDepends(const SnippetKey: string):
@@ -781,6 +908,54 @@ begin
   Result := DataFile(cMasterFileName);
 end;
 
+function TIniDataReader.ReadFileLines(const FileName: string): TStringDynArray;
+var
+  Encoding: TEncoding;
+begin
+  if not DataFileExists(FileName) then
+  begin
+    SetLength(Result, 0);
+    Exit;
+  end;
+  Encoding := GetFileEncoding(FileName);
+  try
+    Result := TFileIO.ReadAllLines(DataFile(FileName), Encoding, True);
+  finally
+    TEncodingHelper.FreeEncoding(Encoding);
+  end;
+end;
+
+function TIniDataReader.ReadFileText(const FileName: string): string;
+begin
+  if not DataFileExists(FileName) then
+    Exit('');
+  Result := TFileIO.ReadAllText(
+    DataFile(FileName), GetFileEncoding(FileName), True
+  );
+end;
+
+procedure TIniDataReader.ReadVersionNumber;
+var
+  VersionStr: string;
+begin
+  if DataFileExists(VersionFileName) then
+  begin
+    // Version file exists. Read and parse it. Set to null if invalid
+    VersionStr := StrTrim(ReadFileText(VersionFileName));
+    if not TVersionNumber.TryStrToVersionNumber(VersionStr, fVersion) then
+      fVersion := TVersionNumber.Nul;
+  end
+  else
+  begin
+    // No version file. Check if v1 present. Set to null if v1 not detected
+    if DataFileExists(ContributorsFileNameV1)
+      and DataFileExists(AcknowledgementsFileNameV1) then
+      fVersion := TVersionNumber.Create(1, 0, 0, 0)
+    else
+      fVersion := TVersionNumber.Nul;
+  end;
+end;
+
 function TIniDataReader.SnippetToCat(const SnippetKey: string): string;
 var
   CatIdx: Integer;  // index of category in category list for this snippet
@@ -870,6 +1045,8 @@ begin
     // Delete current ini and data files
     // (don't delete special files: CONTRIBUTORS, LICENSE, LICENSE-INFO,
     // TESTERS, VERSION).
+    {TODO -cVault: Is it now safe to delete the special files, since we now
+          write these files.}
     DeleteFiles(fOutDir, '*.dat');
     DeleteFiles(fOutDir, '*.ini');
 
@@ -914,6 +1091,38 @@ procedure TIniDataWriter.WriteCatSnippets(const CatID: string;
   const SnipList: IStringList);
 begin
   // Do nothing
+end;
+
+procedure TIniDataWriter.WriteMetaData(const AMetaData: TMetaData);
+var
+  VersionStr: string;
+  KVPairs: TStringList;
+  LicenseInfo: IStringList;
+begin
+  VersionStr := Format(
+    '%0:d.%1:d.%2:d',
+    [AMetaData.Version.V1, AMetaData.Version.V2, AMetaData.Version.V3]
+  );
+  KVPairs := TStringList.Create;
+  try
+    KVPairs.Values[LicenseInfoLicenseNameKey] := AMetaData.LicenseInfo.Name;
+    KVPairs.Values[LicenseInfoLicenseSPDXKey] := AMetaData.LicenseInfo.SPDX;
+    KVPairs.Values[LicenseInfoLicenseURLKey] := AMetaData.LicenseInfo.URL;
+    KVPairs.Values[LicenseInfoCopyrightDateKey] := AMetaData.CopyrightInfo.Date;
+    KVPairs.Values[LicenseInfoCopyrightHolderKey] :=
+      AMetaData.CopyrightInfo.Holder;
+    KVPairs.Values[LicenseInfoCopyrightHolderURLKey] :=
+      AMetaData.CopyrightInfo.HolderURL;
+    LicenseInfo := TIStringList.Create(KVPairs);
+  finally
+    KVPairs.Free;
+  end;
+
+  WriteTextFile(VersionFileName, VersionStr);
+  WriteTextFile(LicenseFileName, AMetaData.LicenseInfo.Text);
+  WriteTextFile(LicenseInfoFileName, LicenseInfo);
+  WriteTextFile(ContributorsFileName, AMetaData.CopyrightInfo.Contributors);
+  WriteTextFile(AcknowledgementsFileName, AMetaData.Acknowledgements);
 end;
 
 procedure TIniDataWriter.WriteSnippetDepends(const SnippetKey: string;
@@ -1006,7 +1215,9 @@ begin
     // test info: only write if not basic
     {TODO -cVault: Add support for AdvancedTest .Level & .URL}
     if Props.TestInfo <> stiBasic then
-      fCurrentCatIni.WriteString(SnippetKey, cTestInfoName, TestInfo[Props.TestInfo]);
+      fCurrentCatIni.WriteString(
+        SnippetKey, cTestInfoName, TestInfo[Props.TestInfo]
+      );
 
   except
 
@@ -1038,6 +1249,22 @@ begin
   fCurrentCatIni.WriteString(
     SnippetKey, cXRefName, XRefs.GetText(',', False)
   );
+end;
+
+procedure TIniDataWriter.WriteTextFile(const AFileName, AText: string);
+begin
+  TFileIO.WriteAllText(MakePath(AFileName), AText, TEncoding.UTF8, True);
+end;
+
+procedure TIniDataWriter.WriteTextFile(const AFileName: string;
+  const ALines: IStringList);
+var
+  Content: string;
+begin
+  Content := ALines.GetText(EOL, False);
+  if not StrIsEmpty(Content) then
+    Content := Content + EOL;
+  WriteTextFile(AFileName, Content);
 end;
 
 { TIniDataWriter.TUTF8IniFile }

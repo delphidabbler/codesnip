@@ -19,6 +19,7 @@ uses
   XMLIntf,
   // Project
   Compilers.UGlobals,
+  DB.MetaData,
   DB.UCategory,
   DB.USnippet,
   DB.USnippetKind,
@@ -306,6 +307,12 @@ type
     ///  </returns>
     ///  <remarks>Method of <c>IDataReader</c>.</remarks>
     function GetSnippetUnits(const SnippetKey: string): IStringList;
+
+    ///  <summary>Gets the collection's meta data.</summary>
+    ///  <returns><c>TMetaData</c>. The required meta data. Will be null if
+    ///  is no meta data.</returns>
+    ///  <remarks>Method of <c>IDataReader</c>.</remarks>
+    function GetMetaData: TMetaData;
   end;
 
   ///  <summary>Class that performs the low level writing of collection data in
@@ -430,6 +437,12 @@ type
     procedure WriteSnippetXRefs(const SnippetKey: string;
       const XRefs: IStringList);
 
+    ///  <summary>Writes the collection's meta data.</summary>
+    ///  <param name="AMetaData"><c>TMetaData</c> [in] Meta data to be written.
+    ///  </param>
+    ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
+    procedure WriteMetaData(const AMetaData: TMetaData);
+
     ///  <summary>Finalises the collection write.</summary>
     ///  <remarks>
     ///  <para>Always called after all other <c>IDataWriter</c> methods.</para>
@@ -472,6 +485,7 @@ resourcestring
   sBadKind = 'Missing or invalid snippet kind for snippet "%s"';
   sSnippetNotFound = 'Can''t find reference to snippet key "%s" in XML file';
   sBadTestInfo = 'Invalid test information for snippet "%s"';
+  sMissingLicenseText = 'License text file "%s" is missing';
 
 { TNativeDataRW }
 
@@ -645,6 +659,63 @@ begin
   for ItemNode in NodeList do
     if ItemNode.IsTextElement then
       Result.Add(ItemNode.Text);
+end;
+
+function TNativeDataReader.GetMetaData: TMetaData;
+var
+  RootNode: IXMLNode;
+  LicenseNode: IXMLNode;
+  CopyrightNode: IXMLNode;
+  LicenseTextFileName: string;
+  LicenseText: string;
+begin
+  Result := TMetaData.Create([
+    TMetaDataCap.License, TMetaDataCap.Copyright, TMetaDataCap.Acknowledgements
+  ]);
+
+  LicenseNode := XMLDoc.FindNode(RootNodeName + '\' + LicenseNodeName);
+  if Assigned(LicenseNode) then
+  begin
+    LicenseTextFileName := LicenseNode.Attributes[LicenseNodeLicenseFileAttr];
+    if (LicenseTextFileName <> '') then
+    begin
+      if not TFile.Exists(FilePath(LicenseTextFileName)) then
+        raise EDataIO.CreateFmt(sMissingLicenseText, [LicenseTextFileName]);
+      LicenseText := TFileIO.ReadAllText(
+        FilePath(LicenseTextFileName), TEncoding.UTF8, False
+      );
+    end
+    else
+      LicenseText := '';
+    Result.LicenseInfo := TLicenseInfo.Create(
+      LicenseNode.Attributes[LicenseNodeNameAttr],
+      LicenseNode.Attributes[LicenseNodeSPDXAttr],
+      LicenseNode.Attributes[LicenseNodeURLAttr],
+      LicenseText
+    );
+  end;
+
+  CopyrightNode := XMLDoc.FindNode(RootNodeName + '\' + CopyrightNodeName);
+  if Assigned(CopyrightNode) then
+  begin
+    Result.CopyrightInfo := TCopyrightInfo.Create(
+      CopyrightNode.Attributes[CopyrightNodeDateAttr],
+      CopyrightNode.Attributes[CopyrightNodeHolderAttr],
+      CopyrightNode.Attributes[CopyrightNodeURLAttr],
+      GetEnclosedListItems(
+        CopyrightNode,
+        CopyrightContributorsListNodeName,
+        CopyrightContributorsListItemNodeName
+      )
+    );
+  end;
+
+  RootNode := XMLDoc.FindNode(RootNodeName);
+  if not Assigned(RootNode) then
+    raise EDataIO.Create(sNoRootNode);
+  Result.Acknowledgements := GetEnclosedListItems(
+    RootNode, AcknowledgementsListNodeName, AcknowledgementsListItemNodeName
+  );
 end;
 
 function TNativeDataReader.GetSnippetDepends(const SnippetKey: string):
@@ -1056,6 +1127,55 @@ begin
   ListNode := XMLDoc.CreateElement(AParent, AListNodeName);
   for Item in AItems do
     XMLDoc.CreateElement(ListNode, AItemNodeName, Item);
+end;
+
+procedure TNativeDataWriter.WriteMetaData(const AMetaData: TMetaData);
+var
+  LicenseNode: IXMLNode;
+  CopyrightNode: IXMLNode;
+begin
+  // Write license info
+  LicenseNode := XMLDoc.CreateElement(fRootNode, LicenseNodeName);
+  LicenseNode.Attributes[LicenseNodeSPDXAttr] := AMetaData.LicenseInfo.SPDX;
+  LicenseNode.Attributes[LicenseNodeNameAttr] := AMetaData.LicenseInfo.Name;
+  LicenseNode.Attributes[LicenseNodeURLAttr] := AMetaData.LicenseInfo.URL;
+  if StrIsEmpty(AMetaData.LicenseInfo.Text) then
+    LicenseNode.Attributes[LicenseNodeLicenseFileAttr] := ''
+  else
+  begin
+    // license text file: license text is written to a UTF-8 encoded file with
+    // no BOM and filename is stored in XML
+    LicenseNode.Attributes[LicenseNodeLicenseFileAttr] := LicenseTextFileName;
+    TFileIO.WriteAllText(
+      FilePath(LicenseTextFileName),
+      AMetaData.LicenseInfo.Text,
+      TEncoding.UTF8,
+      False
+    );
+  end;
+
+  CopyrightNode := XMLDoc.CreateElement(fRootNode, CopyrightNodeName);
+  CopyrightNode.Attributes[CopyrightNodeDateAttr] :=
+    AMetaData.CopyrightInfo.Date;
+  CopyrightNode.Attributes[CopyrightNodeHolderAttr] :=
+    AMetaData.CopyrightInfo.Holder;
+  CopyrightNode.Attributes[CopyrightNodeURLAttr]
+    := AMetaData.CopyrightInfo.HolderURL;
+  if AMetaData.CopyrightInfo.Contributors.Count > 0 then
+    WriteEnclosedList(
+      CopyrightNode,
+      CopyrightContributorsListNodeName,
+      CopyrightContributorsListItemNodeName,
+      AMetaData.CopyrightInfo.Contributors
+    );
+
+  WriteEnclosedList(
+    fRootNode,
+    AcknowledgementsListNodeName,
+    AcknowledgementsListItemNodeName,
+    AMetaData.Acknowledgements
+  );
+
 end;
 
 procedure TNativeDataWriter.WriteReferenceList(const ASnippetKey,

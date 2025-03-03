@@ -120,10 +120,9 @@ uses
   // Project
   Compilers.UCompilers,
   DB.DataFormats,
+  DB.MetaData,
   DB.UMain,
-  DB.UMetaData,
   DB.USnippetKind,
-  DBIO.MetaData.DCSC,
   UStrUtils,
   UUrl;
 
@@ -134,17 +133,19 @@ function TSnippetDoc.CollectionInfo(const ACollectionID: TCollectionID): string;
 resourcestring
   sCollectionInfo = 'A snippet from the "%s" collection.';
 var
-  MetaData: IDBMetaData;
+  MetaData: TMetaData;
   Collection: TCollection;
 begin
   Collection := TCollections.Instance.GetCollection(ACollectionID);
-  Result := Format(sCollectionInfo, [Collection.Name]);
-  MetaData := TMetaDataFactory.CreateInstance(Collection.Storage);
-  if mdcLicense in MetaData.GetCapabilities then
+  MetaData := Collection.MetaData;
+  Result := '';
+  if TMetaDataCap.License in MetaData.Capabilities then
+    Result := Result + StrMakeSentence(MetaData.LicenseInfo.NameWithURL);
+  if TMetaDataCap.Copyright in MetaData.Capabilities then
   begin
-    Result := Result + ' ' + MetaData.GetLicenseInfo.NameWithURL + '.';
-    if (mdcCopyright in MetaData.GetCapabilities) then
-      Result := Result + ' ' + MetaData.GetCopyrightInfo.ToString + '.';
+    if not StrIsEmpty(Result) then
+      Result := Result + ' ';
+    Result := Result + StrMakeSentence(MetaData.CopyrightInfo.ToString);
   end;
 end;
 

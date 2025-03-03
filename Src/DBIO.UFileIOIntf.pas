@@ -19,7 +19,11 @@ interface
 
 uses
   // Project
-  DB.UCategory, DB.USnippet, UExceptions, UIStringList;
+  DB.MetaData,
+  DB.UCategory,
+  DB.USnippet,
+  UExceptions,
+  UIStringList;
 
 
 type
@@ -74,6 +78,11 @@ type
         @param SnippetKey [in] Snippet's key.
         @return List of unit names.
       }
+
+    ///  <summary>Gets the collection's meta data.</summary>
+    ///  <returns><c>TMetaData</c>. The required meta data. May be null if meta
+    ///  data is not supported or not present.</returns>
+    function GetMetaData: TMetaData;
   end;
 
   {
@@ -128,6 +137,13 @@ type
         @param SnippetKey [in] Snippet's key.
         @param XRefs [in] List of snippet keys.
       }
+
+    ///  <summary>Write the collection's meta data.</summary>
+    ///  <param name="AMetaData"><c>TMetaData</c> [in] Meta data to be written.
+    ///  </param>
+    ///  <remarks>Data formats may support all, some or no metadata.</remarks>
+    procedure WriteMetaData(const AMetaData: TMetaData);
+
     procedure Finalise;
       {Finalises the database. Always called after all other methods.
       }

@@ -21,6 +21,7 @@ uses
   Generics.Defaults,
 
   DB.DataFormats,
+  DB.MetaData,
   UEncodings,
   UExceptions,
   USettings,
@@ -63,12 +64,14 @@ type
 
   ECollectionID = class(ECodeSnip);
 
-  TCollection = record
+  TCollection = class
   strict private
     var
       fUID: TCollectionID;
       fName: string;
       fStorage: TDataStorageDetails;
+      fMetaData: TMetaData;
+      procedure SetMetaData(const AValue: TMetaData);
   public
     type
       TComparer = class(TInterfacedObject,
@@ -97,6 +100,11 @@ type
     ///  <summary>Collection storage information.</summary>
     property Storage: TDataStorageDetails
       read fStorage;
+    ///  <summary>Meta data associated with the collection.</summary>
+    ///  <remarks>Meta data is read from and written to the associated storage.
+    ///  </remarks>
+    property MetaData: TMetaData
+      read fMetaData write SetMetaData;
     ///  <summary>Checks if this record's fields are valid.</summary>
     function IsValid: Boolean;
     ///  <summary>Checks if this record is the default collection.</summary>
@@ -108,6 +116,7 @@ type
     var
       fItems: TList<TCollection>;
     function GetItem(const Idx: Integer): TCollection;
+    procedure DoUpdate(const Idx: Integer; const ACollection: TCollection);
     class function GetInstance: TCollections; static;
   strict protected
     procedure Initialize; override;
@@ -197,6 +206,11 @@ begin
     and (fStorage.Format <> TDataFormatKind.Error);
 end;
 
+procedure TCollection.SetMetaData(const AValue: TMetaData);
+begin
+  fMetaData := AValue.Clone;
+end;
+
 { TCollections }
 
 procedure TCollections.Add(const ACollection: TCollection);
@@ -213,11 +227,15 @@ begin
   if Idx < 0 then
     fItems.Add(ACollection)
   else
-    fItems[Idx] := ACollection;
+    DoUpdate(Idx, ACollection);
 end;
 
 procedure TCollections.Clear;
+var
+  Idx: Integer;
 begin
+  for Idx := Pred(fItems.Count) downto 0 do
+    DoUpdate(Idx, nil); // frees and nils item with given index
   fItems.Clear;
 end;
 
@@ -257,12 +275,26 @@ begin
     raise EArgumentException.Create(sCantDelete);
   Idx := IndexOfID(AUID);
   if Idx >= 0 then
+  begin
+    DoUpdate(Idx, nil); // frees and nils item with given index
     fItems.Delete(Idx);
+  end;
+end;
+
+procedure TCollections.DoUpdate(const Idx: Integer;
+  const ACollection: TCollection);
+var
+  OldEntry: TCollection;
+begin
+  OldEntry := fItems[Idx];
+  fItems[Idx] := ACollection;
+  OldEntry.Free;
 end;
 
 procedure TCollections.Finalize;
 begin
   Save;
+  Clear;
   fItems.Free;
 end;
 
@@ -344,7 +376,7 @@ var
 begin
   Idx := IndexOfID(ACollection.UID);
   if Idx >= 0 then
-    fItems[Idx] := ACollection;
+    DoUpdate(Idx, ACollection);
 end;
 
 { TCollectionID }

@@ -27,8 +27,8 @@ uses
   Generics.Collections,
   // Project
   Browser.UHTMLEvents,
+  DB.MetaData,
   DB.UCollections,
-  DB.UMetaData,
   FmGenericViewDlg,
   FrBrowserBase,
   FrHTMLDlg,
@@ -334,89 +334,120 @@ begin
 end;
 
 procedure TAboutDlg.DisplayCollectionInfo(ACollection: TCollection);
+var
+  HasEntries: Boolean;
 
-  function AddHeading(const AHeading: string): TTreeNode;
+  function AddChild(const AParentNode: TTreeNode; const AData: string):
+    TTreeNode;
   begin
-    Result := tvCollectionInfo.Items.AddChild(nil, AHeading);
+    Result := tvCollectionInfo.Items.AddChild(AParentNode, AData);
+    HasEntries := True;
   end;
 
-  procedure AddChild(const AParentNode: TTreeNode; const AData: string);
-  begin
-    tvCollectionInfo.Items.AddChild(AParentNode, AData);
-  end;
-
-  procedure AddItem(const AHeading, AData: string);
+  procedure AddChildren(const AParentNode: TTreeNode; const AData: IStringList);
   var
-    HeadingNode: TTreeNode;
-  begin
-    HeadingNode := AddHeading(AHeading);
-    AddChild(HeadingNode, AData);
-  end;
-
-  procedure AddItems(const AHeading: string; const AData: IStringList);
-  var
-    HeadingNode: TTreeNode;
     DataItem: string;
   begin
-    HeadingNode := AddHeading(AHeading);
     for DataItem in AData do
-      AddChild(HeadingNode, DataItem);
+      AddChild(AParentNode, DataItem);
   end;
 
 var
-  MetaData: IDBMetaData;
-  Capabilities: TMetaDataCapabilities;
+  MetaData: TMetaData;
+  Capabilities: TMetaDataCaps;
   HeadingNode: TTreeNode;
+  SubheadingNode: TTreeNode;
 resourcestring
   sVersionHeading = 'Version';
   sLicenseHeading = 'License';
   sCopyrightHeading = 'Copyright';
   sContributorsHeading = 'Contributors';
-  sTestersHeading = 'Testers';
+  sAcknowledgementsHeading = 'Acknowledgements';
   sNoMetaData = 'No information available for this collection.';
+  sNotAvailable = 'Not specified';
+  sNone = 'None';
 begin
   tvCollectionInfo.Items.BeginUpdate;
   try
     tvCollectionInfo.Items.Clear;
-    MetaData := TMetaDataFactory.CreateInstance(ACollection.Storage);
-    Capabilities := MetaData.GetCapabilities;
+    HasEntries := False;
+    MetaData := ACollection.MetaData;
+    Capabilities := MetaData.Capabilities;
+
     if Capabilities <> [] then
     begin
-      if mdcVersion in Capabilities then
-        AddItem(sVersionHeading, MetaData.GetVersion);
-      if mdcLicense in Capabilities then
+
+      if TMetaDataCap.Version in Capabilities then
       begin
-        HeadingNode := AddHeading(sLicenseHeading);
-        AddChild(
-          HeadingNode,
-          StrIf(
-            MetaData.GetLicenseInfo.Name <> '',
-            MetaData.GetLicenseInfo.Name,
-            MetaData.GetLicenseInfo.SPDX
-          )
-        );
-        AddChild(HeadingNode, MetaData.GetLicenseInfo.URL);
+        HeadingNode := AddChild(nil, sVersionHeading);
+        if not MetaData.Version.IsNull then
+          AddChild(HeadingNode, MetaData.Version)
+        else
+          AddChild(HeadingNode, sNotAvailable);
       end;
-      if mdcCopyright in Capabilities then
+
+      if (TMetaDataCap.License in Capabilities) then
       begin
-        HeadingNode := AddHeading(sCopyrightHeading);
-        AddChild(HeadingNode, MetaData.GetCopyrightInfo.Date);
-        AddChild(HeadingNode, MetaData.GetCopyrightInfo.Holder);
-        AddChild(HeadingNode, MetaData.GetCopyrightInfo.HolderURL);
+        HeadingNode := AddChild(nil, sLicenseHeading);
+        if not MetaData.LicenseInfo.IsNull then
+        begin
+          if not StrIsEmpty(MetaData.LicenseInfo.Name)
+            and not StrIsEmpty(MetaData.LicenseInfo.SPDX) then
+            AddChild(
+              HeadingNode,
+              StrIf(
+                MetaData.LicenseInfo.Name <> '',
+                MetaData.LicenseInfo.Name,
+                MetaData.LicenseInfo.SPDX
+              )
+            );
+          if not StrIsEmpty(MetaData.LicenseInfo.URL) then
+            AddChild(HeadingNode, MetaData.LicenseInfo.URL);
+        end
+        else
+          AddChild(HeadingNode, sNone);
       end;
-      if mdcContributors in Capabilities then
+
+      if TMetaDataCap.Copyright in Capabilities then
       begin
-        AddItems(sContributorsHeading, MetaData.GetContributors);
+        HeadingNode := AddChild(nil, sCopyrightHeading);
+        if not MetaData.CopyrightInfo.IsNull then
+        begin
+          if not StrIsEmpty(MetaData.CopyrightInfo.Date) then
+            AddChild(HeadingNode, MetaData.CopyrightInfo.Date);
+          if not StrIsEmpty(MetaData.CopyrightInfo.Holder) then
+            AddChild(HeadingNode, MetaData.CopyrightInfo.Holder);
+          if not StrIsEmpty(MetaData.CopyrightInfo.HolderURL) then
+            AddChild(HeadingNode, MetaData.CopyrightInfo.HolderURL);
+          if MetaData.CopyrightInfo.Contributors.Count > 0 then
+          begin
+            SubheadingNode := AddChild(HeadingNode, sContributorsHeading);
+            AddChildren(SubheadingNode, MetaData.CopyrightInfo.Contributors);
+          end;
+        end
+        else
+          AddChild(HeadingNode, sNone);
       end;
-      if mdcTesters in Capabilities then
-        AddItems(sTestersHeading, MetaData.GetTesters);
+
+      if TMetaDataCap.Acknowledgements in Capabilities then
+      begin
+        HeadingNode := AddChild(nil, sAcknowledgementsHeading);
+        if MetaData.Acknowledgements.Count > 0 then
+          AddChildren(HeadingNode, MetaData.Acknowledgements)
+        else
+          AddChild(HeadingNode, sNone);
+      end;
     end
+
     else
+      AddChild(nil, sNoMetaData);
+
+    if HasEntries then
     begin
-      AddHeading(sNoMetaData);
+      tvCollectionInfo.FullExpand;
+      tvCollectionInfo.Items[0].MakeVisible;
     end;
-    tvCollectionInfo.FullExpand;
-    tvCollectionInfo.Items[0].MakeVisible;
+
   finally
     tvCollectionInfo.Items.EndUpdate;
   end;

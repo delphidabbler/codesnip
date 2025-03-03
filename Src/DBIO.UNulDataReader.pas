@@ -17,7 +17,11 @@ interface
 
 uses
   // Project
-  DB.UCategory, DB.USnippet, DBIO.UFileIOIntf, UIStringList;
+  DB.MetaData,
+  DB.UCategory,
+  DB.USnippet,
+  DBIO.UFileIOIntf,
+  UIStringList;
 
 
 type
@@ -72,6 +76,11 @@ type
         @param SnippetKey [in] Key of required snippet.
         @return Empty unit name list.
       }
+
+    ///  <summary>Gets the collection's meta data.</summary>
+    ///  <returns><c>TMetaData</c>. Null value.</returns>
+    ///  <remarks>Method of <c>IDataReader</c>.</remarks>
+    function GetMetaData: TMetaData;
   end;
 
 
@@ -114,6 +123,11 @@ function TNulDataReader.GetCatSnippets(const CatID: string): IStringList;
   }
 begin
   Result := TIStringList.Create;
+end;
+
+function TNulDataReader.GetMetaData: TMetaData;
+begin
+  Result := TMetaData.CreateNull;
 end;
 
 function TNulDataReader.GetSnippetDepends(const SnippetKey: string):

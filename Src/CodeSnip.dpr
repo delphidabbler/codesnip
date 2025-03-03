@@ -66,7 +66,6 @@ uses
   DB.UCategory in 'DB.UCategory.pas',
   DB.UDatabaseIO in 'DB.UDatabaseIO.pas',
   DB.UMain in 'DB.UMain.pas',
-  DB.UMetaData in 'DB.UMetaData.pas',
   DB.USnippet in 'DB.USnippet.pas',
   DB.USnippetKind in 'DB.USnippetKind.pas',
   DBIO.UFileIOIntf in 'DBIO.UFileIOIntf.pas',
@@ -378,10 +377,10 @@ uses
   UTabSeparatedFileIO in 'UTabSeparatedFileIO.pas',
   DBIO.UCategoryIO in 'DBIO.UCategoryIO.pas',
   UCollectionListAdapter in 'UCollectionListAdapter.pas',
-  DBIO.MetaData.DCSC in 'DBIO.MetaData.DCSC.pas',
   FmCollectionBackup in 'FmCollectionBackup.pas' {CollectionBackupDlg},
   DB.DataFormats in 'DB.DataFormats.pas',
-  DB.IO.DataFormat.Native in 'DB.IO.DataFormat.Native.pas';
+  DB.IO.DataFormat.Native in 'DB.IO.DataFormat.Native.pas',
+  DB.MetaData in 'DB.MetaData.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
