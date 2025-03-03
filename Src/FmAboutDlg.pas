@@ -79,23 +79,23 @@ type
   end;
 
   ///  <summary>Implements program's about dialogue box.</summary>
-  ///  <remarks>Displays information about the program, the collections in use
-  ///  and the program's user and application folders and config files. Also
+  ///  <remarks>Displays information about the program, the vautls in use and
+  ///  the program's user and application folders and config files. Also
   ///  provides access to the program's easter egg.</remarks>
   TAboutDlg = class(TGenericViewDlg)
     bvlSeparator: TBevel;
     frmProgram: THTMLTpltDlgFrame;
     pcDetail: TPageControl;
-    tsCollections: TTabSheet;
+    tsVaults: TTabSheet;
     tsProgram: TTabSheet;
     pnlTitle: TPanel;
     frmTitle: THTMLTpltDlgFrame;
     tsPaths: TTabSheet;
     btnViewAppConfig: TButton;
     btnViewUserConfig: TButton;
-    cbCollection: TComboBox;
-    lblCollection: TLabel;
-    tvCollectionInfo: TTreeView;
+    cbVaults: TComboBox;
+    lblVaults: TLabel;
+    tvVaultInfo: TTreeView;
     sbPaths: TScrollBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -112,17 +112,17 @@ type
     ///  </summary>
     procedure btnViewUserConfigClick(Sender: TObject);
     ///  <summary>Handles the change event triggered when the user selects a
-    ///  collection in the collections combo box. Updates the display of
-    ///  information about the selected collection.</summary>
-    procedure cbCollectionChange(Sender: TObject);
+    ///  vault in the vaults combo box. Updates the display of information about
+    ///  the selected vault.</summary>
+    procedure cbVaultsChange(Sender: TObject);
   strict private
     var
       ///  <summary>List of dynamically created path information group boxes.
       ///  </summary>
       fPathInfoBoxes: TList<TPathInfoBox>;
-      ///  <summary>Provides a sorted list of collection names for display in
-      ///  the collections combo box.</summary>
-      fCollList: TVaultListAdapter;
+      ///  <summary>Provides a sorted list of vault names for display in the
+      ///  vault combo box.</summary>
+      fVaultList: TVaultListAdapter;
     ///  <summary>Handles title frame's OnHTMLEvent event. Checks for mouse
     ///  events relating to display of the easter egg and acts accordingly.
     ///  </summary>
@@ -132,9 +132,9 @@ type
     procedure HTMLEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo);
     ///  <summary>Displays any meta data associated with a vault.</summary>
-    ///  <param name="ACollection"><c>TVault</c> [in] Vault for which meta data
+    ///  <param name="AVault"><c>TVault</c> [in] Vault for which meta data
     ///  is to be displayed.</param>
-    procedure DisplayCollectionInfo(ACollection: TVault);
+    procedure DisplayVaultInfo(AVault: TVault);
     ///  <summary>Displays content of a config file in a dialogue box or an
     ///  error message if the file does not exist.</summary>
     ///  <param name="FileName">string [in] Name of config file to display.
@@ -223,10 +223,10 @@ var
   PathInfoBox: TPathInfoBox;
   NextPathInfoBoxTop: Integer;
 begin
-  // Collections tab
-  TCtrlArranger.AlignVCentres(8, [lblCollection, cbCollection]);
-  TCtrlArranger.MoveToRightOf(lblCollection, cbCollection, 12);
-  TCtrlArranger.MoveBelow([lblCollection, cbCollection], tvCollectionInfo, 8);
+  // Vaults tab
+  TCtrlArranger.AlignVCentres(8, [lblVaults, cbVaults]);
+  TCtrlArranger.MoveToRightOf(lblVaults, cbVaults, 12);
+  TCtrlArranger.MoveBelow([lblVaults, cbVaults], tvVaultInfo, 8);
 
   // Paths tab
   TCtrlArranger.AlignTops([btnViewAppConfig, btnViewUserConfig], 8);
@@ -275,9 +275,9 @@ begin
   ViewConfigFile(TAppInfo.UserConfigFileName, sTitle);
 end;
 
-procedure TAboutDlg.cbCollectionChange(Sender: TObject);
+procedure TAboutDlg.cbVaultsChange(Sender: TObject);
 begin
-  DisplayCollectionInfo(fCollList.Vault(cbCollection.ItemIndex));
+  DisplayVaultInfo(fVaultList.Vault(cbVaults.ItemIndex));
 end;
 
 procedure TAboutDlg.ConfigForm;
@@ -298,12 +298,12 @@ procedure TAboutDlg.ConfigForm;
   end;
 
 var
-  Collection: TVault;
+  Vault: TVault;
   TabIdx: Integer;
 resourcestring
   // Captions for custom controls
   sInstallPathGpCaption = 'Install Directory';
-  sCollectionPathGpCaption = '%s Collection Directory';
+  sVaultPathGpCaption = '%s Vault Directory';
 begin
   inherited;
   // Creates required custom controls
@@ -311,36 +311,36 @@ begin
   fPathInfoBoxes.Add(
     CreatePathInfoBox(sInstallPathGpCaption, TAppInfo.AppExeDir, 1)
   );
-  for Collection in TVaults.Instance do
+  for Vault in TVaults.Instance do
   begin
     Inc(TabIdx);
     fPathInfoBoxes.Add(
       CreatePathInfoBox(
-        Format(sCollectionPathGpCaption, [Collection.Name]),
-        Collection.Storage.Directory,
+        Format(sVaultPathGpCaption, [Vault.Name]),
+        Vault.Storage.Directory,
         TabIdx
       )
     );
   end;
-  // Load collections into combo box & select default collection
-  fCollList.ToStrings(cbCollection.Items);
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
-  DisplayCollectionInfo(fCollList.Vault(cbCollection.ItemIndex));
-  // Set collections treeview and paths scrollbox background colours
-  tvCollectionInfo.Color := ThemeServicesEx.GetTabBodyColour;
+  // Load vaults into combo box & select default vault
+  fVaultList.ToStrings(cbVaults.Items);
+  cbVaults.ItemIndex := fVaultList.IndexOfUID(TVaultID.Default);
+  DisplayVaultInfo(fVaultList.Vault(cbVaults.ItemIndex));
+  // Set vaults treeview and paths scrollbox background colours
+  tvVaultInfo.Color := ThemeServicesEx.GetTabBodyColour;
   sbPaths.Color := ThemeServicesEx.GetTabBodyColour;
   // Load content into HTML frames
   InitHTMLFrames;
 end;
 
-procedure TAboutDlg.DisplayCollectionInfo(ACollection: TVault);
+procedure TAboutDlg.DisplayVaultInfo(AVault: TVault);
 var
   HasEntries: Boolean;
 
   function AddChild(const AParentNode: TTreeNode; const AData: string):
     TTreeNode;
   begin
-    Result := tvCollectionInfo.Items.AddChild(AParentNode, AData);
+    Result := tvVaultInfo.Items.AddChild(AParentNode, AData);
     HasEntries := True;
   end;
 
@@ -363,15 +363,15 @@ resourcestring
   sCopyrightHeading = 'Copyright';
   sContributorsHeading = 'Contributors';
   sAcknowledgementsHeading = 'Acknowledgements';
-  sNoMetaData = 'No information available for this collection.';
+  sNoMetaData = 'No information available for this vault.';
   sNotAvailable = 'Not specified';
   sNone = 'None';
 begin
-  tvCollectionInfo.Items.BeginUpdate;
+  tvVaultInfo.Items.BeginUpdate;
   try
-    tvCollectionInfo.Items.Clear;
+    tvVaultInfo.Items.Clear;
     HasEntries := False;
-    MetaData := ACollection.MetaData;
+    MetaData := AVault.MetaData;
     Capabilities := MetaData.Capabilities;
 
     if Capabilities <> [] then
@@ -444,12 +444,12 @@ begin
 
     if HasEntries then
     begin
-      tvCollectionInfo.FullExpand;
-      tvCollectionInfo.Items[0].MakeVisible;
+      tvVaultInfo.FullExpand;
+      tvVaultInfo.Items[0].MakeVisible;
     end;
 
   finally
-    tvCollectionInfo.Items.EndUpdate;
+    tvVaultInfo.Items.EndUpdate;
   end;
 end;
 
@@ -468,7 +468,7 @@ end;
 procedure TAboutDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fCollList := TVaultListAdapter.Create;
+  fVaultList := TVaultListAdapter.Create;
   fPathInfoBoxes := TList<TPathInfoBox>.Create;
   frmTitle.OnBuildCSS := UpdateTitleCSS;
   frmProgram.OnBuildCSS := UpdateProgramTabCSS;
@@ -478,7 +478,7 @@ procedure TAboutDlg.FormDestroy(Sender: TObject);
 begin
   inherited;
   fPathInfoBoxes.Free;
-  fCollList.Free;
+  fVaultList.Free;
 end;
 
 procedure TAboutDlg.HTMLEventHandler(Sender: TObject;
