@@ -141,7 +141,7 @@ type
     property Items[const Idx: Integer]: TVault read GetItem; default;
   end;
 
-  TCollectionsPersist = record
+  TVaultsPersist = record
   strict private
     const
       CountKey = 'Count';
@@ -149,13 +149,13 @@ type
       NameKey = 'Name';
       StorageFormatKey = 'Storage.Format';
       StorageDirectoryKey = 'Storage.Directory';
-    class procedure SaveCollection(const AOrdinal: Cardinal;
-      const ACollection: TVault); static;
-    class procedure LoadCollection(const AOrdinal: Cardinal;
-      const ACollections: TVaults); static;
+    class procedure SaveVault(const AOrdinal: Cardinal; const AVault: TVault); 
+      static;
+    class procedure LoadVault(const AOrdinal: Cardinal; const AVaults: TVaults); 
+      static;
   public
-    class procedure Save(const ACollections: TVaults); static;
-    class procedure Load(const ACollections: TVaults); static;
+    class procedure Save(const AVaults: TVaults); static;
+    class procedure Load(const AVaults: TVaults); static;
   end;
 
 implementation
@@ -344,7 +344,7 @@ end;
 procedure TVaults.Initialize;
 begin
   fItems := TList<TVault>.Create;
-  TCollectionsPersist.Load(Self);
+  TVaultsPersist.Load(Self);
   // Ensure there is always at least the default collection present
   if not ContainsID(TVaultID.Default) then
     Add(
@@ -361,7 +361,7 @@ end;
 
 procedure TVaults.Save;
 begin
-  TCollectionsPersist.Save(Self);
+  TVaultsPersist.Save(Self);
 end;
 
 function TVaults.ToArray: TArray<TVault>;
@@ -495,10 +495,9 @@ begin
   Result := Value.Hash;
 end;
 
-{ TCollectionsPersist }
+{ TVaultsPersist }
 
-class procedure TCollectionsPersist.Load(
-  const ACollections: TVaults);
+class procedure TVaultsPersist.Load(const AVaults: TVaults);
 var
   ConfigSection: ISettingsSection;
   Count: Integer;
@@ -507,11 +506,11 @@ begin
   ConfigSection := Settings.ReadSection(ssCollections);
   Count := ConfigSection.GetInteger(CountKey, 0);
   for Idx := 0 to Pred(Count) do
-    LoadCollection(Idx, ACollections);
+    LoadVault(Idx, AVaults);
 end;
 
-class procedure TCollectionsPersist.LoadCollection(const AOrdinal: Cardinal;
-  const ACollections: TVaults);
+class procedure TVaultsPersist.LoadVault(const AOrdinal: Cardinal;
+  const AVaults: TVaults);
 var
   ConfigSection: ISettingsSection;
   UID: TVaultID;
@@ -521,7 +520,7 @@ var
 begin
   ConfigSection := Settings.ReadSection(ssCollection, IntToStr(AOrdinal));
   UID := TVaultID.Create(ConfigSection.GetBytes(UIDKey));
-  if ACollections.ContainsID(UID) then
+  if AVaults.ContainsID(UID) then
     // Don't load a duplicate collection
     Exit;
   Name := ConfigSection.GetString(NameKey, '');
@@ -533,35 +532,34 @@ begin
     ConfigSection.GetString(StorageDirectoryKey, '')
   );
   Collection := TVault.Create(UID, Name, StorageDetails);
-  ACollections.Add(Collection);
+  AVaults.Add(Collection);
 end;
 
-class procedure TCollectionsPersist.Save(const
-  ACollections: TVaults);
+class procedure TVaultsPersist.Save(const AVaults: TVaults);
 var
   ConfigSection: ISettingsSection;
   Idx: Integer;
 begin
   // Save number of collections
   ConfigSection := Settings.EmptySection(ssCollections);
-  ConfigSection.SetInteger(CountKey, ACollections.Count);
+  ConfigSection.SetInteger(CountKey, AVaults.Count);
   ConfigSection.Save;
   // Save each collection's properties in its own section
-  for Idx := 0 to Pred(ACollections.Count) do
-    SaveCollection(Idx, ACollections[Idx]);
+  for Idx := 0 to Pred(AVaults.Count) do
+    SaveVault(Idx, AVaults[Idx]);
 end;
 
-class procedure TCollectionsPersist.SaveCollection(const AOrdinal: Cardinal;
-  const ACollection: TVault);
+class procedure TVaultsPersist.SaveVault(const AOrdinal: Cardinal;
+  const AVault: TVault);
 var
   ConfigSection: ISettingsSection;
 begin
   // Save info about collection format in its own section
   ConfigSection := Settings.EmptySection(ssCollection, IntToStr(AOrdinal));
-  ConfigSection.SetBytes(UIDKey, ACollection.UID.ToArray);
-  ConfigSection.SetString(NameKey, ACollection.Name);
-  ConfigSection.SetInteger(StorageFormatKey, Ord(ACollection.Storage.Format));
-  ConfigSection.SetString(StorageDirectoryKey, ACollection.Storage.Directory);
+  ConfigSection.SetBytes(UIDKey, AVault.UID.ToArray);
+  ConfigSection.SetString(NameKey, AVault.Name);
+  ConfigSection.SetInteger(StorageFormatKey, Ord(AVault.Storage.Format));
+  ConfigSection.SetString(StorageDirectoryKey, AVault.Storage.Directory);
   ConfigSection.Save;
 end;
 
