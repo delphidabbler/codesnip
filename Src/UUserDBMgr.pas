@@ -261,7 +261,7 @@ var
 resourcestring
   sOverwritePrompt = '"%s" already exists. OK to overwrite?';
 begin
-  if TCollectionBackupDlg.Execute(ParentCtrl, FileName, Collection) then
+  if TVaultBackupDlg.Execute(ParentCtrl, FileName, Collection) then
   begin
     if TFile.Exists(FileName)
       and not TMessageBox.Confirm(
@@ -445,7 +445,7 @@ var
 resourcestring
   sFileDoesNotExist = '"%s" does not exist.';
 begin
-  Result := TCollectionBackupDlg.Execute(ParentCtrl, FileName, Collection);
+  Result := TVaultBackupDlg.Execute(ParentCtrl, FileName, Collection);
   if Result then
   begin
     if not TFile.Exists(FileName) then

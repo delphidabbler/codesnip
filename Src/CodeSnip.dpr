@@ -377,7 +377,7 @@ uses
   UTabSeparatedFileIO in 'UTabSeparatedFileIO.pas',
   DBIO.UCategoryIO in 'DBIO.UCategoryIO.pas',
   UI.Adapters.VaultList in 'UI.Adapters.VaultList.pas',
-  FmCollectionBackup in 'FmCollectionBackup.pas' {CollectionBackupDlg},
+  FmCollectionBackup in 'FmCollectionBackup.pas' {VaultBackupDlg},
   DB.DataFormats in 'DB.DataFormats.pas',
   DB.IO.DataFormat.Native in 'DB.IO.DataFormat.Native.pas',
   DB.MetaData in 'DB.MetaData.pas';

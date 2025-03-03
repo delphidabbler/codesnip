@@ -584,7 +584,7 @@
 			<DCCReference Include="DBIO.UCategoryIO.pas"/>
 			<DCCReference Include="UI.Adapters.VaultList.pas"/>
 			<DCCReference Include="FmCollectionBackup.pas">
-				<Form>CollectionBackupDlg</Form>
+				<Form>VaultBackupDlg</Form>
 			</DCCReference>
 			<DCCReference Include="DB.DataFormats.pas"/>
 			<DCCReference Include="DB.IO.DataFormat.Native.pas"/>
