@@ -280,7 +280,7 @@ begin
   // Count the number of vaults containing snippet in the list
   for Snippet in Snips do
   begin
-    Collection := TVaults.Instance.GetCollection(Snippet.CollectionID);
+    Collection := TVaults.Instance.GetVault(Snippet.CollectionID);
     if not fCollections.Contains(Collection) then
       fCollections.Add(Collection);
   end;

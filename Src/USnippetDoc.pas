@@ -136,7 +136,7 @@ var
   MetaData: TMetaData;
   Collection: TVault;
 begin
-  Collection := TVaults.Instance.GetCollection(ACollectionID);
+  Collection := TVaults.Instance.GetVault(ACollectionID);
   MetaData := Collection.MetaData;
   Result := '';
   if TMetaDataCap.License in MetaData.Capabilities then

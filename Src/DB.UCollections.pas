@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2024, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements support for multiple snippet collections.
+ * Implements support for multiple snippet vaults.
 }
 
 
@@ -40,10 +40,8 @@ type
       )
       public
         function Compare(const Left, Right: TVaultID): Integer;
-        function Equals(const Left, Right: TVaultID): Boolean;
-          reintroduce;
-        function GetHashCode(const Value: TVaultID): Integer;
-          reintroduce;
+        function Equals(const Left, Right: TVaultID): Boolean; reintroduce;
+        function GetHashCode(const Value: TVaultID): Integer; reintroduce;
       end;
     constructor Create(const ABytes: TBytes); overload;
     constructor Create(const AStr: string); overload;
@@ -79,35 +77,29 @@ type
       )
       public
         function Compare(const Left, Right: TVault): Integer;
-        function Equals(const Left, Right: TVault): Boolean;
-          reintroduce;
-        function GetHashCode(const Value: TVault): Integer;
-          reintroduce;
+        function Equals(const Left, Right: TVault): Boolean; reintroduce;
+        function GetHashCode(const Value: TVault): Integer; reintroduce;
       end;
-    ///  <summary>Creates a collection record.</summary>
-    ///  <param name="AUID"><c>TVaultID</c> [in] Unique ID of the
-    ///  collection. Must not be null.</param>
-    ///  <param name="AName"><c>string</c> [in] Name of collection. Should be
-    ///  unique. Must not be empty or only whitespace.</param>
+    ///  <summary>Creates a vault object.</summary>
+    ///  <param name="AUID"><c>TVaultID</c> [in] Unique ID of the vault. Must
+    ///  not be null.</param>
+    ///  <param name="AName"><c>string</c> [in] Name of vault. Should be unique.
+    ///  Must not be empty or only whitespace.</param>
     constructor Create(const AUID: TVaultID; const AName: string;
       const AStorage: TDataStorageDetails);
-    ///  <summary>Collection identifier. Must be unique.</summary>
-    property UID: TVaultID
-      read fUID;
-    ///  <summary>Collection name. Must be unique.</summary>
-    property Name: string read
-      fName;
-    ///  <summary>Collection storage information.</summary>
-    property Storage: TDataStorageDetails
-      read fStorage;
-    ///  <summary>Meta data associated with the collection.</summary>
+    ///  <summary>Vault identifier. Must be unique.</summary>
+    property UID: TVaultID read fUID;
+    ///  <summary>Vault name. Must be unique.</summary>
+    property Name: string read fName;
+    ///  <summary>Vault storage information.</summary>
+    property Storage: TDataStorageDetails read fStorage;
+    ///  <summary>Meta data associated with the vault.</summary>
     ///  <remarks>Meta data is read from and written to the associated storage.
     ///  </remarks>
-    property MetaData: TMetaData
-      read fMetaData write SetMetaData;
+    property MetaData: TMetaData read fMetaData write SetMetaData;
     ///  <summary>Checks if this record's fields are valid.</summary>
     function IsValid: Boolean;
-    ///  <summary>Checks if this record is the default collection.</summary>
+    ///  <summary>Checks if this record is the default vault.</summary>
     function IsDefault: Boolean;
   end;
 
@@ -127,7 +119,7 @@ type
     function IndexOfID(const AUID: TVaultID): Integer;
     function ContainsID(const AUID: TVaultID): Boolean;
     function ContainsName(const AName: string): Boolean;
-    function GetCollection(const AUID: TVaultID): TVault;
+    function GetVault(const AUID: TVaultID): TVault;
     function Default: TVault;
     procedure Add(const AVault: TVault);
     procedure Update(const AVault: TVault);
@@ -181,12 +173,12 @@ var
   TrimmedName: string;
 begin
   TrimmedName := StrTrim(AName);
-  Assert(not AUID.IsNull, 'TCollection.Create: AUID is null');
+  Assert(not AUID.IsNull, 'TVault.Create: AUID is null');
   Assert(TrimmedName <> '',
-    'TCollection.Create: AName is empty or only whitespace');
+    'TVault.Create: AName is empty or only whitespace');
   {TODO -cRefactor: move following into IsValid method of TDataDetails}
   Assert(AStorage.Format <> TDataFormatKind.Error,
-    'TCollection.Create: ADataDetails.Kind = TCollectionFormatKind.Error');
+    'TVault.Create: ADataDetails.Kind = TDataFormatKind.Error');
   fUID := AUID.Clone;
   fName := TrimmedName;
   fStorage := AStorage;
@@ -247,11 +239,11 @@ end;
 
 function TVaults.ContainsName(const AName: string): Boolean;
 var
-  Collection: TVault;
+  Vault: TVault;
 begin
   Result := False;
-  for Collection in fItems do
-    if StrSameText(AName, Collection.Name) then
+  for Vault in fItems do
+    if StrSameText(AName, Vault.Name) then
       Exit(True);
 end;
 
@@ -262,12 +254,12 @@ end;
 
 function TVaults.Default: TVault;
 begin
-  Result := GetCollection(TVaultID.Default);
+  Result := GetVault(TVaultID.Default);
 end;
 
 procedure TVaults.Delete(const AUID: TVaultID);
 resourcestring
-  sCantDelete = 'Cannot delete the default collection';
+  sCantDelete = 'Cannot delete the default vault';
 var
   Idx: Integer;
 begin
@@ -306,7 +298,7 @@ begin
     Result[Idx] := fItems[Idx].UID;
 end;
 
-function TVaults.GetCollection(const AUID: TVaultID): TVault;
+function TVaults.GetVault(const AUID: TVaultID): TVault;
 var
   Idx: Integer;
 begin
@@ -345,7 +337,7 @@ procedure TVaults.Initialize;
 begin
   fItems := TList<TVault>.Create;
   TVaultsPersist.Load(Self);
-  // Ensure there is always at least the default collection present
+  // Ensure there is always at least the default vault present
   if not ContainsID(TVaultID.Default) then
     Add(
       TVault.Create(
@@ -439,7 +431,7 @@ end;
 
 class function TVaultID.Default: TVaultID;
 begin
-  // Default collection is an empty GUID = 16 zero bytes
+  // Default vault is an empty GUID = 16 zero bytes
   Result := TVaultID.Create(TGUID.Empty);
 end;
 
@@ -515,13 +507,13 @@ var
   ConfigSection: ISettingsSection;
   UID: TVaultID;
   Name: string;
-  Collection: TVault;
+  Vault: TVault;
   StorageDetails: TDataStorageDetails;
 begin
   ConfigSection := Settings.ReadSection(ssCollection, IntToStr(AOrdinal));
   UID := TVaultID.Create(ConfigSection.GetBytes(UIDKey));
   if AVaults.ContainsID(UID) then
-    // Don't load a duplicate collection
+    // Don't load a duplicate vault
     Exit;
   Name := ConfigSection.GetString(NameKey, '');
 
@@ -531,8 +523,8 @@ begin
     ),
     ConfigSection.GetString(StorageDirectoryKey, '')
   );
-  Collection := TVault.Create(UID, Name, StorageDetails);
-  AVaults.Add(Collection);
+  Vault := TVault.Create(UID, Name, StorageDetails);
+  AVaults.Add(Vault);
 end;
 
 class procedure TVaultsPersist.Save(const AVaults: TVaults);
@@ -540,11 +532,11 @@ var
   ConfigSection: ISettingsSection;
   Idx: Integer;
 begin
-  // Save number of collections
+  // Save number of vaults
   ConfigSection := Settings.EmptySection(ssCollections);
   ConfigSection.SetInteger(CountKey, AVaults.Count);
   ConfigSection.Save;
-  // Save each collection's properties in its own section
+  // Save each vault's properties in its own section
   for Idx := 0 to Pred(AVaults.Count) do
     SaveVault(Idx, AVaults[Idx]);
 end;
@@ -554,7 +546,7 @@ class procedure TVaultsPersist.SaveVault(const AOrdinal: Cardinal;
 var
   ConfigSection: ISettingsSection;
 begin
-  // Save info about collection format in its own section
+  // Save info about vault format in its own section
   ConfigSection := Settings.EmptySection(ssCollection, IntToStr(AOrdinal));
   ConfigSection.SetBytes(UIDKey, AVault.UID.ToArray);
   ConfigSection.SetString(NameKey, AVault.Name);
