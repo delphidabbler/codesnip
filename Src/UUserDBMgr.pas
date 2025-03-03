@@ -325,7 +325,7 @@ class function TUserDBMgr.DeleteDatabase: Boolean;
 var
   CollectionToDelete: TVault;
 begin
-  if not TDeleteUserDBDlg.Execute(nil, CollectionToDelete) then
+  if not TDeleteVaultDlg.Execute(nil, CollectionToDelete) then
     Exit(False);
   if not TDirectory.Exists(CollectionToDelete.Storage.Directory) then
     Exit(False);
