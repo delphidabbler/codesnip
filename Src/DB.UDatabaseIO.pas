@@ -841,9 +841,9 @@ end;
 
 procedure TDCSCV2FormatSaver.Backup;
 var
-  FB: TUserDBBackup;  // TODO -cRefactoring: this is correct class (will change)
+  FB: TVaultBackup;
 begin
-  FB := TUserDBBackup.Create(fBakFile, Vault);
+  FB := TVaultBackup.Create(fBakFile, Vault);
   try
     FB.Backup;
   finally
@@ -869,9 +869,9 @@ end;
 
 procedure TDCSCV2FormatSaver.Restore;
 var
-  FB: TUserDBBackup;
+  FB: TVaultBackup;
 begin
-  FB := TUserDBBackup.Create(fBakFile, Vault);
+  FB := TVaultBackup.Create(fBakFile, Vault);
   try
     FB.Restore;
   finally

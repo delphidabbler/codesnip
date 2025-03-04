@@ -5,15 +5,12 @@
  *
  * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a class that can create and restore backups of the user database.
+ * Implements a class that can create and restore backups of vaults.
 }
 
 
 unit UUserDBBackup;
 
-
-{TODO -cRefactoring: Rename this unit/classes/methods: the names refer to the
-        CodeSnip 4 database structure but the code now works with collections}
 
 interface
 
@@ -32,13 +29,13 @@ type
   ///  Backups are single files.</summary>
   ///  <remarks>See <c>UFolderBackup</c> for details of the file format.
   ///  </remarks>
-  TUserDBBackup = class sealed(TFolderBackup)
+  TVaultBackup = class sealed(TFolderBackup)
   strict private
-    class function MakeFileID(const ACollection: TVault): SmallInt;
+    class function MakeFileID(const AVault: TVault): SmallInt;
   public
     ///  <summary>Object constructor. Sets up the object to backup the given
     ///  vault to the given backup file.</summary>
-    constructor Create(const BackupFile: string; const ACollection: TVault);
+    constructor Create(const BackupFile: string; const AVault: TVault);
   end;
 
 
@@ -52,25 +49,22 @@ uses
   UAppInfo;
 
 
-{ TUserDBBackup }
+{ TVaultBackup }
 
-constructor TUserDBBackup.Create(const BackupFile: string;
-  const ACollection: TVault);
+constructor TVaultBackup.Create(const BackupFile: string;
+  const AVault: TVault);
 begin
   inherited Create(
-    ACollection.Storage.Directory,
-    BackupFile,
-    MakeFileID(ACollection),
-    ACollection.UID.ToArray
+    AVault.Storage.Directory, BackupFile, MakeFileID(AVault), AVault.UID.ToArray
   );
 end;
 
-class function TUserDBBackup.MakeFileID(const ACollection: TVault):
+class function TVaultBackup.MakeFileID(const AVault: TVault):
   SmallInt;
 begin
   // Backup file ID is $Fxxx where xxx is ordinal value of format kind.
-  // The $F indicates that the file is a backup of a collection data format.
-  Result := SmallInt($F000 or UInt16(Ord(ACollection.Storage.Format)));
+  // The $F indicates that the file is a backup of a vault data format.
+  Result := SmallInt($F000 or UInt16(Ord(AVault.Storage.Format)));
 end;
 
 end.

@@ -541,9 +541,9 @@ end;
 
 procedure TUserDBRestoreUI.TRestoreThread.Execute;
 var
-  UserDBBackup: TUserDBBackup;
+  UserDBBackup: TVaultBackup;
 begin
-  UserDBBackup := TUserDBBackup.Create(fBakFileName, fCollection);
+  UserDBBackup := TVaultBackup.Create(fBakFileName, fCollection);
   try
     UserDBBackup.Restore;
   finally
@@ -581,12 +581,12 @@ end;
 
 procedure TUserDBBackupUI.TBackupThread.Execute;
 var
-  UserDBBackup: TUserDBBackup;  // object used to perform backup
+  UserDBBackup: TVaultBackup;
 resourcestring
   // Dialog box caption
   sCaption = 'Save Backup';
 begin
-  UserDBBackup := TUserDBBackup.Create(fBakFileName, fCollection);
+  UserDBBackup := TVaultBackup.Create(fBakFileName, fCollection);
   try
     UserDBBackup.Backup;
   finally
