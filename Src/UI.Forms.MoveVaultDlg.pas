@@ -31,7 +31,7 @@ uses
   UBaseObjects,
   UControlStateMgr,
   UI.Adapters.VaultList,
-  UUserDBMove;
+  VaultMover;
 
 type
   ///  <summary>Dialogue box that is used to move vault data to a new directory.
