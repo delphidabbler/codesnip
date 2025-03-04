@@ -108,8 +108,8 @@ type
       fSnippetInfoList: TSnippetInfoList;
       ///  <summary>Value of ImportInfo property.</summary>
       fImportInfoList: TImportInfoList;
-      ///  <summary>Value of RequestCollectionCallback property.</summary>
-      fRequestCollectionCallback: TFunc<TVaultID>;
+      ///  <summary>Value of <c>RequestVaultCallback</c> property.</summary>
+      fRequestVaultCallback: TFunc<TVaultID>;
     ///  <summary>Initialises import information list with details of snippets
     ///  read from import file.</summary>
     procedure InitImportInfoList;
@@ -124,8 +124,8 @@ type
     ///  customisation.</remarks>
     procedure Import(const FileName: string);
     ///  <summary>Updates database based on imported snippets and customisation
-    ///  described by ImportInfo property, using collection specified in
-    ///  <c>RequestCollectionCallback</c>.</summary>
+    ///  described by ImportInfo property, using the vault specified in
+    ///  <c>RequestVaultCallback</c>.</summary>
     ///  <remarks>Any snippets referenced in the an imported snippet's
     ///  <c>Depends</c> or <c>XRefs</c> property must also be included in the
     ///  import otherwise the snippet is stripped from the dependency list.
@@ -137,8 +137,8 @@ type
     ///  <summary>Callback that gets the ID of the vault that will receive the
     ///  imported snippets.</summary>
     ///  <remarks>Defaults to the default vault ID if not assigned.</remarks>
-    property RequestCollectionCallback: TFunc<TVaultID>
-      read fRequestCollectionCallback write fRequestCollectionCallback;
+    property RequestVaultCallback: TFunc<TVaultID>
+      read fRequestVaultCallback write fRequestVaultCallback;
   end;
 
 type
@@ -173,7 +173,7 @@ begin
   SetLength(fSnippetInfoList, 0);
   fImportInfoList := TImportInfoList.Create;
   // set default event handler
-  fRequestCollectionCallback := function: TVaultID
+  fRequestVaultCallback := function: TVaultID
     begin
       Result := TVaultID.Default;
     end;
@@ -214,9 +214,7 @@ begin
     fImportInfoList.Add(
       TImportInfo.Create(
         SnippetInfo.Key,
-        (Database as IDatabaseEdit).GetUniqueSnippetKey(
-          RequestCollectionCallback
-        ),
+        (Database as IDatabaseEdit).GetUniqueSnippetKey(RequestVaultCallback),
         StrIf(
           SnippetInfo.Data.Props.DisplayName = '',
           SnippetInfo.Key,
@@ -256,7 +254,7 @@ var
   Editor: IDatabaseEdit;                  // object used to update user database
   SnippetInfo: TSnippetInfo;         // info about each snippet from import file
   ImportInfo: TImportInfo;       // info about how / whether to import a snippet
-  CollectionID: TVaultID;               // collection into which we're importing
+  VaultID: TVaultID;                         // vault into which we're importing
   SavedRefs: TList<TSavedReferences>;   // preserved references for each snippet
   SavedRef: TSavedReferences;                        // each record in Refs list
   SnippetDataNoRefs: TSnippetEditData;   // snippet data with references cleared
@@ -269,7 +267,7 @@ begin
   }
 
   Editor := Database as IDatabaseEdit;
-  CollectionID := RequestCollectionCallback();
+  VaultID := RequestVaultCallback();
 
   SavedRefs := TList<TSavedReferences>.Create(
     TDelegatedComparer<TSavedReferences>.Create(
@@ -306,7 +304,7 @@ begin
 
       // add snippet without any dependency
       SavedRef.Snippet := Editor.AddSnippet(
-        ImportInfo.NewKey, CollectionID, SnippetDataNoRefs
+        ImportInfo.NewKey, VaultID, SnippetDataNoRefs
       );
 
       // save snippet with its dependencies

@@ -383,7 +383,7 @@ constructor TCodeImportDlg.InternalCreate(AOwner: TComponent;
 begin
   inherited InternalCreate(AOwner);
   fImportMgr := ImportMgr;
-  fImportMgr.RequestCollectionCallback := GetVaultID;
+  fImportMgr.RequestVaultCallback := GetVaultID;
 end;
 
 procedure TCodeImportDlg.lvImportsItemChecked(Sender: TObject; Item: TListItem);
