@@ -100,7 +100,7 @@ uses
 
 constructor TRTFCategoryDoc.Create(const UseColour: Boolean);
 var
-  Collection: TVault;
+  Vault: TVault;
 begin
   inherited Create;
   fUseColour := UseColour;
@@ -109,9 +109,9 @@ begin
   fBuilder.FontTable.Add(MainFontName, rgfSwiss, 0);
   fBuilder.FontTable.Add(MonoFontName, rgfModern, 0);
   // Set up colour table
-  for Collection in TVaults.Instance do
+  for Vault in TVaults.Instance do
     fBuilder.ColourTable.Add(
-      Preferences.GetSnippetHeadingColour(Collection.UID)
+      Preferences.GetSnippetHeadingColour(Vault.UID)
     );
   fBuilder.ColourTable.Add(Preferences.GroupHeadingColour);
   fBuilder.ColourTable.Add(clExternalLink);
