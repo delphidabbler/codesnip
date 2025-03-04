@@ -61,7 +61,7 @@ type
     ///  the given vault.</summary>
     ///  <remarks>Information includes license and copyright information if
     ///  the vault's data format supports it.</remarks>
-    function CollectionInfo(const ACollectionID: TVaultID): string;
+    function VaultInfo(const AVaultID: TVaultID): string;
   strict protected
     ///  <summary>Initialise document.</summary>
     ///  <remarks>Does nothing. Descendant classes should perform any required
@@ -73,7 +73,7 @@ type
     ///  <remarks>Heading may be rendered differently depending on the snippet's
     ///  vault.</remarks>
     procedure RenderHeading(const Heading: string;
-      const ACollectionID: TVaultID); virtual; abstract;
+      const AVaultID: TVaultID); virtual; abstract;
     ///  <summary>Output given snippet description.</summary>
     procedure RenderDescription(const Desc: IActiveText); virtual; abstract;
     ///  <summary>Output given source code.</summary>
@@ -96,8 +96,8 @@ type
     ///  <remarks>Active text must be interpreted in a manner that makes sense
     ///  for document format.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); virtual; abstract;
-    ///  <summary>Output given information about a collection.</summary>
-    procedure RenderCollectionInfo(const Text: string); virtual; abstract;
+    ///  <summary>Output given information about a vault.</summary>
+    procedure RenderVaultInfo(const Text: string); virtual; abstract;
     ///  <summary>Finalise document and return content as encoded data.
     ///  </summary>
     ///  <remarks>Descendant classes should perform any required finalisation
@@ -132,26 +132,6 @@ uses
 
 
 { TSnippetDoc }
-
-function TSnippetDoc.CollectionInfo(const ACollectionID: TVaultID): string;
-resourcestring
-  sCollectionInfo = 'A snippet from the "%s" collection.';
-var
-  MetaData: TMetaData;
-  Collection: TVault;
-begin
-  Collection := TVaults.Instance.GetVault(ACollectionID);
-  MetaData := Collection.MetaData;
-  Result := '';
-  if TMetaDataCap.License in MetaData.Capabilities then
-    Result := Result + StrMakeSentence(MetaData.LicenseInfo.NameWithURL);
-  if TMetaDataCap.Copyright in MetaData.Capabilities then
-  begin
-    if not StrIsEmpty(Result) then
-      Result := Result + ' ';
-    Result := Result + StrMakeSentence(MetaData.CopyrightInfo.ToString);
-  end;
-end;
 
 function TSnippetDoc.CommaList(const List: IStringList): string;
 resourcestring
@@ -228,7 +208,7 @@ begin
   end;
   if Snippet.Extra.HasContent then
     RenderExtra(Snippet.Extra);
-  RenderCollectionInfo(CollectionInfo(Snippet.VaultID));
+  RenderVaultInfo(VaultInfo(Snippet.VaultID));
   Result := FinaliseDoc;
 end;
 
@@ -245,6 +225,27 @@ begin
   Result := TIStringList.Create;
   for Snippet in SnippetList do
     Result.Add(Snippet.DisplayName);
+end;
+
+function TSnippetDoc.VaultInfo(const AVaultID: TVaultID): string;
+resourcestring
+  {TODO -cBug: the following information is not included in output}
+  sVaultInfo = 'A snippet from the "%s" vault.';
+var
+  MetaData: TMetaData;
+  Vault: TVault;
+begin
+  Vault := TVaults.Instance.GetVault(AVaultID);
+  MetaData := Vault.MetaData;
+  Result := '';
+  if TMetaDataCap.License in MetaData.Capabilities then
+    Result := Result + StrMakeSentence(MetaData.LicenseInfo.NameWithURL);
+  if TMetaDataCap.Copyright in MetaData.Capabilities then
+  begin
+    if not StrIsEmpty(Result) then
+      Result := Result + ' ';
+    Result := Result + StrMakeSentence(MetaData.CopyrightInfo.ToString);
+  end;
 end;
 
 { TCompileDocInfo }

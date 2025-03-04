@@ -51,10 +51,10 @@ type
 
     ///  <summary>Output given heading, i.e. snippet name for snippet from a
     ///  given vault.</summary>
-    ///  <remarks>Heading is output the same regardless of the snippet's
-    ///  collection.</remarks>
-    procedure RenderHeading(const Heading: string;
-      const ACollectionID: TVaultID); override;
+    ///  <remarks>Heading is output the same regardless of the snippet's vault.
+    ///  </remarks>
+    procedure RenderHeading(const Heading: string; const AVaultID: TVaultID);
+      override;
     ///  <summary>Interprets and adds given snippet description to document.
     ///  </summary>
     ///  <remarks>Active text is converted to word-wrapped plain text
@@ -81,8 +81,8 @@ type
     ///  <remarks>Active text is converted to word-wrapped plain text
     ///  paragraphs.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); override;
-    ///  <summary>Output given information about a collection.</summary>
-    procedure RenderCollectionInfo(const Text: string); override;
+    ///  <summary>Output given information about a vault.</summary>
+    procedure RenderVaultInfo(const Text: string); override;
     ///  <summary>Finalises document and returns content as encoded data.
     ///  </summary>
     function FinaliseDoc: TEncodedData; override;
@@ -128,12 +128,6 @@ begin
   end;
 end;
 
-procedure TTextSnippetDoc.RenderCollectionInfo(const Text: string);
-begin
-  fWriter.WriteLine;
-  fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
-end;
-
 procedure TTextSnippetDoc.RenderCompilerInfo(const Heading: string;
   const Info: TCompileDocInfoArray);
 var
@@ -169,7 +163,7 @@ begin
 end;
 
 procedure TTextSnippetDoc.RenderHeading(const Heading: string;
-  const ACollectionID: TVaultID);
+  const AVaultID: TVaultID);
 begin
   fWriter.WriteLine(Heading);
 end;
@@ -200,6 +194,12 @@ procedure TTextSnippetDoc.RenderTitledText(const Title, Text: string);
 begin
   fWriter.WriteLine(Title);
   fWriter.WriteLine(StrWrap(Text, cPageWidth - cIndent, cIndent));
+end;
+
+procedure TTextSnippetDoc.RenderVaultInfo(const Text: string);
+begin
+  fWriter.WriteLine;
+  fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
 end;
 
 end.
