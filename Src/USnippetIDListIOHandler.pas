@@ -84,17 +84,17 @@ resourcestring
   sBadFileFormat = 'Invalid snippet ID list file format';
 var
   Key: string;
-  CollectionHex: string;
-  CollectionID: TVaultID;
+  VaultHex: string;
+  VaultID: TVaultID;
 begin
   Key := StrTrim(AFields[0]);
   if Key = '' then
     raise ESnippetIDListFileReader.Create(sBadFileFormat);
-  CollectionHex := StrTrim(AFields[1]);
-  if CollectionHex = '' then
+  VaultHex := StrTrim(AFields[1]);
+  if VaultHex = '' then
     raise ESnippetIDListFileReader.Create(sBadFileFormat);
-  CollectionID := TVaultID.CreateFromHexString(CollectionHex);
-  fSnippetIDs.Add(TSnippetID.Create(Key, CollectionID));
+  VaultID := TVaultID.CreateFromHexString(VaultHex);
+  fSnippetIDs.Add(TSnippetID.Create(Key, VaultID));
 end;
 
 function TSnippetIDListFileReader.ReadFile(const FileName: string):
