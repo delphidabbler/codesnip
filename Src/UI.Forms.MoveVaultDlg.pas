@@ -72,7 +72,7 @@ type
     var
       ///  <summary>Object that moves a vault's data to a new location.
       ///  </summary>
-      fMover: TUserDBMove;
+      fMover: TVaultMover;
       ///  <summary>Object used to disable and enable all controls on the form.
       ///  </summary>
       fControlStateMgr: TControlStateMgr;
@@ -315,7 +315,7 @@ end;
 procedure TMoveVaultDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fMover := TUserDBMove.Create;
+  fMover := TVaultMover.Create;
   fMover.OnCopyFile := CopyFileHandler;
   fMover.OnDeleteFile := DeleteFileHandler;
   fControlStateMgr := TControlStateMgr.Create(Self);
