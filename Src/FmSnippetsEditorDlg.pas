@@ -5,8 +5,7 @@
  *
  * Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a dialogue box that enables the user to create or edit user
- * defined snippets.
+ * Implements a dialogue box that enables the user to create or edit snippets.
 }
 
 
@@ -58,8 +57,7 @@ type
 
   {
   TSnippetsEditorDlg:
-    Dialog box class that enables the user to create or edit a user defined
-    snippet.
+    Dialog box class that enables the user to create or edit a snippet.
   }
   TSnippetsEditorDlg = class(TGenericOKDlg, INoPublicConstruct)
     alMain: TActionList;
@@ -142,9 +140,9 @@ type
     actClearUnits: TAction;
     miClearUnits: TMenuItem;
     miSpacer3: TMenuItem;
-    lblCollection: TLabel;
-    cbCollection: TComboBox;
-    lblCollectionInfo: TLabel;
+    lblVaults: TLabel;
+    cbVaults: TComboBox;
+    lblVaultInfo: TLabel;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -185,7 +183,7 @@ type
   strict private
     fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
-    fCollList: TVaultListAdapter;   // Accesses sorted list of collections
+    fVaultList: TVaultListAdapter;  // Accesses sorted list of vaults
     fSnipKindList:
       TSnipKindListAdapter;         // Accesses sorted list of snippet kinds
     fEditData: TSnippetEditData;    // Record storing a snippet's editable data
@@ -207,15 +205,15 @@ type
     ///  <remarks>For a new snippet the return value is the vault to be applied
     ///  to the snippet. For an existing snippet this is the value to which the
     ///  snippet already belongs.</remarks>
-    function SelectedCollectionID: TVaultID;
+    function SelectedVaultID: TVaultID;
 
     ///  <summary>Returns a snippet key that is unique with the current
-    ///  snippet collection.</summary>
+    ///  snippet vault.</summary>
     ///  <returns><c>string</c>. The required key.</returns>
     ///  <remarks>For a new snippet this key will change depending each time the
     ///  method is called, and will always be unique within the selected
-    ///  collection. For an existing snippet the key is always that of the
-    ///  snippet and never changes across method calls.</remarks>
+    ///  vault. For an existing snippet the key is always that of the snippet
+    ///  and never changes across method calls.</remarks>
     function UniqueSnippetKey: string;
 
     procedure PopulateControls;
@@ -470,7 +468,7 @@ begin
     fDependsCLBMgr.GetCheckedSnippets(DependsList);
     TDependenciesDlg.Execute(
       Self,
-      TSnippetID.Create(UniqueSnippetKey, SelectedCollectionID),
+      TSnippetID.Create(UniqueSnippetKey, SelectedVaultID),
       StrTrim(edDisplayName.Text),
       DependsList,
       [tiDependsUpon],
@@ -601,7 +599,7 @@ begin
   // Column 1
   TCtrlArranger.AlignLefts(
     [
-      lblCollection, lblDisplayName, lblDescription, lblKind, lblCategories,
+      lblVaults, lblDisplayName, lblDescription, lblKind, lblCategories,
       lblSourceCode, edSourceCode
     ],
     3
@@ -609,11 +607,11 @@ begin
   // Column 2
   TCtrlArranger.AlignLefts(
     [
-      cbCollection, lblCollectionInfo, edDisplayName, frmDescription, cbKind,
+      cbVaults, lblVaultInfo, edDisplayName, frmDescription, cbKind,
       cbCategories
     ],
     TCtrlArranger.RightOf(
-      [lblCollection, lblDisplayName, lblDescription, lblKind, lblCategories],
+      [lblVaults, lblDisplayName, lblDescription, lblKind, lblCategories],
       12
     )
   );
@@ -623,12 +621,10 @@ begin
   );
   frmDescription.Width := btnViewDescription.Left - frmDescription.Left - 8;
   // Row 1
-  TCtrlArranger.AlignVCentres(
-    3, [lblCollection, cbCollection, lblCollectionInfo]
-  );
+  TCtrlArranger.AlignVCentres(3, [lblVaults, cbVaults, lblVaultInfo]);
   // Row 2
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblCollection, cbCollection], 8),
+    TCtrlArranger.BottomOf([lblVaults, cbVaults], 8),
     [lblDisplayName, edDisplayName]
   );
   // Row 3
@@ -702,7 +698,7 @@ begin
     else
     begin
       (Database as IDatabaseEdit).AddSnippet(
-        UniqueSnippetKey, SelectedCollectionID, fEditData
+        UniqueSnippetKey, SelectedVaultID, fEditData
       )
     end;
   except
@@ -748,7 +744,7 @@ begin
   // Create snippet object from entered data
   EditData.Assign(UpdateData);
   Result := (Database as IDatabaseEdit).CreateTempSnippet(
-    UniqueSnippetKey, SelectedCollectionID, EditData
+    UniqueSnippetKey, SelectedVaultID, EditData
   );
 end;
 
@@ -821,7 +817,7 @@ procedure TSnippetsEditorDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fCatList := TCategoryListAdapter.Create(Database.Categories);
-  fCollList := TVaultListAdapter.Create;
+  fVaultList := TVaultListAdapter.Create;
   fSnipKindList := TSnipKindListAdapter.Create;
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fMemoCaretPosDisplayMgr := TMemoCaretPosDisplayMgr.Create;
@@ -846,7 +842,7 @@ begin
   FreeAndNil(fXRefsCLBMgr);
   FreeAndNil(fDependsCLBMgr);
   FreeAndNil(fSnipKindList);
-  FreeAndNil(fCollList);
+  FreeAndNil(fVaultList);
   FreeAndNil(fCatList);
   fMemoCaretPosDisplayMgr.Free;
 end;
@@ -890,10 +886,10 @@ begin
     frmDescription.ActiveText := fSnippet.Description;
     edDisplayName.Text := fSnippet.DisplayName;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
-    cbCollection.ItemIndex := fCollList.IndexOfUID(fSnippet.VaultID);
-    cbCollection.Visible := False;  // can't change existing snippet collection
-    lblCollectionInfo.Caption := cbCollection.Text;
-    lblCollectionInfo.Visible := True;
+    cbVaults.ItemIndex := fVaultList.IndexOfUID(fSnippet.VaultID);
+    cbVaults.Visible := False;  // can't change existing snippet vault
+    lblVaultInfo.Caption := cbVaults.Text;
+    lblVaultInfo.Visible := True;
     frmExtra.DefaultEditMode := emAuto;
     frmExtra.ActiveText := fSnippet.Extra;
     cbKind.ItemIndex := fSnipKindList.IndexOf(fSnippet.Kind);
@@ -915,11 +911,11 @@ begin
     cbCategories.ItemIndex := fCatList.IndexOf(TCategory.DefaultID);
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
-    cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
-    Assert(cbCollection.ItemIndex >= 0,
-      ClassName + '.InitControls: No default collection in cbCollection');
-    cbCollection.Visible := True; // can select collection of new snippet
-    lblCollectionInfo.Visible := False;
+    cbVaults.ItemIndex := fVaultList.IndexOfUID(TVaultID.Default);
+    Assert(cbVaults.ItemIndex >= 0,
+      ClassName + '.InitControls: No default vault in cbVaults');
+    cbVaults.Visible := True; // can select vault of new snippet
+    lblVaultInfo.Visible := False;
     cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
     frmExtra.DefaultEditMode := emPlainText;
     frmExtra.Clear;
@@ -997,19 +993,19 @@ begin
   fSnipKindList.ToStrings(cbKind.Items);
   // Display all available categories in drop down list
   fCatList.ToStrings(cbCategories.Items);
-  // Display all available collections in drop down list
-  fCollList.ToStrings(cbCollection.Items);
+  // Display all available vaults in drop down list
+  fVaultList.ToStrings(cbVaults.Items);
 end;
 
-function TSnippetsEditorDlg.SelectedCollectionID: TVaultID;
+function TSnippetsEditorDlg.SelectedVaultID: TVaultID;
 begin
-  // If editing existing snippet ID then the collection cannot be edited
+  // If editing existing snippet ID then the vault cannot be edited
   if Assigned(fSnippet) then
-    // Editing existing snippet: can't change collection
+    // Editing existing snippet: can't change vault
     Result := fSnippet.VaultID
   else
-    // Editing new snippet: chosing collection is permitted
-    Result := fCollList.Vault(cbCollection.ItemIndex).UID;
+    // Editing new snippet: chosing vault is permitted
+    Result := fVaultList.Vault(cbVaults.ItemIndex).UID;
 end;
 
 procedure TSnippetsEditorDlg.SetAllCompilerResults(
@@ -1026,9 +1022,7 @@ begin
   if Assigned(fSnippet) then
     Result := fSnippet.Key
   else
-    Result := (Database as IDatabaseEdit).GetUniqueSnippetKey(
-      SelectedCollectionID
-    );
+    Result := (Database as IDatabaseEdit).GetUniqueSnippetKey(SelectedVaultID);
 end;
 
 function TSnippetsEditorDlg.UpdateData: TSnippetEditData;
@@ -1065,7 +1059,7 @@ begin
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
 
-  EditSnippetID := TSnippetID.Create(UniqueSnippetKey, SelectedCollectionID);
+  EditSnippetID := TSnippetID.Create(UniqueSnippetKey, SelectedVaultID);
   EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
 
   {TODO -cVault: We do following kind of filtering of Database.Snippets so
@@ -1075,7 +1069,7 @@ begin
   }
   for Snippet in Database.Snippets do
   begin
-    if Snippet.VaultID <> SelectedCollectionID then
+    if Snippet.VaultID <> SelectedVaultID then
       Continue;
     if Snippet.ID <> EditSnippetID then
     begin
@@ -1118,7 +1112,7 @@ begin
     raise EDataEntry.Create(ErrorMessage, edSourceCode, ErrorSelection);
   frmExtra.Validate;
   if not TSnippetValidator.ValidateDependsList(
-    UniqueSnippetKey, SelectedCollectionID, UpdateData, ErrorMessage
+    UniqueSnippetKey, SelectedVaultID, UpdateData, ErrorMessage
   ) then
     raise EDataEntry.Create(  // selection not applicable to list boxes
       StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
