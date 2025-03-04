@@ -419,7 +419,7 @@ var
   LB: TListBox;
   Canvas: TCanvas;
 
-  function ExtractCollectionItem: TVaultID;
+  function ExtractVaultItem: TVaultID;
   begin
     Result := (LB.Items.Objects[Index] as TBox<TVaultID>).Value;
   end;
@@ -429,7 +429,7 @@ begin
   Canvas := LB.Canvas;
   if not (odSelected in State) then
     Canvas.Font.Color := Preferences.GetSnippetHeadingColour(
-      ExtractCollectionItem
+      ExtractVaultItem
     );
   Canvas.TextRect(
     Rect,
