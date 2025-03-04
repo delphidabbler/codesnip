@@ -170,18 +170,17 @@ type
       read GetGroupHeadingCustomColours write SetGroupHeadingCustomColours;
 
     ///  <summary>Gets the heading / tree node colour used for snippets from a
-    ///  specified collection.</summary>
-    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of required vault.
+    ///  specified vault.</summary>
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of required vault.
     ///  </param>
     ///  <returns>TColor. Required colour.</returns>
-    function GetSnippetHeadingColour(const ACollectionID: TVaultID):
-      TColor;
+    function GetSnippetHeadingColour(const AVaultID: TVaultID): TColor;
     ///  <summary>Sets heading / tree node colour used for snippets from a
-    ///  specified collection.</summary>
-    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of required vault.
+    ///  specified vault.</summary>
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of required vault.
     ///  </param>
     ///  <param name="Value"><c>TColor</c>. Required colour.</param>
-    procedure SetSnippetHeadingColour(const ACollectionID: TVaultID;
+    procedure SetSnippetHeadingColour(const AVaultID: TVaultID;
       const Value: TColor);
 
     ///  <summary>Gets custom colours available for snippet headings / tree
@@ -538,19 +537,19 @@ type
 
     ///  <summary>Gets the heading / tree node colour used for snippets from a
     ///  specified vault.</summary>
-    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of required vault.
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of required vault.
     ///  </param>
     ///  <returns>TColor. Required colour.</returns>
     ///  <remarks>Method of <c>IPreferences</c>.</remarks>
-    function GetSnippetHeadingColour(const ACollectionID: TVaultID): TColor;
+    function GetSnippetHeadingColour(const AVaultID: TVaultID): TColor;
 
     ///  <summary>Sets heading / tree node colour used for snippets from a
-    ///  specified collection.</summary>
-    ///  <param name="ACollectionID"><c>TVaultID</c> [in] ID of required vault.
+    ///  specified vault.</summary>
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of required vault.
     ///  </param>
     ///  <param name="Value"><c>TColor</c>. Required colour.</param>
     ///  <remarks>Method of <c>IPreferences</c>.</remarks>
-    procedure SetSnippetHeadingColour(const ACollectionID: TVaultID;
+    procedure SetSnippetHeadingColour(const AVaultID: TVaultID;
       const Value: TColor);
 
     ///  <summary>Gets custom colours available for snippet headings / tree
@@ -558,7 +557,7 @@ type
     ///  <returns><c>IStringList</c>. String list containing custom colours.
     ///  </returns>
     ///  <remarks>
-    ///  <para>All collections share this one custom colour list.</para>
+    ///  <para>All vaults share this one custom colour list.</para>
     ///  <para>Method of <c>IPreferences</c>.</para>
     ///  </remarks>
     function GetSnippetHeadingCustomColours: IStringList;
@@ -568,7 +567,7 @@ type
     ///  <param name="AColours"><c>IStringList</c> [in] String list containing
     ///  custom colours.</param>
     ///  <remarks>
-    ///  <para>All collections share this one custom colour list.</para>
+    ///  <para>All vaults share this one custom colour list.</para>
     ///  <para>Method of <c>IPreferences</c>.</para>
     ///  </remarks>
     procedure SetSnippetHeadingCustomColours(const AColours: IStringList);
@@ -737,7 +736,7 @@ end;
 procedure TPreferences.Assign(const Src: IInterface);
 var
   SrcPref: IPreferences;  // IPreferences interface of Src
-  Collection: TVault;
+  Vault: TVault;
 begin
   // Get IPreferences interface of given object
   if not Supports(Src, IPreferences, SrcPref) then
@@ -754,9 +753,9 @@ begin
   Self.fShowNewSnippetsInNewTabs := SrcPref.ShowNewSnippetsInNewTabs;
   Self.fGroupHeadingColour := SrcPref.GetGroupHeadingColour;
   Self.fGroupHeadingCustomColours := SrcPref.GetGroupHeadingCustomColours;
-  for Collection in TVaults.Instance do
+  for Vault in TVaults.Instance do
     Self.SetSnippetHeadingColour(
-      Collection.UID, SrcPref.GetSnippetHeadingColour(Collection.UID)
+      Vault.UID, SrcPref.GetSnippetHeadingColour(Vault.UID)
     );
   Self.fSnippetHeadingCustomColours := SrcPref.GetSnippetHeadingCustomColours;
   Self.fOverviewFontSize := SrcPref.OverviewFontSize;
@@ -878,11 +877,10 @@ begin
   Result := fShowNewSnippetsInNewTabs;
 end;
 
-function TPreferences.GetSnippetHeadingColour(
-  const ACollectionID: TVaultID): TColor;
+function TPreferences.GetSnippetHeadingColour(const AVaultID: TVaultID): TColor;
 begin
-  if fSnippetHeadingColours.ContainsKey(ACollectionID) then
-    Result := fSnippetHeadingColours[ACollectionID]
+  if fSnippetHeadingColours.ContainsKey(AVaultID) then
+    Result := fSnippetHeadingColours[AVaultID]
   else
     Result := clDefSnippetHeading;
 end;
@@ -1010,10 +1008,10 @@ begin
   fShowNewSnippetsInNewTabs := Value;
 end;
 
-procedure TPreferences.SetSnippetHeadingColour(
-  const ACollectionID: TVaultID; const Value: TColor);
+procedure TPreferences.SetSnippetHeadingColour(const AVaultID: TVaultID;
+  const Value: TColor);
 begin
-  fSnippetHeadingColours.AddOrSetValue(ACollectionID, Value);
+  fSnippetHeadingColours.AddOrSetValue(AVaultID, Value);
 end;
 
 procedure TPreferences.SetSnippetHeadingCustomColours(
@@ -1062,7 +1060,7 @@ end;
 function TPreferencesPersist.Clone: IInterface;
 var
   NewPref: IPreferences;  // reference to new object's IPreferences interface
-  Collection: TVault;
+  Vault: TVault;
 begin
   // Create new object
   Result := TPreferences.Create;
@@ -1079,9 +1077,9 @@ begin
   NewPref.ShowNewSnippetsInNewTabs := Self.fShowNewSnippetsInNewTabs;
   NewPref.GroupHeadingColour := Self.fGroupHeadingColour;
   NewPref.GroupHeadingCustomColours := Self.fGroupHeadingCustomColours;
-  for Collection in TVaults.Instance do
+  for Vault in TVaults.Instance do
     NewPref.SetSnippetHeadingColour(
-      Collection.UID, Self.GetSnippetHeadingColour(Collection.UID)
+      Vault.UID, Self.GetSnippetHeadingColour(Vault.UID)
     );
   NewPref.SnippetHeadingCustomColours := Self.fSnippetHeadingCustomColours;
   NewPref.OverviewFontSize := Self.fOverviewFontSize;
@@ -1100,7 +1098,7 @@ end;
 constructor TPreferencesPersist.Create;
 var
   Storage: ISettingsSection;  // object used to access persistent storage
-  Collection: TVault;
+  Vault: TVault;
 const
   // Default margin size in millimeters
   cPrintPageMarginSizeMM = 25.0;
@@ -1137,13 +1135,13 @@ begin
   );
 
   fSnippetHeadingColours.Clear;
-  for Collection in TVaults.Instance do
+  for Vault in TVaults.Instance do
   begin
     fSnippetHeadingColours.AddOrSetValue(
-      Collection.UID,
+      Vault.UID,
       TColor(
         Storage.GetInteger(
-          'SnippetHeadingColour:' + Collection.UID.ToHexString,
+          'SnippetHeadingColour:' + Vault.UID.ToHexString,
           clDefSnippetHeading
         )
       )
@@ -1211,7 +1209,7 @@ end;
 destructor TPreferencesPersist.Destroy;
 var
   Storage: ISettingsSection;  // object used to access persistent storage
-  Collection: TVault;
+  Vault: TVault;
 begin
   // Wreite meta section (no sub-section name)
   Storage := Settings.EmptySection(ssPreferences);
@@ -1234,16 +1232,16 @@ begin
     'GroupHeadingCustomColour%d',
     fGroupHeadingCustomColours
   );
-  for Collection in TVaults.Instance do
+  for Vault in TVaults.Instance do
   begin
-    if fSnippetHeadingColours.ContainsKey(Collection.UID) then
+    if fSnippetHeadingColours.ContainsKey(Vault.UID) then
       Storage.SetInteger(
-        'SnippetHeadingColour:' + Collection.UID.ToHexString,
-        fSnippetHeadingColours[Collection.UID]
+        'SnippetHeadingColour:' + Vault.UID.ToHexString,
+        fSnippetHeadingColours[Vault.UID]
       )
     else
       Storage.SetInteger(
-        'SnippetHeadingColour:' + Collection.UID.ToHexString,
+        'SnippetHeadingColour:' + Vault.UID.ToHexString,
         clDefSnippetHeading
       )
   end;
