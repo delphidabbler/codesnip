@@ -345,7 +345,7 @@ begin
         'Default',
         TDataStorageDetails.Create(
           TDataFormatInfo.DefaultFormat,
-          TAppInfo.UserDefaultCollectionDir
+          TAppInfo.UserDefaultVaultDir
         )
       )
     );

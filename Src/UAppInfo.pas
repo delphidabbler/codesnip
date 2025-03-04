@@ -53,30 +53,29 @@ type
         @return Full path to common application data directory.
       }
     class function AppDataDir: string;
-      {TODO -cCollections: Remove AppDataDir method: used for "main" database}
+      {TODO -cVault: Remove AppDataDir method: used for "main" database}
       {Returns the directory where CodeSnip stores the "database" files.
         @return Full path to database sub directory.
       }
 
-    ///  <summary>Returns the path where collections are recommended to be
-    ///  stored for the current user.</summary>
+    ///  <summary>Returns the path where vaults are recommended to be stored for
+    ///  the current user.</summary>
     ///  <remarks>
-    ///  <para>Collections each have their own sub-directory of this directory.
+    ///  <para>Vaults each have their own sub-directory of this directory.
     ///  </para>
-    ///  <para>The user may ignore this recommendation and install collections
+    ///  <para>The user may ignore this recommendation and install vaults
     ///  anywhere they choose.</para>
     ///  </remarks>
-    class function UserCollectionsDir: string;
+    class function UserVaultsDir: string;
 
-    ///  <summary>Returns the path where the Default collection is recommended
-    ///  to be stored for the current user.</summary>
+    ///  <summary>Returns the path where the Default vault is recommended to be
+    ///  stored for the current user.</summary>
     ///  <remarks>
-    ///  <para>If the Default collection is not present then CodeSnip will
+    ///  <para>If the Default vault is not present then CodeSnip will
     ///  automatically create it in this directory.</para>
-    ///  <para>The user may move the Default collection anywhere they choose.
-    ///  </para>
+    ///  <para>The user may move the Default vault anywhere they choose.</para>
     ///  </remarks>
-    class function UserDefaultCollectionDir: string;
+    class function UserDefaultVaultDir: string;
 
     class function AppExeFilePath: string;
       {Returns fully specified name of program's executable file.
@@ -253,24 +252,24 @@ begin
   Result := UserAppDir + '\Categories';
 end;
 
-class function TAppInfo.UserCollectionsDir: string;
-begin
-  Result := UserAppDir + '\Collections';
-end;
-
 class function TAppInfo.UserConfigFileName: string;
 begin
   Result := UserAppDir + '\User.config';
 end;
 
-class function TAppInfo.UserDefaultCollectionDir: string;
+class function TAppInfo.UserDefaultVaultDir: string;
 begin
-  Result := UserCollectionsDir + '\Default';
+  Result := UserVaultsDir + '\Default';
 end;
 
 class function TAppInfo.UserFavouritesFileName: string;
 begin
   Result := UserAppDir + '\Favourites';
+end;
+
+class function TAppInfo.UserVaultsDir: string;
+begin
+  Result := UserAppDir + '\Vaults';
 end;
 
 end.
