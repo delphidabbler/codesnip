@@ -587,11 +587,11 @@ end;
 procedure TFavouritesDlg.LVCustomDrawItem(Sender: TCustomListView;
   Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
 var
-  CollectionID: TVaultID;
+  VaultID: TVaultID;
 begin
-  CollectionID := (Item as TFavouriteListItem).Favourite.SnippetID.VaultID;
+  VaultID := (Item as TFavouriteListItem).Favourite.SnippetID.VaultID;
   fLVFavs.Canvas.Font.Color := Preferences.GetSnippetHeadingColour(
-    CollectionID
+    VaultID
   );
 end;
 

@@ -99,18 +99,16 @@ begin
         procedure (AFields: TArray<string>)
         var
           Key: string;
-          CollectionID: TVaultID;
+          VaultID: TVaultID;
           LastAccess: TDateTime;
         begin
           if Length(AFields) <> 3 then
             raise EFavouritesPersist.Create(sBadFormat);
           Key := StrTrim(AFields[0]);
-          CollectionID := TVaultID.CreateFromHexString(
-            StrTrim(AFields[1])
-          );
+          VaultID := TVaultID.CreateFromHexString(StrTrim(AFields[1]));
           LastAccess := StrToDateTime(StrTrim(AFields[2]), DateFormatSettings);
-          if Database.Snippets.Find(Key, CollectionID) <> nil then
-            Favourites.Add(TSnippetID.Create(Key, CollectionID), LastAccess);
+          if Database.Snippets.Find(Key, VaultID) <> nil then
+            Favourites.Add(TSnippetID.Create(Key, VaultID), LastAccess);
         end
       );
     finally
