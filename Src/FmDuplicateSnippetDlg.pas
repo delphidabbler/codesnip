@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2012-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a dialogue box which can create a duplicate copy of asnippet.
+ * Implements a dialogue box which can create a duplicate copy of a snippet.
 }
 
 
@@ -39,8 +39,8 @@ type
     edDisplayName: TEdit;
     lblCategory: TLabel;
     lblDisplayName: TLabel;
-    lblCollection: TLabel;
-    cbCollection: TComboBox;
+    lblVaults: TLabel;
+    cbVaults: TComboBox;
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -60,12 +60,12 @@ type
     var
       fSnippet: TSnippet;
       fCatList: TCategoryListAdapter;
-      fCollList: TVaultListAdapter;
+      fVaultList: TVaultListAdapter;
       fOptions: TPersistentOptions;
       fSnippetKey: string;
-    ///  <summary>Returns the ID of the vault selected in the collections drop
-    ///  down list, or the null vault ID if no vault is selected.</summary>
-    function SelectedCollectionID: TVaultID;
+    ///  <summary>Returns the ID of the vault selected in the vaults drop down
+    ///  list, or the null vault ID if no vault is selected.</summary>
+    function SelectedVaultID: TVaultID;
     function SelectedCategoryID: string;
     procedure ValidateData;
     procedure HandleException(const E: Exception);
@@ -117,7 +117,7 @@ begin
     [
       lblDisplayName, edDisplayName,
       lblCategory, cbCategory,
-      lblCollection, cbCollection,
+      lblVaults, cbVaults,
       chkEdit
     ],
     0
@@ -127,9 +127,9 @@ begin
   TCtrlArranger.MoveBelow(lblDisplayName, edDisplayName, 4);
   TCtrlArranger.MoveBelow(edDisplayName, lblCategory, 8);
   TCtrlArranger.MoveBelow(lblCategory, cbCategory, 4);
-  TCtrlArranger.MoveBelow(cbCategory, lblCollection, 8);
-  TCtrlArranger.MoveBelow(lblCollection, cbCollection, 4);
-  TCtrlArranger.MoveBelow(cbCollection, chkEdit, 20);
+  TCtrlArranger.MoveBelow(cbCategory, lblVaults, 8);
+  TCtrlArranger.MoveBelow(lblVaults, cbVaults, 4);
+  TCtrlArranger.MoveBelow(cbVaults, chkEdit, 20);
 
   pnlBody.ClientWidth := Max(
     TCtrlArranger.TotalControlWidth(pnlBody) + 8,
@@ -145,7 +145,7 @@ begin
   try
     ValidateData;
     fSnippetKey := (Database as IDatabaseEdit).GetUniqueSnippetKey(
-      SelectedCollectionID
+      SelectedVaultID
     );
     UpdateDatabase;
   except
@@ -195,22 +195,22 @@ end;
 procedure TDuplicateSnippetDlg.InitForm;
 var
   SnippetCat: TCategory;
-  SnippetColl: TVault;
+  SnippetVault: TVault;
 begin
   inherited;
   edDisplayName.Text := fSnippet.DisplayName;
 
   fCatList.ToStrings(cbCategory.Items);
-  fCollList.ToStrings(cbCollection.Items);
+  fVaultList.ToStrings(cbVaults.Items);
   Assert(cbCategory.Items.Count > 0, ClassName + '.InitForm: no categories');
-  Assert(cbCollection.Items.Count > 0, ClassName + '.InitForm: no collections');
+  Assert(cbVaults.Items.Count > 0, ClassName + '.InitForm: no vaults');
 
   SnippetCat := Database.Categories.Find(fSnippet.Category);
   Assert(Assigned(SnippetCat), ClassName + '.InitForm: invalid category');
   cbCategory.ItemIndex := cbCategory.Items.IndexOf(SnippetCat.Description);
 
-  SnippetColl := TVaults.Instance.GetVault(fSnippet.VaultID);
-  cbCollection.ItemIndex := cbCollection.Items.IndexOf(SnippetColl.Name);
+  SnippetVault := TVaults.Instance.GetVault(fSnippet.VaultID);
+  cbVaults.ItemIndex := cbVaults.Items.IndexOf(SnippetVault.Name);
 
   chkEdit.Checked := fOptions.EditSnippetOnClose;
 end;
@@ -222,11 +222,11 @@ begin
   Result := fCatList.CatID(cbCategory.ItemIndex);
 end;
 
-function TDuplicateSnippetDlg.SelectedCollectionID: TVaultID;
+function TDuplicateSnippetDlg.SelectedVaultID: TVaultID;
 begin
-  Assert(cbCollection.ItemIndex >= 0,
-    ClassName + '.SelectedCollectionID: no collection selected');
-  Result := fCollList.Vault(cbCollection.ItemIndex).UID;
+  Assert(cbVaults.ItemIndex >= 0,
+    ClassName + '.SelectedVaultID: no vault selected');
+  Result := fVaultList.Vault(cbVaults.ItemIndex).UID;
 end;
 
 procedure TDuplicateSnippetDlg.UpdateDatabase;
@@ -234,7 +234,7 @@ begin
   (Database as IDatabaseEdit).DuplicateSnippet(
     fSnippet,
     fSnippetKey,
-    SelectedCollectionID,
+    SelectedVaultID,
     StrTrim(edDisplayName.Text),
     SelectedCategoryID
   );
@@ -243,35 +243,33 @@ end;
 procedure TDuplicateSnippetDlg.ValidateData;
 resourcestring
   sNoCategory = 'You must choose a category';
-  sNoCollection = 'You must choose a collection';
+  sNoVault = 'You must choose a vault';
   sNoDisplayName = 'You must provide a display name';
 begin
   if StrTrim(edDisplayName.Text) = '' then
     raise EDataEntry.Create(sNoDisplayName, edDisplayName);
   if cbCategory.ItemIndex = -1 then
     raise EDataEntry.Create(sNoCategory, cbCategory);
-  if cbCollection.ItemIndex = -1 then
-    raise EDataEntry.Create(sNoCollection, cbCollection);
+  if cbVaults.ItemIndex = -1 then
+    raise EDataEntry.Create(sNoVault, cbVaults);
 end;
 
 procedure TDuplicateSnippetDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fCatList := TCategoryListAdapter.Create(Database.Categories);
-  fCollList := TVaultListAdapter.Create;
+  fVaultList := TVaultListAdapter.Create;
   fOptions := TPersistentOptions.Create;
 end;
 
 procedure TDuplicateSnippetDlg.FormDestroy(Sender: TObject);
 begin
   if (ModalResult = mrOK) and chkEdit.Checked then
-    TUserDBMgr.EditSnippet(
-      TSnippetID.Create(fSnippetKey, SelectedCollectionID)
-    );
+    TUserDBMgr.EditSnippet(TSnippetID.Create(fSnippetKey, SelectedVaultID));
   fOptions.EditSnippetOnClose := chkEdit.Checked;
   inherited;
   fOptions.Free;
-  fCollList.Free;
+  fVaultList.Free;
   fCatList.Free;
 end;
 
