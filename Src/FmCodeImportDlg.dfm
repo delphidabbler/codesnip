@@ -9,15 +9,11 @@ inherited CodeImportDlg: TCodeImportDlg
     ExplicitHeight = 321
     inherited pcWizard: TPageControl
       Height = 288
-      ActivePage = tsInfo
+      ActivePage = tsFinish
       ExplicitHeight = 288
       object tsInfo: TTabSheet
         Caption = 'tsInfo'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblIntro: TLabel
           Left = 0
           Top = 8
@@ -25,8 +21,8 @@ inherited CodeImportDlg: TCodeImportDlg
           Height = 227
           AutoSize = False
           Caption = 
-            'This wizard helps you import snippets from a file into your user' +
-            ' database.'#13#10#13#10'Click the Next button below to begin.'
+            'This wizard helps you import snippets from a file into a vault.'#13 +
+            #10#13#10'Click the Next button below to begin.'
           WordWrap = True
         end
       end
@@ -34,10 +30,6 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsFile'
         ImageIndex = 1
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblFile: TLabel
           Left = 0
           Top = 8
@@ -75,22 +67,22 @@ inherited CodeImportDlg: TCodeImportDlg
           TabOrder = 1
         end
       end
-      object tsCollection: TTabSheet
-        Caption = 'tsCollection'
+      object tsVault: TTabSheet
+        Caption = 'tsVault'
         ImageIndex = 4
         TabVisible = False
         DesignSize = (
           369
           278)
-        object lblCollection: TLabel
+        object lblVaults: TLabel
           Left = 0
           Top = 8
-          Width = 254
+          Width = 234
           Height = 13
-          Caption = 'Choose a &collection to receive the imported snippets:'
-          FocusControl = cbCollection
+          Caption = 'Choose a &vault to receive the imported snippets:'
+          FocusControl = cbVaults
         end
-        object cbCollection: TComboBox
+        object cbVaults: TComboBox
           Left = 0
           Top = 38
           Width = 369
@@ -104,10 +96,6 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsUpdate'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblImportList: TLabel
           Left = 0
           Top = 53
@@ -159,10 +147,6 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsFinish'
         ImageIndex = 5
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblFinish: TLabel
           Left = 0
           Top = 8
@@ -170,8 +154,8 @@ inherited CodeImportDlg: TCodeImportDlg
           Height = 33
           AutoSize = False
           Caption = 
-            'The database has now been updated. The following snippets were i' +
-            'mported:'
+            'The chosen vault has now been updated. The following snippets we' +
+            're imported:'
           WordWrap = True
         end
         object sbFinish: TScrollBox
