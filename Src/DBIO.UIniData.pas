@@ -10,7 +10,7 @@
 }
 
 {TODO -cVault: rename INI term to DCSCv2 - this isn't a general .ini data
-        IO unit, the .ini format only part of a wider collection format.}
+        IO unit, the .ini format only part of a wider vault format.}
 
 unit DBIO.UIniData;
 
@@ -141,7 +141,7 @@ type
     ///  Returns fully specified path to given file name.
     ///  </summary>
     function DataFile(const FileName: string): string;
-    ///  <summary>Checks if a given file exists in collection directory.
+    ///  <summary>Checks if a given file exists in the vault directory.
     ///  </summary>
     function DataFileExists(const FileName: string): Boolean;
     ///  <summary>Reads all lines from given file and returns them as an array.
@@ -231,15 +231,15 @@ type
     ///  <param name="SnippetKey">string [in] Snippet's key.</param>
     ///  <returns>IStringList containing unit names.</returns>
     function GetSnippetUnits(const SnippetKey: string): IStringList;
-    ///  <summary>Gets the collection's meta data.</summary>
+    ///  <summary>Gets the vault's meta data.</summary>
     ///  <returns><c>TMetaData</c>. The required meta data. Will be null if
     ///  is no meta data present.</returns>
     ///  <remarks>Method of <c>IDataReader</c>.</remarks>
     function GetMetaData: TMetaData;
   end;
 
-  ///  <summary>Write a collection to disk in the DelphiDabbler Code Snippets
-  ///  collection format.</summary>
+  ///  <summary>Write a vault to disk in the DelphiDabbler Code Snippets
+  ///  Collection v2 format.</summary>
   TIniDataWriter = class sealed(TInterfacedObject, IDataWriter)
   strict private
     type
@@ -381,7 +381,7 @@ type
     ///  </param>
     ///  <remarks>
     ///  <para>NOTE: This method conforms to DelphiDabbler Code Snippets
-    ///  collection format v2.1.x.</para>
+    ///  Collection format v2.1.x.</para>
     ///  <para>Method of <c>IDataWriter</c>.</para>
     ///  </remarks>
     procedure WriteSnippetProps(const SnippetKey: string;
@@ -413,7 +413,7 @@ type
     procedure WriteSnippetXRefs(const SnippetKey: string;
       const XRefs: IStringList);
 
-    ///  <summary>Writes the collection's meta data.</summary>
+    ///  <summary>Writes the vault's meta data.</summary>
     ///  <param name="AMetaData"><c>TMetaData</c> [in] Meta data to be written.
     ///  </param>
     ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
@@ -601,8 +601,7 @@ begin
     CatIniFile := CatToCatIni(CatID);
     if not TFile.Exists(CatIniFile) then
       // This is not an error since it is possible that a category exists in
-      // another collection and loader will request info from that collection
-      // too.
+      // another vault and loader will request info from that vault too.
       Exit;
     CatIni := fIniCache.GetIniFile(CatToCatIni(CatID));
     SnipList := TStringList.Create;

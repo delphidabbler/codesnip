@@ -77,7 +77,7 @@ type
         @return Empty unit name list.
       }
 
-    ///  <summary>Gets the collection's meta data.</summary>
+    ///  <summary>Gets the vault's meta data.</summary>
     ///  <returns><c>TMetaData</c>. Null value.</returns>
     ///  <remarks>Method of <c>IDataReader</c>.</remarks>
     function GetMetaData: TMetaData;

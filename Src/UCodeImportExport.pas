@@ -268,7 +268,7 @@ begin
   fSnippetKeyMap := TDictionary<TSnippetID,string>.Create(
     TSnippetID.TComparer.Create
   );
-  // Create map of actual snippet ID to new unique key with default collection
+  // Create map of actual snippet ID to new unique key with default vault
   for Snippet in SnipList do
     fSnippetKeyMap.Add(
       Snippet.ID,
@@ -311,10 +311,10 @@ var
   SnippetNode: IXMLNode; // new snippet node
 begin
   // Create snippet node with attribute that specifies snippet key.
-  // Snippet is exported under a new, unique key within the Default collection.
-  // Since no collection information is saved, we need choose one collection in
-  // order to generate the key, and the Default collection is the only one
-  // guaranteed to be present.
+  // Snippet is exported under a new, unique key within the Default vault.
+  // Since no vault information is saved, we need choose one vault in order
+  // to generate the key, and the Default vault is the only one guaranteed to be
+  // present.
   SnippetNode := fXMLDoc.CreateElement(ParentNode, cSnippetNode);
   SnippetNode.Attributes[cSnippetNameAttr] := fSnippetKeyMap[Snippet.ID];
   // Add nodes for properties: (ignore category and xrefs)
@@ -420,8 +420,7 @@ procedure TCodeImporter.Execute(const Data: TBytes);
     Depends.Clear;
     for SnippetName in SnippetNames do
       // Note: in building snippet ID list we assume each snippet is from the
-      // default collection. It may not be, but there is no way of telling
-      // from XML.
+      // default vault. It may not be, but there is no way of telling from XML.
       Depends.Add(TSnippetID.Create(SnippetName, TVaultID.Default));
   end;
 
