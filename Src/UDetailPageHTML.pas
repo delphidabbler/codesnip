@@ -414,9 +414,9 @@ end;
 
 procedure TWelcomePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 var
-  Collection: TVault;
-  CollectionCount: Integer;
-  CollectionList: TStringBuilder;
+  Vault: TVault;
+  VaultCount: Integer;
+  VaultList: TStringBuilder;
   Compilers: ICompilers;
   Compiler: ICompiler;
   CompilerList: TStringBuilder;
@@ -426,23 +426,21 @@ begin
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
-  CollectionCount := TVaults.Instance.Count;
-  Tplt.ResolvePlaceholderHTML(
-    'CollectionCount', IntToStr(CollectionCount)
-  );
+  VaultCount := TVaults.Instance.Count;
+  Tplt.ResolvePlaceholderHTML('VaultCount', IntToStr(VaultCount));
 
-  CollectionList := TStringBuilder.Create;
+  VaultList := TStringBuilder.Create;
   try
-    for Collection in TVaults.Instance do
-      CollectionList.AppendLine(
+    for Vault in TVaults.Instance do
+      VaultList.AppendLine(
         THTML.CompoundTag(
           'li',
-          THTML.Entities(Collection.Name)
+          THTML.Entities(Vault.Name)
         )
       );
-    Tplt.ResolvePlaceholderHTML('CollectionList', CollectionList.ToString);
+    Tplt.ResolvePlaceholderHTML('VaultList', VaultList.ToString);
   finally
-    CollectionList.Free;
+    VaultList.Free;
   end;
 
   Compilers := TCompilersFactory.CreateAndLoadCompilers;
