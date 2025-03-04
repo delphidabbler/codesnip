@@ -1,5 +1,5 @@
-inherited UserDataPathDlg: TUserDataPathDlg
-  Caption = 'Move Collection Data'
+inherited MoveVaultDlg: TMoveVaultDlg
+  Caption = 'Move Vault'
   ExplicitWidth = 474
   ExplicitHeight = 375
   PixelsPerInch = 96
@@ -16,9 +16,9 @@ inherited UserDataPathDlg: TUserDataPathDlg
       Height = 25
       AutoSize = False
       Caption = 
-        'Use this dialogue box to move a collection'#39's data to a new direc' +
-        'tory.'#13#10'Choose the collection whose data you wish to move then en' +
-        'ter the directory you wish to move the data to.'
+        'Use this dialogue box to move a vault to a new directory.'#13#10'Choos' +
+        'e the vault you wish to move then enter the directory you wish t' +
+        'o move it to.'
       WordWrap = True
     end
     object lblWarning: TLabel
@@ -28,8 +28,8 @@ inherited UserDataPathDlg: TUserDataPathDlg
       Height = 34
       AutoSize = False
       Caption = 
-        'You are strongly advised to make a backup of the collection befo' +
-        're continuing.'
+        'You are strongly advised to make a backup of the vault before co' +
+        'ntinuing.'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -60,8 +60,8 @@ inherited UserDataPathDlg: TUserDataPathDlg
       AutoSize = False
       Caption = 
         'The directory must be empty and must not be a sub-directory of t' +
-        'he current collection'#39's data directory. If the directory does no' +
-        't exist a new one will be created.'
+        'he current vault'#39's data directory. If the directory does not exi' +
+        'st a new one will be created.'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -70,13 +70,13 @@ inherited UserDataPathDlg: TUserDataPathDlg
       ParentFont = False
       WordWrap = True
     end
-    object lblCollection: TLabel
+    object lblVaults: TLabel
       Left = 0
       Top = 71
-      Width = 122
+      Width = 102
       Height = 13
-      Caption = 'Select &collection to move:'
-      FocusControl = cbCollection
+      Caption = 'Select &vault to move:'
+      FocusControl = cbVaults
     end
     inline frmProgress: TProgressFrame
       Left = 57
@@ -90,8 +90,6 @@ inherited UserDataPathDlg: TUserDataPathDlg
       ExplicitHeight = 82
       inherited pnlBody: TPanel
         Height = 82
-        ExplicitLeft = 55
-        ExplicitTop = 72
         ExplicitHeight = 82
       end
     end
@@ -136,7 +134,7 @@ inherited UserDataPathDlg: TUserDataPathDlg
       ParentFont = False
       TabOrder = 2
     end
-    object cbCollection: TComboBox
+    object cbVaults: TComboBox
       Left = 0
       Top = 88
       Width = 358

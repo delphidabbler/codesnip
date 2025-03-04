@@ -238,7 +238,7 @@
 				<Form>UserBugReportDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FmUserDataPathDlg.pas">
-				<Form>UserDataPathDlg</Form>
+				<Form>MoveVaultDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FrProgress.pas">
 				<Form>ProgressFrame</Form>

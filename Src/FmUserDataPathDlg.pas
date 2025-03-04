@@ -5,8 +5,8 @@
  *
  * Copyright (C) 2013-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a dialogue box that can be used to move collection data to a
- * different directory.
+ * Implements a dialogue box that can be used to move vaults to a different
+ * directory.
 }
 
 
@@ -34,12 +34,12 @@ uses
   UUserDBMove;
 
 type
-  ///  <summary>Dialogue box that is used to move the collection data to a new
-  ///  directory.</summary>
+  ///  <summary>Dialogue box that is used to move vault data to a new directory.
+  ///  </summary>
   ///  <remarks>IMPORTANT: This dialogue box is for use only with the standard
   ///  edition of CodeSnip. It MUST NOT be displayed from the portable edition.
   ///  </remarks>
-  TUserDataPathDlg = class(TGenericViewDlg, INoPublicConstruct)
+  TMoveVaultDlg = class(TGenericViewDlg, INoPublicConstruct)
     actBrowse: TAction;
     actMove: TAction;
     alDlg: TActionList;
@@ -51,15 +51,15 @@ type
     btnMove: TButton;
     edPath: TEdit;
     btnBrowse: TButton;
-    lblCollection: TLabel;
-    cbCollection: TComboBox;
+    lblVaults: TLabel;
+    cbVaults: TComboBox;
     ///  <summary>Dispays Browse For Folder dialogue box and copies any chosen
     ///  folder to the edPath edit control.</summary>
     procedure actBrowseExecute(Sender: TObject);
-    ///  <summary>Moves the chosen collection to the path entered by the user
-    ///  and records the changed path.</summary>
+    ///  <summary>Moves the chosen vault to the path entered by the user and
+    ///  records the changed path.</summary>
     ///  <exception>Raises exception if the given path can't be used for any
-    ///  reason or if there was an error copying the collection.</exception>
+    ///  reason or if there was an error copying the vault.</exception>
     procedure actMoveExecute(Sender: TObject);
     ///  <summary>Enables / disables Move action according to whether a suitable
     ///  path has been entered by user.</summary>
@@ -70,15 +70,15 @@ type
     procedure FormDestroy(Sender: TObject);
   strict private
     var
-      ///  <summary>Object that moves a collection's data to a new location.
+      ///  <summary>Object that moves a vault's data to a new location.
       ///  </summary>
       fMover: TUserDBMove;
       ///  <summary>Object used to disable and enable all controls on the form.
       ///  </summary>
       fControlStateMgr: TControlStateMgr;
       ///  <summary>Object used to provide and interogate a sorted list of
-      ///  collection names displated in <c>cbCollection</c>.</summary>
-      fCollList: TVaultListAdapter;
+      ///  vault names displayed in <c>cbVault</c>.</summary>
+      fVaultList: TVaultListAdapter;
     ///  <summary>Sets visibility of all child controls of a parent control.
     ///  </summary>
     ///  <param name="ParentCtrl">TWinControl [in] Parent of affected controls.
@@ -86,16 +86,16 @@ type
     ///  <param name="Show">Boolean [in] Flag indicating required visibility.
     ///  Pass True to show the controls and False to hide them.</param>
     procedure SetVisibility(const ParentCtrl: TWinControl; const Show: Boolean);
-    ///  <summary>Move the chosen collection data to the directory given by
+    ///  <summary>Move the chosen vault data to the directory given by
     ///  <c>NewDir</c>, displaying a progress base located over the given host
     ///  window.</summary>
     ///  <remarks>The new directory is checked to be empty and the user is asked
     ///  for confirmation.</remarks>
     procedure DoMove(const NewDir: string; const ProgressHostCtrl: TWinControl);
-    ///  <summary>Handles the collection data mover object's <c>OnCopyFile</c>
-    ///  event by updating the progress frame.</summary>
+    ///  <summary>Handles the vault data mover object's <c>OnCopyFile</c> event
+    ///  by updating the progress frame.</summary>
     procedure CopyFileHandler(Sender: TObject; const Percent: Byte);
-    ///  <summary>Handles the collectio data mover object's <c>OnDeleteFile</c>
+    ///  <summary>Handles the vault data mover object's <c>OnDeleteFile</c>
     ///  event by updating the progress frame.</summary>
     procedure DeleteFileHandler(Sender: TObject; const Percent: Byte);
     ///  <summary>Gets the directory entered in the <c>edPath</c> edit control.
@@ -108,7 +108,7 @@ type
     ///  exceptions unchanged.</summary>
     ///  <exception>Always raises a new exception.</exception>
     ///  <remarks>This method is designed to handle exceptions raised when the
-    ///  collection data is moved.</remarks>
+    ///  vault data is moved.</remarks>
     procedure HandleException(const E: Exception);
   strict protected
     ///  <summary>Initialises the form's controls and associated objects.
@@ -147,11 +147,11 @@ uses
 
 { TUserDataPathDlg }
 
-procedure TUserDataPathDlg.actBrowseExecute(Sender: TObject);
+procedure TMoveVaultDlg.actBrowseExecute(Sender: TObject);
 var
   Dlg: TBrowseForFolderDlg; // browse for folder standard dialogue box
 resourcestring
-  sDlgTitle = 'Choose Collection Data Directory';
+  sDlgTitle = 'Choose Vault Data Directory';
   sDlgHeading = 'Choose an empty directory or create a new one';
 begin
   Dlg := TBrowseForFolderDlg.Create(nil);
@@ -166,22 +166,22 @@ begin
   end;
 end;
 
-procedure TUserDataPathDlg.actMoveExecute(Sender: TObject);
+procedure TMoveVaultDlg.actMoveExecute(Sender: TObject);
 begin
   DoMove(NewDirFromEditCtrl, Self);
 end;
 
-procedure TUserDataPathDlg.actMoveUpdate(Sender: TObject);
+procedure TMoveVaultDlg.actMoveUpdate(Sender: TObject);
 begin
   actMove.Enabled := (NewDirFromEditCtrl <> '')
     and not StrSameText(
       NewDirFromEditCtrl,
-      fCollList.Vault(cbCollection.ItemIndex).Storage.Directory
+      fVaultList.Vault(cbVaults.ItemIndex).Storage.Directory
     )
     and Self.Enabled;
 end;
 
-procedure TUserDataPathDlg.ArrangeForm;
+procedure TMoveVaultDlg.ArrangeForm;
 begin
   TCtrlArranger.SetLabelHeights(Self);
 
@@ -189,7 +189,7 @@ begin
 
   TCtrlArranger.AlignLefts(
     [
-      lblInstructions, lblWarning, lblCollection, cbCollection, lblPath, edPath,
+      lblInstructions, lblWarning, lblVaults, cbVaults, lblPath, edPath,
       lblExplainMove
     ],
     0
@@ -201,12 +201,12 @@ begin
   TCtrlArranger.MoveBelow(lblInstructions, lblWarning, 8);
   lblWarning.Width := pnlBody.ClientWidth;
   // Row 3
-  TCtrlArranger.MoveBelow(lblWarning, lblCollection, 12);
+  TCtrlArranger.MoveBelow(lblWarning, lblVaults, 12);
   // Row 4
-  TCtrlArranger.MoveBelow(lblCollection, cbCollection, 6);
-  cbCollection.Width := pnlBody.ClientWidth;
+  TCtrlArranger.MoveBelow(lblVaults, cbVaults, 6);
+  cbVaults.Width := pnlBody.ClientWidth;
   // Row 5
-  TCtrlArranger.MoveBelow(cbCollection, lblPath, 12);
+  TCtrlArranger.MoveBelow(cbVaults, lblPath, 12);
   // Row 6
   TCtrlArranger.AlignRights([btnBrowse], pnlBody.ClientWidth);
   edPath.Width := btnBrowse.Left - 6 - edPath.Left;
@@ -225,7 +225,7 @@ begin
   inherited;
 end;
 
-procedure TUserDataPathDlg.ConfigForm;
+procedure TMoveVaultDlg.ConfigForm;
 begin
   inherited;
   TFontHelper.SetDefaultBaseFonts([lblWarning.Font]);
@@ -235,11 +235,11 @@ begin
   ]);
   frmProgress.Visible := False;
   frmProgress.Range := TRange.Create(0, 100);
-  fCollList.ToStrings(cbCollection.Items);
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TVaultID.Default);
+  fVaultList.ToStrings(cbVaults.Items);
+  cbVaults.ItemIndex := fVaultList.IndexOfUID(TVaultID.Default);
 end;
 
-procedure TUserDataPathDlg.CopyFileHandler(Sender: TObject;
+procedure TMoveVaultDlg.CopyFileHandler(Sender: TObject;
   const Percent: Byte);
 resourcestring
   sCopying = 'Copying files...';
@@ -250,7 +250,7 @@ begin
   Application.ProcessMessages;
 end;
 
-procedure TUserDataPathDlg.DeleteFileHandler(Sender: TObject;
+procedure TMoveVaultDlg.DeleteFileHandler(Sender: TObject;
   const Percent: Byte);
 resourcestring
   sDeleting = 'Deleting files...';
@@ -261,11 +261,11 @@ begin
   Application.ProcessMessages;
 end;
 
-procedure TUserDataPathDlg.DoMove(const NewDir: string;
+procedure TMoveVaultDlg.DoMove(const NewDir: string;
   const ProgressHostCtrl: TWinControl);
 resourcestring
   sNonEmptyDir = 'The specified directory is not empty.';
-  sConfirmMsg = 'Are you sure you want to move the collection data?';
+  sConfirmMsg = 'Are you sure you want to move the vault data?';
 begin
   if TDirectory.Exists(NewDir)
     and not TDirectory.IsEmpty(NewDir) then
@@ -279,7 +279,7 @@ begin
     frmProgress.Show(ProgressHostCtrl);
     try
       fMover.MoveTo(
-        fCollList.Vault(cbCollection.ItemIndex), NewDir
+        fVaultList.Vault(cbVaults.ItemIndex), NewDir
       );
     except
       on E: Exception do
@@ -293,10 +293,10 @@ begin
   end;
 end;
 
-class procedure TUserDataPathDlg.Execute(AOwner: TComponent);
+class procedure TMoveVaultDlg.Execute(AOwner: TComponent);
 {$IFNDEF PORTABLE}
 var
-  Dlg: TUserDataPathDlg;
+  Dlg: TMoveVaultDlg;
 {$ENDIF}
 begin
   {$IFDEF PORTABLE}
@@ -312,25 +312,25 @@ begin
   {$ENDIF}
 end;
 
-procedure TUserDataPathDlg.FormCreate(Sender: TObject);
+procedure TMoveVaultDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fMover := TUserDBMove.Create;
   fMover.OnCopyFile := CopyFileHandler;
   fMover.OnDeleteFile := DeleteFileHandler;
   fControlStateMgr := TControlStateMgr.Create(Self);
-  fCollList := TVaultListAdapter.Create;
+  fVaultList := TVaultListAdapter.Create;
 end;
 
-procedure TUserDataPathDlg.FormDestroy(Sender: TObject);
+procedure TMoveVaultDlg.FormDestroy(Sender: TObject);
 begin
-  fCollList.Free;
+  fVaultList.Free;
   fControlStateMgr.Free;
   fMover.Free;
   inherited;
 end;
 
-procedure TUserDataPathDlg.HandleException(const E: Exception);
+procedure TMoveVaultDlg.HandleException(const E: Exception);
 begin
   if (E is EInOutError) or (E is ENotSupportedException)
     or (E is EDirectoryNotFoundException) or (E is EPathTooLongException)
@@ -339,12 +339,12 @@ begin
   raise E;
 end;
 
-function TUserDataPathDlg.NewDirFromEditCtrl: string;
+function TMoveVaultDlg.NewDirFromEditCtrl: string;
 begin
   Result := ExcludeTrailingPathDelimiter(StrTrim(edPath.Text));
 end;
 
-procedure TUserDataPathDlg.SetVisibility(const ParentCtrl: TWinControl;
+procedure TMoveVaultDlg.SetVisibility(const ParentCtrl: TWinControl;
   const Show: Boolean);
 var
   I: Integer;

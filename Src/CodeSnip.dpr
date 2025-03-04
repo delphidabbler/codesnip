@@ -130,7 +130,7 @@ uses
   FmTestCompileDlg in 'FmTestCompileDlg.pas' {TestCompileDlg},
   FmTrappedBugReportDlg in 'FmTrappedBugReportDlg.pas' {TrappedBugReportDlg},
   FmUserBugReportDlg in 'FmUserBugReportDlg.pas' {UserBugReportDlg},
-  FmUserDataPathDlg in 'FmUserDataPathDlg.pas' {UserDataPathDlg},
+  FmUserDataPathDlg in 'FmUserDataPathDlg.pas' {MoveVaultDlg},
   FrProgress in 'FrProgress.pas' {ProgressFrame: TFrame},
   FmUserHiliterMgrDlg in 'FmUserHiliterMgrDlg.pas' {UserHiliterMgrDlg},
   FmWaitDlg in 'FmWaitDlg.pas' {WaitDlg},

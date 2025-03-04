@@ -15,7 +15,7 @@ unit UUserDBMgr;
 interface
 
 {TODO -cRefactoring: Rename this unit/classes/methods: the names refer to the
-        CodeSnip 4 database structure but the code now works with collections}
+        CodeSnip 4 database structure but the code now works with vaults}
 
 uses
   // Delphi
@@ -418,7 +418,7 @@ class procedure TUserDBMgr.MoveDatabase;
 begin
   // This dialogue box not available in portable edition
   {$IFNDEF PORTABLE}
-  TUserDataPathDlg.Execute(nil);
+  TMoveVaultDlg.Execute(nil);
   {$ENDIF}
 end;
 
