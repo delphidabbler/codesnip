@@ -78,12 +78,12 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
       TabOrder = 5
       OnClick = btnCollapseAllClick
     end
-    object btnCollection: TBitBtn
+    object btnVaults: TBitBtn
       Left = 287
       Top = 63
       Width = 91
       Height = 25
-      Caption = 'Collectio&n'
+      Caption = '&Vault'
       DoubleBuffered = True
       Glyph.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100
@@ -97,13 +97,13 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
       Layout = blGlyphRight
       ParentDoubleBuffered = False
       TabOrder = 3
-      OnClick = btnCollectionClick
+      OnClick = btnVaultsClick
     end
   end
   inherited btnOK: TButton
     OnClick = btnOKClick
   end
-  object mnuCollections: TPopupMenu
+  object mnuVaults: TPopupMenu
     Left = 72
     Top = 72
   end
