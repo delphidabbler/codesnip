@@ -236,7 +236,7 @@ begin
   if Assigned(fDisplaySnippetAction) then
   begin
     (fDisplaySnippetAction as TSnippetAction).Key := Key;
-    (fDisplaySnippetAction as TSnippetAction).CollectionID := AVaultID;
+    (fDisplaySnippetAction as TSnippetAction).VaultID := AVaultID;
     (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
     fDisplaySnippetAction.Execute;
   end;
