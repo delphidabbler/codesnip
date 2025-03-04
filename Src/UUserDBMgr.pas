@@ -107,7 +107,7 @@ uses
   FmRenameCategoryDlg,
   FmSnippetsEditorDlg,
   {$IFNDEF PORTABLE}
-  FmUserDataPathDlg,
+  UI.Forms.MoveVaultDlg,
   {$ENDIF}
   FmWaitDlg,
   UAppInfo,

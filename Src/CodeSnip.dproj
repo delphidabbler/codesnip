@@ -237,7 +237,7 @@
 			<DCCReference Include="FmUserBugReportDlg.pas">
 				<Form>UserBugReportDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmUserDataPathDlg.pas">
+			<DCCReference Include="UI.Forms.MoveVaultDlg.pas">
 				<Form>MoveVaultDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FrProgress.pas">
