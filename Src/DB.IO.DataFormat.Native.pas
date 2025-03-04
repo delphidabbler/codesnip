@@ -30,10 +30,6 @@ uses
 
 type
 
-  {TODO -cVault: Change file format to replace "collection.xml" with "vault.xml"
-          and "collection" tag with "vault" tag.
-  }
-
   ///  <summary>Base class for classes that read and write vault data in the
   ///  native data format.</summary>
   TNativeDataRW = class abstract(TInterfacedObject)
@@ -46,7 +42,7 @@ type
   strict protected
     const
       ///  <summary>Name of vault's XML file.</summary>
-      XMLFileName = 'collection.xml';
+      XMLFileName = 'vault.xml';
       ///  <summary>Extension used for source code files.</summary>
       SourceCodeFileExt = '.source';
       ///  <summary>Name of vaults's license file, if any.</summary>
@@ -61,7 +57,7 @@ type
       CurrentFileVersion: TVersionNumber = (V1: 1; V2: 0; V3: 0; V4: 0);
 
       // XML node and attribute names
-      RootNodeName = 'collection';
+      RootNodeName = 'vault';
       RootNodeWatermarkAttr = 'watermark';
       RootNodeVersionMajorAttr = 'version-major';
       RootNodeVersionMinorAttr = 'version-minor';
