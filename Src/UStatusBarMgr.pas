@@ -350,29 +350,29 @@ procedure TStatusBarMgr.ShowSnippetsInfo;
   }
 var
   TotalSnippets: Integer;     // number of snippets in database
-  TotalCollections: Integer;  // number of collections in database
+  TotalVaults: Integer;       // number of vaults in database
 resourcestring
   // status bar message strings
   sSnippet = 'snippet';
   sSnippets = 'snippets';
-  sCollection = 'collection';
-  sCollections = 'collections';
+  sVault = 'vault';
+  sVaults = 'vaults';
   sStats = '%0:d %1:s in %2:d %3:s';
 const
   SnippetsStr: array[Boolean] of string = (sSnippet, sSnippets);
-  CollectionsStr: array[Boolean] of string = (sCollection, sCollections);
+  VaultsStr: array[Boolean] of string = (sVault, sVaults);
 begin
   // Calculate database stats
   TotalSnippets := Database.Snippets.Count;
-  TotalCollections := TVaults.Instance.Count;
+  TotalVaults := TVaults.Instance.Count;
   // Build display text and display it
   fStatusBar.Panels[cDBPanel].Text := Format(
     sStats,
     [
       TotalSnippets,
       SnippetsStr[TotalSnippets <> 1],
-      TotalCollections,
-      CollectionsStr[TotalCollections <> 1]
+      TotalVaults,
+      VaultsStr[TotalVaults <> 1]
     ]
   );
 end;
