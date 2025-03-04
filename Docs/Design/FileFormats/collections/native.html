@@ -7,14 +7,14 @@
  *
  * Copyright (C) 2024, Peter Johnson (gravatar.com/delphidabbler).
  *
- * CodeSnip File Format Documentation: Native Collection Format v5
+ * CodeSnip File Format Documentation: Native Vault Format
 -->
 <html xmlns="https://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 
 <head>
 
 <title>
-  CodeSnip File Format Documentation - Native Collection Format
+  CodeSnip File Format Documentation - Native Vault Format
 </title>
 
 <link
@@ -38,7 +38,7 @@
 </div>
 
 <h1>
-  Native Collection Format
+  Native Vault Format
 </h1>
 
 <section id="contents">
@@ -63,11 +63,9 @@
       <li>
         <a href="#source-files">Source Files</a>
       </li>
-      <!-- TODO: To be implemented
       <li>
         <a href="#license-file">License File</a>
       </li>
-      -->
     </ul>
   </li>
   <li>
@@ -84,15 +82,15 @@
 </h2>
 
 <p>
-  This file format is the default collection data format used by CodeSnip Vault.
+  This file format is the default vault data format used by CodeSnip Vault.
 </p>
 
 <p>
-  The format comprises a single XML file along with a number of data files located in the same directory. Each user can have zero or more snippet collections that use this format.
+  The format comprises a single XML file along with a number of data files located in the same directory. Each user can have zero or more snippet vaults that use this format.
 </p>
 
 <p>
-  The XML file is named <code>collection.xml</code>. It contains all the information about about the collection, except for the source code of each snippet.
+  The XML file is named <code>vault.xml</code>. It contains all the information about about the vault, except for the source code of each snippet.
 </p>
 
 <p>
@@ -112,7 +110,7 @@
 </h2>
 
 <p>
-  All files are text files that use UTF-8 encoding, <em>without</em> any UTF-8 preamble (BOM). The XML processing instruction of <code>collection.xml</code> has its <em>encoding</em> atrribute set to <code>UTF-8</code>.
+  All files are text files that use UTF-8 encoding, <em>without</em> any UTF-8 preamble (BOM). The XML processing instruction of <code>vault.xml</code> has its <em>encoding</em> atrribute set to <code>UTF-8</code>.
 </p>
 
 </section>
@@ -156,11 +154,11 @@
   </dd>
 
   <dt>
-    <strong>collection</strong>
+    <strong>vault</strong>
   </dt>
   <dd>
     <p>
-      Parent node that contains all the collection data.
+      Parent node that contains all the vault data.
     </p>
     <p>
       Attributes:
@@ -188,16 +186,16 @@
   </dd>
 
   <dt>
-    <strong>collection/categories</strong>
+    <strong>vault/categories</strong>
   </dt>
   <dd>
     <p>
-      Contains a list of all categories used by the collection.
+      Contains a list of all categories used by the vault.
     </p>
   </dd>
 
   <dt>
-    <strong>collection/categories/category</strong>
+    <strong>vault/categories/category</strong>
   </dt>
   <dd>
     <p>
@@ -217,7 +215,7 @@
   <dd>
 
   <dt>
-    <strong>collection/categories/category/description</strong>
+    <strong>vault/categories/category/description</strong>
   </dt>
   <dd>
     <p>
@@ -226,7 +224,7 @@
   </dd>
 
   <dt>
-    <strong>collection/categories/category/snippet-keys</strong>
+    <strong>vault/categories/category/snippet-keys</strong>
   </dt>
   <dd>
     <p>
@@ -235,7 +233,7 @@
   </dd>
 
   <dt>
-    <strong>collection/categories/category/snippet-keys/key</strong>
+    <strong>vault/categories/category/snippet-keys/key</strong>
   </dt>
   <dd>
     <p>
@@ -245,22 +243,22 @@
       The value must be:
     </p>
     <ul class="squashed">
-      <li>unique withing the collection</li>
+      <li>unique withing the vault</li>
       <li>a valid Unicode Pascal identifier</li>
     </ul>
   </dd>
 
   <dt>
-    <strong>collection/snippets</strong>
+    <strong>vault/snippets</strong>
   </dt>
   <dd>
     <p>
-      Contains defintiions of all snippets in the collection.
+      Contains defintiions of all snippets in the vault.
     </p>
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet</strong>
+    <strong>vault/snippets/snippet</strong>
   </dt>
   <dd>
     <p>
@@ -281,7 +279,7 @@
           The value must be:
         </p>
         <ul class="squashed">
-          <li>unique withing the collection</li>
+          <li>unique withing the vault</li>
           <li>a valid Unicode Pascal identifier</li>
         </ul>
       </dd>
@@ -293,7 +291,7 @@
           The unique id of the category to which the snippet belongs. 
         </p>
         <p>
-          The value must correspond to the <em>id</em> attribute of one of the <em>collection/categories/category</em> nodes.
+          The value must correspond to the <em>id</em> attribute of one of the <em>vault/categories/category</em> nodes.
         </p>
       </dd>
       <dt>
@@ -318,14 +316,14 @@
           The values are not case sensitive.
         </p>
         <p>
-          If <em>collection/snippets/snippet/source-code/language</em> has any value other than <code>Pascal</code> then this attribute <span class="very-strong">must</span> have value <code>freeform</code>. 
+          If <em>vault/snippets/snippet/source-code/language</em> has any value other than <code>Pascal</code> then this attribute <span class="very-strong">must</span> have value <code>freeform</code>. 
         </p>
       </dd>
     </dl>
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/display-name</strong>
+    <strong>vault/snippets/snippet/display-name</strong>
   </dt>
   <dd>
     <p>
@@ -334,7 +332,7 @@
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/description</strong>
+    <strong>vault/snippets/snippet/description</strong>
   </dt>
   <dd>
     <p>
@@ -349,7 +347,7 @@
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/notes</strong>
+    <strong>vault/snippets/snippet/notes</strong>
   </dt>
   <dd>
     <p>
@@ -364,7 +362,7 @@
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/source-code</strong>
+    <strong>vault/snippets/snippet/source-code</strong>
   </dt>
   <dd>
     <p>
@@ -411,7 +409,7 @@
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/compile-results</strong>
+    <strong>vault/snippets/snippet/compile-results</strong>
   </dt>
   <dd>
     <p>
@@ -431,7 +429,7 @@
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/compile-results/compiler
+    <strong>vault/snippets/snippet/compile-results/compiler
     </strong>
   </dt>
   <dd>
@@ -568,7 +566,7 @@
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/tests</strong>
+    <strong>vault/snippets/snippet/tests</strong>
   </dt>
   <dd>
     <p>
@@ -624,7 +622,7 @@
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/required-units</strong>
+    <strong>vault/snippets/snippet/required-units</strong>
   </dt>
   <dd>
     <p>
@@ -634,13 +632,13 @@
       The node <em>may</em> be omitted if there are no required units.
     </p>
     <p>
-      If <em>collection/snippets/snippet/source-code/language</em> has any value other than <code>Pascal</code> then this node has no meaning and <span class="very-strong">must</span> be omitted.
+      If <em>vault/snippets/snippet/source-code/language</em> has any value other than <code>Pascal</code> then this node has no meaning and <span class="very-strong">must</span> be omitted.
     </p>
 
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/required-units/unit</strong>
+    <strong>vault/snippets/snippet/required-units/unit</strong>
   </dt>
   <dd>
     <p>
@@ -652,7 +650,7 @@
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/required-snippets</strong>
+    <strong>vault/snippets/snippet/required-snippets</strong>
   </dt>
   <dd>
     <p>
@@ -662,12 +660,12 @@
       The node <em>may</em> be omitted if there are no required snippets.
     </p>
     <p>
-      If <em>collection/snippets/snippet/source-code/language</em> has any value other than <code>Pascal</code> then this node has no meaning and <span class="very-strong">must</span> be omitted.
+      If <em>vault/snippets/snippet/source-code/language</em> has any value other than <code>Pascal</code> then this node has no meaning and <span class="very-strong">must</span> be omitted.
     </p>
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/required-snippets/key</strong>
+    <strong>vault/snippets/snippet/required-snippets/key</strong>
   </dt>
   <dd>
     <p>
@@ -676,7 +674,7 @@
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/xrefs</strong>
+    <strong>vault/snippets/snippet/xrefs</strong>
   </dt>
   <dd>
     <p>
@@ -688,7 +686,7 @@
   </dd>
 
   <dt>
-    <strong>collection/snippets/snippet/xrefs/key</strong>
+    <strong>vault/snippets/snippet/xrefs/key</strong>
   </dt>
   <dd>
     <p>
@@ -696,13 +694,12 @@
     </p>
   </dd>
 
-  <!-- TODO: Meta data yet to be implemented
   <dt>
-    <strong>collection/license</strong>
+    <strong>vault/license</strong>
   </dt>
   <dd>
     <p>
-      Contains license information for the collection.
+      Contains license information for the vault.
     </p>
     <p>
       Attributes:
@@ -773,11 +770,11 @@
   </dd>
 
   <dt>
-    <strong>collection/copyright</strong>
+    <strong>vault/copyright</strong>
   </dt>
   <dd>
     <p>
-      Contains information about the copyright that applies to the collection.
+      Contains information about the copyright that applies to the vault.
     </p>
     <p>
       Attributes:
@@ -805,7 +802,7 @@
           The name(s) of the copyright holder(s).
         </p>
         <p>
-          If there are numerous contributors to the collection, who each have a claim on copyright, they <span class="very-strong">must</span> be listed under the <em>collection/copyright/contributors</em> node and this attribute's value should refer to the fact, e.g. <code>Alice Jones &amp; contributors</code> or simply <code>Contributors</code>.
+          If there are numerous contributors to the vault, who each have a claim on copyright, they <span class="very-strong">must</span> be listed under the <em>vault/copyright/contributors</em> node and this attribute's value should refer to the fact, e.g. <code>Alice Jones &amp; contributors</code> or simply <code>Contributors</code>.
         </p>
         <p>
           If no copyright holder is provided then this attribute <em>may</em> be either omitted or have an empty value.
@@ -823,13 +820,13 @@
         </p>
       </dd>
       <p>
-        The node <em>may</em> be omitted if there are no values for any attributes the <em>collection/copyright/contributors</em> is not present. A missing node is taken to mean that there is no copyright information.
+        The node <em>may</em> be omitted if there are no values for any attributes the <em>vault/copyright/contributors</em> is not present. A missing node is taken to mean that there is no copyright information.
       </p>
     </dl>
   </dd>
 
   <dt>
-    <strong>collection/copyright/contributors</strong>
+    <strong>vault/copyright/contributors</strong>
   </dt>
   <dd>
     <p>
@@ -841,7 +838,7 @@
   </dd>
 
   <dt>
-    <strong>collection/copyright/contributors/name</strong>
+    <strong>vault/copyright/contributors/name</strong>
   </dt>
   <dd>
     <p>
@@ -850,7 +847,7 @@
   </dd>
 
   <dt>
-    <strong>collection/acknowledgements</strong>
+    <strong>vault/acknowledgements</strong>
   </dt>
   <dd>
     <p>
@@ -862,14 +859,13 @@
   </dd>
 
   <dt>
-    <strong>collection/acknowledgements/name</strong>
+    <strong>vault/acknowledgements/name</strong>
   </dt>
   <dd>
     <p>
       Name being acknowledged. One node per name in the list.
     </p>
   </dd>
-  -->
 
 </dl>
 
@@ -882,10 +878,9 @@
 </p>
 
 <p>
-  Source code files are referenced by the <em>file-name</em> attribute of a snippet's <em>collection/snippets/snippet/source-code</em> node in the XML file.
+  Source code files are referenced by the <em>file-name</em> attribute of a snippet's <em>vault/snippets/snippet/source-code</em> node in the XML file.
 </p>
 
-<!-- TODO: To be implemented
 <h3 id="license-file">
   License File
 </h3>
@@ -899,9 +894,8 @@
 </p>
 
 <p>
-  The file is named according to the <em>license-file-name</em> attribute of the <em>collection/license</em> node.
+  The file is named according to the <em>license-file-name</em> attribute of the <em>vault/license</em> node.
 </p>
--->
 
 </section>
 
