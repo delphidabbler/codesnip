@@ -552,7 +552,7 @@
 			<DCCReference Include="UURIEncode.pas"/>
 			<DCCReference Include="UUrl.pas"/>
 			<DCCReference Include="UUrlMonEx.pas"/>
-			<DCCReference Include="UUserDBBackup.pas"/>
+			<DCCReference Include="VaultBackup.pas"/>
 			<DCCReference Include="UUserDBMgr.pas"/>
 			<DCCReference Include="VaultMover.pas"/>
 			<DCCReference Include="UUtils.pas"/>

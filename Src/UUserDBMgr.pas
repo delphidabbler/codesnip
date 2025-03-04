@@ -115,7 +115,7 @@ uses
   UExceptions,
   UIStringList,
   UMessageBox,
-  UUserDBBackup,
+  VaultBackup,
   UWaitForThreadUI;
 
 type

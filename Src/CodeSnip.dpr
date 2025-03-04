@@ -350,7 +350,7 @@ uses
   UURIEncode in 'UURIEncode.pas',
   UUrl in 'UUrl.pas',
   UUrlMonEx in 'UUrlMonEx.pas',
-  UUserDBBackup in 'UUserDBBackup.pas',
+  VaultBackup in 'VaultBackup.pas',
   UUserDBMgr in 'UUserDBMgr.pas',
   VaultMover in 'VaultMover.pas',
   UUtils in 'UUtils.pas',
