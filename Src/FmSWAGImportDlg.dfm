@@ -19,16 +19,12 @@ inherited SWAGImportDlg: TSWAGImportDlg
     inherited pcWizard: TPageControl
       Width = 671
       Height = 456
-      ActivePage = tsIntro
+      ActivePage = tsUpdate
       ExplicitWidth = 671
       ExplicitHeight = 456
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmIntro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -59,10 +55,6 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFolder'
         ImageIndex = 4
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblFolder: TLabel
           Left = 0
           Top = 8
@@ -212,17 +204,17 @@ inherited SWAGImportDlg: TSWAGImportDlg
           Height = 36
           AutoSize = False
           Caption = 
-            'When you are ready to import the packets select the collection i' +
-            'nto which you want to import them then click "Import". This step' +
-            ' can'#39't be undone.'
+            'When you are ready to import the packets select the vault into w' +
+            'hich you want to import them then click "Import". This step can'#39 +
+            't be undone.'
           WordWrap = True
         end
-        object lblCollection: TLabel
+        object lblVaults: TLabel
           Left = 0
           Top = 83
-          Width = 80
+          Width = 60
           Height = 13
-          Caption = 'Select &collection:'
+          Caption = 'Select &vault:'
         end
         object lvImports: TListView
           Left = 0
@@ -243,7 +235,7 @@ inherited SWAGImportDlg: TSWAGImportDlg
           TabOrder = 1
           ViewStyle = vsReport
         end
-        object cbCollection: TComboBox
+        object cbVaults: TComboBox
           Left = 86
           Top = 80
           Width = 289
@@ -256,10 +248,6 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFinish'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmOutro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
