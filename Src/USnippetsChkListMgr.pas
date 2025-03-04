@@ -103,7 +103,7 @@ uses
   Graphics,
   StdCtrls,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UColours,
   UGraphicUtils,
   UPreferences;
@@ -204,7 +204,7 @@ begin
   Canvas := fCLB.Canvas;
   if not (odSelected in State) then
     Canvas.Font.Color := Preferences.GetSnippetHeadingColour(
-      (fCLB.Items.Objects[Index] as TSnippet).CollectionID
+      (fCLB.Items.Objects[Index] as TSnippet).VaultID
     );
   Canvas.TextRect(
     Rect,

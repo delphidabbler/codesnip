@@ -90,14 +90,17 @@ implementation
 
 uses
   // Project
-  ActiveText.UMain, DB.UCollections, UColours, UPreferences;
+  ActiveText.UMain,
+  DB.Vaults,
+  UColours,
+  UPreferences;
 
 
 { TRTFCategoryDoc }
 
 constructor TRTFCategoryDoc.Create(const UseColour: Boolean);
 var
-  Collection: TCollection;
+  Vault: TVault;
 begin
   inherited Create;
   fUseColour := UseColour;
@@ -106,9 +109,9 @@ begin
   fBuilder.FontTable.Add(MainFontName, rgfSwiss, 0);
   fBuilder.FontTable.Add(MonoFontName, rgfModern, 0);
   // Set up colour table
-  for Collection in TCollections.Instance do
+  for Vault in TVaults.Instance do
     fBuilder.ColourTable.Add(
-      Preferences.GetSnippetHeadingColour(Collection.UID)
+      Preferences.GetSnippetHeadingColour(Vault.UID)
     );
   fBuilder.ColourTable.Add(Preferences.GroupHeadingColour);
   fBuilder.ColourTable.Add(clExternalLink);
@@ -232,7 +235,7 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(SubHeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
-  SetColour(Preferences.GetSnippetHeadingColour(Snippet.CollectionID));
+  SetColour(Preferences.GetSnippetHeadingColour(Snippet.VaultID));
   fBuilder.AddText(Snippet.DisplayName);
   fBuilder.EndPara;
   fBuilder.EndGroup;

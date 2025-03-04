@@ -237,8 +237,8 @@
 			<DCCReference Include="FmUserBugReportDlg.pas">
 				<Form>UserBugReportDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmUserDataPathDlg.pas">
-				<Form>UserDataPathDlg</Form>
+			<DCCReference Include="UI.Forms.MoveVaultDlg.pas">
+				<Form>MoveVaultDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FrProgress.pas">
 				<Form>ProgressFrame</Form>
@@ -392,7 +392,7 @@
 			<DCCReference Include="UBrowseForFolderDlg.pas"/>
 			<DCCReference Include="UBrowseProtocol.pas"/>
 			<DCCReference Include="UCategoryAction.pas"/>
-			<DCCReference Include="UCategoryListAdapter.pas"/>
+			<DCCReference Include="UI.Adapters.CategoryList.pas"/>
 			<DCCReference Include="ClassHelpers.UControls.pas"/>
 			<DCCReference Include="UClipboardHelper.pas"/>
 			<DCCReference Include="UCodeImportExport.pas"/>
@@ -515,7 +515,7 @@
 			<DCCReference Include="UShowCaseCtrl.pas"/>
 			<DCCReference Include="USimpleDispatch.pas"/>
 			<DCCReference Include="USingleton.pas"/>
-			<DCCReference Include="USnipKindListAdapter.pas"/>
+			<DCCReference Include="UI.Adapters.SnippetKindList.pas"/>
 			<DCCReference Include="USnippetAction.pas"/>
 			<DCCReference Include="USnippetDoc.pas"/>
 			<DCCReference Include="USnippetExtraHelper.pas"/>
@@ -552,9 +552,9 @@
 			<DCCReference Include="UURIEncode.pas"/>
 			<DCCReference Include="UUrl.pas"/>
 			<DCCReference Include="UUrlMonEx.pas"/>
-			<DCCReference Include="UUserDBBackup.pas"/>
+			<DCCReference Include="VaultBackup.pas"/>
 			<DCCReference Include="UUserDBMgr.pas"/>
-			<DCCReference Include="UUserDBMove.pas"/>
+			<DCCReference Include="VaultMover.pas"/>
 			<DCCReference Include="UUtils.pas"/>
 			<DCCReference Include="UVersionInfo.pas"/>
 			<DCCReference Include="UView.pas"/>
@@ -569,8 +569,8 @@
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
-			<DCCReference Include="FmDeleteUserDBDlg.pas">
-				<Form>DeleteUserDBDlg</Form>
+			<DCCReference Include="UI.Forms.DeleteVaultDlg.pas">
+				<Form>DeleteVaultDlg</Form>
 			</DCCReference>
 			<DCCReference Include="Compilers.UAutoDetect.pas"/>
 			<DCCReference Include="Compilers.USettings.pas"/>
@@ -579,12 +579,12 @@
 			</DCCReference>
 			<DCCReference Include="ClassHelpers.UGraphics.pas"/>
 			<DCCReference Include="ClassHelpers.UActions.pas"/>
-			<DCCReference Include="DB.UCollections.pas"/>
+			<DCCReference Include="DB.Vaults.pas"/>
 			<DCCReference Include="UTabSeparatedFileIO.pas"/>
 			<DCCReference Include="DBIO.UCategoryIO.pas"/>
-			<DCCReference Include="UCollectionListAdapter.pas"/>
-			<DCCReference Include="FmCollectionBackup.pas">
-				<Form>CollectionBackupDlg</Form>
+			<DCCReference Include="UI.Adapters.VaultList.pas"/>
+			<DCCReference Include="UI.Forms.BackupVaultDlg.pas">
+				<Form>VaultBackupDlg</Form>
 			</DCCReference>
 			<DCCReference Include="DB.DataFormats.pas"/>
 			<DCCReference Include="DB.IO.DataFormat.Native.pas"/>

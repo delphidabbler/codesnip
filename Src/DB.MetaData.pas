@@ -5,7 +5,8 @@
  *
  * Copyright (C) 2025, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Encapsulates a collection's data format metadata.
+ * Encapsulates a metadata that applies to a vault. Available metadata depends
+ * on that supported by a vault's chosen data format.
 }
 
 
@@ -24,13 +25,12 @@ type
 
   ///  <summary>Enumeration of the capabilities of a data format.</summary>
   ///  <remarks>
-  ///  <para>- <c>Version</c> - supports the collection's data format version
-  ///  number.</para>
-  ///  <para>- <c>License</c> - supports collection license information.</para>
-  ///  <para>- <c>Copyright</c> - supports collection copyright information.
+  ///  <para>- <c>Version</c> - supports data format version numbering.</para>
+  ///  <para>- <c>License</c> - supports vault license information.</para>
+  ///  <para>- <c>Copyright</c> - supports vault copyright information.
   ///  </para>
   ///  <para>- <c>Acknowledgements</c> - supports acknowledgements for the
-  ///  collection.</para>
+  ///  vault.</para>
   ///  </remarks>
   TMetaDataCap = (
     Version,
@@ -43,7 +43,7 @@ type
   ///  </summary>
   TMetaDataCaps = set of TMetaDataCap;
 
-  ///  <summary>Record providing information about a collection's license.
+  ///  <summary>Record providing information about a vault's license.
   ///  </summary>
   TLicenseInfo = record
   strict private
@@ -92,7 +92,7 @@ type
     function NameWithURL: string;
   end;
 
-  ///  <summary>Record providing informaton about a collection's copyright.
+  ///  <summary>Record providing informaton about a vault's copyright.
   ///  </summary>
   TCopyrightInfo = record
   strict private
@@ -145,7 +145,7 @@ type
     function ToString: string;
   end;
 
-  ///  <summary>Encapsulates a collection's meta data.</summary>
+  ///  <summary>Encapsulates meta data associated with a vault.</summary>
   TMetaData = record
   strict private
     var
@@ -180,15 +180,15 @@ type
     property Version: TVersionNumber
       read GetVersion write fVersion;
 
-    ///  <summary>Information about the collection license.</summary>
+    ///  <summary>Information about the vault's license.</summary>
     property LicenseInfo: TLicenseInfo
       read GetLicenseInfo write fLicenseInfo;
 
-    ///  <summary>Information about the collection's copyright.</summary>
+    ///  <summary>Information about the vault's copyright.</summary>
     property CopyrightInfo: TCopyrightInfo
       read GetCopyrightInfo write fCopyrightInfo;
 
-    ///  <summary>List of acknowledgements.</summary>
+    ///  <summary>List of acknowledgements associated with a vault.</summary>
     property Acknowledgements: IStringList
       read GetAcknowledgements write fAcknowledgements;
   end;

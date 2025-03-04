@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Custom action used to request display of a snippet by key and collection ID.
+ * Custom action used to request display of a snippet by key and vault ID.
 }
 
 
@@ -19,7 +19,7 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   IntfNotifier;
 
 
@@ -32,15 +32,15 @@ type
   ///  Custom action used to request display of a snippet.
   ///  </summary>
   ///  <remarks>
-  ///  Required snippet is uniquely identified by its key and collection ID.
+  ///  Required snippet is uniquely identified by its key and vault ID.
   ///  </remarks>
   TSnippetAction = class(TBasicAction, ISetNotifier)
   strict private
     var
       ///  <summary>Value of Key property.</summary>
       fKey: string;
-      ///  <summary>Value of CollectionID property.</summary>
-      fCollectionID: TCollectionID;
+      ///  <summary>Value of VaultID property.</summary>
+      fVaultID: TVaultID;
       ///  <summary>Value of NewTab property.</summary>
       fNewTab: Boolean;
       ///  <summary>Reference to Notifier object.</summary>
@@ -61,9 +61,9 @@ type
     procedure SetNotifier(const Notifier: INotifier);
     ///  <summary>Key of snippet to be displayed.</summary>
     property Key: string read fKey write fKey;
-    ///  <summary>ID of the collection containing the snippet to be displayed.
+    ///  <summary>ID of the vault containing the snippet to be displayed.
     ///  </summary>
-    property CollectionID: TCollectionID read fCollectionID write fCollectionID;
+    property VaultID: TVaultID read fVaultID write fVaultID;
     ///  <summary>Flag indicating if snippet is to be displayed in a new detail
     ///  pane tab.</summary>
     property NewTab: Boolean read fNewTab write fNewTab;
@@ -89,7 +89,7 @@ begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
   Assert(Key <> '', ClassName + '.Execute: Key not provided');
 
-  Snippet := Database.Snippets.Find(Key, fCollectionID);
+  Snippet := Database.Snippets.Find(Key, fVaultID);
   Assert(Assigned(Snippet), ClassName + '.Execute: Key not valid');
 
   // Create a view item for snippet and get notifier to display it

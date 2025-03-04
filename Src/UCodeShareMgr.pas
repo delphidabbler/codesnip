@@ -59,8 +59,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UCollections,
   DB.UMain,
+  DB.Vaults,
   FmCodeExportDlg,
   FmCodeImportDlg,
   UCodeImportMgr;

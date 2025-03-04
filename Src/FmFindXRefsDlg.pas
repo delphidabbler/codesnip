@@ -130,7 +130,7 @@ uses
   SysUtils,
   Graphics,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UColours,
   UCtrlArranger,
   UPreferences,
@@ -235,7 +235,7 @@ begin
   // Set label font styles and colours
   lblSnippetName.Font.Style := [fsBold];
   lblSnippetName.Font.Color :=
-    Preferences.GetSnippetHeadingColour(fSnippet.CollectionID);
+    Preferences.GetSnippetHeadingColour(fSnippet.VaultID);
   // Display selected snippet name in appropriate controls
   lblSnippetName.Caption := fSnippet.DisplayName;
   chkIncludeSnippet.Caption := Format(

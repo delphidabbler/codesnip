@@ -22,8 +22,8 @@ uses
   // Project
   ActiveText.UMain,
   DB.UCategory,
-  DB.UCollections,
   DB.USnippet,
+  DB.Vaults,
   SWAG.UCommon;
 
 
@@ -62,9 +62,9 @@ type
     ///  </summary>
     function BuildSnippetInfo(const SWAGPacket: TSWAGPacket):
       TSnippetEditData;
-    ///  <summary>Imports (i.e. adds) the given SWAG packet into the user
-    ///  database as a CodeSnip format snippet.</summary>
-    procedure ImportPacketAsSnippet(const ACollectionID: TCollectionID;
+    ///  <summary>Imports (i.e. adds) the given SWAG packet into the specified
+    ///  vault.</summary>
+    procedure ImportPacketAsSnippet(const AVaultID: TVaultID;
       const SWAGPacket: TSWAGPacket);
 
     class procedure EnsureSWAGCategoryExists;
@@ -82,11 +82,13 @@ type
     procedure IncludePacket(const SWAGPacket: TSWAGPacket);
     ///  <summary>Imports all the required SWAG packets into the user database
     ///  as new snippets.</summary>
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] Vault into which packets
+    ///  are imported.</param>
     ///  <param name="Callback">TProgressCallback [in] Optional callback to be
     ///  called after each SWAG packet is imported.</param>
     ///  <remarks>The packets that are imported are those that have been
     ///  recorded by calling IncludePacket.</remarks>
-    procedure Import(const ACollectionID: TCollectionID;
+    procedure Import(const AVaultID: TVaultID;
       const Callback: TProgressCallback = nil);
     ///  <summary>Description of the category in the user database used for all
     ///  imported SWAG packets.</summary>
@@ -256,7 +258,7 @@ begin
   Result := fExtraBoilerplate;
 end;
 
-procedure TSWAGImporter.Import(const ACollectionID: TCollectionID;
+procedure TSWAGImporter.Import(const AVaultID: TVaultID;
   const Callback: TProgressCallback);
 var
   SWAGPacket: TSWAGPacket;
@@ -265,21 +267,19 @@ begin
   begin
     if Assigned(Callback) then
       Callback(SWAGPacket);
-    ImportPacketAsSnippet(ACollectionID, SWAGPacket);
+    ImportPacketAsSnippet(AVaultID, SWAGPacket);
   end;
 end;
 
 procedure TSWAGImporter.ImportPacketAsSnippet(
-  const ACollectionID: TCollectionID; const SWAGPacket: TSWAGPacket);
+  const AVaultID: TVaultID; const SWAGPacket: TSWAGPacket);
 var
-  SnippetKey: string;                // unique ID of new snippet
+  SnippetKey: string;                 // unique ID of new snippet
   SnippetDetails: TSnippetEditData;   // data describing new snippet
 begin
-  SnippetKey := (Database as IDatabaseEdit).GetUniqueSnippetKey(ACollectionID);
+  SnippetKey := (Database as IDatabaseEdit).GetUniqueSnippetKey(AVaultID);
   SnippetDetails := BuildSnippetInfo(SWAGPacket);
-  (Database as IDatabaseEdit).AddSnippet(
-    SnippetKey, ACollectionID, SnippetDetails
-  );
+  (Database as IDatabaseEdit).AddSnippet(SnippetKey, AVaultID, SnippetDetails);
 end;
 
 procedure TSWAGImporter.IncludePacket(const SWAGPacket: TSWAGPacket);

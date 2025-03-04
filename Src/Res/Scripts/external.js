@@ -24,13 +24,13 @@ function configCompilers() {
 /*
  * Calls external object to get host application to display a named snippet.
  *  @param string snippet [in] Key of snippet to be displayed.
- *  @param string collectionId [in] Hex string representation of collection
- *    to which the snippet belongs.
+ *  @param string vaultId [in] Hex string representation of the vault to which
+ *    the snippet belongs.
  *  @return False.
  */
-function displaySnippet(snippet, collectionId) {
+function displaySnippet(snippet, vaultId) {
   var e = window.event;
-  external.DisplaySnippet(snippet, collectionId, e.ctrlKey);
+  external.DisplaySnippet(snippet, vaultId, e.ctrlKey);
   return false;
 }
 
@@ -49,11 +49,12 @@ function displayCategory(catid) {
  * Calls external object to get host application to edit a named snippet.
  *  @param string snippet [in] Key of snippet to be edited. Must be user
  *    defined.
- *  @param string collectionId [in] Hex string representation of collection
+ *  @param string vaultId [in] Hex string representation of the vault to which
+ *  the snippet belongs.
  *  @return False.
  */
-function editSnippet(snippet, collectionId) {
-  external.EditSnippet(snippet, collectionId);
+function editSnippet(snippet, vaultId) {
+  external.EditSnippet(snippet, vaultId);
   return false;
 }
 

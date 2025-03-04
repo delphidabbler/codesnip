@@ -18,9 +18,9 @@ interface
 uses
   // Project
   ActiveText.UMain,
-  DB.UCollections,
   DB.USnippet,
   DB.USnippetKind,
+  DB.Vaults,
   UBaseObjects,
   UStructs;
 
@@ -60,8 +60,8 @@ type
     ///  </summary>
     ///  <param name="AKey"><c>string</c> [in] Key of snippet for which
     ///  dependencies are to be checked.</param>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> [in] ID of the
-    ///  collection to which snippet belongs.</param>
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of the vault to which
+    ///  the snippet belongs.</param>
     ///  <param name="AData"><c>TSnippetEditData</c> [in] Data describing
     ///  properties and references of snippet for which dependencies are to be
     ///  checked.</param>
@@ -70,7 +70,7 @@ type
     ///  <returns><c>Boolean</c>. <c>True</c> if dependency list is valid or
     ///  <c>False</c> if not.</returns>
     class function ValidateDependsList(const AKey: string;
-      const ACollectionID: TCollectionID; const AData: TSnippetEditData;
+      const AVaultID: TVaultID; const AData: TSnippetEditData;
       out AErrorMsg: string): Boolean; overload;
 
     class function ValidateSourceCode(const Source: string;
@@ -268,22 +268,13 @@ begin
 end;
 
 class function TSnippetValidator.ValidateDependsList(const AKey: string;
-  const ACollectionID: TCollectionID; const AData: TSnippetEditData;
+  const AVaultID: TVaultID; const AData: TSnippetEditData;
   out AErrorMsg: string): Boolean;
-  {Recursively checks dependency list of a snippet for validity.
-    @param SnippetKey [in] Key of snippet for which dependencies are to be
-      checked.
-    @param Data [in] Data describing properties and references of snippet for
-      which dependencies are to be checked.
-    @param ErrorMsg [out] Message that describes error. Undefined if True
-      returned.
-    @return True if dependency list is valid or False if not.
-  }
 var
   TempSnippet: TSnippet;  // temporary snippet that is checked for dependencies
 begin
   TempSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
-    AKey, ACollectionID, AData
+    AKey, AVaultID, AData
   );
   try
     Result := ValidateDependsList(TempSnippet, AErrorMsg);

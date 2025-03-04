@@ -90,21 +90,20 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Caption = 'Displa&y Name:'
           FocusControl = edDisplayName
         end
-        object lblCollection: TLabel
+        object lblVaults: TLabel
           Left = 3
           Top = 10
-          Width = 50
+          Width = 28
           Height = 13
-          Caption = 'C&ollection:'
-          FocusControl = cbCollection
+          Caption = '&Vault:'
+          FocusControl = cbVaults
         end
-        object lblCollectionInfo: TLabel
+        object lblVaultInfo: TLabel
           Left = 411
           Top = 10
-          Width = 76
+          Width = 54
           Height = 13
-          Caption = 'lblCollectionInfo'
-          FocusControl = cbCollection
+          Caption = 'lblVaultInfo'
         end
         object edSourceCode: TMemo
           Left = 4
@@ -191,7 +190,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Caption = 'Synta&x highlight this snippet as Pascal code'
           TabOrder = 7
         end
-        object cbCollection: TComboBox
+        object cbVaults: TComboBox
           Left = 93
           Top = 7
           Width = 298

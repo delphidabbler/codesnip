@@ -18,11 +18,22 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes, Buttons, Menus,
+  Forms,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
+  Buttons,
+  Menus,
   // Project
-  DB.UCollections,
-  DB.USnippet, FmGenericOKDlg, FrCheckedTV, FrSelectSnippets,
-  FrSelectSnippetsBase, UBaseObjects, USearch;
+  DB.USnippet,
+  DB.Vaults,
+  FmGenericOKDlg,
+  FrCheckedTV,
+  FrSelectSnippets,
+  FrSelectSnippetsBase,
+  UBaseObjects,
+  USearch;
 
 
 type
@@ -40,12 +51,12 @@ type
     btnExpandAll: TButton;
     btnCollapseAll: TButton;
     lblOverwriteSearch: TLabel;
-    btnCollection: TBitBtn;
-    mnuCollections: TPopupMenu;
+    btnVaults: TBitBtn;
+    mnuVaults: TPopupMenu;
     procedure btnClearAllClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
-    procedure btnCollectionClick(Sender: TObject);
+    procedure btnVaultsClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnExpandAllClick(Sender: TObject);
     procedure btnCollapseAllClick(Sender: TObject);
@@ -62,23 +73,23 @@ type
         @param Sender [in] Not used.
       }
 
-    ///  <summary>Selects all snippets from the given collection.</summary>
-    ///  <param name="ACollectionID"><c>TCollectionID</c> ID of the required
-    ///  collection.</param>
-    procedure SelectDB(const ACollectionID: TCollectionID);
+    ///  <summary>Selects all snippets from the given vault.</summary>
+    ///  <param name="AVaultID"><c>TVaultID</c> ID of the required vault.
+    ///  </param>
+    procedure SelectDB(const AVaultID: TVaultID);
 
-    ///  <summary>Populates collections pop-up menu with menu items.</summary>
-    procedure PopulateCollectionsMenu;
+    ///  <summary>Populates vault pop-up menu with menu items.</summary>
+    procedure PopulateVaultsMenu;
 
-    ///  <summary>Handles clicks on collection menu items. Selects snippets
-    ///  belonging to the selected collection.</summary>
-    procedure CollectionMenuClick(Sender: TObject);
+    ///  <summary>Handles clicks on vault menu items. Selects snippets belonging
+    ///  to the selected vault.</summary>
+    procedure VaultMenuClick(Sender: TObject);
 
   strict protected
 
     procedure ConfigForm; override;
 
-    ///  <summary>Initialises form. Populates collections menu and collapses
+    ///  <summary>Initialises form. Populates vaults menu and collapses
     ///  treeview.</summary>
     procedure InitForm; override;
 
@@ -118,24 +129,23 @@ uses
 type
   ///  <summary>Custom menu item with additional property to store a compiler
   ///  version.</summary>
-  TCollectionMenuItem = class(TMenuItem)
+  TVaultMenuItem = class(TMenuItem)
   strict private
     var
-      ///  <summary>Value of CompilerVer property</summary>
-      fCollection: TCollection;
+      ///  <summary>Value of <c>Vault</c> property</summary>
+      fVault: TVault;
   public
     ///  <summary>Constructs a menu item with all required properties and event
     ///  handlers.</summary>
     ///  <param name="AOwner">TComponent [in] Menu item's owner.</param>
-    ///  <param name="ACollection"><c>TCollection</c> [in] Collection whose name
-    ///  is displayed in menu item.</param>
+    ///  <param name="AVault"><c>TVault</c> [in] Vault whose name is
+    ///  displayed in menu item.</param>
     ///  <param name="AClickHandler">TNotifyEvent [in] Reference to an event
     ///  handler for menu item's OnClick event.</param>
-    constructor Create(AOwner: TComponent;  const ACollection: TCollection;
+    constructor Create(AOwner: TComponent; const AVault: TVault;
       const AClickHandler: TNotifyEvent); reintroduce;
-    ///  <summary>Version number of compiler whose name is displayed in menu
-    ///  item's caption.</summary>
-    property Collection: TCollection read fCollection write fCollection;
+    ///  <summary>Vault whose name is displayed in the menu item.</summary>
+    property Vault: TVault read fVault write fVault;
   end;
 
 { TSelectionSearchDlg }
@@ -163,14 +173,14 @@ begin
   frmSelect.CollapseTree;
 end;
 
-procedure TSelectionSearchDlg.btnCollectionClick(Sender: TObject);
+procedure TSelectionSearchDlg.btnVaultsClick(Sender: TObject);
 var
   PopupPos: TPoint; // place where menu pops up
 begin
   PopupPos := ClientToScreen(
-    Point(btnCollection.Left, btnCollection.Top + btnCollection.Height)
+    Point(btnVaults.Left, btnVaults.Top + btnVaults.Height)
   );
-  mnuCollections.Popup(PopupPos.X, PopupPos.Y);
+  mnuVaults.Popup(PopupPos.X, PopupPos.Y);
 end;
 
 procedure TSelectionSearchDlg.btnExpandAllClick(Sender: TObject);
@@ -202,11 +212,6 @@ begin
   // Storing all snippets in database in snippet selection frame's
   // SelectedSnippets property causes all snippets to be selected
   frmSelect.SelectedSnippets := Database.Snippets;
-end;
-
-procedure TSelectionSearchDlg.CollectionMenuClick(Sender: TObject);
-begin
-  SelectDB((Sender as TCollectionMenuItem).Collection.UID);
 end;
 
 procedure TSelectionSearchDlg.ConfigForm;
@@ -256,29 +261,27 @@ procedure TSelectionSearchDlg.InitForm;
 begin
   inherited;
   frmSelect.CollapseTree;
-  PopulateCollectionsMenu;
+  PopulateVaultsMenu;
 end;
 
-procedure TSelectionSearchDlg.PopulateCollectionsMenu;
+procedure TSelectionSearchDlg.PopulateVaultsMenu;
 
-  ///  Adds a menu item for given collection to the pop-up menu.
-  procedure AddMenuItem(const ACollection: TCollection);
+  ///  Adds a menu item for given vault to the pop-up menu.
+  procedure AddMenuItem(const AVault: TVault);
   begin
-    mnuCollections.Items.Add(
-      TCollectionMenuItem.Create(
-        mnuCollections, ACollection, CollectionMenuClick
-      )
+    mnuVaults.Items.Add(
+      TVaultMenuItem.Create(mnuVaults, AVault, VaultMenuClick)
     );
   end;
 
 var
-  Collection: TCollection;
+  Vault: TVault;
 begin
-  for Collection in TCollections.Instance do
-    AddMenuItem(Collection);
+  for Vault in TVaults.Instance do
+    AddMenuItem(Vault);
 end;
 
-procedure TSelectionSearchDlg.SelectDB(const ACollectionID: TCollectionID);
+procedure TSelectionSearchDlg.SelectDB(const AVaultID: TVaultID);
 var
   Snippet: TSnippet;          // references each snippet in database
   SnippetList: TSnippetList;  // list of selected snippets
@@ -286,7 +289,7 @@ begin
   SnippetList := TSnippetList.Create;
   try
     for Snippet in Database.Snippets do
-      if Snippet.CollectionID = ACollectionID then
+      if Snippet.VaultID = AVaultID then
         SnippetList.Add(Snippet);
     frmSelect.SelectedSnippets := SnippetList;
   finally
@@ -312,14 +315,19 @@ begin
   frmSelect.SelectedSnippets := Value;
 end;
 
-{ TCollectionMenuItem }
+procedure TSelectionSearchDlg.VaultMenuClick(Sender: TObject);
+begin
+  SelectDB((Sender as TVaultMenuItem).Vault.UID);
+end;
 
-constructor TCollectionMenuItem.Create(AOwner: TComponent;
-  const ACollection: TCollection; const AClickHandler: TNotifyEvent);
+{ TVaultMenuItem }
+
+constructor TVaultMenuItem.Create(AOwner: TComponent; const AVault: TVault;
+  const AClickHandler: TNotifyEvent);
 begin
   inherited Create(AOwner);
-  Caption := ACollection.Name;
-  Collection := ACollection;
+  Caption := AVault.Name;
+  Vault := AVault;
   OnClick := AClickHandler;
 end;
 

@@ -1,5 +1,5 @@
-inherited DeleteUserDBDlg: TDeleteUserDBDlg
-  Caption = 'Delete All Snippets From Collection'
+inherited DeleteVaultDlg: TDeleteVaultDlg
+  Caption = 'Delete All Snippets From A Vault'
   ExplicitWidth = 474
   ExplicitHeight = 375
   PixelsPerInch = 96
@@ -13,13 +13,13 @@ inherited DeleteUserDBDlg: TDeleteUserDBDlg
       Caption = 'Confirm &deletion:'
       FocusControl = edConfirm
     end
-    object lblCollection: TLabel
+    object lblVaults: TLabel
       Left = 0
       Top = 224
-      Width = 87
+      Width = 67
       Height = 13
-      Caption = 'Choose &collection:'
-      FocusControl = cbCollection
+      Caption = 'Choose &vault:'
+      FocusControl = cbVaults
     end
     object edConfirm: TEdit
       Left = 120
@@ -35,6 +35,7 @@ inherited DeleteUserDBDlg: TDeleteUserDBDlg
       Height = 210
       Align = alTop
       TabOrder = 0
+      TabStop = True
       ExplicitWidth = 369
       ExplicitHeight = 210
       inherited pnlBrowser: TPanel
@@ -56,7 +57,7 @@ inherited DeleteUserDBDlg: TDeleteUserDBDlg
         end
       end
     end
-    object cbCollection: TComboBox
+    object cbVaults: TComboBox
       Left = 120
       Top = 221
       Width = 249

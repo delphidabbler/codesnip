@@ -52,7 +52,7 @@ implementation
 
 
 uses
-  DB.UCollections;
+  DB.Vaults;
 
 
 {$R *.dfm}

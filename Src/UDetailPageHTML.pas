@@ -68,9 +68,9 @@ uses
   // Project
   Compilers.UGlobals,
   Compilers.UCompilers,
-  DB.UCollections,
   DB.UMain,
   DB.USnippet,
+  DB.Vaults,
   UConsts,
   UContainers,
   UCSSUtils,
@@ -414,9 +414,9 @@ end;
 
 procedure TWelcomePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 var
-  Collection: TCollection;
-  CollectionCount: Integer;
-  CollectionList: TStringBuilder;
+  Vault: TVault;
+  VaultCount: Integer;
+  VaultList: TStringBuilder;
   Compilers: ICompilers;
   Compiler: ICompiler;
   CompilerList: TStringBuilder;
@@ -426,23 +426,21 @@ begin
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
-  CollectionCount := TCollections.Instance.Count;
-  Tplt.ResolvePlaceholderHTML(
-    'CollectionCount', IntToStr(CollectionCount)
-  );
+  VaultCount := TVaults.Instance.Count;
+  Tplt.ResolvePlaceholderHTML('VaultCount', IntToStr(VaultCount));
 
-  CollectionList := TStringBuilder.Create;
+  VaultList := TStringBuilder.Create;
   try
-    for Collection in TCollections.Instance do
-      CollectionList.AppendLine(
+    for Vault in TVaults.Instance do
+      VaultList.AppendLine(
         THTML.CompoundTag(
           'li',
-          THTML.Entities(Collection.Name)
+          THTML.Entities(Vault.Name)
         )
       );
-    Tplt.ResolvePlaceholderHTML('CollectionList', CollectionList.ToString);
+    Tplt.ResolvePlaceholderHTML('VaultList', VaultList.ToString);
   finally
-    CollectionList.Free;
+    VaultList.Free;
   end;
 
   Compilers := TCompilersFactory.CreateAndLoadCompilers;
@@ -515,7 +513,7 @@ begin
   Tplt.ResolvePlaceholderText(
     'EditEventHandler',
     TJavaScript.LiteralFunc(
-      'editSnippet', [GetSnippet.Key, GetSnippet.CollectionID.ToHexString]
+      'editSnippet', [GetSnippet.Key, GetSnippet.VaultID.ToHexString]
     )
   );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);

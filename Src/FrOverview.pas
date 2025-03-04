@@ -18,11 +18,25 @@ interface
 
 uses
   // Delphi
-  ComCtrls, Controls, Classes, Windows, ExtCtrls, StdCtrls, ToolWin, Menus,
+  ComCtrls,
+  Controls,
+  Classes,
+  Windows,
+  ExtCtrls,
+  StdCtrls,
+  ToolWin,
+  Menus,
   // Project
-  DB.UCollections,
-  DB.USnippet, FrTitled, IntfFrameMgrs, IntfNotifier, UCommandBars,
-  UOverviewTreeState, USnippetsTVDraw, UView, UViewItemTreeNode;
+  DB.USnippet,
+  DB.Vaults,
+  FrTitled,
+  IntfFrameMgrs,
+  IntfNotifier,
+  UCommandBars,
+  UOverviewTreeState,
+  USnippetsTVDraw,
+  UView,
+  UViewItemTreeNode;
 
 
 type
@@ -75,14 +89,13 @@ type
       }
       TTVDraw = class(TSnippetsTVDraw)
       strict protected
-        ///  <summary>Gets the collection ID, if any, associated with a  tree
-        ///  node.</summary>
+        ///  <summary>Gets the vault ID, if any, associated with a tree node.
+        ///  </summary>
         ///  <param name="Node"><c>TTreeNode</c> [in] Node to be checked.
         ///  </param>
-        ///  <returns><c>TCollectionID</c>. Associated collection ID. If
-        ///  <c>Node</c> has no associated collection then a null collection ID
-        ///  is returned.</returns>
-        function GetCollectionID(const Node: TTreeNode): TCollectionID;
+        ///  <returns><c>TVaultID</c>. Associated vault ID. If <c>Node</c> has
+        ///  no associated vault then a null vault ID is returned.</returns>
+        function GetVaultID(const Node: TTreeNode): TVaultID;
           override;
 
         function IsSectionHeadNode(const Node: TTreeNode): Boolean;
@@ -964,8 +977,7 @@ end;
 
 { TOverviewFrame.TTVDraw }
 
-function TOverviewFrame.TTVDraw.GetCollectionID(const Node: TTreeNode):
-  TCollectionID;
+function TOverviewFrame.TTVDraw.GetVaultID(const Node: TTreeNode): TVaultID;
 var
   ViewItem: IView;              // view item represented by node
   SnippetView: ISnippetView;    // view item if node represents a snippet
@@ -973,9 +985,9 @@ begin
   // TODO -cBug: Exception reported as issue #70 could have moved here
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
   if Supports(ViewItem, ISnippetView, SnippetView) then
-    Result := SnippetView.Snippet.CollectionID
+    Result := SnippetView.Snippet.VaultID
   else
-    Result := TCollectionID.CreateNull;
+    Result := TVaultID.CreateNull;
 end;
 
 function TOverviewFrame.TTVDraw.IsSectionHeadNode(

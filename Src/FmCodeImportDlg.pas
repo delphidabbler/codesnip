@@ -25,11 +25,11 @@ uses
   ExtCtrls,
   Forms,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   FmWizardDlg,
   UBaseObjects,
   UCodeImportMgr,
-  UCollectionListAdapter;
+  UI.Adapters.VaultList;
 
 type
   ///  <summary>
@@ -54,9 +54,9 @@ type
     lblModifyInstructions: TLabel;
     lblFinish: TLabel;
     sbFinish: TScrollBox;
-    tsCollection: TTabSheet;
-    lblCollection: TLabel;
-    cbCollection: TComboBox;
+    tsVault: TTabSheet;
+    lblVaults: TLabel;
+    cbVaults: TComboBox;
     ///  <summary>Handles clicks on list view check boxes.</summary>
     procedure lvImportsItemChecked(Sender: TObject; Item: TListItem);
     ///  <summary>Handles request to display open file dialog box to get import
@@ -72,7 +72,7 @@ type
       // Indices of wizard pages
       cIntroPage      = 0;
       cFilePage       = 1;
-      cCollectionPage = 2;
+      cVaultPage      = 2;
       cUpdatePage     = 3;
       cFinishPage     = 4;
       // Index of subitems in list view
@@ -81,10 +81,9 @@ type
       ///  <summary>Reference to import manager object used to perform import
       ///  operations.</summary>
       fImportMgr: TCodeImportMgr;
-      ///  <summary>Object that populates <c>cbCollection</c> with an
-      ///  alphabetical list of collection names and manages interaction with
-      ///  it.</summary>
-      fCollList: TCollectionListAdapter;
+      ///  <summary>Object that populates <c>cbVaults</c> with an alphabetical
+      ///  list of vault names and manages interaction with it.</summary>
+      fVaultList: TVaultListAdapter;
     ///  <summary>Validates entries on wizard pages indetified by the page
     ///  index.</summary>
     procedure ValidatePage(const PageIdx: Integer);
@@ -117,9 +116,9 @@ type
     procedure UpdateDatabase;
     ///  <summary>Displays names of imported snippets on finish page.</summary>
     procedure PresentResults;
-    ///  <summary>Gets the ID of the collection into which all snippets are to
-    ///  be imported.</summary>
-    function GetCollectionID: TCollectionID;
+    ///  <summary>Gets the ID of the vault into which all snippets are to be
+    ///  imported.</summary>
+    function GetVaultID: TVaultID;
   strict protected
     ///  <summary>Protected constructor that sets up object to use given import
     ///  manager object.</summary>
@@ -221,9 +220,9 @@ begin
   );
   lblLoadFile.Top := TCtrlArranger.BottomOf([edFile, btnBrowse], 12);
 
-  // tsCollection
-  cbCollection.Top := TCtrlArranger.BottomOf(lblCollection, 6);
-  cbCollection.Width := tsCollection.Width;
+  // tsVault
+  cbVaults.Top := TCtrlArranger.BottomOf(lblVaults, 6);
+  cbVaults.Width := tsVault.Width;
 
   // tsUpdate
   lblImportList.Top := TCtrlArranger.BottomOf(lblModifyInstructions, 8);
@@ -291,7 +290,7 @@ end;
 procedure TCodeImportDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fCollList := TCollectionListAdapter.Create;
+  fVaultList := TVaultListAdapter.Create;
 end;
 
 procedure TCodeImportDlg.FormDestroy(Sender: TObject);
@@ -299,17 +298,10 @@ var
   Idx: Integer;
 begin
   inherited;
-  fCollList.Free;
+  fVaultList.Free;
   // Free the TBox<> objects stored in list item data pointer
   for Idx := Pred(lvImports.Items.Count) downto 0 do
     TObject(lvImports.Items[Idx].Data).Free;
-end;
-
-function TCodeImportDlg.GetCollectionID: TCollectionID;
-begin
-  Assert(cbCollection.ItemIndex >= 0,
-    ClassName + '.GetCollectionID: no collection selected');
-  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
 end;
 
 function TCodeImportDlg.GetFileNameFromEditCtrl: string;
@@ -317,19 +309,26 @@ begin
   Result := StrTrim(edFile.Text);
 end;
 
+function TCodeImportDlg.GetVaultID: TVaultID;
+begin
+  Assert(cbVaults.ItemIndex >= 0,
+    ClassName + '.GetVaultID: no vault selected');
+  Result := fVaultList.Vault(cbVaults.ItemIndex).UID;
+end;
+
 function TCodeImportDlg.HeadingText(const PageIdx: Integer): string;
 resourcestring
   // Page headings
   sIntroPageheading = 'Import snippets from a file';
   sFilePage = 'Choose import file';
-  sCollectionPage = 'Choose a collection';
+  sVaultPage = 'Choose a vault';
   sUpdatePage = 'Edit import and update database';
   sFinishPage = 'Import complete';
 begin
   case PageIdx of
     cIntroPage:       Result := sIntroPageheading;
     cFilePage:        Result := sFilePage;
-    cCollectionPage:  Result := sCollectionPage;
+    cVaultPage:       Result := sVaultPage;
     cUpdatePage:      Result := sUpdatePage;
     cFinishPage:      Result := sFinishPage;
   end;
@@ -337,14 +336,13 @@ end;
 
 procedure TCodeImportDlg.InitForm;
 begin
-  fCollList.ToStrings(cbCollection.Items);
-  Assert(cbCollection.Items.Count > 0, ClassName + '.InitForm: no collections');
-  Assert(TCollections.Instance.ContainsID(TCollectionID.Default),
-    ClassName + '.InitForm: default collection not found');
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
-  Assert(cbCollection.ItemIndex >= 0,
-    ClassName + '.InitForm: default collection name not in cbCollection');
-
+  fVaultList.ToStrings(cbVaults.Items);
+  Assert(cbVaults.Items.Count > 0, ClassName + '.InitForm: no vaults');
+  Assert(TVaults.Instance.ContainsID(TVaultID.Default),
+    ClassName + '.InitForm: default vault not found');
+  cbVaults.ItemIndex := fVaultList.IndexOfUID(TVaultID.Default);
+  Assert(cbVaults.ItemIndex >= 0,
+    ClassName + '.InitForm: default vault name not in cbVaults');
   inherited;
 end;
 
@@ -385,7 +383,7 @@ constructor TCodeImportDlg.InternalCreate(AOwner: TComponent;
 begin
   inherited InternalCreate(AOwner);
   fImportMgr := ImportMgr;
-  fImportMgr.RequestCollectionCallback := GetCollectionID;
+  fImportMgr.RequestVaultCallback := GetVaultID;
 end;
 
 procedure TCodeImportDlg.lvImportsItemChecked(Sender: TObject; Item: TListItem);

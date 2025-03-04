@@ -15,7 +15,7 @@ unit UUserDBMgr;
 interface
 
 {TODO -cRefactoring: Rename this unit/classes/methods: the names refer to the
-        CodeSnip 4 database structure but the code now works with collections}
+        CodeSnip 4 database structure but the code now works with vaults}
 
 uses
   // Delphi
@@ -78,10 +78,10 @@ type
     ///  <summary>Moves the user database to a new location specified by the
     ///  user.</summary>
     class procedure MoveDatabase;
-    ///  <summary>Deletes all the snippets in a collection specified by the
-    ///  user.</summary>
-    ///  <returns><c>Boolean</c>. <c>True</c> if the collection's data was
-    ///  deleted, <c>False</c> otherwise.</returns>
+    ///  <summary>Deletes all the snippets in a vault specified by the user.
+    ///  </summary>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the vault's data was deleted,
+    ///  <c>False</c> otherwise.</returns>
     class function DeleteDatabase: Boolean;
   end;
 
@@ -96,18 +96,18 @@ uses
   Windows {for inlining},
   IOUtils,
   // Project
-  DB.UCollections,
   DB.UMain,
   DB.USnippet,
+  DB.Vaults,
   FmAddCategoryDlg,
-  FmCollectionBackup,
+  UI.Forms.BackupVaultDlg,
   FmDeleteCategoryDlg,
-  FmDeleteUserDBDlg,
+  UI.Forms.DeleteVaultDlg,
   FmDuplicateSnippetDlg,
   FmRenameCategoryDlg,
   FmSnippetsEditorDlg,
   {$IFNDEF PORTABLE}
-  FmUserDataPathDlg,
+  UI.Forms.MoveVaultDlg,
   {$ENDIF}
   FmWaitDlg,
   UAppInfo,
@@ -115,7 +115,7 @@ uses
   UExceptions,
   UIStringList,
   UMessageBox,
-  UUserDBBackup,
+  VaultBackup,
   UWaitForThreadUI;
 
 type
@@ -180,28 +180,27 @@ type
         var
           ///  <summary>Name of backup file to be restored.</summary>
           fBakFileName: string;
-
-          fCollection: TCollection;
+      
+          fVault: TVault;
       strict protected
         ///  <summary>Restores the user database from a backup.</summary>
         procedure Execute; override;
       public
         ///  <summary>Constructs a new, suspended, thread that can restore the
-        ///  database from the given backup file.</summary>
-        constructor Create(const BakFileName: string;
-          const ACollection: TCollection);
+        ///  given vault from the given backup file.</summary>
+        constructor Create(const BakFileName: string; const AVault: TVault);
       end;
   public
-    ///  <summary>Performs a user database restoration operation from in a
-    ///  background thread and displays a wait diaogue box if the operation
-    ///  takes more than a given time to execute. Blocks until the thread
-    ///  terminates.</summary>
+    ///  <summary>Performs the restoration of a vault from a background thread
+    ///  and displays a wait diaogue box if the operation takes more than a
+    ///  given time to execute. Blocks until the thread terminates.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
     ///  box, over which it is aligned.</param>
     ///  <param name="BakFileName">string [in] Name of backup file to be
     ///  restored.</param>
+    ///  <param name="AVault"><c>TVault</c> Vault being restored.</param>
     class procedure Execute(AOwner: TComponent; const BakFileName: string;
-      const ACollection: TCollection);
+      const AVault: TVault);
   end;
 
 type
@@ -217,26 +216,26 @@ type
           ///  <summary>Name of backup file to be created.</summary>
           fBakFileName: string;
 
-          fCollection: TCollection;
+          fVault: TVault;
       strict protected
         ///  <summary>Backs up the user database.</summary>
         procedure Execute; override;
       public
         ///  <summary>Constructs a new, suspended, thread that can backup the
-        ///  database to the given backup file.</summary>
-        constructor Create(const BakFileName: string;
-          const ACollection: TCollection);
+        ///  given vault to the given backup file.</summary>
+        constructor Create(const BakFileName: string; const AVault: TVault);
       end;
   public
-    ///  <summary>Performs a user database backup operation from in a background
-    ///  thread and displays a wait diaogue box if the operation takes more than
-    ///  a given time to execute. Blocks until the thread terminates.</summary>
+    ///  <summary>Performs a vault backup operation in a background thread and
+    ///  displays a wait diaogue box if the operation takes more than a given
+    ///  time to execute. Blocks until the thread terminates.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
     ///  box, over which it is aligned.</param>
     ///  <param name="BakFileName">string [in] Name of backup file to be
     ///  created.</param>
+    ///  <param name="AVault"><c>TVault</c> Vault being backed up.</param>
     class procedure Execute(AOwner: TComponent; const BakFileName: string;
-      const ACollection: TCollection);
+      const AVault: TVault);
   end;
 
 { TUserDBMgr }
@@ -256,18 +255,18 @@ end;
 class procedure TUserDBMgr.BackupDatabase(ParentCtrl: TComponent);
 var
   FileName: string;
-  Collection: TCollection;
+  Vault: TVault;
 resourcestring
   sOverwritePrompt = '"%s" already exists. OK to overwrite?';
 begin
-  if TCollectionBackupDlg.Execute(ParentCtrl, FileName, Collection) then
+  if TVaultBackupDlg.Execute(ParentCtrl, FileName, Vault) then
   begin
     if TFile.Exists(FileName)
       and not TMessageBox.Confirm(
         ParentCtrl, Format(sOverwritePrompt, [FileName])
       ) then
       Exit;
-    TUserDBBackupUI.Execute(ParentCtrl, FileName, Collection);
+    TUserDBBackupUI.Execute(ParentCtrl, FileName, Vault);
   end;
 end;
 
@@ -322,13 +321,13 @@ end;
 
 class function TUserDBMgr.DeleteDatabase: Boolean;
 var
-  CollectionToDelete: TCollection;
+  VaultToDelete: TVault;
 begin
-  if not TDeleteUserDBDlg.Execute(nil, CollectionToDelete) then
+  if not TDeleteVaultDlg.Execute(nil, VaultToDelete) then
     Exit(False);
-  if not TDirectory.Exists(CollectionToDelete.Storage.Directory) then
+  if not TDirectory.Exists(VaultToDelete.Storage.Directory) then
     Exit(False);
-  TDirectory.Delete(CollectionToDelete.Storage.Directory, True);
+  TDirectory.Delete(VaultToDelete.Storage.Directory, True);
   Result := True;
 end;
 
@@ -417,7 +416,7 @@ class procedure TUserDBMgr.MoveDatabase;
 begin
   // This dialogue box not available in portable edition
   {$IFNDEF PORTABLE}
-  TUserDataPathDlg.Execute(nil);
+  TMoveVaultDlg.Execute(nil);
   {$ENDIF}
 end;
 
@@ -440,11 +439,11 @@ end;
 class function TUserDBMgr.RestoreDatabase(ParentCtrl: TComponent): Boolean;
 var
   FileName: string;
-  Collection: TCollection;
+  Vault: TVault;
 resourcestring
   sFileDoesNotExist = '"%s" does not exist.';
 begin
-  Result := TCollectionBackupDlg.Execute(ParentCtrl, FileName, Collection);
+  Result := TVaultBackupDlg.Execute(ParentCtrl, FileName, Vault);
   if Result then
   begin
     if not TFile.Exists(FileName) then
@@ -455,7 +454,7 @@ begin
       );
       Exit;
     end;
-    TUserDBRestoreUI.Execute(ParentCtrl, FileName, Collection);
+    TUserDBRestoreUI.Execute(ParentCtrl, FileName, Vault);
   end;
 end;
 
@@ -513,14 +512,14 @@ end;
 { TUserDBRestoreUI }
 
 class procedure TUserDBRestoreUI.Execute(AOwner: TComponent;
-  const BakFileName: string; const ACollection: TCollection);
+  const BakFileName: string; const AVault: TVault);
 resourcestring
   // Caption for wait dialog
-  sWaitCaption = 'Restoring database files...';
+  sWaitCaption = 'Restoring vault files...';
 var
   Thread: TRestoreThread;   // thread that performs restore operation
 begin
-  Thread := TRestoreThread.Create(BakFileName, ACollection);
+  Thread := TRestoreThread.Create(BakFileName, AVault);
   try
     RunThreadWithWaitDlg(Thread, AOwner, sWaitCaption);
   finally
@@ -531,18 +530,18 @@ end;
 { TUserDBRestoreUI.TRestoreThread }
 
 constructor TUserDBRestoreUI.TRestoreThread.Create(const BakFileName: string;
-  const ACollection: TCollection);
+  const AVault: TVault);
 begin
   inherited Create(True);
   fBakFileName := BakFileName;
-  fCollection := ACollection;
+  fVault := AVault;
 end;
 
 procedure TUserDBRestoreUI.TRestoreThread.Execute;
 var
-  UserDBBackup: TUserDBBackup;
+  UserDBBackup: TVaultBackup;
 begin
-  UserDBBackup := TUserDBBackup.Create(fBakFileName, fCollection);
+  UserDBBackup := TVaultBackup.Create(fBakFileName, fVault);
   try
     UserDBBackup.Restore;
   finally
@@ -553,14 +552,14 @@ end;
 { TUserDBBackupUI }
 
 class procedure TUserDBBackupUI.Execute(AOwner: TComponent;
-  const BakFileName: string; const ACollection: TCollection);
+  const BakFileName: string; const AVault: TVault);
 resourcestring
   // Caption for wait dialog
-  sWaitCaption = 'Backing up database...';
+  sWaitCaption = 'Backing up vault...';
 var
   Thread: TBackupThread;   // thread that performs restore operation
 begin
-  Thread := TBackupThread.Create(BakFileName, ACollection);
+  Thread := TBackupThread.Create(BakFileName, AVault);
   try
     RunThreadWithWaitDlg(Thread, AOwner, sWaitCaption);
   finally
@@ -571,21 +570,21 @@ end;
 { TUserDBBackupUI.TBackupThread }
 
 constructor TUserDBBackupUI.TBackupThread.Create(const BakFileName: string;
-  const ACollection: TCollection);
+  const AVault: TVault);
 begin
   inherited Create(True);
   fBakFileName := BakFileName;
-  fCollection := ACollection;
+  fVault := AVault;
 end;
 
 procedure TUserDBBackupUI.TBackupThread.Execute;
 var
-  UserDBBackup: TUserDBBackup;  // object used to perform backup
+  UserDBBackup: TVaultBackup;
 resourcestring
   // Dialog box caption
   sCaption = 'Save Backup';
 begin
-  UserDBBackup := TUserDBBackup.Create(fBakFileName, fCollection);
+  UserDBBackup := TVaultBackup.Create(fBakFileName, fVault);
   try
     UserDBBackup.Backup;
   finally

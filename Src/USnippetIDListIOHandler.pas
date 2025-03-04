@@ -65,7 +65,7 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UStrUtils,
   UTabSeparatedFileIO;
 
@@ -84,17 +84,17 @@ resourcestring
   sBadFileFormat = 'Invalid snippet ID list file format';
 var
   Key: string;
-  CollectionHex: string;
-  CollectionID: TCollectionID;
+  VaultHex: string;
+  VaultID: TVaultID;
 begin
   Key := StrTrim(AFields[0]);
   if Key = '' then
     raise ESnippetIDListFileReader.Create(sBadFileFormat);
-  CollectionHex := StrTrim(AFields[1]);
-  if CollectionHex = '' then
+  VaultHex := StrTrim(AFields[1]);
+  if VaultHex = '' then
     raise ESnippetIDListFileReader.Create(sBadFileFormat);
-  CollectionID := TCollectionID.CreateFromHexString(CollectionHex);
-  fSnippetIDs.Add(TSnippetID.Create(Key, CollectionID));
+  VaultID := TVaultID.CreateFromHexString(VaultHex);
+  fSnippetIDs.Add(TSnippetID.Create(Key, VaultID));
 end;
 
 function TSnippetIDListFileReader.ReadFile(const FileName: string):
@@ -110,7 +110,7 @@ begin
     except
       on E: ETabSeparatedReader do
         raise ESnippetIDListFileReader.Create(E);
-      on E: ECollectionID do
+      on E: EVaultID do
         raise ESnippetIDListFileReader.Create(E);
       else
         raise;
@@ -145,7 +145,7 @@ begin
   try
     try
       for SnippetID in SnippetIDs do
-        TSVWriter.WriteLine([SnippetID.Key, SnippetID.CollectionID.ToHexString]);
+        TSVWriter.WriteLine([SnippetID.Key, SnippetID.VaultID.ToHexString]);
     finally
       TSVWriter.Free;
     end;

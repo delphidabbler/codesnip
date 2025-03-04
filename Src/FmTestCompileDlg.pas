@@ -160,7 +160,7 @@ uses
   Graphics,
   Types {for inlining},
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UColours,
   UCtrlArranger,
   UFontHelper,
@@ -289,7 +289,7 @@ begin
   // Set required label fonts and captions
   TFontHelper.SetDefaultBaseFont(lblSnippetName.Font);
   lblSnippetName.Font.Color :=
-    Preferences.GetSnippetHeadingColour(fSnippet.CollectionID);
+    Preferences.GetSnippetHeadingColour(fSnippet.VaultID);
   lblSnippetName.Caption := fSnippet.DisplayName;
 end;
 

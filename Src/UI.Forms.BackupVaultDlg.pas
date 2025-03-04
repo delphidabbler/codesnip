@@ -5,12 +5,12 @@
  *
  * Copyright (C) 2024, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a dialogue box that enables the user to choose a collection to
- * backup or restore along with the directory to backup to or restore from.
+ * Implements a dialogue box that enables the user to choose a vault to backup
+ * or restore along with the directory to backup to or restore from.
 }
 
 
-unit FmCollectionBackup;
+unit UI.Forms.BackupVaultDlg;
 
 interface
 
@@ -21,14 +21,14 @@ uses
   StdCtrls,
   ExtCtrls,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   FmGenericOKDlg,
-  UCollectionListAdapter;
+  UI.Adapters.VaultList;
 
 type
-  TCollectionBackupDlg = class(TGenericOKDlg)
-    lblCollection: TLabel;
-    cbCollection: TComboBox;
+  TVaultBackupDlg = class(TGenericOKDlg)
+    lblVaults: TLabel;
+    cbVaults: TComboBox;
     lblPath: TLabel;
     edPath: TEdit;
     btnBrowse: TButton;
@@ -39,15 +39,15 @@ type
   strict private
     var
       fFileName: string;
-      fCollection: TCollection;
-      fCollList: TCollectionListAdapter;
+      fVault: TVault;
+      fVaultList: TVaultListAdapter;
     function GetFilePathFromEditCtrl: string;
   strict protected
     procedure ConfigForm; override;
     procedure ArrangeForm; override;
   public
     class function Execute(AOwner: TComponent;
-      out AFileName: string; out ACollection: TCollection): Boolean;
+      out AFileName: string; out AVault: TVault): Boolean;
   end;
 
 implementation
@@ -65,15 +65,15 @@ uses
   USaveDialogEx,
   UStrUtils;
 
-procedure TCollectionBackupDlg.ArrangeForm;
+procedure TVaultBackupDlg.ArrangeForm;
 begin
-  TCtrlArranger.AlignLefts([lblCollection, cbCollection, lblPath, edPath], 0);
+  TCtrlArranger.AlignLefts([lblVaults, cbVaults, lblPath, edPath], 0);
   // row 1
-  lblCollection.Top := 0;
+  lblVaults.Top := 0;
   // row 2
-  TCtrlArranger.MoveBelow(lblCollection, cbCollection, 6);
+  TCtrlArranger.MoveBelow(lblVaults, cbVaults, 6);
   // row 3
-  TCtrlArranger.MoveBelow(cbCollection, lblPath, 12);
+  TCtrlArranger.MoveBelow(cbVaults, lblPath, 12);
   // row 4
   TCtrlArranger.MoveToRightOf(edPath, btnBrowse, 6);
   TCtrlArranger.AlignVCentres(
@@ -84,7 +84,7 @@ begin
   inherited;
 end;
 
-procedure TCollectionBackupDlg.btnBrowseClick(Sender: TObject);
+procedure TVaultBackupDlg.btnBrowseClick(Sender: TObject);
 var
   SaveDlg: TSaveDialogEx;       // save dialog box used to name backup file
 resourcestring
@@ -105,46 +105,46 @@ begin
   end;
 end;
 
-procedure TCollectionBackupDlg.btnOKClick(Sender: TObject);
+procedure TVaultBackupDlg.btnOKClick(Sender: TObject);
 begin
   fFileName := GetFilePathFromEditCtrl;
-  fCollection := fCollList.Collection(cbCollection.ItemIndex);
+  fVault := fVaultList.Vault(cbVaults.ItemIndex);
 end;
 
-procedure TCollectionBackupDlg.ConfigForm;
+procedure TVaultBackupDlg.ConfigForm;
 begin
   inherited;
-  fCollList.ToStrings(cbCollection.Items);
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  fVaultList.ToStrings(cbVaults.Items);
+  cbVaults.ItemIndex := fVaultList.IndexOfUID(TVaultID.Default);
 end;
 
-class function TCollectionBackupDlg.Execute(AOwner: TComponent;
-  out AFileName: string; out ACollection: TCollection): Boolean;
+class function TVaultBackupDlg.Execute(AOwner: TComponent;
+  out AFileName: string; out AVault: TVault): Boolean;
 var
-  Dlg: TCollectionBackupDlg;
+  Dlg: TVaultBackupDlg;
 begin
-  Dlg := TCollectionBackupDlg.Create(AOwner);
+  Dlg := TVaultBackupDlg.Create(AOwner);
   Result := Dlg.ShowModal = mrOK;
   if Result then
   begin
     AFileName := Dlg.fFileName;
-    ACollection := Dlg.fCollection;
+    AVault := Dlg.fVault;
   end;
 end;
 
-procedure TCollectionBackupDlg.FormCreate(Sender: TObject);
+procedure TVaultBackupDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fCollList := TCollectionListAdapter.Create;
+  fVaultList := TVaultListAdapter.Create;
 end;
 
-procedure TCollectionBackupDlg.FormDestroy(Sender: TObject);
+procedure TVaultBackupDlg.FormDestroy(Sender: TObject);
 begin
-  fCollList.Free;
+  fVaultList.Free;
   inherited;
 end;
 
-function TCollectionBackupDlg.GetFilePathFromEditCtrl: string;
+function TVaultBackupDlg.GetFilePathFromEditCtrl: string;
 begin
   Result := StrTrim(edPath.Text);
 end;

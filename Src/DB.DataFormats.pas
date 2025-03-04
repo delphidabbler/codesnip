@@ -4,7 +4,7 @@ interface
 
 type
 
-  ///  <summary>Enumeration of the kinds of supported snippet collection data
+  ///  <summary>Enumeration of the kinds of supported snippet vault data
   ///  formats.</summary>
   ///  <remarks>
   ///  <para><c>Error</c> -- Invalid format. Used to indicate an unknown format
@@ -30,7 +30,7 @@ type
   );
 
   ///  <summary>Record containing details of the data format and location in
-  ///  which a collection is stored.</summary>
+  ///  which data is stored.</summary>
   TDataStorageDetails = record
   strict private
     var
@@ -62,19 +62,19 @@ type
       end;
     const
       // There are so few entries in this table it's not worth the overhead
-      // of using a dicitionary for the lookup.
+      // of using a dictionary for the lookup.
       LookupTable: array[0..2] of TMapRecord = (
         (Kind: TDataFormatKind.Native_Vault;
-          Name: 'CodeSnip Vault Native Snippet Collection'),
+          Name: 'CodeSnip Vault Native Snippet Format'),
         (Kind: TDataFormatKind.Native_v4;
-          Name: 'CodeSnip 4 Native Snippet Collection'),
+          Name: 'CodeSnip 4 Native Snippet Format'),
         (Kind: TDataFormatKind.DCSC_v2;
-          Name: 'DelphiDabbler Code Snippets Collection v2')
+          Name: 'DelphiDabbler Code Snippets Collection v2 Format')
       );
     class function IndexOf(const AKind: TDataFormatKind): Integer; static;
   public
     const
-      ///  <summary>Specifies the data format used for the default collection.
+      ///  <summary>Specifies the data format used for the default format.
       ///  </summary>
       DefaultFormat = TDataFormatKind.Native_v4;
   public

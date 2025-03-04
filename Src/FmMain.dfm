@@ -613,29 +613,25 @@ inherited MainForm: TMainForm
       OnExecute = actPrintExecute
       OnUpdate = actPrintUpdate
     end
-    object actBackupDatabase: TAction
+    object actBackupVault: TAction
       Category = 'Database'
-      Caption = 'Backup Collection Data...'
-      Hint = 'Backup a collection|Backup a collection'#39's data files'
+      Caption = 'Backup Vault...'
+      Hint = 'Backup a vault|Backup a vault'#39's data files'
       ImageIndex = 33
-      OnExecute = actBackupDatabaseExecute
+      OnExecute = actBackupVaultExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
-    object actRestoreDatabase: TAction
+    object actRestoreVault: TAction
       Category = 'Database'
-      Caption = 'Restore Collection Data...'
-      Hint = 
-        'Restore a collection|Restore a collection'#39's data files from a ba' +
-        'ckup'
+      Caption = 'Restore Vault...'
+      Hint = 'Restore a vault|Restore a vaults'#39's data files from a backup'
       ImageIndex = 32
-      OnExecute = actRestoreDatabaseExecute
+      OnExecute = actRestoreVaultExecute
     end
     object actSaveDatabase: TAction
       Category = 'Database'
-      Caption = 'Save User Database'
-      Hint = 
-        'Save user database|Save all changes to the user-defined snippet ' +
-        'database'
+      Caption = 'Save Database'
+      Hint = 'Save database|Save all vaults to the database'
       ImageIndex = 25
       ShortCut = 16467
       OnExecute = actSaveDatabaseExecute
@@ -843,13 +839,11 @@ inherited MainForm: TMainForm
       OnExecute = actAddFavouriteExecute
       OnUpdate = actAddFavouriteUpdate
     end
-    object actMoveUserDatabase: TAction
+    object actMoveVault: TAction
       Category = 'Database'
-      Caption = 'Move Collection Data Files...'
-      Hint = 
-        'Move a collection|Move a collection'#39's data files to a new direct' +
-        'ory'
-      OnExecute = actMoveUserDatabaseExecute
+      Caption = 'Move Vault Data Files...'
+      Hint = 'Move a vault|Move a vault'#39's data files to a new directory'
+      OnExecute = actMoveVaultExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
     object actSWAGImport: TAction
@@ -868,13 +862,13 @@ inherited MainForm: TMainForm
         ' default web browser'
       ImageIndex = 6
     end
-    object actDeleteUserDatabase: TAction
+    object actDeleteVault: TAction
       Category = 'Database'
-      Caption = 'Delete All Snippets From Collection'
+      Caption = 'Delete All Snippets From Vault'
       Hint = 
-        'Delete All Snippets From A Collection|Deletes all the snippets f' +
-        'rom a selected collection - USE WITH CAUTION'
-      OnExecute = actDeleteUserDatabaseExecute
+        'Delete All Snippets From A Vault|Deletes all the snippets from a' +
+        ' chosen vault - USE WITH CAUTION'
+      OnExecute = actDeleteVaultExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
   end
@@ -1086,11 +1080,11 @@ inherited MainForm: TMainForm
       object miSpacer11: TMenuItem
         Caption = '-'
       end
-      object miBackupDatabase: TMenuItem
-        Action = actBackupDatabase
+      object miBackupVault: TMenuItem
+        Action = actBackupVault
       end
-      object miRestoreDatabase: TMenuItem
-        Action = actRestoreDatabase
+      object miRestoreVault: TMenuItem
+        Action = actRestoreVault
       end
       object miSpacer13: TMenuItem
         Caption = '-'
@@ -1101,14 +1095,14 @@ inherited MainForm: TMainForm
       object miSpacer20: TMenuItem
         Caption = '-'
       end
-      object miMoveUserDatabase: TMenuItem
-        Action = actMoveUserDatabase
+      object miMoveVault: TMenuItem
+        Action = actMoveVault
       end
       object miSpacer21: TMenuItem
         Caption = '-'
       end
-      object miDeleteUserDatabase: TMenuItem
-        Action = actDeleteUserDatabase
+      object miDeleteVault: TMenuItem
+        Action = actDeleteVault
       end
     end
     object miCompile: TMenuItem

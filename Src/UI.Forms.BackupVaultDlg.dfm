@@ -1,17 +1,17 @@
-inherited CollectionBackupDlg: TCollectionBackupDlg
-  Caption = 'Choose Collection & Backup File'
+inherited VaultBackupDlg: TVaultBackupDlg
+  Caption = 'Choose Vault & Backup File'
   ExplicitWidth = 474
   ExplicitHeight = 375
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    object lblCollection: TLabel
+    object lblVaults: TLabel
       Left = 0
       Top = 7
-      Width = 80
+      Width = 60
       Height = 13
-      Caption = 'Select &collection:'
-      FocusControl = cbCollection
+      Caption = 'Select &vault:'
+      FocusControl = cbVaults
     end
     object lblPath: TLabel
       Left = 0
@@ -27,7 +27,7 @@ inherited CollectionBackupDlg: TCollectionBackupDlg
       Font.Style = []
       ParentFont = False
     end
-    object cbCollection: TComboBox
+    object cbVaults: TComboBox
       Left = 0
       Top = 24
       Width = 358

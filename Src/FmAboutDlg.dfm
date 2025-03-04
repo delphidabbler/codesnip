@@ -27,12 +27,16 @@ inherited AboutDlg: TAboutDlg
       Top = 47
       Width = 409
       Height = 218
-      ActivePage = tsPaths
+      ActivePage = tsVaults
       Align = alTop
       TabOrder = 0
       OnMouseDown = pcDetailMouseDown
       object tsProgram: TTabSheet
         Caption = 'About The Program'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmProgram: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -63,21 +67,21 @@ inherited AboutDlg: TAboutDlg
           end
         end
       end
-      object tsCollections: TTabSheet
-        Caption = 'About Collections'
+      object tsVaults: TTabSheet
+        Caption = 'About Vaults'
         ImageIndex = 1
         DesignSize = (
           401
           190)
-        object lblCollection: TLabel
+        object lblVaults: TLabel
           Left = 3
           Top = 3
-          Width = 80
+          Width = 60
           Height = 13
-          Caption = '&Select collection:'
-          FocusControl = cbCollection
+          Caption = '&Select vault:'
+          FocusControl = cbVaults
         end
-        object cbCollection: TComboBox
+        object cbVaults: TComboBox
           Left = 112
           Top = 0
           Width = 286
@@ -85,9 +89,9 @@ inherited AboutDlg: TAboutDlg
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
-          OnChange = cbCollectionChange
+          OnChange = cbVaultsChange
         end
-        object tvCollectionInfo: TTreeView
+        object tvVaultInfo: TTreeView
           Left = 0
           Top = 27
           Width = 401
@@ -104,6 +108,10 @@ inherited AboutDlg: TAboutDlg
       object tsPaths: TTabSheet
         Caption = 'Paths && Files'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         DesignSize = (
           401
           190)

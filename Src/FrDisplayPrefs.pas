@@ -25,11 +25,11 @@ uses
   Graphics,
   Generics.Collections,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   FrPrefsBase,
-  UCollectionListAdapter,
   UColorBoxEx,
   UColorDialogEx,
+  UI.Adapters.VaultList,
   UPreferences;
 
 
@@ -41,7 +41,7 @@ type
     chkHideEmptySections: TCheckBox;
     chkSnippetsInNewTab: TCheckBox;
     lblGroupHeadingColour: TLabel;
-    lblCollectionColours: TLabel;
+    lblVaultColours: TLabel;
     btnDefColours: TButton;
     lblSourceBGColour: TLabel;
     lblOverviewFontSize: TLabel;
@@ -49,19 +49,19 @@ type
     lblDetailFontSize: TLabel;
     cbDetailFontSize: TComboBox;
     lblHiliterInfo: TLabel;
-    cbCollection: TComboBox;
+    cbVaults: TComboBox;
     procedure chkHideEmptySectionsClick(Sender: TObject);
     procedure btnDefColoursClick(Sender: TObject);
     procedure FontSizeChange(Sender: TObject);
-    procedure cbCollectionChange(Sender: TObject);
+    procedure cbVaultsChange(Sender: TObject);
   strict private
     var
       ///  <summary>Flag indicating if changes affect UI.</summary>
       fUIChanged: Boolean;
 
       ///  <summary>Local copy of snippet heading / tree node colour for each
-      ///  collection.</summary>
-      fSnippetHeadingColours: TDictionary<TCollectionID,TColor>;
+      ///  vault.</summary>
+      fSnippetHeadingColours: TDictionary<TVaultID,TColor>;
 
       fGroupHeadingColourBox: TColorBoxEx;
       fGroupHeadingColourDlg: TColorDialogEx;
@@ -70,7 +70,7 @@ type
       fSourceBGColourBox: TColorBoxEx;
       fSourceBGColourDlg: TColorDialogEx;
 
-      fCollList: TCollectionListAdapter;
+      fVaultList: TVaultListAdapter;
 
     procedure SelectOverviewTreeState(const State: TOverviewStartState);
       {Selects combo box item associated with a overview treeview startup state.
@@ -88,7 +88,7 @@ type
     procedure SnippetHeadingColourBoxChange(Sender: TObject);
     procedure PopulateFontSizeCombos;
     procedure SetTabOrder;
-    function SelectedCollectionID: TCollectionID;
+    function SelectedVaultID: TVaultID;
   public
     constructor Create(AOwner: TComponent); override;
       {Object constructor. Sets up frame and populates controls.
@@ -162,11 +162,11 @@ procedure TDisplayPrefsFrame.Activate(const Prefs: IPreferences;
     @param Prefs [in] Object that provides info used to update controls.
   }
 var
-  Collection: TCollection;
+  Vault: TVault;
 begin
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
-  Assert(cbCollection.ItemIndex >= 0,
-    ClassName + '.Activate: no default collection found in cbCollection');
+  cbVaults.ItemIndex := fVaultList.IndexOfUID(TVaultID.Default);
+  Assert(cbVaults.ItemIndex >= 0,
+    ClassName + '.Activate: no default vault found in cbVaults');
   SelectOverviewTreeState(Prefs.OverviewStartState);
   chkHideEmptySections.OnClick := nil;  // prevent OnClick when Checked set
   chkHideEmptySections.Checked := not Prefs.ShowEmptySections;
@@ -174,12 +174,12 @@ begin
   chkSnippetsInNewTab.Checked := Prefs.ShowNewSnippetsInNewTabs;
   fGroupHeadingColourBox.Selected := Prefs.GroupHeadingColour;
   fSnippetHeadingColours.Clear;
-  for Collection in TCollections.Instance do
+  for Vault in TVaults.Instance do
     fSnippetHeadingColours.Add(
-      Collection.UID, Prefs.GetSnippetHeadingColour(Collection.UID)
+      Vault.UID, Prefs.GetSnippetHeadingColour(Vault.UID)
     );
   fSnippetHeadingColourBox.Selected :=
-    Prefs.GetSnippetHeadingColour(SelectedCollectionID);
+    Prefs.GetSnippetHeadingColour(SelectedVaultID);
   fSourceBGColourBox.Selected := Prefs.SourceCodeBGcolour;
   Prefs.GroupHeadingCustomColours.CopyTo(
     fGroupHeadingColourDlg.CustomColors, True
@@ -200,13 +200,13 @@ begin
   TCtrlArranger.AlignLefts(
     [
       lblOverviewTree, chkSnippetsInNewTab, chkHideEmptySections,
-      lblGroupHeadingColour, lblCollectionColours, lblSourceBGColour,
+      lblGroupHeadingColour, lblVaultColours, lblSourceBGColour,
       btnDefColours, lblOverviewFontSize, lblDetailFontSize, lblHiliterInfo
     ],
     0
   );
-  // Align collections combo indented from left
-  cbCollection.Left := 8;
+  // Align vaults combo indented from left
+  cbVaults.Left := 8;
 
   // Align controls on right: make sure they are all to right of everything
   // on left that is on same line as any of them.
@@ -217,7 +217,7 @@ begin
     ],
     TCtrlArranger.RightOf(
       [
-        lblOverviewTree, lblGroupHeadingColour, cbCollection, lblSourceBGColour,
+        lblOverviewTree, lblGroupHeadingColour, cbVaults, lblSourceBGColour,
         lblOverviewFontSize, lblDetailFontSize
       ],
       8
@@ -243,17 +243,17 @@ begin
   // 5th row
   TCtrlArranger.MoveBelow(
     [lblGroupHeadingColour, fGroupHeadingColourBox],
-    lblCollectionColours,
+    lblVaultColours,
     12
   );
   // 6th row
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(lblCollectionColours, 6),
-    [cbCollection, fSnippetHeadingColourBox]
+    TCtrlArranger.BottomOf(lblVaultColours, 6),
+    [cbVaults, fSnippetHeadingColourBox]
   );
   // 7th row
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([cbCollection, fSnippetHeadingColourBox], 18),
+    TCtrlArranger.BottomOf([cbVaults, fSnippetHeadingColourBox], 18),
     [lblSourceBGColour, fSourceBGColourBox]
   );
   // 8th row
@@ -280,22 +280,22 @@ end;
 
 procedure TDisplayPrefsFrame.btnDefColoursClick(Sender: TObject);
 var
-  Collection: TCollection;
+  Vault: TVault;
 begin
   // Restores default heading and source code background colours in colour
   // combo boxes
   fGroupHeadingColourBox.Selected := clDefGroupHeading;
   fSnippetHeadingColourBox.Selected := clDefSnippetHeading;
-  for Collection in TCollections.Instance do
-    fSnippetHeadingColours[Collection.UID] := clDefSnippetHeading;
+  for Vault in TVaults.Instance do
+    fSnippetHeadingColours[Vault.UID] := clDefSnippetHeading;
   fSourceBGColourBox.Selected := clSourceBg;
   fUIChanged := True;
 end;
 
-procedure TDisplayPrefsFrame.cbCollectionChange(Sender: TObject);
+procedure TDisplayPrefsFrame.cbVaultsChange(Sender: TObject);
 begin
   fSnippetHeadingColourBox.Selected :=
-    fSnippetHeadingColours[SelectedCollectionID];
+    fSnippetHeadingColours[SelectedVaultID];
 end;
 
 procedure TDisplayPrefsFrame.chkHideEmptySectionsClick(Sender: TObject);
@@ -346,7 +346,7 @@ begin
     fSnippetHeadingColourDlg, SnippetHeadingColourBoxChange
   );
   fSnippetHeadingColourBox.OnChange := SnippetHeadingColourBoxChange;
-  lblCollectionColours.FocusControl := cbCollection;
+  lblVaultColours.FocusControl := cbVaults;
   fSourceBGColourBox := CreateCustomColourBox(
     fSourceBGColourDlg, ColourBoxChangeHandler
   );
@@ -354,13 +354,13 @@ begin
 
   PopulateFontSizeCombos;
 
-  fSnippetHeadingColours := TDictionary<TCollectionID,TColor>.Create(
-    TCollectionID.TComparer.Create
+  fSnippetHeadingColours := TDictionary<TVaultID,TColor>.Create(
+    TVaultID.TComparer.Create
   );
 
-  fCollList := TCollectionListAdapter.Create;
-  fCollList.ToStrings(cbCollection.Items);
-  Assert(cbCollection.Items.Count > 0, ClassName + '.Create: no collections');
+  fVaultList := TVaultListAdapter.Create;
+  fVaultList.ToStrings(cbVaults.Items);
+  Assert(cbVaults.Items.Count > 0, ClassName + '.Create: no vaults');
 
   SetTabOrder;
 end;
@@ -388,7 +388,7 @@ procedure TDisplayPrefsFrame.Deactivate(const Prefs: IPreferences);
     @param Prefs [in] Object used to store information.
   }
 var
-  Collection: TCollection;
+  Vault: TVault;
 begin
   Prefs.ShowNewSnippetsInNewTabs := chkSnippetsInNewTab.Checked;
   Prefs.ShowEmptySections := not chkHideEmptySections.Checked;
@@ -401,9 +401,9 @@ begin
     fGroupHeadingColourDlg.CustomColors, True
   );
 
-  for Collection in TCollections.Instance do
+  for Vault in TVaults.Instance do
     Prefs.SetSnippetHeadingColour(
-      Collection.UID, fSnippetHeadingColours[Collection.UID]
+      Vault.UID, fSnippetHeadingColours[Vault.UID]
     );
   Prefs.SourceCodeBGCustomColours.CopyFrom(
     fSourceBGColourDlg.CustomColors, True
@@ -416,7 +416,7 @@ end;
 
 destructor TDisplayPrefsFrame.Destroy;
 begin
-  fCollList.Free;
+  fVaultList.Free;
   fSnippetHeadingColours.Free;
   inherited;
 end;
@@ -509,11 +509,11 @@ begin
   TFontHelper.ListCommonFontSizes(cbDetailFontSize.Items);
 end;
 
-function TDisplayPrefsFrame.SelectedCollectionID: TCollectionID;
+function TDisplayPrefsFrame.SelectedVaultID: TVaultID;
 begin
-  Assert(cbCollection.ItemIndex >= 0,
-    ClassName + '.SelectedCollectionID: no collection selected');
-  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
+  Assert(cbVaults.ItemIndex >= 0,
+    ClassName + '.SelectedVaultID: no vault selected');
+  Result := fVaultList.Vault(cbVaults.ItemIndex).UID;
 end;
 
 procedure TDisplayPrefsFrame.SelectOverviewTreeState(
@@ -540,7 +540,7 @@ begin
   chkSnippetsInNewTab.TabOrder := 1;
   chkHideEmptySections.TabOrder := 2;
   fGroupHeadingColourBox.TabOrder := 3;
-  cbCollection.TabOrder := 4;
+  cbVaults.TabOrder := 4;
   fSnippetHeadingColourBox.TabOrder := 5;
   fSourceBGColourBox.TabOrder := 6;
   btnDefColours.TabOrder := 7;
@@ -551,7 +551,7 @@ end;
 procedure TDisplayPrefsFrame.SnippetHeadingColourBoxChange(Sender: TObject);
 begin
   ColourBoxChangeHandler(Sender);
-  fSnippetHeadingColours[SelectedCollectionID] :=
+  fSnippetHeadingColours[SelectedVaultID] :=
     fSnippetHeadingColourBox.Selected
 end;
 

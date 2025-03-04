@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2025, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements classes that can read and write collections stored in the CodeSnip
+ * Implements classes that can read and write vaults stored in the CodeSnip
  * Vault native data format.
 }
 
@@ -30,8 +30,8 @@ uses
 
 type
 
-  ///  <summary>Base class for classes that read and write collection data in
-  ///  the native data format.</summary>
+  ///  <summary>Base class for classes that read and write vault data in the
+  ///  native data format.</summary>
   TNativeDataRW = class abstract(TInterfacedObject)
   strict private
     var
@@ -41,11 +41,11 @@ type
       fXMLDoc: IXMLDocumentEx;
   strict protected
     const
-      ///  <summary>Name of collection's XML file.</summary>
-      XMLFileName = 'collection.xml';
+      ///  <summary>Name of vault's XML file.</summary>
+      XMLFileName = 'vault.xml';
       ///  <summary>Extension used for source code files.</summary>
       SourceCodeFileExt = '.source';
-      ///  <summary>Name of collection's license file, if any.</summary>
+      ///  <summary>Name of vaults's license file, if any.</summary>
       LicenseTextFileName = 'license.txt';
       ///  <summary>Watermark included in all native data format files.
       ///  </summary>
@@ -57,7 +57,7 @@ type
       CurrentFileVersion: TVersionNumber = (V1: 1; V2: 0; V3: 0; V4: 0);
 
       // XML node and attribute names
-      RootNodeName = 'collection';
+      RootNodeName = 'vault';
       RootNodeWatermarkAttr = 'watermark';
       RootNodeVersionMajorAttr = 'version-major';
       RootNodeVersionMinorAttr = 'version-minor';
@@ -135,7 +135,7 @@ type
 
   strict protected
 
-    ///  <summary>Directory containing the collection.</summary>
+    ///  <summary>Directory containing the vault.</summary>
     property DataDirectory: string read fDataDirectory;
 
     ///  <summary>XML document object.</summary>
@@ -164,21 +164,21 @@ type
     ///  <summary>Returns fully specified path of the XML file.</summary>
     function PathToXMLFile: string;
 
-    ///  <summary>Returns fully specified path of a file within the collection
+    ///  <summary>Returns fully specified path of a file within the vault
     ///  directory.</summary>
     function FilePath(const AFileName: string): string;
 
   public
 
     ///  <summary>Object constructor. Creates an XML document to access the
-    ///  collection's XML file.</summary>
+    ///  vaults's XML file.</summary>
     ///  <param name="ADataDirectory"><c>string</c> [in] Full path to the
-    ///  directory that contains the collection's data files.</param>
+    ///  directory that contains the vault's data files.</param>
     constructor Create(const ADataDirectory: string);
 
   end;
 
-  ///  <summary>Class that performs the low level reading of collection data in
+  ///  <summary>Class that performs the low level reading of vault data in
   ///  CodeSnip Vault native format from an XML file and linked data files.
   ///  </summary>
   TNativeDataReader = class sealed(TNativeDataRW, IDataReader)
@@ -229,27 +229,27 @@ type
     procedure HandleException(const EObj: TObject);
   public
 
-    ///  <summary>Object constructor. Loads XML from file if the collection
-    ///  exists, otherwise creates a minimal empty document.</summary>
+    ///  <summary>Object constructor. Loads XML from file if the vault exists,
+    ///  otherwise creates a minimal empty document.</summary>
     ///  <param name="ADataDirectory"><c>string</c> [in] Full path to the
-    ///  directory that contains the collection's data files.</param>
+    ///  directory that contains the vault's data files.</param>
     constructor Create(const ADirectory: string);
 
-    ///  <summary>Checks if the collection exists.</summary>
-    ///  <returns><c>Boolean</c>. Returns <c>True</c> if the collection exists
-    ///  or <c>False</c> if not.</returns>
+    ///  <summary>Checks if the vault exists.</summary>
+    ///  <returns><c>Boolean</c>. Returns <c>True</c> if the vault exists or
+    ///  <c>False</c> if not.</returns>
     ///  <remarks>
     ///  <para>This method is always called before any other <c>IDataReader</c>
     ///  methods. If it returns <c>False</c> then no other <c>IDataReader</c>
     ///  methods are called. Therefore other methods can safely assume that the
-    ///  collection exists.</para>
+    ///  vault exists.</para>
     ///  <para>Method of <c>IDataReader</c>.</para>
     ///  </remarks>
     function DatabaseExists: Boolean;
-    {TODO -cRefactor: Rename DatabaseExists to CollectionExists.}
+    {TODO -cRefactor: Rename DatabaseExists to VaultExists.}
 
     ///  <summary>Gets the unique IDs of all categories referenced in the
-    ///  collection.</summary>
+    ///  vault.</summary>
     ///  <returns><c>IStringList</c>. List of category IDs.</returns>
     ///  <remarks>Method of <c>IDataReader</c>.</remarks>
     function GetAllCatIDs: IStringList;
@@ -259,12 +259,12 @@ type
     ///  </param>
     ///  <param name="Props"><c>TCategoryData</c> [in/out] An empty,
     ///  initialised, properties record is passed in and a record with the
-    ///  properties read from the collection data is passed out.</param>
+    ///  properties read from the vault data is passed out.</param>
     ///  <remarks>Method of <c>IDataReader</c>.</remarks>
     procedure GetCatProps(const CatID: string; var Props: TCategoryData);
 
     ///  <summary>Gets the unique keys of all snippets in a category within the
-    ///  collection.</summary>
+    ///  vault.</summary>
     ///  <param name="CatID"><c>string</c> [in] ID of the required category.
     ///  </param>
     ///  <returns><c>IStringList</c>. List of snippet keys.</returns>
@@ -276,13 +276,13 @@ type
     ///  snippet.</param>
     ///  <param name="Props"><c>TSnippetData</c> [in/out] An empty,
     ///  initialised, properties record is passed in and a record with the
-    ///  properties read from the collection data is passed out.</param>
+    ///  properties read from the vault data is passed out.</param>
     ///  <remarks>Method of <c>IDataReader</c>.</remarks>
     procedure GetSnippetProps(const SnippetKey: string;
       var Props: TSnippetData);
 
-    ///  <summary>Gets a list of the keys of all snippets within the collection
-    ///  that are cross-referenced by a given snippet.</summary>
+    ///  <summary>Gets a list of the keys of all snippets within the vault that
+    ///  are cross-referenced by a given snippet.</summary>
     ///  <param name="SnippetKey"><c>string</c> [in] Key of snippet for which
     ///  cross references are required.</param>
     ///  <returns><c>IStringList</c>. List of keys of cross referenced snippets.
@@ -308,14 +308,14 @@ type
     ///  <remarks>Method of <c>IDataReader</c>.</remarks>
     function GetSnippetUnits(const SnippetKey: string): IStringList;
 
-    ///  <summary>Gets the collection's meta data.</summary>
+    ///  <summary>Gets the vault's meta data.</summary>
     ///  <returns><c>TMetaData</c>. The required meta data. Will be null if
     ///  is no meta data.</returns>
     ///  <remarks>Method of <c>IDataReader</c>.</remarks>
     function GetMetaData: TMetaData;
   end;
 
-  ///  <summary>Class that performs the low level writing of collection data in
+  ///  <summary>Class that performs the low level writing of vault data in
   ///  CodeSnip Vault native format to an XML file and linked data files.
   ///  </summary>
   TNativeDataWriter = class sealed(TNativeDataRW, IDataWriter)
@@ -366,7 +366,7 @@ type
       AItemNodeName: string; const AItems: IStringList);
 
   public
-    ///  <summary>Initialises the collection write.</summary>
+    ///  <summary>Initialises the vault write.</summary>
     ///  <remarks>
     ///  <para>Always called before all other <c>IDataWriter</c> methods.</para>
     ///  <para>Method of <c>IDataWriter</c>.</para>
@@ -437,13 +437,13 @@ type
     procedure WriteSnippetXRefs(const SnippetKey: string;
       const XRefs: IStringList);
 
-    ///  <summary>Writes the collection's meta data.</summary>
+    ///  <summary>Writes the vault's meta data.</summary>
     ///  <param name="AMetaData"><c>TMetaData</c> [in] Meta data to be written.
     ///  </param>
     ///  <remarks>Method of <c>IDataWriter</c>.</remarks>
     procedure WriteMetaData(const AMetaData: TMetaData);
 
-    ///  <summary>Finalises the collection write.</summary>
+    ///  <summary>Finalises the vault write.</summary>
     ///  <remarks>
     ///  <para>Always called after all other <c>IDataWriter</c> methods.</para>
     ///  <para>Method of <c>IDataWriter</c>.</para>
@@ -474,7 +474,7 @@ resourcestring
   sMissingNode = 'Document has no %s node.';
   // TNativeDataReader error messages
   sParseError = 'Error parsing XML file';
-  sBadDataFormat = 'Invalid native collection data format: %s';
+  sBadDataFormat = 'Invalid native vault data format: %s';
   sNoRootNode = 'Invalid document: no root element present';
   sBadRootName = 'Invalid document: root element must be named <%s>';
   sBadWatermark = 'Invalid document: watermark is incorrect';
@@ -632,7 +632,7 @@ begin
       {TODO -cVault: Check the following comment and decide if this still
               applies. Replace Exit with exception if necessary.}
       // This is not an error since it is possible that a category exists in
-      // another collection and loader will request info from here also
+      // another vault and loader will request info from here also
       Exit(TIStringList.Create);
     Result := GetEnclosedListItems(
       CatNode, CategorySnippetsListNodeName, CategorySnippetsListItemNodeName

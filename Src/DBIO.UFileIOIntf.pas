@@ -79,7 +79,7 @@ type
         @return List of unit names.
       }
 
-    ///  <summary>Gets the collection's meta data.</summary>
+    ///  <summary>Gets the vault's meta data.</summary>
     ///  <returns><c>TMetaData</c>. The required meta data. May be null if meta
     ///  data is not supported or not present.</returns>
     function GetMetaData: TMetaData;
@@ -138,7 +138,7 @@ type
         @param XRefs [in] List of snippet keys.
       }
 
-    ///  <summary>Write the collection's meta data.</summary>
+    ///  <summary>Write the vault's meta data.</summary>
     ///  <param name="AMetaData"><c>TMetaData</c> [in] Meta data to be written.
     ///  </param>
     ///  <remarks>Data formats may support all, some or no metadata.</remarks>

@@ -20,8 +20,8 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  DB.UCollections,
-  DB.USnippet;
+  DB.USnippet,
+  DB.Vaults;
 
 
 type

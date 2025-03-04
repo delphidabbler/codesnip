@@ -18,9 +18,13 @@ interface
 
 uses
   // Delphi
-  Forms, Controls, StdCtrls, Classes,
+  Forms,
+  Controls,
+  StdCtrls,
+  Classes,
   // Project
-  DB.UCategory, UCategoryListAdapter;
+  DB.UCategory,
+  UI.Adapters.CategoryList;
 
 
 type

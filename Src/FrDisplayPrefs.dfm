@@ -18,13 +18,13 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
     Height = 13
     Caption = '&Group heading colour in overview pane:'
   end
-  object lblCollectionColours: TLabel
+  object lblVaultColours: TLabel
     Left = 16
     Top = 139
-    Width = 240
+    Width = 220
     Height = 13
-    Caption = 'Heading colour snippets from different &collections:'
-    FocusControl = cbCollection
+    Caption = 'Heading colour snippets from different &vaults:'
+    FocusControl = cbVaults
   end
   object lblSourceBGColour: TLabel
     Left = 16
@@ -112,13 +112,13 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
     TabOrder = 5
     OnChange = FontSizeChange
   end
-  object cbCollection: TComboBox
+  object cbVaults: TComboBox
     Left = 16
     Top = 158
     Width = 170
     Height = 21
     Style = csDropDownList
     TabOrder = 6
-    OnChange = cbCollectionChange
+    OnChange = cbVaultsChange
   end
 end

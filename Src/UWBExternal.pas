@@ -53,31 +53,28 @@ type
     ///  library.</summary>
     constructor Create;
 
-    ///  <summary>Display snippet identified by key and collection ID.</summary>
+    ///  <summary>Display snippet identified by key and vault ID.</summary>
     ///  <param name="Key">WideString [in] Snippet's key.</param>
-    ///  <param name="CollectionIDAsHex">WideString [in] Hex representation of
-    ///  snippet's collection ID.</param>
+    ///  <param name="VaultIDAsHex">WideString [in] Hex representation of
+    ///  snippet's vault ID.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  tab.</param>
     ///  <remarks>Method of IWBExternal15.</remarks>
     procedure DisplaySnippet(const Key: WideString;
-      const CollectionIDAsHex: WideString; NewTab: WordBool); safecall;
+      const VaultIDAsHex: WideString; NewTab: WordBool); safecall;
 
     ///  <summary>Displays the Configure Compilers dialogue box.</summary>
     ///  <remarks>Method of IWBExternal15.</remarks>
     procedure ConfigCompilers; safecall;
 
-    ///  <summary>Edits the snippet identified by its key and collection ID.
+    ///  <summary>Edits the snippet identified by its key and vault ID.
     ///  </summary>
     ///  <param name="Key">WideString [in] Snippet's key.</param>
-    ///  <param name="CollectionIDAsHex">WideString [in] Hex representation of
-    ///  snippet's collection ID.</param>
-    ///  <remarks>
-    ///  <para>The snippet must be user defined.</para>
-    ///  <para>Method of IWBExternal15.</para>
-    ///  </remarks>
+    ///  <param name="VaultIDAsHex">WideString [in] Hex representation of
+    ///  snippet's vault ID.</param>
+    ///  <remarks>Method of IWBExternal15.</remarks>
     procedure EditSnippet(const Key: WideString;
-      const CollectionIDAsHex: WideString); safecall;
+      const VaultIDAsHex: WideString); safecall;
 
     ///  <summary>Displays a named category.</summary>
     ///  <param name="CatID">WideString [in] ID of category to be displayed.
@@ -112,7 +109,7 @@ uses
   // Delphi
   Forms,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   UAppInfo;
 
 
@@ -151,13 +148,13 @@ begin
   end;
 end;
 
-procedure TWBExternal.DisplaySnippet(const Key, CollectionIDAsHex: WideString;
+procedure TWBExternal.DisplaySnippet(const Key, VaultIDAsHex: WideString;
   NewTab: WordBool);
 begin
   try
     if Assigned(fNotifier) then
       fNotifier.DisplaySnippet(
-        Key, TCollectionID.CreateFromHexString(CollectionIDAsHex), NewTab
+        Key, TVaultID.CreateFromHexString(VaultIDAsHex), NewTab
       );
   except
     HandleException;
@@ -165,15 +162,11 @@ begin
 end;
 
 procedure TWBExternal.EditSnippet(const Key: WideString;
-  const CollectionIDAsHex: WideString);
-  {TODO -cVault: change to take a collection ID as hex string as 2nd param &
-          lift restriction on having to be user defined.}
+  const VaultIDAsHex: WideString);
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.EditSnippet(
-        Key, TCollectionID.CreateFromHexString(CollectionIDAsHex)
-      );
+      fNotifier.EditSnippet(Key, TVaultID.CreateFromHexString(VaultIDAsHex));
   except
     HandleException;
   end;

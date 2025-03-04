@@ -18,9 +18,15 @@ interface
 
 uses
   // Project
-  DB.UCollections,
-  ActiveText.UMain, ActiveText.URTFRenderer, Hiliter.UGlobals, UEncodings,
-  UIStringList, USnippetDoc, URTFBuilder, URTFStyles;
+  ActiveText.UMain,
+  ActiveText.URTFRenderer,
+  DB.Vaults,
+  Hiliter.UGlobals,
+  UEncodings,
+  UIStringList,
+  USnippetDoc,
+  URTFBuilder,
+  URTFStyles;
 
 
 type
@@ -77,11 +83,11 @@ type
     ///  <summary>Initialises rich text document.</summary>
     procedure InitialiseDoc; override;
     ///  <summary>Output given heading, i.e. snippet name for snippet from a
-    ///  given collection..</summary>
-    ///  <remarks>Heading is coloured according the the snippet's collection.
+    ///  given vault.</summary>
+    ///  <remarks>Heading is coloured according the the snippet's vault.
     ///  </remarks>
-    procedure RenderHeading(const Heading: string;
-      const ACollectionID: TCollectionID); override;
+    procedure RenderHeading(const Heading: string; const AVaultID: TVaultID);
+      override;
     ///  <summary>Adds given snippet description to document.</summary>
     ///  <remarks>Active text formatting is observed and styled to suit
     ///  document.</remarks>
@@ -107,8 +113,8 @@ type
     ///  <remarks>Active text formatting is observed and styled to suit
     ///  document.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); override;
-    ///  <summary>Output given information about a collection.</summary>
-    procedure RenderCollectionInfo(const Text: string); override;
+    ///  <summary>Output given information about a vault.</summary>
+    procedure RenderVaultInfo(const Text: string); override;
     ///  <summary>Finalises document and returns content as encoded data.
     ///  </summary>
     function FinaliseDoc: TEncodedData; override;
@@ -163,7 +169,7 @@ end;
 
 procedure TRTFSnippetDoc.InitialiseDoc;
 var
-  Collection: TCollection;
+  Vault: TVault;
 begin
   // Create object used to build main rich text document
   fBuilder := TRTFBuilder.Create(0);  // Use default code page
@@ -174,9 +180,9 @@ begin
   fBuilder.ColourTable.Add(clWarningText);
   fBuilder.ColourTable.Add(clVarText);
   fBuilder.ColourTable.Add(clExternalLink);
-  for Collection in TCollections.Instance do
+  for Vault in TVaults.Instance do
     fBuilder.ColourTable.Add(
-      Preferences.GetSnippetHeadingColour(Collection.UID)
+      Preferences.GetSnippetHeadingColour(Vault.UID)
     );
 end;
 
@@ -320,17 +326,6 @@ begin
   end;
 end;
 
-procedure TRTFSnippetDoc.RenderCollectionInfo(const Text: string);
-begin
-  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
-  fBuilder.SetFontSize(DBInfoFontSize);
-  fBuilder.SetFontStyle([fsItalic]);
-  fBuilder.AddText(Text);
-  fBuilder.EndPara;
-  fBuilder.ClearParaFormatting;
-  fBuilder.ResetCharStyle;
-end;
-
 procedure TRTFSnippetDoc.RenderCompilerInfo(const Heading: string;
   const Info: TCompileDocInfoArray);
 
@@ -421,12 +416,12 @@ begin
 end;
 
 procedure TRTFSnippetDoc.RenderHeading(const Heading: string;
-  const ACollectionID: TCollectionID);
+  const AVaultID: TVaultID);
 begin
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.SetFontSize(HeadingFontSize);
   if fUseColour then
-    fBuilder.SetColour(Preferences.GetSnippetHeadingColour(ACollectionID));
+    fBuilder.SetColour(Preferences.GetSnippetHeadingColour(AVaultID));
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(0.0, ParaSpacing));
   fBuilder.AddText(Heading);
   fBuilder.EndPara;
@@ -488,6 +483,17 @@ begin
   fBuilder.EndGroup;
   fBuilder.AddText(' ' + Text);
   fBuilder.EndPara;
+end;
+
+procedure TRTFSnippetDoc.RenderVaultInfo(const Text: string);
+begin
+  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
+  fBuilder.SetFontSize(DBInfoFontSize);
+  fBuilder.SetFontStyle([fsItalic]);
+  fBuilder.AddText(Text);
+  fBuilder.EndPara;
+  fBuilder.ClearParaFormatting;
+  fBuilder.ResetCharStyle;
 end;
 
 end.

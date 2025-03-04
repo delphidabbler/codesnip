@@ -5,12 +5,12 @@
  *
  * Copyright (C) 2022-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a dialogue box that enables the user to choose a collection from
- * which to delete all snippets.
+ * Implements a dialogue box that enables the user to choose a vault from which
+ * to delete all snippets.
 }
 
 
-unit FmDeleteUserDBDlg;
+unit UI.Forms.DeleteVaultDlg;
 
 interface
 
@@ -22,21 +22,21 @@ uses
   ExtCtrls,
   Classes,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   FmGenericOKDlg,
   FrBrowserBase,
   FrHTMLDlg,
   FrFixedHTMLDlg,
   UBaseObjects,
-  UCollectionListAdapter;
+  UI.Adapters.VaultList;
 
 type
-  TDeleteUserDBDlg = class(TGenericOKDlg, INoPublicConstruct)
+  TDeleteVaultDlg = class(TGenericOKDlg, INoPublicConstruct)
     edConfirm: TEdit;
     frmWarning: TFixedHTMLDlgFrame;
     lblConfirm: TLabel;
-    lblCollection: TLabel;
-    cbCollection: TComboBox;
+    lblVaults: TLabel;
+    cbVaults: TComboBox;
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -45,9 +45,9 @@ type
       cConfirmText = 'DELETE MY SNIPPETS';
     var
       fPermissionGranted: Boolean;
-      fCollection: TCollection;
-      fCollList: TCollectionListAdapter;
-    function SelectedCollection: TCollection;
+      fVault: TVault;
+      fVaultList: TVaultListAdapter;
+    function SelectedVault: TVault;
     function IsValidPassword: Boolean;
   strict protected
     ///  <summary>Protected constructor that sets up form.</summary>
@@ -55,7 +55,7 @@ type
     procedure ConfigForm; override;
     procedure ArrangeForm; override;
   public
-    class function Execute(AOwner: TComponent; out ACollection: TCollection): Boolean;
+    class function Execute(AOwner: TComponent; out AVault: TVault): Boolean;
   end;
 
 implementation
@@ -69,30 +69,30 @@ uses
 
 {$R *.dfm}
 
-procedure TDeleteUserDBDlg.ArrangeForm;
+procedure TDeleteVaultDlg.ArrangeForm;
 begin
   frmWarning.Height := frmWarning.DocHeight;
-  TCtrlArranger.AlignLefts([frmWarning, lblConfirm, lblCollection], 0);
-  TCtrlArranger.AlignRights([frmWarning, cbCollection, edConfirm]);
+  TCtrlArranger.AlignLefts([frmWarning, lblConfirm, lblVaults], 0);
+  TCtrlArranger.AlignRights([frmWarning, cbVaults, edConfirm]);
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(frmWarning, 12),
-    [lblCollection, cbCollection]
+    [lblVaults, cbVaults]
   );
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblCollection, cbCollection], 12),
+    TCtrlArranger.BottomOf([lblVaults, cbVaults], 12),
     [lblConfirm, edConfirm]
   );
   pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 8;
   inherited;
 end;
 
-procedure TDeleteUserDBDlg.btnOKClick(Sender: TObject);
+procedure TDeleteVaultDlg.btnOKClick(Sender: TObject);
 resourcestring
   sBadPassword = 'Invalid confirmation text entered';
 begin
   inherited;
   fPermissionGranted := IsValidPassword;
-  fCollection := SelectedCollection;
+  fVault := SelectedVault;
   if not fPermissionGranted then
   begin
     TMessageBox.Error(Self, sBadPassword);
@@ -101,57 +101,57 @@ begin
   end;
 end;
 
-procedure TDeleteUserDBDlg.ConfigForm;
+procedure TDeleteVaultDlg.ConfigForm;
 begin
   inherited;
   frmWarning.Initialise('dlg-dbdelete.html');
-  fCollList.ToStrings(cbCollection.Items);
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
+  fVaultList.ToStrings(cbVaults.Items);
+  cbVaults.ItemIndex := fVaultList.IndexOfUID(TVaultID.Default);
 end;
 
-class function TDeleteUserDBDlg.Execute(AOwner: TComponent;
-  out ACollection: TCollection): Boolean;
+class function TDeleteVaultDlg.Execute(AOwner: TComponent; out AVault: TVault):
+  Boolean;
 var
-  Dlg: TDeleteUserDBDlg;
+  Dlg: TDeleteVaultDlg;
 begin
   Dlg := InternalCreate(AOwner);
   try
     Dlg.ShowModal;
     Result := Dlg.fPermissionGranted;
     if Result then
-      ACollection := Dlg.fCollection;
+      AVault := Dlg.fVault;
   finally
     Dlg.Free;
   end;
 end;
 
-procedure TDeleteUserDBDlg.FormCreate(Sender: TObject);
+procedure TDeleteVaultDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fCollList := TCollectionListAdapter.Create;
+  fVaultList := TVaultListAdapter.Create;
 end;
 
-procedure TDeleteUserDBDlg.FormDestroy(Sender: TObject);
+procedure TDeleteVaultDlg.FormDestroy(Sender: TObject);
 begin
-  fCollList.Free;
+  fVaultList.Free;
   inherited;
 end;
 
-constructor TDeleteUserDBDlg.InternalCreate(AOwner: TComponent);
+constructor TDeleteVaultDlg.InternalCreate(AOwner: TComponent);
 begin
   Assert(Supports(Self, INoPublicConstruct), ClassName + '.InternalCreate: '
     + 'Form''s protected constructor can''t be called');
   inherited InternalCreate(AOwner);
 end;
 
-function TDeleteUserDBDlg.IsValidPassword: Boolean;
+function TDeleteVaultDlg.IsValidPassword: Boolean;
 begin
   Result := edConfirm.Text = cConfirmText;
 end;
 
-function TDeleteUserDBDlg.SelectedCollection: TCollection;
+function TDeleteVaultDlg.SelectedVault: TVault;
 begin
-  Result := fCollList.Collection(cbCollection.ItemIndex);
+  Result := fVaultList.Vault(cbVaults.ItemIndex);
 end;
 
 end.

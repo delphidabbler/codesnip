@@ -76,9 +76,17 @@ uses
   // Delphi
   SysUtils, Dialogs,
   // Project
-  DB.UCollections,
-  UCodeImportExport, UCtrlArranger, UEncodings, UExceptions, UIOUtils,
-  UMessageBox, UOpenDialogHelper, USaveDialogEx, UStrUtils, UUtils;
+  DB.Vaults,
+  UCodeImportExport,
+  UCtrlArranger,
+  UEncodings,
+  UExceptions,
+  UIOUtils,
+  UMessageBox,
+  UOpenDialogHelper,
+  USaveDialogEx,
+  UStrUtils,
+  UUtils;
 
 
 {$R *.dfm}

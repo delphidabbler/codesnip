@@ -7,7 +7,7 @@
  *
  * Implements a wizard dialogue box that lets the user select and import
  * packets from the DelphiDabbler implementation of the SWAG Pascal archive as
- * new user-defined CodeSnip snippets.
+ * new CodeSnip snippets.
 }
 
 
@@ -28,25 +28,25 @@ uses
   Classes,
   Generics.Collections,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   FmWizardDlg,
   FrBrowserBase,
   FrFixedHTMLDlg,
   FrHTMLDlg,
   FrHTMLTpltDlg,
   UBaseObjects,
-  UCollectionListAdapter,
   UContainers,
   UCSSBuilder,
   SWAG.UCommon,
   SWAG.UImporter,
-  SWAG.UReader;
+  SWAG.UReader,
+  UI.Adapters.VaultList;
 
 
 type
   ///  <summary>Class that implements a wizard dialogue box that lets the user
   ///  select and import packets from the DelphiDabbler implementation of the
-  ///  SWAG Pascal archive as new user-defined CodeSnip snippets.</summary>
+  ///  SWAG Pascal archive as new snippets.</summary>
   TSWAGImportDlg = class(TWizardDlg, INoPublicConstruct)
     tsIntro: TTabSheet;
     tsCategories: TTabSheet;
@@ -75,8 +75,8 @@ type
     lblVersionNumber: TLabel;
     lblFolderPageInfo1: TLabel;
     lblUpdateDesc2: TLabel;
-    lblCollection: TLabel;
-    cbCollection: TComboBox;
+    lblVaults: TLabel;
+    cbVaults: TComboBox;
     ///  <summary>Handles clicks on the check boxes next to packets in the
     ///  packet selection list box by selecting and deselecting packets for
     ///  inclusion in the import.</summary>
@@ -114,9 +114,6 @@ type
     procedure FormDestroy(Sender: TObject);
   strict private
     const
-      {TODO -cCollections: Add combo box to select collection into which to add
-              imported snippets. Either add combo box to update page, or add a
-              new page for it before finish page or before update page.}
       ///  <summary>Index of introductory page in wizard.</summary>
       cIntroPage = 0;
       ///  <summary>Index of SWAG database folder selection page in wizard.
@@ -142,23 +139,22 @@ type
       ///  <summary>List of packets selected for import, sorted by ID.
       ///  </summary>
       fSelectedPackets: TSortedList<TSWAGPacket>;
-      ///  <summary>Object that imports selected SWAG packets into CodeSnip's
-      ///  user database.</summary>
+      ///  <summary>Object that imports selected SWAG packets into a specified
+      ///  vault.</summary>
       fImporter: TSWAGImporter;
       ///  <summary>ID of currently selected category.</summary>
       ///  <remarks>Set to zero if no category is selected.</remarks>
       fCurrentCatID: Cardinal;
-      ///  <summary>Object that populates <c>cbCollection</c> with an
-      ///  alphabetical list of collection names and manages interaction with
-      ///  it.</summary>
-      fCollList: TCollectionListAdapter;
+      ///  <summary>Object that populates <c>cbVaults</c> with an alphabetical
+      ///  list of vault names and manages interaction with it.</summary>
+      fVaultList: TVaultListAdapter;
     ///  <summary>Retrieves import directory name from edit control where it is
     ///  entered.</summary>
     function GetDirNameFromEditCtrl: string;
-    ///  <summary>Retrieves collection specified by user that applies to
-    ///  imported snippets.</summary>
-    ///  <returns><c>TCollectionID</c>. The required collection ID.</returns>
-    function SelectedCollectionID: TCollectionID;
+    ///  <summary>Retrieves vault specified by user that applies to imported
+    ///  snippets.</summary>
+    ///  <returns><c>TVaultID</c>. The required vault ID.</returns>
+    function SelectedVaultID: TVaultID;
     ///  <summary>Validates entries on the wizard page identified by the given
     ///  page index.</summary>
     procedure ValidatePage(const PageIdx: Integer);
@@ -202,8 +198,8 @@ type
     ///  <summary>Gets the complete information for each packet selected for
     ///  import and stores in the given list.</summary>
     procedure GetImportPackets(const PacketList: TList<TSWAGPacket>);
-    ///  <summary>Performs the import of the selected packets as into CodeSnip's
-    ///  user database as new user-defined snippets.</summary>
+    ///  <summary>Performs the import of the selected packets into a specified
+    ///  vault.</summary>
     ///  <remarks>Displays a wait dialogue box while the import is proceeding.
     ///  </remarks>
     procedure UpdateDatabase;
@@ -370,7 +366,7 @@ begin
 
   // tsUpdate
   TCtrlArranger.AlignLefts(
-    [lblUpdateDesc1, lblUpdateDesc2, lblCollection, lvImports], 0
+    [lblUpdateDesc1, lblUpdateDesc2, lblVaults, lvImports], 0
   );
   lblUpdateDesc1.Width := tsUpdate.ClientWidth;
   lblUpdateDesc2.Width := tsUpdate.ClientWidth;
@@ -378,10 +374,10 @@ begin
   lblUpdateDesc1.Top := 3;
   TCtrlArranger.MoveBelow(lblUpdateDesc1, lblUpdateDesc2, 4);
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(lblUpdateDesc2, 8), [lblCollection, cbCollection]
+    TCtrlArranger.BottomOf(lblUpdateDesc2, 8), [lblVaults, cbVaults]
   );
-  TCtrlArranger.MoveToRightOf(lblCollection, cbCollection, 4);
-  TCtrlArranger.MoveBelow([lblCollection, cbCollection], lvImports, 12);
+  TCtrlArranger.MoveToRightOf(lblVaults, cbVaults, 4);
+  TCtrlArranger.MoveBelow([lblVaults, cbVaults], lvImports, 12);
 
   // tsFinish
   frmOutro.Height := frmOutro.DocHeight;
@@ -531,15 +527,15 @@ begin
     end
   );
 
-  // Set up collection list
-  fCollList.ToStrings(cbCollection.Items);
-  Assert(cbCollection.Items.Count > 0,
-    ClassName + '.ConfigForm: no collections');
-  Assert(TCollections.Instance.ContainsID(TCollectionID.Default),
-    ClassName + '.ConfigForm: default collection not found');
-  cbCollection.ItemIndex := fCollList.IndexOfUID(TCollectionID.Default);
-  Assert(cbCollection.ItemIndex >= 0,
-    ClassName + '.ConfigForm: default collection not in cbCollection');
+  // Set up vaults list
+  fVaultList.ToStrings(cbVaults.Items);
+  Assert(cbVaults.Items.Count > 0,
+    ClassName + '.ConfigForm: no vaults');
+  Assert(TVaults.Instance.ContainsID(TVaultID.Default),
+    ClassName + '.ConfigForm: default vault not found');
+  cbVaults.ItemIndex := fVaultList.IndexOfUID(TVaultID.Default);
+  Assert(cbVaults.ItemIndex >= 0,
+    ClassName + '.ConfigForm: default vault not in cbVaults');
 end;
 
 destructor TSWAGImportDlg.Destroy;
@@ -619,12 +615,12 @@ end;
 procedure TSWAGImportDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fCollList := TCollectionListAdapter.Create;
+  fVaultList := TVaultListAdapter.Create;
 end;
 
 procedure TSWAGImportDlg.FormDestroy(Sender: TObject);
 begin
-  fCollList.Free;
+  fVaultList.Free;
   inherited;
 end;
 
@@ -871,11 +867,11 @@ begin
   );
 end;
 
-function TSWAGImportDlg.SelectedCollectionID: TCollectionID;
+function TSWAGImportDlg.SelectedVaultID: TVaultID;
 begin
-  Assert(cbCollection.ItemIndex >= 0,
-    ClassName + '.SelectedCollectionID: no collection selected');
-  Result := fCollList.Collection(cbCollection.ItemIndex).UID;
+  Assert(cbVaults.ItemIndex >= 0,
+    ClassName + '.SelectedVaultID: no vault selected');
+  Result := fVaultList.Vault(cbVaults.ItemIndex).UID;
 end;
 
 procedure TSWAGImportDlg.UpdateButtons(const PageIdx: Integer);
@@ -911,7 +907,7 @@ begin
       procedure
       begin
         fImporter.Import(
-          SelectedCollectionID,
+          SelectedVaultID,
           procedure (const Packet: TSWAGPacket)
           begin
             Application.ProcessMessages;

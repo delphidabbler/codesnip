@@ -55,7 +55,7 @@ type
     actAddCategory: TAction;
     actAddFavourite: TAction;
     actAddSnippet: TAction;
-    actBackupDatabase: TAction;
+    actBackupVault: TAction;
     actBlog: TBrowseURL;
     actBugReport: TAction;
     actCloseAllDetailsTabs: TAction;
@@ -70,7 +70,7 @@ type
     actCopySource: TAction;
     actDeleteCategory: TAction;
     actDeleteSnippet: TAction;
-    actDeleteUserDatabase: TAction;
+    actDeleteVault: TAction;
     actDuplicateSnippet: TAction;
     actEditSnippet: TAction;
     actExit: TFileExit;
@@ -92,14 +92,14 @@ type
     actImportCode: TAction;
     actLicense: TAction;
     actLoadSelection: TAction;
-    actMoveUserDatabase: TAction;
+    actMoveVault: TAction;
     actNextTab: TAction;
     actNewDetailsTab: TAction;
     actPreferences: TAction;
     actPreviousTab: TAction;
     actPrint: TAction;
     actRenameCategory: TAction;
-    actRestoreDatabase: TAction;
+    actRestoreVault: TAction;
     actSaveDatabase: TAction;
     actSaveSelection: TAction;
     actSaveSnippet: TAction;
@@ -126,7 +126,7 @@ type
     miAddCategory: TMenuItem;
     miAddFavourite: TMenuItem;
     miAddSnippet: TMenuItem;
-    miBackupDatabase: TMenuItem;
+    miBackupVault: TMenuItem;
     miBlog: TMenuItem;
     miCategories: TMenuItem;
     miCloseAllDetailsTabs: TMenuItem;
@@ -141,7 +141,7 @@ type
     miDatabase: TMenuItem;
     miDeleteCategory: TMenuItem;
     miDeleteSnippet: TMenuItem;
-    miDeleteUserDatabase: TMenuItem;
+    miDeleteVault: TMenuItem;
     miDuplicateSnippet: TMenuItem;
     miEdit: TMenuItem;
     miEditSnippet: TMenuItem;
@@ -166,13 +166,13 @@ type
     miImportCode: TMenuItem;
     miLicense: TMenuItem;
     miLoadSelection: TMenuItem;
-    miMoveUserDatabase: TMenuItem;
+    miMoveVault: TMenuItem;
     miNewDetailsTab: TMenuItem;
     miPreferences: TMenuItem;
     miPrint: TMenuItem;
     miRenameCategory: TMenuItem;
     miReportBug: TMenuItem;
-    miRestoreDatabase: TMenuItem;
+    miRestoreVault: TMenuItem;
     miSaveDatabase: TMenuItem;
     miSaveSelection: TMenuItem;
     miSaveSnippet: TMenuItem;
@@ -254,7 +254,7 @@ type
     ///  database.</summary>
     procedure actAddSnippetExecute(Sender: TObject);
     ///  <summary>Makes a backup of the user database.</summary>
-    procedure actBackupDatabaseExecute(Sender: TObject);
+    procedure actBackupVaultExecute(Sender: TObject);
     ///  <summary>Displays Bug Report dialogue box.</summary>
     procedure actBugReportExecute(Sender: TObject);
     ///  <summary>Closes all open tabs in details pane.</summary>
@@ -299,7 +299,7 @@ type
     procedure actDeleteSnippetExecute(Sender: TObject);
     ///  <summary>Requests permission then attempts to delete the user defined
     ///  snippets database.</summary>
-    procedure actDeleteUserDatabaseExecute(Sender: TObject);
+    procedure actDeleteVaultExecute(Sender: TObject);
     ///  <summary>Displays a dialogue box that can be used to duplicate the
     ///  selected snippet.</summary>
     procedure actDuplicateSnippetExecute(Sender: TObject);
@@ -359,7 +359,7 @@ type
     ///  <summary>Displays a dialogue box that can be used to move the user
     ///  database to a user defined directory.</summary>
     ///  <remarks>This action must be hidden in the portable edition.</remarks>
-    procedure actMoveUserDatabaseExecute(Sender: TObject);
+    procedure actMoveVaultExecute(Sender: TObject);
     ///  <summary>Creates a new empty tab in details pane.</summary>
     procedure actNewDetailsTabExecute(Sender: TObject);
     ///  <summary>Displays next tab in either overview or details pane depending
@@ -395,7 +395,7 @@ type
     procedure actRenameCategoryUpdate(Sender: TObject);
     ///  <summary>Displays a dialogue box from which a backup file can be
     ///  selected and used to restore the user defined database.</summary>
-    procedure actRestoreDatabaseExecute(Sender: TObject);
+    procedure actRestoreVaultExecute(Sender: TObject);
     ///  <summary>Save any changes in the user defined database to disk.
     ///  </summary>
     procedure actSaveDatabaseExecute(Sender: TObject);
@@ -580,19 +580,46 @@ implementation
 
 uses
   // Delphi
-  Windows, Graphics,
+  Windows,
+  Graphics,
   // Project
   ClassHelpers.UControls,
   ClassHelpers.UGraphics,
   DB.UCategory,
-  DB.UCollections,
-  DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
-  FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo,
-  UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
-  UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
-  UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper,
-  UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,
-  USaveUnitMgr, USelectionIOMgr, UUrl, UUserDBMgr, UView, UViewItemAction,
+  DB.UMain,
+  DB.USnippet,
+  DB.Vaults,
+  FmSplash,
+  FmTrappedBugReportDlg,
+  FmWaitDlg,
+  IntfFrameMgrs,
+  UActionFactory,
+  UAppInfo,
+  UCodeShareMgr,
+  UCommandBars,
+  UConsts,
+  UCopyInfoMgr,
+  UCopySourceMgr,
+  UDatabaseLoader,
+  UDatabaseLoaderUI,
+  UDetailTabAction,
+  UEditSnippetAction,
+  UExceptions,
+  UHelpMgr,
+  UHistoryMenus,
+  UKeysHelper,
+  UMessageBox,
+  UNotifier,
+  UNulDropTarget,
+  UPrintMgr,
+  UQuery,
+  USaveSnippetMgr,
+  USaveUnitMgr,
+  USelectionIOMgr,
+  UUrl,
+  UUserDBMgr,
+  UView,
+  UViewItemAction,
   UWBExternal;
 
 
@@ -628,7 +655,7 @@ begin
   TUserDBMgr.AddSnippet;
 end;
 
-procedure TMainForm.actBackupDatabaseExecute(Sender: TObject);
+procedure TMainForm.actBackupVaultExecute(Sender: TObject);
 begin
   if (Database as IDatabaseEdit).Updated then
     TUserDBMgr.Save(Self);
@@ -731,7 +758,7 @@ begin
   // display update is handled by snippets change event handler
 end;
 
-procedure TMainForm.actDeleteUserDatabaseExecute(Sender: TObject);
+procedure TMainForm.actDeleteVaultExecute(Sender: TObject);
 begin
   if (Database as IDatabaseEdit).Updated then
     TUserDBMgr.Save(Self);
@@ -771,7 +798,7 @@ begin
   Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actEditSnippetExecute: Can''t edit current view item');
   Snippet := (fMainDisplayMgr.CurrentView as ISnippetView).Snippet;
-  fNotifier.EditSnippet(Snippet.Key, Snippet.CollectionID);
+  fNotifier.EditSnippet(Snippet.Key, Snippet.VaultID);
   // display of updated snippet is handled by snippets change event handler
 end;
 
@@ -918,7 +945,7 @@ begin
     DoSearchFilter(Search);
 end;
 
-procedure TMainForm.actMoveUserDatabaseExecute(Sender: TObject);
+procedure TMainForm.actMoveVaultExecute(Sender: TObject);
 begin
   if (Database as IDatabaseEdit).Updated then
     TUserDBMgr.Save(Self);
@@ -996,7 +1023,7 @@ begin
   (Sender as TAction).Enabled := TUserDBMgr.CanRenameACategory;
 end;
 
-procedure TMainForm.actRestoreDatabaseExecute(Sender: TObject);
+procedure TMainForm.actRestoreVaultExecute(Sender: TObject);
 begin
   if TUserDBMgr.RestoreDatabase(Self) then
   begin

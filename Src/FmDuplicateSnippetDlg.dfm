@@ -25,13 +25,13 @@ inherited DuplicateSnippetDlg: TDuplicateSnippetDlg
       Caption = '&Snippet'
       FocusControl = edDisplayName
     end
-    object lblCollection: TLabel
+    object lblVaults: TLabel
       Left = 0
       Top = 116
-      Width = 50
+      Width = 28
       Height = 13
-      Caption = '&Collection:'
-      FocusControl = cbCollection
+      Caption = '&Vault:'
+      FocusControl = cbVaults
     end
     object cbCategory: TComboBox
       Left = 0
@@ -59,7 +59,7 @@ inherited DuplicateSnippetDlg: TDuplicateSnippetDlg
       Caption = '&Edit in Snippets Editor'
       TabOrder = 2
     end
-    object cbCollection: TComboBox
+    object cbVaults: TComboBox
       Left = 0
       Top = 135
       Width = 222

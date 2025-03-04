@@ -156,7 +156,7 @@ type
         @return List of unit names.
       }
 
-    ///  <summary>Gets the collection's meta data.</summary>
+    ///  <summary>Gets the vault's meta data.</summary>
     ///  <returns><c>TMetaData</c>. Null value.</returns>
     ///  <remarks>
     ///  <para>Meta data is not supported by the data format.</para>
@@ -245,7 +245,7 @@ type
         @param XRefs [in] List of snippet keys.
       }
 
-    ///  <summary>Writes the collection's meta data.</summary>
+    ///  <summary>Writes the vault's meta data.</summary>
     ///  <param name="AMetaData"><c>TMetaData</c> [in] Meta data to be written.
     ///  </param>
     ///  <remarks>

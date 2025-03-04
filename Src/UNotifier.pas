@@ -19,7 +19,7 @@ uses
   // Delphi
   Classes, ActiveX,
   // Project
-  DB.UCollections,
+  DB.Vaults,
   IntfNotifier,
   UView;
 
@@ -67,12 +67,12 @@ type
     ///  <summary>Displays a snippet.</summary>
     ///  <param name="Key">WideString [in] Required snippet's key.
     ///  </param>
-    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
-    ///  collection.</param>
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of the snippet's
+    ///  vault.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
-    procedure DisplaySnippet(const Key: WideString;
-      ACollectionID: TCollectionID; NewTab: WordBool);
+    procedure DisplaySnippet(const Key: WideString; AVaultID: TVaultID;
+      NewTab: WordBool);
 
     ///  <summary>Displays a category.</summary>
     ///  <param name="CatId">WideString [in] ID of required category.</param>
@@ -107,11 +107,10 @@ type
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
     ///  <param name="Key">WideString [in] Snippet's key.</param>
-    ///  <param name="ACollectionID">TCollectionID [in] ID of the snippet's
-    ///  collection.</param>
+    ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of the snippet's
+    ///  vault.</param>
     ///  <remarks>Method of INotifier.</remarks>
-    procedure EditSnippet(const Key: WideString;
-      const ACollectionID: TCollectionID);
+    procedure EditSnippet(const Key: WideString; const AVaultID: TVaultID);
 
     ///  <summary>Displays news items from the CodeSnip news feed.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -231,25 +230,25 @@ begin
   end;
 end;
 
-procedure TNotifier.DisplaySnippet(const Key: WideString;
-  ACollectionID: TCollectionID; NewTab: WordBool);
+procedure TNotifier.DisplaySnippet(const Key: WideString; AVaultID: TVaultID;
+  NewTab: WordBool);
 begin
   if Assigned(fDisplaySnippetAction) then
   begin
     (fDisplaySnippetAction as TSnippetAction).Key := Key;
-    (fDisplaySnippetAction as TSnippetAction).CollectionID := ACollectionID;
+    (fDisplaySnippetAction as TSnippetAction).VaultID := AVaultID;
     (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
     fDisplaySnippetAction.Execute;
   end;
 end;
 
 procedure TNotifier.EditSnippet(const Key: WideString;
-  const ACollectionID: TCollectionID);
+  const AVaultID: TVaultID);
 begin
   if Assigned(fEditSnippetAction) then
   begin
     (fEditSnippetAction as TEditSnippetAction).ID := TSnippetID.Create(
-      Key, ACollectionID
+      Key, AVaultID
     );
     fEditSnippetAction.Execute;
   end;

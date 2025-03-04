@@ -271,11 +271,20 @@ implementation
 
 uses
   // Delphi
-  SysUtils, DateUtils, Windows, Graphics,
+  SysUtils,
+  DateUtils,
+  Windows,
+  Graphics,
   // Project
-  DB.UCollections,
-  DB.UMain, DB.USnippet, UCtrlArranger, UMessageBox, UPreferences, USettings,
-  UStructs, UStrUtils;
+  DB.UMain,
+  DB.USnippet,
+  DB.Vaults,
+  UCtrlArranger,
+  UMessageBox,
+  UPreferences,
+  USettings,
+  UStructs,
+  UStrUtils;
 
 {$R *.dfm}
 
@@ -344,9 +353,7 @@ begin
   LI := fLVFavs.Selected as TFavouriteListItem;
   SelectedSnippet := LI.Favourite.SnippetID;
   fNotifier.DisplaySnippet(
-    SelectedSnippet.Key,
-    SelectedSnippet.CollectionID,
-    chkNewTab.Checked
+    SelectedSnippet.Key, SelectedSnippet.VaultID, chkNewTab.Checked
   );
   fFavourites.Touch(SelectedSnippet);
   fLVFavs.Selected := FindListItem(SelectedSnippet);
@@ -580,11 +587,11 @@ end;
 procedure TFavouritesDlg.LVCustomDrawItem(Sender: TCustomListView;
   Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
 var
-  CollectionID: TCollectionID;
+  VaultID: TVaultID;
 begin
-  CollectionID := (Item as TFavouriteListItem).Favourite.SnippetID.CollectionID;
+  VaultID := (Item as TFavouriteListItem).Favourite.SnippetID.VaultID;
   fLVFavs.Canvas.Font.Color := Preferences.GetSnippetHeadingColour(
-    CollectionID
+    VaultID
   );
 end;
 
