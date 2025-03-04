@@ -83,7 +83,7 @@ type
         ///  </param>
         ///  <returns><c>TVaultID</c>. Associated vault ID. If <c>Node</c> has
         ///  no associated vault then a null vault ID is returned.</returns>
-        function GetCollectionID(const Node: TTreeNode): TVaultID;
+        function GetVaultID(const Node: TTreeNode): TVaultID;
           override;
 
         function IsErrorNode(const Node: TTreeNode): Boolean;
@@ -517,8 +517,7 @@ begin
   fRootID := RootID;
 end;
 
-function TDependenciesDlg.TTVDraw.GetCollectionID(
-  const Node: TTreeNode): TVaultID;
+function TDependenciesDlg.TTVDraw.GetVaultID(const Node: TTreeNode): TVaultID;
 begin
   if not Assigned(Node.Data) then
     Result := TVaultID.CreateNull

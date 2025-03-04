@@ -37,7 +37,7 @@ type
     ///  <param name="Node"><c>TTreeNode</c> [in] Node to be checked.</param>
     ///  <returns><c>TVaultID</c>. Associated vault ID. If <c>Node</c> has no
     ///  associated vault then a null vault ID is returned.</returns>
-    function GetCollectionID(const Node: TTreeNode): TVaultID;
+    function GetVaultID(const Node: TTreeNode): TVaultID;
       virtual; abstract;
 
     function IsSectionHeadNode(const Node: TTreeNode): Boolean;
@@ -125,7 +125,7 @@ begin
         TV.Canvas.Font.Color := Preferences.GroupHeadingColour
       else
         TV.Canvas.Font.Color :=
-          Preferences.GetSnippetHeadingColour(GetCollectionID(Node));
+          Preferences.GetSnippetHeadingColour(GetVaultID(Node));
       TV.Canvas.Brush.Color := TV.Color;
     end;
     if IsSectionHeadNode(Node) then

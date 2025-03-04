@@ -50,13 +50,13 @@ type
       TTVDraw = class(TSnippetsTVDraw)
       strict protected
 
-        ///  <summary>Gets the collection ID, if any, associated with a  tree
-        ///  node.</summary>
+        ///  <summary>Gets the vault ID, if any, associated with a tree node.
+        ///  </summary>
         ///  <param name="Node"><c>TTreeNode</c> [in] Node to be checked.
         ///  </param>
         ///  <returns><c>TVaultID</c>. Associated vault ID. If <c>Node</c> has
         ///  no associated vault then a null vault ID is returned.</returns>
-        function GetCollectionID(const Node: TTreeNode): TVaultID;
+        function GetVaultID(const Node: TTreeNode): TVaultID;
           override;
 
         function IsSectionHeadNode(const Node: TTreeNode): Boolean;
@@ -274,7 +274,7 @@ end;
 
 { TSelectSnippetsBaseFrame.TTVDraw }
 
-function TSelectSnippetsBaseFrame.TTVDraw.GetCollectionID(
+function TSelectSnippetsBaseFrame.TTVDraw.GetVaultID(
   const Node: TTreeNode): TVaultID;
 var
   SnipObj: TObject; // object referenced in Node.Data
