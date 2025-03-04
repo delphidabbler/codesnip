@@ -40,14 +40,13 @@ library ExternalObj
   {
 
     /*
-     * Display snippet identified by key and collection ID.
+     * Display snippet identified by key and vault ID.
      *    @param Key [in] Snippet's key.
-     *    @param CollectionIDAsHex [in] Hex representation of snippet's 
-     *           collection ID.
+     *    @param VaultIDAsHex [in] Hex representation of snippet's vault ID. 
      */
     [id(0x00000080)]
     HRESULT _stdcall DisplaySnippet([in] BSTR Key,
-        [in] BSTR CollectionIDAsHex, [in] VARIANT_BOOL NewTab);
+        [in] BSTR VaultIDAsHex, [in] VARIANT_BOOL NewTab);
 
     /*
      * Displays configure compilers dialog box.
@@ -58,11 +57,10 @@ library ExternalObj
     /*
      * Edits the snippet identified by its key.
      *    @param Key [in] Key of snippet to edit. Must be user defined.
-     *    @param CollectionIDAsHex [in] Hex representation of snippet's 
-     *           collection ID.
+     *    @param VaultIDAsHex [in] Hex representation of snippet's vault ID. 
      */
     [id(0x0000006C)]
-    HRESULT _stdcall EditSnippet([in] BSTR Key, [in] BSTR CollectionIDAsHex);
+    HRESULT _stdcall EditSnippet([in] BSTR Key, [in] BSTR VaultIDAsHex);
 
     /*
      * Display identified category.
