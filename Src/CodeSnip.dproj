@@ -583,7 +583,7 @@
 			<DCCReference Include="UTabSeparatedFileIO.pas"/>
 			<DCCReference Include="DBIO.UCategoryIO.pas"/>
 			<DCCReference Include="UI.Adapters.VaultList.pas"/>
-			<DCCReference Include="FmCollectionBackup.pas">
+			<DCCReference Include="UI.Forms.BackupVaultDlg.pas">
 				<Form>VaultBackupDlg</Form>
 			</DCCReference>
 			<DCCReference Include="DB.DataFormats.pas"/>

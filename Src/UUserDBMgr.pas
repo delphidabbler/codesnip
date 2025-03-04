@@ -100,7 +100,7 @@ uses
   DB.USnippet,
   DB.Vaults,
   FmAddCategoryDlg,
-  FmCollectionBackup,
+  UI.Forms.BackupVaultDlg,
   FmDeleteCategoryDlg,
   FmDeleteUserDBDlg,
   FmDuplicateSnippetDlg,
