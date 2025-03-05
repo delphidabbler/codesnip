@@ -9,10 +9,8 @@
  * files.
 }
 
-{TODO -cVault: rename INI term to DCSCv2 - this isn't a general .ini data
-        IO unit, the .ini format only part of a wider vault format.}
 
-unit DBIO.UIniData;
+unit DB.IO.DataFormat.DCSCv2;
 
 
 interface
@@ -24,7 +22,6 @@ uses
   Classes,
   Types,
   Generics.Collections,
-  Generics.Defaults,
   IniFiles,
   // Project
   ActiveText.UMain,
@@ -33,18 +30,45 @@ uses
   DB.USnippet,
   DBIO.UFileIOIntf,
   UIStringList,
-  UMainDBFileReader,
   UVersionInfo;
 
 
 type
 
-  ///  <summary>
-  ///  Reads main CodeSnip database data from .ini and .dat files.
-  ///  </summary>
+  ///  <summary>Reads a vault from disk in the DelphiDabbler Code Snippets
+  ///  Collection v2 format.</summary>
   TIniDataReader = class sealed(TInterfacedObject, IDataReader)
   strict private
     type
+      ///  <summary>Extension of <c>TMemIniFile</c> that loads its data from a
+      ///  UTF8 encoded file with BOM. Any quotes enclosing values read from the
+      ///  ini file are stripped.</summary>
+      TUTF8IniFileEx = class(TMemIniFile)
+      public
+        ///  <summary>Object constructor. Sets up ini file object and loads data
+        ///  into it from a file.</summary>
+        ///  <param name="AFileName"><c>string</c> [in] Name of ini file.
+        ///  </param>
+        constructor Create(const AFileName: string);
+        ///  <summary>Retrieves a string value from an ini file.</summary>
+        ///  <param name="Section"><c>string</c> [in] Section containing value.
+        ///  </param>
+        ///  <param name="Ident"><c>string</c> [in] Identifier of value.</param>
+        ///  <param name="Default"><c>string</c> [in] Default value used if
+        ///  <c>Ident</c> has no associated value.</param>
+        ///  <returns><c>string</c> containing the required value, with any
+        ///  enclosing quotes removed.</returns>
+        ///  <remarks>Overrides the method in base class to strip enclosing
+        ///  quotes.</remarks>
+        function ReadString(const Section, Ident, Default: string): string;
+          override;
+        ///  <summary>Loads ini object's data from a string array.</summary>
+        ///  <param name="AStrings"><c>TStringDynArray</c> [in] Array of strings
+        ///  to be loaded.</param>
+        ///  <remarks>Overloads inherited <c>SetStrings</c> method.</remarks>
+        procedure SetStrings(const AStrings: TStringDynArray); overload;
+      end;
+
       ///  <summary>
       ///  Class that implements a cache of ini file objects, indexed by ini
       ///  file name.
@@ -59,11 +83,9 @@ type
         var
           ///  <summary>Maps file names to related ini file objects.</summary>
           fCache: TIniFileMap;
-          ///  <summary>Loads database files using correct encoding.</summary>
-          fFileReader: TMainDBFileReader;
       public
         ///  <summary>Object constructor. Sets up empty cache.</summary>
-        constructor Create(const FileReader: TMainDBFileReader);
+        constructor Create;
         ///  <summary>Object destructor. Frees cache.</summary>
         destructor Destroy; override;
         ///  <summary>
@@ -90,8 +112,6 @@ type
       fSnippetCatMap: TSnippetCatMap;
       ///  <summary>Cache of category ini file objects.</summary>
       fIniCache: TIniFileCache;
-      ///  <summary>Reads DB files using correct encoding.</summary>
-      fFileReader: TMainDBFileReader;
       ///  <summary>Data format version number.</summary>
       fVersion: TVersionNumber;
     const
@@ -439,11 +459,9 @@ uses
   UConsts,
   UEncodings,
   UExceptions,
-  UIniDataLoader,
   UIOUtils,
   UREMLDataIO,
   USnippetExtraHelper,
-  USystemInfo,
   UStrUtils,
   UUtils;
 
@@ -525,15 +543,14 @@ begin
   // Create helper objects used to speed up access to ini files
   if DatabaseExists then
   begin
-    fFileReader := TMainDBFileReader.Create(MasterFileName);
-    fIniCache := TIniFileCache.Create(fFileReader);
+    fIniCache := TIniFileCache.Create;
     try
       ReadVersionNumber;
       if fVersion.IsNull then
         raise EDataIO.Create(sVersionNotSpecified);
       if fVersion.V1 <> SupportedMajorVersion then
         raise EDataIO.CreateFmt(sVersionNotSupported, [string(fVersion)]);
-      fMasterIni := TDatabaseIniFile.Create(fFileReader, MasterFileName);
+      fMasterIni := TUTF8IniFileEx.Create(MasterFileName);
       fCatIDs := TStringList.Create;
       fSnippetCatMap := TSnippetCatMap.Create(TTextEqualityComparer.Create);
       // Load required indexes
@@ -566,7 +583,6 @@ end;
 
 destructor TIniDataReader.Destroy;
 begin
-  fFileReader.Free;
   fIniCache.Free;
   fSnippetCatMap.Free;
   fCatIDs.Free;
@@ -744,7 +760,9 @@ var
   begin
     SnipFileName := CatIni.ReadString(SnippetKey, cSnipFileName, '');
     try
-      Result := fFileReader.ReadAllText(DataFile(SnipFileName));
+      Result := TFileIO.ReadAllText(
+        DataFile(SnipFileName), TEncoding.UTF8, True
+      );
     except
       // if error loading file then database is corrupt
       on E: EFOpenError do
@@ -873,8 +891,7 @@ resourcestring
 begin
   DeleteFiles(DataDir, '*.*');
   if (EObj is EDataIO)
-    or (EObj is EFileStreamError)
-    or (EObj is EDatabaseIniFile) then
+    or (EObj is EFileStreamError) then
     // we have database error: raise new exception containing old message
     raise EDataIO.CreateFmt(sDBError, [(EObj as Exception).Message])
   else
@@ -968,13 +985,52 @@ begin
   Result := fCatIDs[CatIdx];
 end;
 
+{ TIniDataReader.TUTF8IniFileEx }
+
+constructor TIniDataReader.TUTF8IniFileEx.Create(const AFileName: string);
+resourcestring
+  sFileNotFound = 'File "%s" does not exist.';
+begin
+  inherited Create(AFileName);
+  if not TFile.Exists(AFileName) then
+    raise EDataIO.CreateFmt(
+      sFileNotFound, [ExtractFileName(AFileName)]
+    );
+  SetStrings(TFileIO.ReadAllLines(AFileName, TEncoding.UTF8, True));
+end;
+
+function TIniDataReader.TUTF8IniFileEx.ReadString(const Section, Ident,
+  Default: string): string;
+begin
+  // Read string from ini
+  Result := inherited ReadString(Section, Ident, Default);
+  // Strip any leading and trailing quotes
+  if (Length(Result) > 1) and (Result[1] = DOUBLEQUOTE)
+    and (Result[Length(Result)] = DOUBLEQUOTE) then
+    Result := Copy(Result, 2, Length(Result) - 2);
+end;
+
+procedure TIniDataReader.TUTF8IniFileEx.SetStrings(
+  const AStrings: TStringDynArray);
+var
+  SL: TStringList;
+  Str: string;
+begin
+  SL := TStringList.Create;
+  try
+    for Str in AStrings do
+      SL.Add(Str);
+    SetStrings(SL);
+  finally
+    SL.Free;
+  end;
+end;
+
 { TIniDataReader.TIniFileCache }
 
-constructor TIniDataReader.TIniFileCache.Create(
-  const FileReader: TMainDBFileReader);
+constructor TIniDataReader.TIniFileCache.Create;
 begin
   inherited Create;
-  fFileReader := FileReader;
   // fCache owns and frees the ini file objects
   fCache := TIniFileMap.Create(
     [doOwnsValues], TTextEqualityComparer.Create
@@ -991,7 +1047,7 @@ function TIniDataReader.TIniFileCache.GetIniFile(
   const PathToFile: string): TCustomIniFile;
 begin
   if not fCache.ContainsKey(PathToFile) then
-    fCache.Add(PathToFile, TDatabaseIniFile.Create(fFileReader, PathToFile));
+    fCache.Add(PathToFile, TUTF8IniFileEx.Create(PathToFile));
   Result := fCache[PathToFile];
 end;
 

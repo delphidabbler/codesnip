@@ -133,7 +133,7 @@ uses
   DB.IO.DataFormat.Native,
   DBIO.UCategoryIO,
   DBIO.UFileIOIntf,
-  DBIO.UIniData,
+  DB.IO.DataFormat.DCSCv2,
   DBIO.UNulDataReader,
   DBIO.UXMLDataIO,
   UAppInfo,

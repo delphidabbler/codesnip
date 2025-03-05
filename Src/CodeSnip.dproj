@@ -72,7 +72,7 @@
 			<DCCReference Include="DB.USnippet.pas"/>
 			<DCCReference Include="DB.USnippetKind.pas"/>
 			<DCCReference Include="DBIO.UFileIOIntf.pas"/>
-			<DCCReference Include="DBIO.UIniData.pas"/>
+			<DCCReference Include="DB.IO.DataFormat.DCSCv2.pas"/>
 			<DCCReference Include="DBIO.UNulDataReader.pas"/>
 			<DCCReference Include="DBIO.UXMLDataIO.pas"/>
 			<DCCReference Include="Favourites.UManager.pas"/>
@@ -459,7 +459,6 @@
 			<DCCReference Include="UHTMLUtils.pas"/>
 			<DCCReference Include="UHTTPProtocol.pas"/>
 			<DCCReference Include="UImageTags.pas"/>
-			<DCCReference Include="UIniDataLoader.pas"/>
 			<DCCReference Include="UInitialLetter.pas"/>
 			<DCCReference Include="UIOUtils.pas"/>
 			<DCCReference Include="UIStringList.pas"/>
@@ -468,7 +467,6 @@
 			<DCCReference Include="ULEDImageList.pas"/>
 			<DCCReference Include="ULinkAction.pas"/>
 			<DCCReference Include="ULocales.pas"/>
-			<DCCReference Include="UMainDBFileReader.pas"/>
 			<DCCReference Include="UMainDisplayMgr.pas"/>
 			<DCCReference Include="UMarquee.pas"/>
 			<DCCReference Include="UMeasurement.pas"/>
