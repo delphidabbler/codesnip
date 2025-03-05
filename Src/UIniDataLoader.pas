@@ -18,9 +18,10 @@ interface
 
 uses
   // Delphi
-  Classes, IniFiles,
+  Types,
+  IniFiles,
   // Project
-  UBaseObjects, UExceptions, UIStringList, UMainDBFileReader;
+  UExceptions;
 
 
 type
@@ -28,18 +29,11 @@ type
   ///  Any quotes enclosing values read from the ini file are stripped.
   ///  </summary>
   TDatabaseIniFile = class(TMemIniFile)
-  strict private
-    var
-      ///  <summary>Loads database file using correct encoding.</summary>
-      fFileReader: TMainDBFileReader;
   public
     ///  <summary>Object constructor. Sets up ini file object and loads data
     ///  into it from a file.</summary>
-    ///  <param name="FileReader">TMainDBFileReader [in] Object used to read
-    ///  database text files using correct encoding.</param>
     ///  <param name="AFileName"><c>string</c> [in] Name of ini file.</param>
-    constructor Create(const FileReader: TMainDBFileReader;
-      const AFileName: string);
+    constructor Create(const AFileName: string);
     ///  <summary>Retrieves a string value from an ini file.</summary>
     ///  <param name="Section"><c>string</c> [in] Section containing value.
     ///  </param>
@@ -52,11 +46,11 @@ type
     ///  </remarks>
     function ReadString(const Section, Ident, Default: string): string;
       override;
-    ///  <summary>Loads ini object's data from a string list.</summary>
-    ///  <param name="Strings">IStringList [in] Strings to be loaded.</param>
-    ///  <remarks>Overloads inherited <c>SetStrings</c> to load data from a
-    ///  IStringList as well as TStringList.</remarks>
-    procedure SetStrings(const Strings: IStringList); overload;
+    ///  <summary>Loads ini object's data from a string array.</summary>
+    ///  <param name="AStrings"><c>TStringDynArray</c> [in] Array of strings to
+    ///  be loaded.</param>
+    ///  <remarks>Overloads inherited <c>SetStrings</c> method.</remarks>
+    procedure SetStrings(const AStrings: TStringDynArray); overload;
   end;
 
 type
@@ -70,26 +64,24 @@ implementation
 uses
   // Delphi
   SysUtils,
+  Classes,
   IOUtils,
   // Project
   UConsts,
-  UStrUtils,
-  UVersionInfo;
+  UIOUtils;
 
 { TDatabaseIniFile }
 
-constructor TDatabaseIniFile.Create(const FileReader: TMainDBFileReader;
-  const AFileName: string);
+constructor TDatabaseIniFile.Create(const AFileName: string);
 resourcestring
   sFileNotFound = 'File "%s" does not exist.';
 begin
   inherited Create(AFileName);
-  fFileReader := FileReader;
   if not TFile.Exists(AFileName) then
     raise EDatabaseIniFile.CreateFmt(
       sFileNotFound, [ExtractFileName(AFileName)]
     );
-  SetStrings(fFileReader.ReadAllStrings(AFileName));
+  SetStrings(TFileIO.ReadAllLines(AFileName, TEncoding.UTF8, True));
 end;
 
 function TDatabaseIniFile.ReadString(const Section, Ident,
@@ -103,13 +95,15 @@ begin
     Result := Copy(Result, 2, Length(Result) - 2);
 end;
 
-procedure TDatabaseIniFile.SetStrings(const Strings: IStringList);
+procedure TDatabaseIniFile.SetStrings(const AStrings: TStringDynArray);
 var
-  SL: TStringList;  // string list use to call inherited method
+  SL: TStringList;
+  Str: string;
 begin
   SL := TStringList.Create;
   try
-    Strings.CopyTo(SL);
+    for Str in AStrings do
+      SL.Add(Str);
     SetStrings(SL);
   finally
     FreeAndNil(SL);

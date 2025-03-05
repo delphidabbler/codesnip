@@ -266,7 +266,6 @@ uses
   ULEDImageList in 'ULEDImageList.pas',
   ULinkAction in 'ULinkAction.pas',
   ULocales in 'ULocales.pas',
-  UMainDBFileReader in 'UMainDBFileReader.pas',
   UMainDisplayMgr in 'UMainDisplayMgr.pas',
   UMarquee in 'UMarquee.pas',
   UMeasurement in 'UMeasurement.pas',

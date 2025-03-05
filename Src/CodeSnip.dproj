@@ -468,7 +468,6 @@
 			<DCCReference Include="ULEDImageList.pas"/>
 			<DCCReference Include="ULinkAction.pas"/>
 			<DCCReference Include="ULocales.pas"/>
-			<DCCReference Include="UMainDBFileReader.pas"/>
 			<DCCReference Include="UMainDisplayMgr.pas"/>
 			<DCCReference Include="UMarquee.pas"/>
 			<DCCReference Include="UMeasurement.pas"/>

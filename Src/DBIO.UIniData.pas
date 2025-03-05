@@ -33,7 +33,6 @@ uses
   DB.USnippet,
   DBIO.UFileIOIntf,
   UIStringList,
-  UMainDBFileReader,
   UVersionInfo;
 
 
@@ -59,11 +58,9 @@ type
         var
           ///  <summary>Maps file names to related ini file objects.</summary>
           fCache: TIniFileMap;
-          ///  <summary>Loads database files using correct encoding.</summary>
-          fFileReader: TMainDBFileReader;
       public
         ///  <summary>Object constructor. Sets up empty cache.</summary>
-        constructor Create(const FileReader: TMainDBFileReader);
+        constructor Create;
         ///  <summary>Object destructor. Frees cache.</summary>
         destructor Destroy; override;
         ///  <summary>
@@ -90,8 +87,6 @@ type
       fSnippetCatMap: TSnippetCatMap;
       ///  <summary>Cache of category ini file objects.</summary>
       fIniCache: TIniFileCache;
-      ///  <summary>Reads DB files using correct encoding.</summary>
-      fFileReader: TMainDBFileReader;
       ///  <summary>Data format version number.</summary>
       fVersion: TVersionNumber;
     const
@@ -525,15 +520,14 @@ begin
   // Create helper objects used to speed up access to ini files
   if DatabaseExists then
   begin
-    fFileReader := TMainDBFileReader.Create(MasterFileName);
-    fIniCache := TIniFileCache.Create(fFileReader);
+    fIniCache := TIniFileCache.Create;
     try
       ReadVersionNumber;
       if fVersion.IsNull then
         raise EDataIO.Create(sVersionNotSpecified);
       if fVersion.V1 <> SupportedMajorVersion then
         raise EDataIO.CreateFmt(sVersionNotSupported, [string(fVersion)]);
-      fMasterIni := TDatabaseIniFile.Create(fFileReader, MasterFileName);
+      fMasterIni := TDatabaseIniFile.Create(MasterFileName);
       fCatIDs := TStringList.Create;
       fSnippetCatMap := TSnippetCatMap.Create(TTextEqualityComparer.Create);
       // Load required indexes
@@ -566,7 +560,6 @@ end;
 
 destructor TIniDataReader.Destroy;
 begin
-  fFileReader.Free;
   fIniCache.Free;
   fSnippetCatMap.Free;
   fCatIDs.Free;
@@ -744,7 +737,9 @@ var
   begin
     SnipFileName := CatIni.ReadString(SnippetKey, cSnipFileName, '');
     try
-      Result := fFileReader.ReadAllText(DataFile(SnipFileName));
+      Result := TFileIO.ReadAllText(
+        DataFile(SnipFileName), TEncoding.UTF8, True
+      );
     except
       // if error loading file then database is corrupt
       on E: EFOpenError do
@@ -970,11 +965,9 @@ end;
 
 { TIniDataReader.TIniFileCache }
 
-constructor TIniDataReader.TIniFileCache.Create(
-  const FileReader: TMainDBFileReader);
+constructor TIniDataReader.TIniFileCache.Create;
 begin
   inherited Create;
-  fFileReader := FileReader;
   // fCache owns and frees the ini file objects
   fCache := TIniFileMap.Create(
     [doOwnsValues], TTextEqualityComparer.Create
@@ -991,7 +984,7 @@ function TIniDataReader.TIniFileCache.GetIniFile(
   const PathToFile: string): TCustomIniFile;
 begin
   if not fCache.ContainsKey(PathToFile) then
-    fCache.Add(PathToFile, TDatabaseIniFile.Create(fFileReader, PathToFile));
+    fCache.Add(PathToFile, TDatabaseIniFile.Create(PathToFile));
   Result := fCache[PathToFile];
 end;
 
