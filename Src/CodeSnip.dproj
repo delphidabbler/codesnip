@@ -459,7 +459,6 @@
 			<DCCReference Include="UHTMLUtils.pas"/>
 			<DCCReference Include="UHTTPProtocol.pas"/>
 			<DCCReference Include="UImageTags.pas"/>
-			<DCCReference Include="UIniDataLoader.pas"/>
 			<DCCReference Include="UInitialLetter.pas"/>
 			<DCCReference Include="UIOUtils.pas"/>
 			<DCCReference Include="UIStringList.pas"/>

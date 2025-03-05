@@ -257,7 +257,6 @@ uses
   UHTMLUtils in 'UHTMLUtils.pas',
   UHTTPProtocol in 'UHTTPProtocol.pas',
   UImageTags in 'UImageTags.pas',
-  UIniDataLoader in 'UIniDataLoader.pas',
   UInitialLetter in 'UInitialLetter.pas',
   UIOUtils in 'UIOUtils.pas',
   UIStringList in 'UIStringList.pas',
