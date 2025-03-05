@@ -321,7 +321,7 @@ uses
   Generics.Defaults,
   // Project
   DB.UDatabaseIO,
-  DBIO.UCategoryIO,
+  DB.IO.Categories,
   IntfCommon,
   UExceptions,
   UQuery,

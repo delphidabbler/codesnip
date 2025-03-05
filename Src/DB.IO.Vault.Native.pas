@@ -10,7 +10,7 @@
 }
 
 
-unit DB.IO.DataFormat.Native;
+unit DB.IO.Vault.Native;
 
 interface
 
@@ -23,7 +23,7 @@ uses
   DB.UCategory,
   DB.USnippet,
   DB.USnippetKind,
-  DBIO.UFileIOIntf,
+  DB.IO.Vault,
   UIStringList,
   UVersionInfo,
   UXMLDocumentEx;

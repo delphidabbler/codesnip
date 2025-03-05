@@ -8,7 +8,7 @@
  * Class that read and write category information from and to files.
 }
 
-unit DBIO.UCategoryIO;
+unit DB.IO.Categories;
 
 interface
 

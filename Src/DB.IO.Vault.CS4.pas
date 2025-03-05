@@ -10,7 +10,7 @@
 }
 
 
-unit DBIO.UXMLDataIO;
+unit DB.IO.Vault.CS4;
 
 
 interface
@@ -23,7 +23,7 @@ uses
   DB.MetaData,
   DB.UCategory,
   DB.USnippet,
-  DBIO.UFileIOIntf,
+  DB.IO.Vault,
   UIStringList,
   UREMLDataIO,
   UXMLDocumentEx;

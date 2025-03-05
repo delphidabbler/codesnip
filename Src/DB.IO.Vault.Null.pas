@@ -9,7 +9,7 @@
 }
 
 
-unit DBIO.UNulDataReader;
+unit DB.IO.Vault.Null;
 
 
 interface
@@ -20,7 +20,7 @@ uses
   DB.MetaData,
   DB.UCategory,
   DB.USnippet,
-  DBIO.UFileIOIntf,
+  DB.IO.Vault,
   UIStringList;
 
 

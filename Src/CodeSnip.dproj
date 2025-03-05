@@ -71,10 +71,10 @@
 			<DCCReference Include="DB.UMain.pas"/>
 			<DCCReference Include="DB.USnippet.pas"/>
 			<DCCReference Include="DB.USnippetKind.pas"/>
-			<DCCReference Include="DBIO.UFileIOIntf.pas"/>
-			<DCCReference Include="DB.IO.DataFormat.DCSCv2.pas"/>
-			<DCCReference Include="DBIO.UNulDataReader.pas"/>
-			<DCCReference Include="DBIO.UXMLDataIO.pas"/>
+			<DCCReference Include="DB.IO.Vault.pas"/>
+			<DCCReference Include="DB.IO.Vault.DCSCv2.pas"/>
+			<DCCReference Include="DB.IO.Vault.Null.pas"/>
+			<DCCReference Include="DB.IO.Vault.CS4.pas"/>
 			<DCCReference Include="Favourites.UManager.pas"/>
 			<DCCReference Include="Favourites.UFavourites.pas"/>
 			<DCCReference Include="Favourites.UPersist.pas"/>
@@ -395,7 +395,7 @@
 			<DCCReference Include="UI.Adapters.CategoryList.pas"/>
 			<DCCReference Include="ClassHelpers.UControls.pas"/>
 			<DCCReference Include="UClipboardHelper.pas"/>
-			<DCCReference Include="UCodeImportExport.pas"/>
+			<DCCReference Include="DB.IO.ImportExport.CS4.pas"/>
 			<DCCReference Include="UCodeImportMgr.pas"/>
 			<DCCReference Include="UCodeShareMgr.pas"/>
 			<DCCReference Include="UColorBoxEx.pas"/>
@@ -579,13 +579,13 @@
 			<DCCReference Include="ClassHelpers.UActions.pas"/>
 			<DCCReference Include="DB.Vaults.pas"/>
 			<DCCReference Include="UTabSeparatedFileIO.pas"/>
-			<DCCReference Include="DBIO.UCategoryIO.pas"/>
+			<DCCReference Include="DB.IO.Categories.pas"/>
 			<DCCReference Include="UI.Adapters.VaultList.pas"/>
 			<DCCReference Include="UI.Forms.BackupVaultDlg.pas">
 				<Form>VaultBackupDlg</Form>
 			</DCCReference>
 			<DCCReference Include="DB.DataFormats.pas"/>
-			<DCCReference Include="DB.IO.DataFormat.Native.pas"/>
+			<DCCReference Include="DB.IO.Vault.Native.pas"/>
 			<DCCReference Include="DB.MetaData.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">

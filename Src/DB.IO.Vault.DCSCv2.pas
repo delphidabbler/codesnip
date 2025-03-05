@@ -10,7 +10,7 @@
 }
 
 
-unit DB.IO.DataFormat.DCSCv2;
+unit DB.IO.Vault.DCSCv2;
 
 
 interface
@@ -28,7 +28,7 @@ uses
   DB.MetaData,
   DB.UCategory,
   DB.USnippet,
-  DBIO.UFileIOIntf,
+  DB.IO.Vault,
   UIStringList,
   UVersionInfo;
 
