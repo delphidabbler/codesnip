@@ -69,7 +69,7 @@ uses
   DB.USnippet in 'DB.USnippet.pas',
   DB.USnippetKind in 'DB.USnippetKind.pas',
   DBIO.UFileIOIntf in 'DBIO.UFileIOIntf.pas',
-  DBIO.UIniData in 'DBIO.UIniData.pas',
+  DB.IO.DataFormat.DCSCv2 in 'DB.IO.DataFormat.DCSCv2.pas',
   DBIO.UNulDataReader in 'DBIO.UNulDataReader.pas',
   DBIO.UXMLDataIO in 'DBIO.UXMLDataIO.pas',
   Favourites.UManager in 'Favourites.UManager.pas',

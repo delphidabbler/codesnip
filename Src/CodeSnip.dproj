@@ -72,7 +72,7 @@
 			<DCCReference Include="DB.USnippet.pas"/>
 			<DCCReference Include="DB.USnippetKind.pas"/>
 			<DCCReference Include="DBIO.UFileIOIntf.pas"/>
-			<DCCReference Include="DBIO.UIniData.pas"/>
+			<DCCReference Include="DB.IO.DataFormat.DCSCv2.pas"/>
 			<DCCReference Include="DBIO.UNulDataReader.pas"/>
 			<DCCReference Include="DBIO.UXMLDataIO.pas"/>
 			<DCCReference Include="Favourites.UManager.pas"/>

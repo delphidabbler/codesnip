@@ -9,10 +9,8 @@
  * files.
 }
 
-{TODO -cVault: rename INI term to DCSCv2 - this isn't a general .ini data
-        IO unit, the .ini format only part of a wider vault format.}
 
-unit DBIO.UIniData;
+unit DB.IO.DataFormat.DCSCv2;
 
 
 interface
