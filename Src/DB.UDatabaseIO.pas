@@ -164,7 +164,7 @@ type
   }
   TDatabaseLoader = class(TInterfacedObject, IDataFormatLoader)
   strict private
-    fReader: IDataReader;         // Object used to read data from storage
+    fReader: IVaultStorageReader; // Object used to read data from storage
     fSnipList: TSnippetList;      // Receives list of snippets
     fCategories: TCategoryList;   // Receives list of categories
     fFactory: IDBDataItemFactory; // Object creates new categories and snippets
@@ -184,7 +184,7 @@ type
         @except Exception always raised.
       }
   strict protected
-    function CreateReader: IDataReader; virtual; abstract;
+    function CreateReader: IVaultStorageReader; virtual; abstract;
       {Creates reader object for the database. If database doesn't exist a nul
       reader must be created.
         @return Reader object instance.
@@ -242,7 +242,7 @@ type
   }
   TDCSCV2FormatLoader = class(TDatabaseLoader, IDataFormatLoader)
   strict protected
-    function CreateReader: IDataReader; override;
+    function CreateReader: IVaultStorageReader; override;
       {Creates reader object. If main database doesn't exist a nul reader is
       created.
         @return Reader object instance.
@@ -259,7 +259,7 @@ type
   }
   TNativeV4FormatLoader = class(TDatabaseLoader, IDataFormatLoader)
   strict protected
-    function CreateReader: IDataReader; override;
+    function CreateReader: IVaultStorageReader; override;
       {Creates reader object. If user database doesn't exist a nul reader is
       created.
         @return Reader object instance.
@@ -272,7 +272,7 @@ type
 
   TNativeVaultFormatLoader = class(TDatabaseLoader, IDataFormatLoader)
   strict protected
-    function CreateReader: IDataReader; override;
+    function CreateReader: IVaultStorageReader; override;
       {Creates reader object. If user database doesn't exist a nul reader is
       created.
         @return Reader object instance.
@@ -296,7 +296,7 @@ type
   )
   strict private
     var
-      fWriter: IDataWriter;             // Object used to write to storage
+      fWriter: IVaultStorageWriter;     // Object used to write to storage
       fSnipList: TSnippetList;          // List of snippets to be written
       fCategories: TCategoryList;       // List of categories to be written
       fProvider: IDBDataProvider;       // Object used to get data to be written
@@ -329,8 +329,8 @@ type
 
     ///  <summary>Creates an object that can write data to storage in the
     ///  required format.</summary>
-    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
-    function CreateWriter: IDataWriter; virtual; abstract;
+    ///  <returns><c>IVaultStorageWriter</c>. Required writer object.</returns>
+    function CreateWriter: IVaultStorageWriter; virtual; abstract;
 
     ///  <summary>Vault being saved.</summary>
     property Vault: TVault read fVault;
@@ -371,8 +371,8 @@ type
 
     ///  <summary>Creates an object that can write data to storage in
     ///  DelphiDabbler Code Snippets v2 data format.</summary>
-    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
-    function CreateWriter: IDataWriter; override;
+    ///  <returns><c>IVaultStorageWriter</c>. Required writer object.</returns>
+    function CreateWriter: IVaultStorageWriter; override;
 
   public
 
@@ -401,8 +401,8 @@ type
 
     ///  <summary>Creates an object that can write data to storage in
     ///  CodeSnip's native v4 data format.</summary>
-    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
-    function CreateWriter: IDataWriter; override;
+    ///  <returns><c>IVaultStorageWriter</c>. Required writer object.</returns>
+    function CreateWriter: IVaultStorageWriter; override;
 
   public
 
@@ -426,8 +426,8 @@ type
 
     ///  <summary>Creates an object that can write data to storage in
     ///  CodeSnip's native v4 data format.</summary>
-    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
-    function CreateWriter: IDataWriter; override;
+    ///  <returns><c>IVaultStorageWriter</c>. Required writer object.</returns>
+    function CreateWriter: IVaultStorageWriter; override;
 
   public
 
@@ -629,7 +629,6 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
     @param Snippet [in] Snippet for which references are required.
   }
 
-  // ---------------------------------------------------------------------------
   procedure LoadSnippetReferences(const RefList: TSnippetList;
     const RefKeys: IStringList);
     {Creates a snippet list from keys of snippets in a string list. If no
@@ -649,7 +648,6 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
         RefList.Add(Reference);
     end;
   end;
-  // ---------------------------------------------------------------------------
 
 begin
   LoadSnippetReferences(
@@ -695,15 +693,15 @@ end;
 
 { TDCSCV2FormatLoader }
 
-function TDCSCV2FormatLoader.CreateReader: IDataReader;
+function TDCSCV2FormatLoader.CreateReader: IVaultStorageReader;
   {Creates reader object. If main database doesn't exist a nul reader is
   created.
     @return Reader object instance.
   }
 begin
-  Result := TIniDataReader.Create(Vault.Storage.Directory);
+  Result := TDCSCV2VaultStorageReader.Create(Vault.Storage.Directory);
   if not Result.DatabaseExists then
-    Result := TNulDataReader.Create;
+    Result := TNullVaultStorageReader.Create;
 end;
 
 function TDCSCV2FormatLoader.ErrorMessageHeading: string;
@@ -718,15 +716,15 @@ end;
 
 { TNativeV4FormatLoader }
 
-function TNativeV4FormatLoader.CreateReader: IDataReader;
+function TNativeV4FormatLoader.CreateReader: IVaultStorageReader;
   {Creates reader object. If user database doesn't exist a nul reader is
   created.
     @return Reader object instance.
   }
 begin
-  Result := TXMLDataReader.Create(Vault.Storage.Directory);
+  Result := TCS4VaultStorageReader.Create(Vault.Storage.Directory);
   if not Result.DatabaseExists then
-    Result := TNulDataReader.Create;
+    Result := TNullVaultStorageReader.Create;
 end;
 
 function TNativeV4FormatLoader.ErrorMessageHeading: string;
@@ -741,11 +739,11 @@ end;
 
 { TNativeVaultFormatLoader }
 
-function TNativeVaultFormatLoader.CreateReader: IDataReader;
+function TNativeVaultFormatLoader.CreateReader: IVaultStorageReader;
 begin
-  Result := TNativeDataReader.Create(Vault.Storage.Directory);
+  Result := TNativeVaultStorageReader.Create(Vault.Storage.Directory);
   if not Result.DatabaseExists then
-    Result := TNulDataReader.Create;
+    Result := TNullVaultStorageReader.Create;
 end;
 
 function TNativeVaultFormatLoader.ErrorMessageHeading: string;
@@ -862,9 +860,9 @@ begin
   until not TFile.Exists(fBakFile);
 end;
 
-function TDCSCV2FormatSaver.CreateWriter: IDataWriter;
+function TDCSCV2FormatSaver.CreateWriter: IVaultStorageWriter;
 begin
-  Result := TIniDataWriter.Create(Vault.Storage.Directory);
+  Result := TDCSCV2VaultStorageWriter.Create(Vault.Storage.Directory);
 end;
 
 procedure TDCSCV2FormatSaver.Restore;
@@ -897,9 +895,9 @@ end;
 
 { TNativeV4FormatSaver }
 
-function TNativeV4FormatSaver.CreateWriter: IDataWriter;
+function TNativeV4FormatSaver.CreateWriter: IVaultStorageWriter;
 begin
-  Result := TXMLDataWriter.Create(Vault.Storage.Directory);
+  Result := TCS4VaultStorageWriter.Create(Vault.Storage.Directory);
 end;
 
 procedure TNativeV4FormatSaver.Save(const SnipList: TSnippetList;
@@ -911,9 +909,9 @@ end;
 
 { TNativeVaultFormatSaver }
 
-function TNativeVaultFormatSaver.CreateWriter: IDataWriter;
+function TNativeVaultFormatSaver.CreateWriter: IVaultStorageWriter;
 begin
-  Result := TNativeDataWriter.Create(Vault.Storage.Directory);
+  Result := TNativeVaultStorageWriter.Create(Vault.Storage.Directory);
 end;
 
 procedure TNativeVaultFormatSaver.Save(const SnipList: TSnippetList;
@@ -927,13 +925,13 @@ end;
 procedure TGlobalCategoryLoader.Load(const Categories: TCategoryList;
   const DBDataItemFactory: IDBDataItemFactory);
 var
-  Reader: TCategoryReader;
-  CatInfo: TCategoryReader.TCategoryIDAndData;
+  Reader: TCategoryStorageReader;
+  CatInfo: TCategoryStorageReader.TCategoryIDAndData;
   Cat: TCategory;
 begin
   if not TFile.Exists(TAppInfo.UserCategoriesFileName) then
     Exit;
-  Reader := TCategoryReader.Create(TAppInfo.UserCategoriesFileName);
+  Reader := TCategoryStorageReader.Create(TAppInfo.UserCategoriesFileName);
   try
     for CatInfo in Reader.Read do
     begin
@@ -959,9 +957,9 @@ end;
 
 procedure TGlobalCategorySaver.Save(const Categories: TCategoryList);
 var
-  Writer: TCategoryWriter;
+  Writer: TCategoryStorageWriter;
 begin
-  Writer := TCategoryWriter.Create(TAppInfo.UserCategoriesFileName);
+  Writer := TCategoryStorageWriter.Create(TAppInfo.UserCategoriesFileName);
   try
     Writer.Write(Categories);
   finally

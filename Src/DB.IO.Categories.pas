@@ -22,8 +22,9 @@ uses
   UTabSeparatedFileIO;
 
 type
-  ///  <summary>Base class for category reader and writer classes.</summary>
-  TCategoryIO = class abstract(TObject)
+  ///  <summary>Base class for category storage reader and writer classes.
+  ///  </summary>
+  TCategoryStorage = class abstract(TObject)
   strict protected
     const
       ///  <summary>Watermark that is present on the first line of a valid
@@ -31,8 +32,8 @@ type
       Watermark = #$25BA + ' CodeSnip Categories v1 ' + #$25C4;
   end;
 
-  ///  <summary>Class used to read category information from a file.</summary>
-  TCategoryReader = class sealed(TCategoryIO)
+  ///  <summary>Reads category information from storage.</summary>
+  TCategoryStorageReader = class sealed(TCategoryStorage)
   public
     type
       ///  <summary>Key / Value pair associating the category ID (key) with the
@@ -47,8 +48,8 @@ type
       fCatData: TList<TCategoryIDAndData>;
     ///  <summary>Parses fields that have been split out from each text line.
     ///  </summary>
-    ///  <exception><c>ECategoryReader</c> raised if the fields are not valid.
-    ///  </exception>
+    ///  <exception><c>ECategoryStorageReader</c> raised if the fields are not
+    ///  valid.</exception>
     procedure ParseFields(AFields: TArray<string>);
   public
     ///  <summary>Creates object to read from file <c>AFileName</c>.</summary>
@@ -58,16 +59,17 @@ type
     ///  <summary>Reads data about each category defined in file.</summary>
     ///  <returns><c>TArray&lt;TCategoryIDAndData&gt;</c>. Array of category
     ///  data.</returns>
-    ///  <exception><c>ECategoryReader</c> raised if the file can't be read or
-    ///  if its contents are invalid.</exception>
+    ///  <exception><c>ECategoryStorageReader</c> raised if the file can't be
+    ///  read or if its contents are invalid.</exception>
     function Read: TArray<TCategoryIDAndData>;
   end;
 
-  ///  <summary>Class of exception raised by <c>TCategoryReader</c>.</summary>
-  ECategoryReader = class(ECodeSnip);
+  ///  <summary>Class of exception raised by <c>TCategoryStorageReader</c>.
+  ///  </summary>
+  ECategoryStorageReader = class(ECodeSnip);
 
-  ///  <summary>Class used to write category information to a file.</summary>
-  TCategoryWriter = class sealed(TCategoryIO)
+  ///  <summary>Writes category information to storage.</summary>
+  TCategoryStorageWriter = class sealed(TCategoryStorage)
   strict private
     var
       ///  <summary>Object that writes data to a tab delimited UTF8 text file.
@@ -89,9 +91,9 @@ uses
   // Project
   UStrUtils;
 
-{ TCategoryReader }
+{ TCategoryStorageReader }
 
-constructor TCategoryReader.Create(const AFileName: string);
+constructor TCategoryStorageReader.Create(const AFileName: string);
 begin
   Assert(not StrIsEmpty(AFileName), ClassName + '.Create: AFileName is empty');
   inherited Create;
@@ -99,14 +101,14 @@ begin
   fCatData := TList<TCategoryIDAndData>.Create;
 end;
 
-destructor TCategoryReader.Destroy;
+destructor TCategoryStorageReader.Destroy;
 begin
   fCatData.Free;
   fFileReader.Free;
   inherited;
 end;
 
-procedure TCategoryReader.ParseFields(AFields: TArray<string>);
+procedure TCategoryStorageReader.ParseFields(AFields: TArray<string>);
 resourcestring
   sMalformedLine = 'Malformed line in categories file';
 var
@@ -114,45 +116,45 @@ var
   Data: TCategoryData;
 begin
   if Length(AFields) <> 2 then
-    raise ECategoryReader.Create(sMalformedLine);
+    raise ECategoryStorageReader.Create(sMalformedLine);
   if StrIsEmpty(AFields[0]) or StrIsEmpty(AFields[1]) then
-    raise ECategoryReader.Create(sMalformedLine);
+    raise ECategoryStorageReader.Create(sMalformedLine);
   CatID := StrTrim(AFields[0]);
   Data.Init;
   Data.Desc := StrTrim(AFields[1]);
   fCatData.Add(TCategoryIDAndData.Create(CatID, Data));
 end;
 
-function TCategoryReader.Read: TArray<TCategoryIDAndData>;
+function TCategoryStorageReader.Read: TArray<TCategoryIDAndData>;
 begin
   fCatData.Clear;
   try
     fFileReader.Read(ParseFields);
   except
     on E: ETabSeparatedReader do
-      raise ECategoryReader.Create(E);
+      raise ECategoryStorageReader.Create(E);
     else
       raise;
   end;
   Result := fCatData.ToArray;
 end;
 
-{ TCategoryWriter }
+{ TCategoryStorageWriter }
 
-constructor TCategoryWriter.Create(const AFileName: string);
+constructor TCategoryStorageWriter.Create(const AFileName: string);
 begin
   Assert(not StrIsEmpty(AFileName), ClassName + '.Create: AFileName is empty');
   inherited Create;
   fFileWriter := TTabSeparatedFileWriter.Create(AFileName, Watermark);
 end;
 
-destructor TCategoryWriter.Destroy;
+destructor TCategoryStorageWriter.Destroy;
 begin
   fFileWriter.Free;
   inherited;
 end;
 
-procedure TCategoryWriter.Write(const ACategoryList: TCategoryList);
+procedure TCategoryStorageWriter.Write(const ACategoryList: TCategoryList);
 var
   Cat: TCategory;
 begin

@@ -35,9 +35,11 @@ uses
 
 type
 
-  ///  <summary>Reads a vault from disk in the DelphiDabbler Code Snippets
-  ///  Collection v2 format.</summary>
-  TIniDataReader = class sealed(TInterfacedObject, IDataReader)
+  ///  <summary>Reads a vault's data from storage in the DelphiDabbler Code
+  ///  Snippets Collection v2 format.</summary>
+  TDCSCV2VaultStorageReader = class sealed(TInterfacedObject,
+    IVaultStorageReader
+  )
   strict private
     type
       ///  <summary>Extension of <c>TMemIniFile</c> that loads its data from a
@@ -179,7 +181,8 @@ type
     ///  <param name="KeyName">string [in] Name of a key in ini file storing
     ///  comma separated list of references.</param>
     ///  <returns>IStringList containing names of referenced items.</returns>
-    function GetSnippetReferences(const SnippetKey, KeyName: string): IStringList;
+    function GetSnippetReferences(const SnippetKey, KeyName: string):
+      IStringList;
   strict protected
     ///  <summary>
     ///  Extracts comma delimited text fields into a string list.
@@ -258,9 +261,11 @@ type
     function GetMetaData: TMetaData;
   end;
 
-  ///  <summary>Write a vault to disk in the DelphiDabbler Code Snippets
-  ///  Collection v2 format.</summary>
-  TIniDataWriter = class sealed(TInterfacedObject, IDataWriter)
+  ///  <summary>Writes a vault's data to storage in the DelphiDabbler Code
+  ///  Snippets Collection v2 format.</summary>
+  TDCSCV2VaultStorageWriter = class sealed(TInterfacedObject,
+    IVaultStorageWriter
+  )
   strict private
     type
 
@@ -519,20 +524,20 @@ const
     'FPC'
   );
 
-{ TIniDataReader }
+{ TDCSCV2VaultStorageReader }
 
-function TIniDataReader.CatToCatIni(const CatID: string): string;
+function TDCSCV2VaultStorageReader.CatToCatIni(const CatID: string): string;
 begin
   Result := DataFile(fMasterIni.ReadString(CatID, cMasterIniName, ''));
 end;
 
-class function TIniDataReader.CommaStrToStrings(
+class function TDCSCV2VaultStorageReader.CommaStrToStrings(
   const CommaStr: string): IStringList;
 begin
   Result := TIStringList.Create(CommaStr, ',', False, True);
 end;
 
-constructor TIniDataReader.Create(const DBDir: string);
+constructor TDCSCV2VaultStorageReader.Create(const DBDir: string);
 resourcestring
   // Error messages
   sVersionNotSpecified = 'Format version number not specified';
@@ -561,27 +566,28 @@ begin
   end;
 end;
 
-function TIniDataReader.DatabaseExists: Boolean;
+function TDCSCV2VaultStorageReader.DatabaseExists: Boolean;
 begin
   Result := FileExists(MasterFileName);
 end;
 
-function TIniDataReader.DataDir: string;
+function TDCSCV2VaultStorageReader.DataDir: string;
 begin
   Result := ExcludeTrailingPathDelimiter(fDBDir)
 end;
 
-function TIniDataReader.DataFile(const FileName: string): string;
+function TDCSCV2VaultStorageReader.DataFile(const FileName: string): string;
 begin
   Result := IncludeTrailingPathDelimiter(DataDir) + FileName;
 end;
 
-function TIniDataReader.DataFileExists(const FileName: string): Boolean;
+function TDCSCV2VaultStorageReader.DataFileExists(const FileName: string):
+  Boolean;
 begin
   Result := TFile.Exists(DataFile(FileName), False);
 end;
 
-destructor TIniDataReader.Destroy;
+destructor TDCSCV2VaultStorageReader.Destroy;
 begin
   fIniCache.Free;
   fSnippetCatMap.Free;
@@ -590,12 +596,12 @@ begin
   inherited;
 end;
 
-function TIniDataReader.GetAllCatIDs: IStringList;
+function TDCSCV2VaultStorageReader.GetAllCatIDs: IStringList;
 begin
   Result := TIStringList.Create(fCatIDs);
 end;
 
-procedure TIniDataReader.GetCatProps(const CatID: string;
+procedure TDCSCV2VaultStorageReader.GetCatProps(const CatID: string;
   var Props: TCategoryData);
 begin
   try
@@ -605,7 +611,8 @@ begin
   end;
 end;
 
-function TIniDataReader.GetCatSnippets(const CatID: string): IStringList;
+function TDCSCV2VaultStorageReader.GetCatSnippets(const CatID: string):
+  IStringList;
 var
   CatIniFile: string;
   CatIni: TCustomIniFile; // accesses .ini file associated with category
@@ -632,7 +639,8 @@ begin
   end;
 end;
 
-function TIniDataReader.GetFileEncoding(const FileName: string): TEncoding;
+function TDCSCV2VaultStorageReader.GetFileEncoding(const FileName: string):
+  TEncoding;
 begin
   // Old v1 database meta files may be in the system default encodings, v1 and
   // all v2 and later use UTF-8 with BOM.
@@ -642,7 +650,7 @@ begin
     Result := TEncoding.Default;
 end;
 
-function TIniDataReader.GetMetaData: TMetaData;
+function TDCSCV2VaultStorageReader.GetMetaData: TMetaData;
 var
   SL: TStringList;
   LicenseText: string;
@@ -682,19 +690,18 @@ begin
   );
 end;
 
-function TIniDataReader.GetSnippetDepends(const SnippetKey: string):
+function TDCSCV2VaultStorageReader.GetSnippetDepends(const SnippetKey: string):
   IStringList;
 begin
   Result := GetSnippetReferences(SnippetKey, cDependsName);
 end;
 
-procedure TIniDataReader.GetSnippetProps(const SnippetKey: string;
+procedure TDCSCV2VaultStorageReader.GetSnippetProps(const SnippetKey: string;
   var Props: TSnippetData);
 var
   CatIni: TCustomIniFile; // .ini file associated with snippet's category
   CatID: string;          // snippet's category id
 
-  // ---------------------------------------------------------------------------
   /// <summary>Reads "StandardFormat" value from ini file.</summary>
   function GetStdFormatProperty: Boolean;
   begin
@@ -834,7 +841,6 @@ var
     else // Str = 'none' or any invalid value
       Result := stiNone;
   end;
-  // ---------------------------------------------------------------------------
 
 begin
   try
@@ -859,7 +865,7 @@ begin
   end;
 end;
 
-function TIniDataReader.GetSnippetReferences(const SnippetKey,
+function TDCSCV2VaultStorageReader.GetSnippetReferences(const SnippetKey,
   KeyName: string): IStringList;
 var
   CatIni: TCustomIniFile; // accesses snippet's category's .ini
@@ -874,17 +880,19 @@ begin
   end;
 end;
 
-function TIniDataReader.GetSnippetUnits(const SnippetKey: string): IStringList;
+function TDCSCV2VaultStorageReader.GetSnippetUnits(const SnippetKey: string):
+  IStringList;
 begin
   Result := GetSnippetReferences(SnippetKey, cUnitsName);
 end;
 
-function TIniDataReader.GetSnippetXRefs(const SnippetKey: string): IStringList;
+function TDCSCV2VaultStorageReader.GetSnippetXRefs(const SnippetKey: string):
+  IStringList;
 begin
   Result := GetSnippetReferences(SnippetKey, cXRefName);
 end;
 
-procedure TIniDataReader.HandleCorruptDatabase(const EObj: TObject);
+procedure TDCSCV2VaultStorageReader.HandleCorruptDatabase(const EObj: TObject);
 resourcestring
   // Error message
   sDBError = 'The database is corrupt and had been deleted.' + EOL2 + '%s';
@@ -899,7 +907,7 @@ begin
     raise EObj;
 end;
 
-procedure TIniDataReader.LoadIndices;
+procedure TDCSCV2VaultStorageReader.LoadIndices;
 var
   SnippetKey: string;         // key of each snippet in a category
   CatIdx: Integer;            // loops thru all categories
@@ -919,12 +927,13 @@ begin
   end;
 end;
 
-function TIniDataReader.MasterFileName: string;
+function TDCSCV2VaultStorageReader.MasterFileName: string;
 begin
   Result := DataFile(cMasterFileName);
 end;
 
-function TIniDataReader.ReadFileLines(const FileName: string): TStringDynArray;
+function TDCSCV2VaultStorageReader.ReadFileLines(const FileName: string):
+  TStringDynArray;
 var
   Encoding: TEncoding;
 begin
@@ -941,7 +950,7 @@ begin
   end;
 end;
 
-function TIniDataReader.ReadFileText(const FileName: string): string;
+function TDCSCV2VaultStorageReader.ReadFileText(const FileName: string): string;
 begin
   if not DataFileExists(FileName) then
     Exit('');
@@ -950,7 +959,7 @@ begin
   );
 end;
 
-procedure TIniDataReader.ReadVersionNumber;
+procedure TDCSCV2VaultStorageReader.ReadVersionNumber;
 var
   VersionStr: string;
 begin
@@ -972,7 +981,8 @@ begin
   end;
 end;
 
-function TIniDataReader.SnippetToCat(const SnippetKey: string): string;
+function TDCSCV2VaultStorageReader.SnippetToCat(const SnippetKey: string):
+  string;
 var
   CatIdx: Integer;  // index of category in category list for this snippet
 resourcestring
@@ -985,9 +995,10 @@ begin
   Result := fCatIDs[CatIdx];
 end;
 
-{ TIniDataReader.TUTF8IniFileEx }
+{ TDCSCV2VaultStorageReader.TUTF8IniFileEx }
 
-constructor TIniDataReader.TUTF8IniFileEx.Create(const AFileName: string);
+constructor TDCSCV2VaultStorageReader.TUTF8IniFileEx.Create(
+  const AFileName: string);
 resourcestring
   sFileNotFound = 'File "%s" does not exist.';
 begin
@@ -999,8 +1010,8 @@ begin
   SetStrings(TFileIO.ReadAllLines(AFileName, TEncoding.UTF8, True));
 end;
 
-function TIniDataReader.TUTF8IniFileEx.ReadString(const Section, Ident,
-  Default: string): string;
+function TDCSCV2VaultStorageReader.TUTF8IniFileEx.ReadString(const Section,
+  Ident, Default: string): string;
 begin
   // Read string from ini
   Result := inherited ReadString(Section, Ident, Default);
@@ -1010,7 +1021,7 @@ begin
     Result := Copy(Result, 2, Length(Result) - 2);
 end;
 
-procedure TIniDataReader.TUTF8IniFileEx.SetStrings(
+procedure TDCSCV2VaultStorageReader.TUTF8IniFileEx.SetStrings(
   const AStrings: TStringDynArray);
 var
   SL: TStringList;
@@ -1026,9 +1037,9 @@ begin
   end;
 end;
 
-{ TIniDataReader.TIniFileCache }
+{ TDCSCV2VaultStorageReader.TIniFileCache }
 
-constructor TIniDataReader.TIniFileCache.Create;
+constructor TDCSCV2VaultStorageReader.TIniFileCache.Create;
 begin
   inherited Create;
   // fCache owns and frees the ini file objects
@@ -1037,13 +1048,13 @@ begin
   );
 end;
 
-destructor TIniDataReader.TIniFileCache.Destroy;
+destructor TDCSCV2VaultStorageReader.TIniFileCache.Destroy;
 begin
   fCache.Free;  // frees owned .Values[] objects
   inherited;
 end;
 
-function TIniDataReader.TIniFileCache.GetIniFile(
+function TDCSCV2VaultStorageReader.TIniFileCache.GetIniFile(
   const PathToFile: string): TCustomIniFile;
 begin
   if not fCache.ContainsKey(PathToFile) then
@@ -1051,27 +1062,28 @@ begin
   Result := fCache[PathToFile];
 end;
 
-{ TIniDataWriter }
+{ TDCSCV2VaultStorageWriter }
 
-function TIniDataWriter.ActiveTextToREML(AActiveText: IActiveText): string;
+function TDCSCV2VaultStorageWriter.ActiveTextToREML(AActiveText: IActiveText):
+  string;
 begin
   Result := TREMLWriter.Render(AActiveText, False);
 end;
 
-constructor TIniDataWriter.Create(const AOutDir: string);
+constructor TDCSCV2VaultStorageWriter.Create(const AOutDir: string);
 begin
   inherited Create;
   fOutDir := AOutDir;
   fCache := TUTF8IniFileCache.Create;
 end;
 
-destructor TIniDataWriter.Destroy;
+destructor TDCSCV2VaultStorageWriter.Destroy;
 begin
   fCache.Free;  // frees owned ini file objects
   inherited;
 end;
 
-procedure TIniDataWriter.Finalise;
+procedure TDCSCV2VaultStorageWriter.Finalise;
 var
   IniInfo: TPair<string,TUTF8IniFile>;
 begin
@@ -1083,7 +1095,7 @@ begin
   end;
 end;
 
-procedure TIniDataWriter.HandleException(const EObj: TObject);
+procedure TDCSCV2VaultStorageWriter.HandleException(const EObj: TObject);
 begin
   if (EObj is EFileStreamError) or (EObj is ECodeSnip)
     or (EObj is EDirectoryNotFoundException) then
@@ -1091,7 +1103,7 @@ begin
   raise EObj;
 end;
 
-procedure TIniDataWriter.Initialise;
+procedure TDCSCV2VaultStorageWriter.Initialise;
 begin
   try
     // Make sure database folder exists
@@ -1116,22 +1128,22 @@ begin
   end;
 end;
 
-function TIniDataWriter.MakeCatIniName(const ACatID: string): string;
+function TDCSCV2VaultStorageWriter.MakeCatIniName(const ACatID: string): string;
 begin
   Result := ACatID + '.ini';
 end;
 
-function TIniDataWriter.MakeCatIniPath(const ACatID: string): string;
+function TDCSCV2VaultStorageWriter.MakeCatIniPath(const ACatID: string): string;
 begin
   Result := MakePath(MakeCatIniName(ACatID));
 end;
 
-function TIniDataWriter.MakePath(const AFileName: string): string;
+function TDCSCV2VaultStorageWriter.MakePath(const AFileName: string): string;
 begin
   Result := TPath.Combine(fOutDir, AFileName);
 end;
 
-procedure TIniDataWriter.WriteCatProps(const CatID: string;
+procedure TDCSCV2VaultStorageWriter.WriteCatProps(const CatID: string;
   const Props: TCategoryData);
 var
   Master: TUTF8IniFile;
@@ -1142,13 +1154,13 @@ begin
   Master.WriteString(CatId, cMasterIniName, MakeCatIniName(CatID));
 end;
 
-procedure TIniDataWriter.WriteCatSnippets(const CatID: string;
+procedure TDCSCV2VaultStorageWriter.WriteCatSnippets(const CatID: string;
   const SnipList: IStringList);
 begin
   // Do nothing
 end;
 
-procedure TIniDataWriter.WriteMetaData(const AMetaData: TMetaData);
+procedure TDCSCV2VaultStorageWriter.WriteMetaData(const AMetaData: TMetaData);
 var
   VersionStr: string;
   KVPairs: TStringList;
@@ -1180,15 +1192,15 @@ begin
   WriteTextFile(AcknowledgementsFileName, AMetaData.Acknowledgements);
 end;
 
-procedure TIniDataWriter.WriteSnippetDepends(const SnippetKey: string;
-  const Depends: IStringList);
+procedure TDCSCV2VaultStorageWriter.WriteSnippetDepends(
+  const SnippetKey: string; const Depends: IStringList);
 begin
   fCurrentCatIni.WriteString(
     SnippetKey, cDependsName, Depends.GetText(',', False)
   );
 end;
 
-procedure TIniDataWriter.WriteSnippetProps(const SnippetKey: string;
+procedure TDCSCV2VaultStorageWriter.WriteSnippetProps(const SnippetKey: string;
   const Props: TSnippetData);
 const
   Kinds: array[TSnippetKind] of string = (
@@ -1229,7 +1241,9 @@ begin
     Inc(fFileNumber);
     SourceFileName := IntToStr(fFileNumber) + '.dat';
     SourceFilePath := MakePath(SourceFileName);
-    TFileIO.WriteAllText(SourceFilePath, Props.SourceCode, TEncoding.UTF8, True);
+    TFileIO.WriteAllText(
+      SourceFilePath, Props.SourceCode, TEncoding.UTF8, True
+    );
 
     // snippet kind
     fCurrentCatIni.WriteString(SnippetKey, cKindName, Kinds[Props.Kind]);
@@ -1290,7 +1304,7 @@ begin
 
 end;
 
-procedure TIniDataWriter.WriteSnippetUnits(const SnippetKey: string;
+procedure TDCSCV2VaultStorageWriter.WriteSnippetUnits(const SnippetKey: string;
   const Units: IStringList);
 begin
   fCurrentCatIni.WriteString(
@@ -1298,7 +1312,7 @@ begin
   );
 end;
 
-procedure TIniDataWriter.WriteSnippetXRefs(const SnippetKey: string;
+procedure TDCSCV2VaultStorageWriter.WriteSnippetXRefs(const SnippetKey: string;
   const XRefs: IStringList);
 begin
   fCurrentCatIni.WriteString(
@@ -1306,12 +1320,13 @@ begin
   );
 end;
 
-procedure TIniDataWriter.WriteTextFile(const AFileName, AText: string);
+procedure TDCSCV2VaultStorageWriter.WriteTextFile(const AFileName,
+  AText: string);
 begin
   TFileIO.WriteAllText(MakePath(AFileName), AText, TEncoding.UTF8, True);
 end;
 
-procedure TIniDataWriter.WriteTextFile(const AFileName: string;
+procedure TDCSCV2VaultStorageWriter.WriteTextFile(const AFileName: string;
   const ALines: IStringList);
 var
   Content: string;
@@ -1322,9 +1337,9 @@ begin
   WriteTextFile(AFileName, Content);
 end;
 
-{ TIniDataWriter.TUTF8IniFile }
+{ TDCSCV2VaultStorageWriter.TUTF8IniFile }
 
-procedure TIniDataWriter.TUTF8IniFile.Save;
+procedure TDCSCV2VaultStorageWriter.TUTF8IniFile.Save;
 var
   Data: TStringList;
 begin
@@ -1337,16 +1352,16 @@ begin
   end;
 end;
 
-{ TIniDataWriter.TUTF8IniFileCache }
+{ TDCSCV2VaultStorageWriter.TUTF8IniFileCache }
 
-procedure TIniDataWriter.TUTF8IniFileCache.AddIniFile(
+procedure TDCSCV2VaultStorageWriter.TUTF8IniFileCache.AddIniFile(
   const APathToFile: string);
 begin
   if not fCache.ContainsKey(APathToFile) then
     InternalAddIniFile(APathToFile);
 end;
 
-constructor TIniDataWriter.TUTF8IniFileCache.Create;
+constructor TDCSCV2VaultStorageWriter.TUTF8IniFileCache.Create;
 begin
   inherited Create;
   // fCache owns and frees the ini file objects
@@ -1355,19 +1370,19 @@ begin
   );
 end;
 
-destructor TIniDataWriter.TUTF8IniFileCache.Destroy;
+destructor TDCSCV2VaultStorageWriter.TUTF8IniFileCache.Destroy;
 begin
   fCache.Free;  // frees all owned ini file objects in .Values[]
   inherited;
 end;
 
-function TIniDataWriter.TUTF8IniFileCache.GetEnumerator: 
+function TDCSCV2VaultStorageWriter.TUTF8IniFileCache.GetEnumerator: 
   TObjectDictionary<string, TUTF8IniFile>.TPairEnumerator;
 begin
   Result := fCache.GetEnumerator;
 end;
 
-function TIniDataWriter.TUTF8IniFileCache.GetIniFile(
+function TDCSCV2VaultStorageWriter.TUTF8IniFileCache.GetIniFile(
   const APathToFile: string): TUTF8IniFile;
 begin
   if not fCache.ContainsKey(APathToFile) then
@@ -1376,7 +1391,7 @@ begin
     Result := fCache[APathToFile];
 end;
 
-function TIniDataWriter.TUTF8IniFileCache.InternalAddIniFile(
+function TDCSCV2VaultStorageWriter.TUTF8IniFileCache.InternalAddIniFile(
   const APathToFile: string): TUTF8IniFile;
 begin
   Result := TUTF8IniFile.Create(APathToFile, TEncoding.UTF8);

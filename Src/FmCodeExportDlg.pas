@@ -243,7 +243,7 @@ procedure TCodeExportDlg.WriteOutputFile;
 var
   OutData: TEncodedData;  // receives export file content
 begin
-  OutData := TCodeExporter.ExportSnippets(frmSnippets.SelectedSnippets);
+  OutData := TCS4SnippetExporter.ExportSnippets(frmSnippets.SelectedSnippets);
   TFileIO.WriteAllBytes(StrTrim(edFile.Text), OutData.Data);
 end;
 

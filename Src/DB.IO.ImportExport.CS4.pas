@@ -51,8 +51,9 @@ type
   TSnippetInfoList = array of TSnippetInfo;
 
 type
-  ///  <summary>Imports code snippets from XML.</summary>
-  TCodeImporter = class(TNoPublicConstructObject)
+  ///  <summary>Imports code snippets from CodeSnip 4 import/export format
+  ///  files.</summary>
+  TCS4SnippetImporter = class(TNoPublicConstructObject)
   strict private
     const
       {TODO -cVault: Let user select or create a category rather than imposing
@@ -96,13 +97,14 @@ type
   end;
 
 type
-  ///  <summary>Class of exception raised when TCodeImporter encounters invalid
-  ///  XML.</summary>
-  ECodeImporter = class(ECodeSnipXML);
+  ///  <summary>Class of exception raised when <c>TCS4SnippetImporter</c>
+  ///  encounters invalid XML.</summary>
+  ECS4SnippetImporter = class(ECodeSnipXML);
 
 type
-  ///  <summary>Exports code snippets to XML.</summary>
-  TCodeExporter = class(TNoPublicConstructObject)
+  ///  <summary>Exports code snippets to CodeSnip 4 import/export format file
+  ///  </summary>
+  TCS4SnippetExporter = class(TNoPublicConstructObject)
   strict private
     var
       fSnippetKeyMap: TDictionary<TSnippetID,string>;
@@ -167,9 +169,9 @@ type
   end;
 
 type
-  ///  <summary>Class of exception raised when TCodeExporter detects an expected
-  ///  error.</summary>
-  ECodeExporter = class(ECodeSnipXML);
+  ///  <summary>Class of exception raised when <c>TCS4SnippetExporter</c>
+  ///  detects an expected error.</summary>
+  ECS4SnippetExporter = class(ECodeSnipXML);
 
 
 implementation
@@ -199,16 +201,16 @@ const
   cEarliestVersion  = 1;  // earliest file version supported by importer
   cLatestVersion    = 7;  // current file version written by exporter
 
-{ TCodeExporter }
+{ TCS4SnippetExporter }
 
-destructor TCodeExporter.Destroy;
+destructor TCS4SnippetExporter.Destroy;
 begin
   fSnippetKeyMap.Free;
   fXMLDoc := nil;
   inherited;
 end;
 
-function TCodeExporter.Execute: TEncodedData;
+function TCS4SnippetExporter.Execute: TEncodedData;
 var
   RootNode: IXMLNode; // document root node
 resourcestring
@@ -239,10 +241,10 @@ begin
   end;
 end;
 
-class function TCodeExporter.ExportSnippets(const SnipList: TSnippetList):
+class function TCS4SnippetExporter.ExportSnippets(const SnipList: TSnippetList):
   TEncodedData;
 var
-  Instance: TCodeExporter;
+  Instance: TCS4SnippetExporter;
 begin
   Instance := InternalCreate(SnipList);
   try
@@ -252,14 +254,14 @@ begin
   end;
 end;
 
-procedure TCodeExporter.HandleException(const EObj: TObject);
+procedure TCS4SnippetExporter.HandleException(const EObj: TObject);
 begin
   if (EObj is EFileStreamError) or (EObj is ECodeSnipXML) then
-    raise ECodeExporter.Create(EObj as Exception);
+    raise ECS4SnippetExporter.Create(EObj as Exception);
   raise EObj;
 end;
 
-constructor TCodeExporter.InternalCreate(const SnipList: TSnippetList);
+constructor TCS4SnippetExporter.InternalCreate(const SnipList: TSnippetList);
 var
   Snippet: TSnippet;
 begin
@@ -276,7 +278,8 @@ begin
     );
 end;
 
-function TCodeExporter.SnippetKeys(const SnipList: TSnippetList): IStringList;
+function TCS4SnippetExporter.SnippetKeys(const SnipList: TSnippetList):
+  IStringList;
 var
   Snippet: TSnippet;  // references each snippet in list
 begin
@@ -286,14 +289,14 @@ begin
       Result.Add(fSnippetKeyMap[Snippet.ID]);
 end;
 
-procedure TCodeExporter.WriteProgInfo(const ParentNode: IXMLNode);
+procedure TCS4SnippetExporter.WriteProgInfo(const ParentNode: IXMLNode);
 begin
   fXMLDoc.CreateElement(
     ParentNode, cProgVersionNode, TAppInfo.ProgramReleaseVersion
   );
 end;
 
-procedure TCodeExporter.WriteReferenceList(const ParentNode: IXMLNode;
+procedure TCS4SnippetExporter.WriteReferenceList(const ParentNode: IXMLNode;
   const ListNodeName: string; PasNames: IStringList);
 begin
   // Don't write list tags if no items
@@ -305,7 +308,7 @@ begin
   );
 end;
 
-procedure TCodeExporter.WriteSnippet(const ParentNode: IXMLNode;
+procedure TCS4SnippetExporter.WriteSnippet(const ParentNode: IXMLNode;
   const Snippet: TSnippet);
 var
   SnippetNode: IXMLNode; // new snippet node
@@ -358,7 +361,7 @@ begin
   );
 end;
 
-procedure TCodeExporter.WriteSnippets(const ParentNode: IXMLNode);
+procedure TCS4SnippetExporter.WriteSnippets(const ParentNode: IXMLNode);
 var
   Node: IXMLNode;       // new snippets list node
   Snippet: TSnippet;    // refers to each exported snippet
@@ -370,16 +373,16 @@ begin
     WriteSnippet(Node, Snippet);
 end;
 
-{ TCodeImporter }
+{ TCS4SnippetImporter }
 
-destructor TCodeImporter.Destroy;
+destructor TCS4SnippetImporter.Destroy;
 begin
   fXMLDoc := nil;
   OleUninitialize;
   inherited;
 end;
 
-class procedure TCodeImporter.EnsureImportCategoryExists;
+class procedure TCS4SnippetImporter.EnsureImportCategoryExists;
 resourcestring
   ImportCatDesc = 'Imported Snippets';
 var
@@ -393,7 +396,7 @@ begin
   end;
 end;
 
-procedure TCodeImporter.Execute(const Data: TBytes);
+procedure TCS4SnippetImporter.Execute(const Data: TBytes);
 
   ///  Reads list of units from under SnippetNode into Units list.
   procedure GetUnits(const SnippetNode: IXMLNode; Units: IStringList);
@@ -479,9 +482,8 @@ begin
       fSnippetInfo[Idx].Data.Props.SourceCode := TXMLDocHelper.GetSubTagText(
         fXMLDoc, SnippetNode, cSourceCodeTextNode
       );
-      fSnippetInfo[Idx].Data.Props.HiliteSource := TXMLDocHelper.GetHiliteSource(
-        fXMLDoc, SnippetNode, True
-      );
+      fSnippetInfo[Idx].Data.Props.HiliteSource :=
+        TXMLDocHelper.GetHiliteSource(fXMLDoc, SnippetNode, True);
       // how we read extra property depends on version of file
       case fVersion of
         1:
@@ -522,15 +524,15 @@ begin
     end;
   except
     on E: EDOMParseError do
-      raise ECodeImporter.Create(sParseError);
+      raise ECS4SnippetImporter.Create(sParseError);
     on E: ECodeSnipXML do
-      raise ECodeImporter.Create(E);
+      raise ECS4SnippetImporter.Create(E);
     else
       raise;
   end;
 end;
 
-function TCodeImporter.GetAllSnippetNodes: IXMLSimpleNodeList;
+function TCS4SnippetImporter.GetAllSnippetNodes: IXMLSimpleNodeList;
 var
   SnippetsNode: IXMLNode; // node under which all snippets are stored
 begin
@@ -538,11 +540,11 @@ begin
   Result := fXMLDoc.FindChildNodes(SnippetsNode, cSnippetNode);
 end;
 
-class procedure TCodeImporter.ImportData(out SnippetInfo: TSnippetInfoList;
-  const Data: TBytes);
+class procedure TCS4SnippetImporter.ImportData(
+  out SnippetInfo: TSnippetInfoList; const Data: TBytes);
 var
   Idx: Integer; // loops through all imported snippets
-  Instance: TCodeImporter;
+  Instance: TCS4SnippetImporter;
 begin
   Instance := InternalCreate;
   try
@@ -555,7 +557,7 @@ begin
   end;
 end;
 
-constructor TCodeImporter.InternalCreate;
+constructor TCS4SnippetImporter.InternalCreate;
 begin
   inherited InternalCreate;
   OleInitialize(nil);
@@ -564,7 +566,7 @@ begin
   EnsureImportCategoryExists;
 end;
 
-function TCodeImporter.ValidateDoc: Integer;
+function TCS4SnippetImporter.ValidateDoc: Integer;
 var
   SnippetsNode: IXMLNode;           // node where snippets are recorded
   SnippetNodes: IXMLSimpleNodeList; // list of nodes describing snippets
@@ -582,11 +584,11 @@ begin
   // Must be a snippets node
   SnippetsNode := fXMLDoc.FindNode(cExportRootNode + '\' + cSnippetsNode);
   if not Assigned(SnippetsNode) then
-    raise ECodeImporter.CreateFmt(sMissingNode, [cSnippetsNode]);
+    raise ECS4SnippetImporter.CreateFmt(sMissingNode, [cSnippetsNode]);
   // Must be at least one snippet node
   SnippetNodes := fXMLDoc.FindChildNodes(SnippetsNode, cSnippetNode);
   if SnippetNodes.Count = 0 then
-    raise ECodeImporter.CreateFmt(sMissingNode, [cSnippetNode]);
+    raise ECS4SnippetImporter.CreateFmt(sMissingNode, [cSnippetNode]);
 end;
 
 { TSnippetInfo }

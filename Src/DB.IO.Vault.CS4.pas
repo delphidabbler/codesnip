@@ -31,12 +31,9 @@ uses
 
 type
 
-  {
-  TXMLDataIO:
-    Base class for classes that read and write databases stored in an XML file
-    and linked data files.
-  }
-  TXMLDataIO = class(TInterfacedObject)
+  ///  <summary>Base class for classes that read and write vault data in the
+  ///  CodeSnip 4 user data format.</summary>
+  TCS4VaultStorage = class(TInterfacedObject)
   strict protected
     fDBDir: string;           // Database directory
     fXMLDoc: IXMLDocumentEx;  // Extended XML document object
@@ -76,13 +73,10 @@ type
       }
   end;
 
-  {
-  TXMLDataReader:
-    Class that can read a database from an XML file and various linked data
-    files.
-  }
-  TXMLDataReader = class(TXMLDataIO,
-    IDataReader
+  ///  <summary>Reads a vault's data from storage in the CodeSnip 4 user data
+  ///  format.</summary>
+  TCS4VaultStorageReader = class(TCS4VaultStorage,
+    IVaultStorageReader
   )
   strict private
     fVersion: Integer;
@@ -165,13 +159,10 @@ type
     function GetMetaData: TMetaData;
   end;
 
-  {
-  TXMLDataWriter:
-    Class that can write a database to an XML file and various linked data
-    files.
-  }
-  TXMLDataWriter = class(TXMLDataIO,
-    IDataWriter
+  ///  <summary>Writes a vault's data to storage in the CodeSnip 4 user data
+  ///  format.</summary>
+  TCS4VaultStorageWriter = class(TCS4VaultStorage,
+    IVaultStorageWriter
   )
   strict private
     fFileNum: Integer;          // Number of next available unused data file
@@ -304,13 +295,13 @@ begin
   raise EDataIO.CreateFmt(FmtStr, Args);
 end;
 
-{ TXMLDataIO }
+{ TCS4VaultStorage }
 
 resourcestring
   // Error message
   sMissingNode = 'Document has no %s node.';
 
-constructor TXMLDataIO.Create(const DBDir: string);
+constructor TCS4VaultStorage.Create(const DBDir: string);
   {Class constructor. Creates object and XML document for a given database.
     @param DBDir [in] Directory where database is stored.
   }
@@ -323,7 +314,7 @@ begin
   fXMLDoc := TXMLDocHelper.CreateXMLDoc;
 end;
 
-function TXMLDataIO.DataDir: string;
+function TCS4VaultStorage.DataDir: string;
   {Gets name of directory storing the database being accessed. Path varies
   according to which database is being accessed.
     @return Path to directory.
@@ -332,7 +323,7 @@ begin
   Result := ExcludeTrailingPathDelimiter(fDBDir);
 end;
 
-function TXMLDataIO.DataFile(const FileName: string): string;
+function TCS4VaultStorage.DataFile(const FileName: string): string;
   {Gets full path to a file name. Path depends on which database is being
   accessed.
     @param FileName [in] File name for which path is required.
@@ -342,7 +333,7 @@ begin
   Result := IncludeTrailingPathDelimiter(DataDir) + FileName;
 end;
 
-destructor TXMLDataIO.Destroy;
+destructor TCS4VaultStorage.Destroy;
   {Class destructor. Tears down object.
   }
 begin
@@ -352,7 +343,7 @@ begin
   inherited;
 end;
 
-function TXMLDataIO.FindCategoryNode(const CatID: string): IXMLNode;
+function TCS4VaultStorage.FindCategoryNode(const CatID: string): IXMLNode;
   {Finds a specified category node in the file.
     @param CatID [in] Id of required category.
     @return Required node or nil if node doesn't exist.
@@ -371,7 +362,7 @@ begin
   )
 end;
 
-function TXMLDataIO.FindSnippetNode(const SnippetKey: string): IXMLNode;
+function TCS4VaultStorage.FindSnippetNode(const SnippetKey: string): IXMLNode;
   {Finds a specified snippet node for a snippet in the file.
     @param SnippetKey [in] Key of required snippet.
     @return Required node or nil if node doesn't exist.
@@ -390,7 +381,7 @@ begin
   );
 end;
 
-function TXMLDataIO.PathToXMLFile: string;
+function TCS4VaultStorage.PathToXMLFile: string;
   {Gets fully specified path to the XML file. Path depends on which database is
   being accessed.
     @return Required path.
@@ -399,7 +390,7 @@ begin
   Result := DataFile(cDatabaseFileName);
 end;
 
-{ TXMLDataReader }
+{ TCS4VaultStorageReader }
 
 resourcestring
   // Error messages
@@ -409,7 +400,7 @@ resourcestring
   sMissingSource = 'Source code file name missing for snippet "%s"';
   sDBError = 'The database is corrupt and had been deleted.' + EOL2 + '%s';
 
-constructor TXMLDataReader.Create(const DBDir: string);
+constructor TCS4VaultStorageReader.Create(const DBDir: string);
   {Class constructor. Sets up object and loads XML from file if database master
   file exists, otherwise creates a minimal empty document.
     @param DBDir [in] Directory where database is stored.
@@ -442,7 +433,7 @@ begin
   end;
 end;
 
-function TXMLDataReader.DatabaseExists: Boolean;
+function TCS4VaultStorageReader.DatabaseExists: Boolean;
   {Check if the database exists. This method is always called first. No
   other methods are called if this method returns false.
     @return True if database exists, False if not.
@@ -451,7 +442,7 @@ begin
   Result := FileExists(PathToXMLFile);
 end;
 
-function TXMLDataReader.GetAllCatIDs: IStringList;
+function TCS4VaultStorageReader.GetAllCatIDs: IStringList;
   {Get ids of all categories in database.
     @return List of category names.
   }
@@ -473,7 +464,7 @@ begin
   end;
 end;
 
-procedure TXMLDataReader.GetCatProps(const CatID: string;
+procedure TCS4VaultStorageReader.GetCatProps(const CatID: string;
   var Props: TCategoryData);
   {Get properties of a category.
     @param CatID [in] Id of required category.
@@ -497,7 +488,8 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetCatSnippets(const CatID: string): IStringList;
+function TCS4VaultStorageReader.GetCatSnippets(const CatID: string):
+  IStringList;
   {Get keys of all snippets in a category.
     @param CatID [in] Id of category containing snippets.
     @return List of snippet keys.
@@ -520,13 +512,13 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetMetaData: TMetaData;
+function TCS4VaultStorageReader.GetMetaData: TMetaData;
 begin
   // Meta data not supported by this data format
   Result := TMetaData.CreateNull;
 end;
 
-function TXMLDataReader.GetSnippetDepends(const SnippetKey: string):
+function TCS4VaultStorageReader.GetSnippetDepends(const SnippetKey: string):
   IStringList;
   {Get list of all snippets on which a given snippet depends.
     @param SnippetKey [in] Key of required snippet.
@@ -536,7 +528,7 @@ begin
   Result := GetSnippetReferences(SnippetKey, cDependsNode);
 end;
 
-procedure TXMLDataReader.GetSnippetProps(const SnippetKey: string;
+procedure TCS4VaultStorageReader.GetSnippetProps(const SnippetKey: string;
   var Props: TSnippetData);
   {Get properties of a snippet.
     @param SnippetKey [in] Key of required snippet.
@@ -546,7 +538,6 @@ procedure TXMLDataReader.GetSnippetProps(const SnippetKey: string;
 var
   SnippetNode: IXMLNode;  // node for required snippet
 
-  // ---------------------------------------------------------------------------
   function GetPropertyText(const PropTagName: string): string;
     {Gets text of a specified property.
       @param PropTagName [in] Tag associated with property.
@@ -656,7 +647,6 @@ var
     else
       Result := TActiveTextFactory.CreateActiveText;
   end;
-  // ---------------------------------------------------------------------------
 
 begin
   try
@@ -682,8 +672,8 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetSnippetReferences(const SnippetKey, RefName: string):
-  IStringList;
+function TCS4VaultStorageReader.GetSnippetReferences(const SnippetKey,
+  RefName: string): IStringList;
   {Get list of all specified references made by a snippet.
     @param SnippetKey [in] Key of required snippet.
     @param RefName [in] Name of node containing snippet's references.
@@ -706,7 +696,8 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetSnippetUnits(const SnippetKey: string): IStringList;
+function TCS4VaultStorageReader.GetSnippetUnits(const SnippetKey: string):
+  IStringList;
   {Get list of all units referenced by a snippet.
     @param SnippetKey [in] Key of required snippet.
     @return List of unit keys.
@@ -715,7 +706,8 @@ begin
   Result := GetSnippetReferences(SnippetKey, cUnitsNode);
 end;
 
-function TXMLDataReader.GetSnippetXRefs(const SnippetKey: string): IStringList;
+function TCS4VaultStorageReader.GetSnippetXRefs(const SnippetKey: string):
+  IStringList;
   {Get list of all snippets that are cross referenced by a snippet.
     @param SnippetKey [in] Key of snippet we need cross references for.
     @return List of snippet keys.
@@ -724,7 +716,7 @@ begin
   Result := GetSnippetReferences(SnippetKey, cXRefNode);
 end;
 
-procedure TXMLDataReader.HandleCorruptDatabase(const EObj: TObject);
+procedure TCS4VaultStorageReader.HandleCorruptDatabase(const EObj: TObject);
   {Called when a corrupt database is encountered. Deletes all files and raises
   exception.
     @param EObj [in] Reference to exception that caused this method to be
@@ -747,7 +739,7 @@ begin
     raise EObj;
 end;
 
-function TXMLDataReader.ValidateDoc: Integer;
+function TCS4VaultStorageReader.ValidateDoc: Integer;
   {Validates XML document and gets file version.
     @return XML file version number.
     @except EDataIO raised if XML is not valid.
@@ -767,9 +759,9 @@ begin
     Error(sMissingNode, [cSnippetsNode]);
 end;
 
-{ TXMLDataWriter }
+{ TCS4VaultStorageWriter }
 
-procedure TXMLDataWriter.Finalise;
+procedure TCS4VaultStorageWriter.Finalise;
   {Finalises the database. Always called after all other methods.
   }
 var
@@ -793,7 +785,7 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.HandleException(const EObj: TObject);
+procedure TCS4VaultStorageWriter.HandleException(const EObj: TObject);
   {Handles exceptions raised by converting expected exceptions into ECodeSnip
   derived exceptions.
     @param EObj [in] Reference to exception to be handled.
@@ -805,7 +797,7 @@ begin
   raise EObj;
 end;
 
-procedure TXMLDataWriter.Initialise;
+procedure TCS4VaultStorageWriter.Initialise;
   {Initialise the database. Always called before any other methods.
   }
 var
@@ -843,7 +835,7 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteCatProps(const CatID: string;
+procedure TCS4VaultStorageWriter.WriteCatProps(const CatID: string;
   const Props: TCategoryData);
   {Write the properties of a category. Always called before WriteCatSnippets for
   a given category, so can be used to perform any per-category initialisation.
@@ -863,7 +855,7 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteCatSnippets(const CatID: string;
+procedure TCS4VaultStorageWriter.WriteCatSnippets(const CatID: string;
   const SnipList: IStringList);
   {Write the list of snippets belonging to a category. Always called after
   WriteCatProps for any given category.
@@ -888,13 +880,13 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteMetaData(const AMetaData: TMetaData);
+procedure TCS4VaultStorageWriter.WriteMetaData(const AMetaData: TMetaData);
 begin
   // Do nothing: meta data not supported.
 end;
 
-procedure TXMLDataWriter.WriteNameList(const Parent: IXMLNode; const ListName,
-  ItemName: string; const Items: IStringList);
+procedure TCS4VaultStorageWriter.WriteNameList(const Parent: IXMLNode;
+  const ListName, ItemName: string; const Items: IStringList);
   {Writes a list of names to XML.
     @param Parent [in] Reference to node under which list is to be stored.
     @param ListName [in] Name of tag that encloses the list items.
@@ -910,8 +902,8 @@ begin
     fXMLDoc.CreateElement(ListNode, ItemName, Item);
 end;
 
-procedure TXMLDataWriter.WriteReferenceList(const SnippetKey, ListName: string;
-  const Items: IStringList);
+procedure TCS4VaultStorageWriter.WriteReferenceList(const SnippetKey,
+  ListName: string; const Items: IStringList);
   {Writes a snippet's reference list to XML.
     @param SnippetKey [in] Key of snippet whose reference list is to be
       written.
@@ -938,7 +930,7 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteSnippetDepends(const SnippetKey: string;
+procedure TCS4VaultStorageWriter.WriteSnippetDepends(const SnippetKey: string;
   const Depends: IStringList);
   {Write the list of snippets on which a snippet depends.
     @param SnippetKey [in] Snippet's key.
@@ -948,7 +940,7 @@ begin
   WriteReferenceList(SnippetKey, cDependsNode, Depends);
 end;
 
-procedure TXMLDataWriter.WriteSnippetProps(const SnippetKey: string;
+procedure TCS4VaultStorageWriter.WriteSnippetProps(const SnippetKey: string;
   const Props: TSnippetData);
   {Write the properties of a snippet. Always called after all categories are
   written and before WriteSnippetsUnits, so can be used to perform any per-
@@ -1006,7 +998,7 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteSnippetUnits(const SnippetKey: string;
+procedure TCS4VaultStorageWriter.WriteSnippetUnits(const SnippetKey: string;
   const Units: IStringList);
   {Write the list of units required by a snippet.
     @param SnippetKey [in] Snippet's key.
@@ -1016,7 +1008,7 @@ begin
   WriteReferenceList(SnippetKey, cUnitsNode, Units);
 end;
 
-procedure TXMLDataWriter.WriteSnippetXRefs(const SnippetKey: string;
+procedure TCS4VaultStorageWriter.WriteSnippetXRefs(const SnippetKey: string;
   const XRefs: IStringList);
   {Write the list of snippets that a snippet cross-references.
     @param SnippetKey [in] Snippet's key.
