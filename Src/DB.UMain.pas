@@ -755,7 +755,7 @@ constructor TDatabase.Create;
   }
 begin
   inherited Create;
-  fSnippets := TSnippetListEx.Create(True);
+  fSnippets := TSnippetList.Create(True);
   fCategories := TCategoryListEx.Create(True);
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
@@ -830,9 +830,9 @@ begin
     GetReferrerList(Snippet, Referrers);
     // Delete snippet for XRef or Depends list of referencing snippets
     for Referrer in Referrers do
-      (Referrer.XRef as TSnippetListEx).Delete(Snippet);
+      Referrer.XRef.Delete(Snippet);
     for Dependent in Dependents do
-      (Dependent.Depends as TSnippetListEx).Delete(Snippet);
+      Dependent.Depends.Delete(Snippet);
     // Delete snippet itself
     InternalDeleteSnippet(Snippet);
     Query.Update;
@@ -1050,9 +1050,9 @@ begin
   // Delete from category if found
   Cat := fCategories.Find(Snippet.Category);
   if Assigned(Cat) then
-    (Cat.Snippets as TSnippetListEx).Delete(Snippet);
+    Cat.Snippets.Delete(Snippet);
   // Delete from "master" list: this frees Snippet
-  (fSnippets as TSnippetListEx).Delete(Snippet);
+  fSnippets.Delete(Snippet);
 end;
 
 procedure TDatabase.Load;
@@ -1208,9 +1208,9 @@ begin
 
     // remove references to pre-update snippet from referring snippets
     for Referrer in Referrers do
-      (Referrer.XRef as TSnippetListEx).Delete(ASnippet);
+      Referrer.XRef.Delete(ASnippet);
     for Dependent in Dependents do
-      (Dependent.Depends as TSnippetListEx).Delete(ASnippet);
+      Dependent.Depends.Delete(ASnippet);
 
     // record snippet's key and vault ID for use in re-created updated snippet
     PreservedSnippetID := ASnippet.ID;

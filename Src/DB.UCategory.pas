@@ -248,7 +248,7 @@ begin
   fID := CatID;
   fDescription := Data.Desc;
   // Create list to store snippets in category
-  fSnippets := TSnippetListEx.Create;
+  fSnippets := TSnippetList.Create;
 end;
 
 destructor TCategory.Destroy;

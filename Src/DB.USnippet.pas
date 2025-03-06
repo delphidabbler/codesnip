@@ -317,6 +317,11 @@ type
         @return Index where item was inserted in list
         @except Raised if duplicate snippet added to list.
       }
+    procedure Delete(const Snippet: TSnippet);
+      {Deletes a snippet from list.
+        @param Snippet [in] Snippet to be deleted. No action taken if snippet
+          not in list.
+      }
     function Find(const SnippetID: TSnippetID): TSnippet; overload;
       {Finds a specified snippet in list.
         @param SnippetID [in] ID of snippet to find.
@@ -383,24 +388,6 @@ type
       {List of snippets}
   end;
 
-  {
-  TSnippetListEx:
-    Private extension of TSnippetList for use internally by Snippets object.
-  }
-  TSnippetListEx = class(TSnippetList)
-  public
-    function Add(const Snippet: TSnippet): Integer; override;
-      {Adds a snippet to list.
-        @param Snippet [in] Snippet to be added.
-        @return Index where snippet was added to list.
-      }
-    procedure Delete(const Snippet: TSnippet);
-      {Deletes a snippet from list.
-        @param Snippet [in] Snippet to be deleted. No action taken if snippet
-          not in list.
-      }
-  end;
-
 implementation
 
 uses
@@ -436,8 +423,8 @@ begin
   // Create string list to store required units
   fUnits := TStringList.Create;
   // Create snippets lists for Depends and XRef properties
-  fDepends := TSnippetListEx.Create;
-  fXRef := TSnippetListEx.Create;
+  fDepends := TSnippetList.Create;
+  fXRef := TSnippetList.Create;
   // The following property added to support multiple snippet vaults
   fVaultID := AVaultID.Clone;
 end;
@@ -690,6 +677,16 @@ begin
   fList.PermitDuplicates := False;
 end;
 
+procedure TSnippetList.Delete(const Snippet: TSnippet);
+var
+  Idx: Integer; // index of snippet in list.
+begin
+  Idx := fList.IndexOf(Snippet);
+  if Idx = -1 then
+    Exit;
+  fList.Delete(Idx);  // this frees snippet if list owns objects
+end;
+
 destructor TSnippetList.Destroy;
   {Destructor. Tears down object.
   }
@@ -797,31 +794,6 @@ begin
       end;
     end;
   end;
-end;
-
-{ TSnippetListEx }
-
-function TSnippetListEx.Add(const Snippet: TSnippet): Integer;
-  {Adds a snippet to list.
-    @param Snippet [in] Snippet to be added.
-    @return Index where snippet was added to list.
-  }
-begin
-  Result := inherited Add(Snippet);
-end;
-
-procedure TSnippetListEx.Delete(const Snippet: TSnippet);
-  {Deletes a snippet from list.
-    @param Snippet [in] Snippet to be deleted. No action taken if snippet not in
-      list.
-  }
-var
-  Idx: Integer; // index of snippet in list.
-begin
-  Idx := fList.IndexOf(Snippet);
-  if Idx = -1 then
-    Exit;
-  fList.Delete(Idx);  // this frees snippet if list owns objects
 end;
 
 { TSnippetData }
