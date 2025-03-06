@@ -771,21 +771,18 @@ var
   Data: TSnippetEditData; // data describing snippet's properties and references
 begin
   Assert(Assigned(Snippet), ClassName + '.CreateTempSnippet: Snippet is nil');
-  Assert(Snippet is TSnippetEx,
-    ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
-  Data := (Snippet as TSnippetEx).GetEditData;
-  Result := TTempSnippet.Create(
-    Snippet.Key, Snippet.VaultID, (Snippet as TSnippetEx).GetProps);
-  (Result as TTempSnippet).UpdateRefs(
-    (Snippet as TSnippetEx).GetReferences, fSnippets
-  );
+//  Assert(Snippet is TSnippetEx,
+//    ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
+  Data := Snippet.GetEditData;
+  Result := TSnippet.Create(Snippet.Key, Snippet.VaultID, Snippet.GetProps);
+  Result.UpdateRefs(Snippet.GetReferences, fSnippets);
 end;
 
 function TDatabase.CreateTempSnippet(const AKey: string;
   const AVaultID: TVaultID; const AData: TSnippetEditData): TSnippet;
 begin
-  Result := TTempSnippet.Create(AKey, AVaultID, AData.Props);
-  (Result as TTempSnippet).UpdateRefs(AData.Refs, fSnippets);
+  Result := TSnippet.Create(AKey, AVaultID, AData.Props);
+  Result.UpdateRefs(AData.Refs, fSnippets);
 end;
 
 procedure TDatabase.DeleteCategory(const Category: TCategory);
@@ -866,7 +863,7 @@ var
 begin
   {TODO -cVault: Update edit data before calling this method and replace
           and ANewDisplayName and ACatID with a single AData parameter.}
-  Data := (ASnippet as TSnippetEx).GetEditData;
+  Data := ASnippet.GetEditData;
   Data.Props.Cat := ACatID;
   Data.Props.DisplayName := ANewDisplayName;
   Result := AddSnippet(ANewKey, ANewVaultID, Data);
@@ -926,8 +923,8 @@ begin
     Result.Init;
 end;
 
-function TDatabase.GetEditableSnippetInfo(
-  const Snippet: TSnippet): TSnippetEditData;
+function TDatabase.GetEditableSnippetInfo(const Snippet: TSnippet):
+  TSnippetEditData;
   {Provides details of all a snippet's data (properties and references) that may
   be edited.
     @param Snippet [in] Snippet for which data is required. May be nil in which
@@ -936,7 +933,7 @@ function TDatabase.GetEditableSnippetInfo(
   }
 begin
   if Assigned(Snippet) then
-    Result := (Snippet as TSnippetEx).GetEditData
+    Result := Snippet.GetEditData
   else
     Result.Init;
 end;
@@ -1026,8 +1023,8 @@ resourcestring
   sCatNotFound = 'Category "%0:s" referenced by new snippet with key "%1:s" '
     + 'does not exist';
 begin
-  Result := TSnippetEx.Create(AKey, AVaultID, AData.Props);
-  (Result as TSnippetEx).UpdateRefs(AData.Refs, fSnippets);
+  Result := TSnippet.Create(AKey, AVaultID, AData.Props);
+  Result.UpdateRefs(AData.Refs, fSnippets);
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
     raise ECodeSnip.CreateFmt(sCatNotFound, [Result.Category, Result.Key]);
@@ -1285,7 +1282,7 @@ end;
 function TDBDataItemFactory.CreateSnippet(const Key: string;
   const AVaultID: TVaultID; const Props: TSnippetData): TSnippet;
 begin
-  Result := TSnippetEx.Create(Key, AVaultID, Props);
+  Result := TSnippet.Create(Key, AVaultID, Props);
 end;
 
 { TVaultDataProvider }
@@ -1319,13 +1316,13 @@ end;
 function TVaultDataProvider.GetSnippetProps(
   const Snippet: TSnippet): TSnippetData;
 begin
-  Result := (Snippet as TSnippetEx).GetProps;
+  Result := Snippet.GetProps;
 end;
 
 function TVaultDataProvider.GetSnippetRefs(
   const Snippet: TSnippet): TSnippetReferences;
 begin
-  Result := (Snippet as TSnippetEx).GetReferences;
+  Result := Snippet.GetReferences;
 end;
 
 

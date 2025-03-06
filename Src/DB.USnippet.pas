@@ -150,7 +150,7 @@ type
       {Gets snippet's display name, or name if no display name is set
         @return Required display name.
       }
-  strict protected
+  strict private
     procedure SetKey(const AKey: string);
       {Sets Key property.
         @param AKey [in] New key.
@@ -197,8 +197,43 @@ type
       {Checks if snippet can be compiled.
         @return True if compilation supported and False if not.
       }
+
     ///  <summary>Returns the snippets hash code.</summary>
     function Hash: Integer;
+
+    ///  <summary>Updates the snippet's properties and references.</summary>
+    ///  <param name="Data"><c>TSnippetEditData</c> [in] Snippet's new property
+    ///  values and references.</param>
+    ///  <param name="AllSnippets"><c>TSnippetList</c> [in] List of all snippets
+    ///  in the database (for use in validation the new snippet references).
+    ///  </param>
+    procedure Update(const Data: TSnippetEditData;
+      const AllSnippets: TSnippetList);
+
+    ///  <summary>Updates the snippet's references.</summary>
+    ///  <param name="Refs"><c>TSnippetReferences</c> [in] Records all the snippet's
+    ///  references (i.e. XRef, Depends and Units).</param>
+    ///  <param name="AllSnippets"><c>TSnippetList</c> [in] List of all snippets
+    ///  in the database (used to ensure all references to other snippets are
+    ///  valid).</param>
+    procedure UpdateRefs(const Refs: TSnippetReferences;
+      const AllSnippets: TSnippetList);
+
+    ///  <summary>Get all of a snippet's editable data.</summary>
+    ///  <returns><c>TSnippetEditData</c>. The snippet's editable properties and
+    ///  references.</returns>
+    function GetEditData: TSnippetEditData;
+
+    ///  <summary>Gets all of a snippet's editable properties.</summary>
+    ///  <returns><c>TSnippetData</c>. Record containing the required property
+    ///  values.</returns>
+    function GetProps: TSnippetData;
+
+    ///  <summary>Gets all of a snippet's editable references.</summary>
+    ///  <returns><c>TSnippetReferences</c>. Record containing the required
+    ///  references.</returns>
+    function GetReferences: TSnippetReferences;
+
     property Kind: TSnippetKind read fKind;
       {Kind of snippet represented by this object}
     property ID: TSnippetID read GetID;
@@ -230,48 +265,6 @@ type
     ///  <summary>ID of vault to which the snippet belongs.</summary>
     property VaultID: TVaultID read fVaultID;
   end;
-
-  {
-  TSnippetEx:
-    Extension of TSnippet for use internally by Snippets object.
-  }
-  TSnippetEx = class(TSnippet)
-  public
-    procedure UpdateRefs(const Refs: TSnippetReferences;
-      const AllSnippets: TSnippetList);
-      {Updates a snippet's references.
-        @param Refs [in] Stores all snippet's references (XRef, Depends and
-          Units).
-        @param AllSnippets [in] List of all snippets in database.
-      }
-    procedure Update(const Data: TSnippetEditData;
-      const AllSnippets: TSnippetList);
-      {Updates snippet's properties and references.
-        @param Data [in] New property values and references.
-        @param AllSnippets [in] List of all snippets in database.
-      }
-    function GetEditData: TSnippetEditData;
-      {Gets details of all editable data of snippet.
-        @return Required editable properties and references.
-      }
-    function GetProps: TSnippetData;
-      {Gets details of snippet's properties.
-        @return Record containing property values.
-      }
-    function GetReferences: TSnippetReferences;
-      {Gets details of snippet's references.
-        @return Information sufficient to define references.
-      }
-  end;
-
-  {
-  TTempSnippet:
-    Special subclass of TSnippetEx that can't be added to the Snippets object.
-    Class does nothing, simply provides a class name for testing when a snippet
-    is added to a TSnippetListEx. TTempSnippet can be added to a normal snippet
-    list.
-  }
-  TTempSnippet = class(TSnippetEx);
 
   {
   TSnippetList:
@@ -393,7 +386,7 @@ type
   TSnippetListEx = class(TSnippetList)
   public
     function Add(const Snippet: TSnippet): Integer; override;
-      {Adds a snippet to list. Snippet must not be TTempSnippet class.
+      {Adds a snippet to list.
         @param Snippet [in] Snippet to be added.
         @return Index where snippet was added to list.
       }
@@ -445,8 +438,6 @@ end;
 constructor TSnippet.Create(const AKey: string; const AVaultID: TVaultID;
   const Props: TSnippetData);
 begin
-  Assert(ClassType <> TSnippet,
-    ClassName + '.Create: must only be called from descendants.');
   Assert(not AVaultID.IsNull,
     ClassName + '.Create: AVaultID is null');
   inherited Create;
@@ -487,12 +478,38 @@ begin
   Result := fDisplayName;
 end;
 
+function TSnippet.GetEditData: TSnippetEditData;
+begin
+  Result.Props := GetProps;
+  Result.Refs := GetReferences;
+end;
+
 function TSnippet.GetID: TSnippetID;
   {Gets snippet's unique ID.
     @return Required ID.
   }
 begin
   Result := TSnippetID.Create(fKey, fVaultID);
+end;
+
+function TSnippet.GetProps: TSnippetData;
+begin
+  Result.Cat := Category;
+  Result.Kind := Kind;
+  Result.Desc := Description;
+  Result.SourceCode := SourceCode;
+  Result.HiliteSource := HiliteSource;
+  Result.DisplayName := GetDisplayNameValue;
+  Result.Extra := TActiveTextFactory.CloneActiveText(Extra);
+  Result.CompilerResults := Compatibility;
+  Result.TestInfo := TestInfo;
+end;
+
+function TSnippet.GetReferences: TSnippetReferences;
+begin
+  Result.Units := TIStringList.Create(Units);
+  Result.Depends := TSnippetIDListEx.Create(Depends);
+  Result.XRef := TSnippetIDListEx.Create(XRef);
 end;
 
 function TSnippet.Hash: Integer;
@@ -528,6 +545,40 @@ begin
   fTestInfo := Data.TestInfo;
 end;
 
+procedure TSnippet.Update(const Data: TSnippetEditData;
+  const AllSnippets: TSnippetList);
+begin
+  SetProps(Data.Props);
+  UpdateRefs(Data.Refs, AllSnippets);
+end;
+
+procedure TSnippet.UpdateRefs(const Refs: TSnippetReferences;
+  const AllSnippets: TSnippetList);
+
+  // Builds a list of snippets, SL, corresponding to the snippets IDs in IDList.
+  // Any snippet IDs for which there is no match snippet in the database is
+  // ignored.
+  procedure BuildSnippetList(const SL: TSnippetList;
+    const IDList: ISnippetIDList);
+  var
+    ID: TSnippetID;     // refers to each ID in ID list
+    Snippet: TSnippet;  // references each snippet identified by ID
+  begin
+    SL.Clear;
+    for ID in IDList do
+    begin
+      Snippet := AllSnippets.Find(ID);
+      if Assigned(Snippet) then
+        SL.Add(Snippet);
+    end;
+  end;
+
+begin
+  Refs.Units.CopyTo(Self.Units, True);            // copy units
+  BuildSnippetList(Self.Depends, Refs.Depends);   // build Depends list
+  BuildSnippetList(Self.XRef, Refs.XRef);         // build XRef list
+end;
+
 { TSnippet.TComparer }
 
 function TSnippet.TComparer.Compare(const Left, Right: TSnippet): Integer;
@@ -553,92 +604,6 @@ begin
   Result := StrCompareText(Left.DisplayName, Right.DisplayName);
   if Result = 0 then
     Result := Left.ID.CompareTo(Right.ID);
-end;
-
-{ TSnippetEx }
-
-function TSnippetEx.GetEditData: TSnippetEditData;
-  {Gets details of all editable data of snippet.
-    @return Required editable properties and references.
-  }
-begin
-  Result.Props := GetProps;
-  Result.Refs := GetReferences;
-end;
-
-function TSnippetEx.GetProps: TSnippetData;
-  {Gets details of snippet's properties.
-    @return Record containing property values.
-  }
-begin
-  Result.Cat := Category;
-  Result.Kind := Kind;
-  Result.Desc := Description;
-  Result.SourceCode := SourceCode;
-  Result.HiliteSource := HiliteSource;
-  Result.DisplayName := GetDisplayNameValue;
-  Result.Extra := TActiveTextFactory.CloneActiveText(Extra);
-  Result.CompilerResults := Compatibility;
-  Result.TestInfo := TestInfo;
-end;
-
-function TSnippetEx.GetReferences: TSnippetReferences;
-  {Gets details of snippet's references.
-    @return Information sufficient to define references.
-  }
-begin
-  Result.Units := TIStringList.Create(Units);
-  Result.Depends := TSnippetIDListEx.Create(Depends);
-  Result.XRef := TSnippetIDListEx.Create(XRef);
-end;
-
-procedure TSnippetEx.Update(const Data: TSnippetEditData;
-  const AllSnippets: TSnippetList);
-  {Updates snippet's properties and references.
-    @param Data [in] New property values and references.
-    @param AllSnippets [in] List of all snippets in database.
-  }
-begin
-  SetProps(Data.Props);
-  UpdateRefs(Data.Refs, AllSnippets);
-end;
-
-procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
-  const AllSnippets: TSnippetList);
-  {Updates a snippet's references.
-    @param Refs [in] Stores all snippet's references (XRef, Depends and
-      Units).
-    @param AllSnippets [in] List of all snippets in database.
-  }
-
-  // ---------------------------------------------------------------------------
-  procedure BuildSnippetList(const SL: TSnippetList;
-    const IDList: ISnippetIDList);
-    {Creates a snippets list from a snippets ID list. Looks up snippets in list
-    of all snippets in database. Any snippets in ID list that do not exist in
-    database are ignored.
-      @param SL [in] Snippets list object to be updated.
-      @param IDList [in] Snippets ID list that provides information used to
-        create snippets list.
-    }
-  var
-    ID: TSnippetID;     // refers to each ID in ID list
-    Snippet: TSnippet;  // references each snippet identified by ID
-  begin
-    SL.Clear;
-    for ID in IDList do
-    begin
-      Snippet := AllSnippets.Find(ID);
-      if Assigned(Snippet) then
-        SL.Add(Snippet);
-    end;
-  end;
-  // ---------------------------------------------------------------------------
-
-begin
-  Refs.Units.CopyTo(Self.Units, True);            // copy units
-  BuildSnippetList(Self.Depends, Refs.Depends);   // build Depends list
-  BuildSnippetList(Self.XRef, Refs.XRef);         // build XRef list
 end;
 
 { TSnippetList }
@@ -753,7 +718,7 @@ begin
   // We need a temporary snippet object in order to perform binary search using
   // object list's built in search
   NullData.Init;
-  TempSnippet := TTempSnippet.Create(SnippetKey, AVaultID, NullData);
+  TempSnippet := TSnippet.Create(SnippetKey, AVaultID, NullData);
   try
     Result := fList.Find(TempSnippet, Index);
   finally
@@ -839,13 +804,11 @@ end;
 { TSnippetListEx }
 
 function TSnippetListEx.Add(const Snippet: TSnippet): Integer;
-  {Adds a snippet to list. Snippet must not be TTempSnippet class.
+  {Adds a snippet to list.
     @param Snippet [in] Snippet to be added.
     @return Index where snippet was added to list.
   }
 begin
-  Assert(not(Snippet is TTempSnippet),
-    ClassName + '.Add: Can''t add temporary snippets to database');
   Result := inherited Add(Snippet);
 end;
 
