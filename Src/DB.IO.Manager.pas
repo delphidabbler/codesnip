@@ -5,15 +5,12 @@
  *
  * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements objects that can load data into the Database object from both the
- * user and main databases. Also provides a class that can write the user
- * database to storage.
- *
- * Uses file I/O interface implementations to read / write the physical files.
+ * Manages loading and saving the entire database using the various supported
+ * data formats.
 }
 
 
-unit DB.UDatabaseIO;
+unit DB.IO.Manager;
 
 
 interface
@@ -33,7 +30,7 @@ type
 
   ///  <summary>Interface to objects that can load data into a vault within the
   ///  database from storage in a supported data format.</summary>
-  IDataFormatLoader = interface(IInterface)
+  IVaultLoader = interface(IInterface)
     ['{C6AF94FC-F56F-44AE-9E79-3B0CD0BB21D4}']
     ///  <summary>Loads data from storage into a vault within the database.
     ///  </summary>
@@ -50,7 +47,7 @@ type
 
   ///  <summary>Interface to objects that can save data from a vault within the
   ///  database into storage in a supported data format.</summary>
-  IDataFormatSaver = interface(IInterface)
+  IVaultSaver = interface(IInterface)
     ['{F46EE2E3-68A7-4877-9E04-192D15D29BB1}']
     ///  <summary>Saves data to storage.</summary>
     ///  <param name="SnipList"><c>TSnippetList</c> [in] Contains information
@@ -86,22 +83,20 @@ type
     procedure Save(const Categories: TCategoryList);
   end;
 
-  {
-  TDatabaseIOFactory:
-    Factory class that can create instances of writer and loader objects for the
-    Database object.
-  }
+  ///  <summary>Factory class that can create instances of objects that can be
+  ///  used to load and save vaults and global category information into and
+  ///  from the database.</summary>
   TDatabaseIOFactory = class(TNoConstructObject)
   public
     ///  <summary>Creates and returns an object to be used to load the given
     ///  vault's data in the correct format. Nil is returned if no loader object
     ///  is supported.</summary>
-    class function CreateDBLoader(const AVault: TVault): IDataFormatLoader;
+    class function CreateVaultLoader(const AVault: TVault): IVaultLoader;
 
     ///  <summary>Creates and returns an object to be used to save the given
     ///  vaults's data in the correct format. Nil is return if no saver object
     ///  is supported.</summary>
-    class function CreateDBSaver(const AVault: TVault): IDataFormatSaver;
+    class function CreateVaultSaver(const AVault: TVault): IVaultSaver;
 
     ///  <summary>Creates and returns an object to be used to load a list of
     ///  globally stored categories.</summary>
@@ -113,11 +108,9 @@ type
 
   end;
 
-  {
-  EDatabaseLoader:
-    Class of exception raised by database loader objects.
-  }
-  EDatabaseLoader = class(ECodeSnip);
+  ///  <summary>Class of exception raised by <c>TVaultLoader</c> objects.
+  ///  <summary>
+  EVaultLoader = class(ECodeSnip);
 
 
 implementation
@@ -130,12 +123,12 @@ uses
   IOUtils,
   // Project
   DB.DataFormats,
-  DB.IO.DataFormat.Native,
-  DBIO.UCategoryIO,
-  DBIO.UFileIOIntf,
-  DB.IO.DataFormat.DCSCv2,
-  DBIO.UNulDataReader,
-  DBIO.UXMLDataIO,
+  DB.IO.Vault.CS4,
+  DB.IO.Vault.DCSCv2,
+  DB.IO.Vault.Native,
+  DB.IO.Vault,
+  DB.IO.Vault.Null,
+  DB.IO.Categories,
   UAppInfo,
   UConsts,
   UIStringList,
@@ -145,26 +138,16 @@ uses
 
 type
 
-  {
-  TDatabaseLoaderClass:
-    Class reference to TDatabaseLoader descendants.
-  }
-  TDatabaseLoaderClass = class of TDatabaseLoader;
-
-  {TODO -cRefactoring: Would a better method be to have a single TDatabaseLoader
+  {TODO -cRefactoring: Would a better method be to have a single TVaultLoader
                      class that is passed a reader object in its constructor,
                      rather than have sub-classes that simply create the
                      required reader object?}
-  {TODO -cRefactoring: Rename TDatabaseLoader to TFormatLoader or similar}
 
-  {
-  TDatabaseLoader:
-    Abstract base class for objects that can load data into the Database object
-    from storage.
-  }
-  TDatabaseLoader = class(TInterfacedObject, IDataFormatLoader)
+  ///  <summary>Abstract base class for objects that can load data from storage
+  ///  into a vault within the database.</summary>
+  TVaultLoader = class abstract (TInterfacedObject, IVaultLoader)
   strict private
-    fReader: IDataReader;         // Object used to read data from storage
+    fReader: IVaultStorageReader; // Object used to read data from storage
     fSnipList: TSnippetList;      // Receives list of snippets
     fCategories: TCategoryList;   // Receives list of categories
     fFactory: IDBDataItemFactory; // Object creates new categories and snippets
@@ -184,7 +167,7 @@ type
         @except Exception always raised.
       }
   strict protected
-    function CreateReader: IDataReader; virtual; abstract;
+    function CreateReader: IVaultStorageReader; virtual; abstract;
       {Creates reader object for the database. If database doesn't exist a nul
       reader must be created.
         @return Reader object instance.
@@ -197,8 +180,7 @@ type
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
-    function IsNativeSnippet(const Snippet: TSnippet): Boolean;
-      virtual;
+    function IsNativeSnippet(const Snippet: TSnippet): Boolean; virtual;
       {Checks if a snippet is native (belongs) to the database being read.
         @param Snippet [in] Snippet to test.
         @return True if snippet is native, False if not.
@@ -210,8 +192,7 @@ type
     procedure LoadCategories;
       {Loads all categories from storage.
       }
-    procedure CreateCategory(const CatID: string;
-      const CatData: TCategoryData);
+    procedure CreateCategory(const CatID: string; const CatData: TCategoryData);
       {Creates a new category and adds it to the categories list.
         @param CatID [in] ID of category.
         @param CatData [in] Properties of category.
@@ -222,7 +203,7 @@ type
     property Vault: TVault read fVault;
   public
     constructor Create(const AVault: TVault);
-    { IDataFormatLoader method }
+    { IVaultLoader method }
     procedure Load(const SnipList: TSnippetList;
       const Categories: TCategoryList;
       const DBDataItemFactory: IDBDataItemFactory);
@@ -236,13 +217,11 @@ type
       }
   end;
 
-  {
-  TDCSCV2FormatLoader:
-    Class that updates Database object with data read from main database.
-  }
-  TDCSCV2FormatLoader = class(TDatabaseLoader, IDataFormatLoader)
+  ///  <summary>Class that loads data into the database from a vault stored in
+  ///  DelphiDabbler Code Snippets Collection v2 data format.</summary>
+  TDCSCV2VaultLoader = class sealed (TVaultLoader, IVaultLoader)
   strict protected
-    function CreateReader: IDataReader; override;
+    function CreateReader: IVaultStorageReader; override;
       {Creates reader object. If main database doesn't exist a nul reader is
       created.
         @return Reader object instance.
@@ -253,13 +232,11 @@ type
       }
   end;
 
-  {
-  TNativeV4FormatLoader:
-    Class that updates Database object with data read from user database.
-  }
-  TNativeV4FormatLoader = class(TDatabaseLoader, IDataFormatLoader)
+  ///  <summary>Class that loads data into the database from a vault stored in
+  ///  CodeSnip 4 user data format.</summary>
+  TCS4VaultLoader = class sealed (TVaultLoader, IVaultLoader)
   strict protected
-    function CreateReader: IDataReader; override;
+    function CreateReader: IVaultStorageReader; override;
       {Creates reader object. If user database doesn't exist a nul reader is
       created.
         @return Reader object instance.
@@ -270,9 +247,11 @@ type
       }
   end;
 
-  TNativeVaultFormatLoader = class(TDatabaseLoader, IDataFormatLoader)
+  ///  <summary>Class that loads data into the database from a vault stored in
+  ///  the native CodeSnip Vault data format.</summary>
+  TNativeVaultLoader = class sealed (TVaultLoader, IVaultLoader)
   strict protected
-    function CreateReader: IDataReader; override;
+    function CreateReader: IVaultStorageReader; override;
       {Creates reader object. If user database doesn't exist a nul reader is
       created.
         @return Reader object instance.
@@ -283,20 +262,21 @@ type
       }
   end;
 
-  {TODO -cRefactoring: Would a better method be to have a single TFormatSaver
+  {TODO -cRefactoring: Would a better method be to have a single TVaultSaver
                        class that is passed a writer object in its constructor,
                        rather than have sub-classes that simply create the
                        required writer object?
                        Would need to make sure all .Save methods in sub-classes
                        are identical first. }
 
-  ///  <summary>Base for classes that save a vault to storage.</summary>
-  TFormatSaver = class abstract (TInterfacedObject,
-    IDataFormatSaver
+  ///  <summary>Abstract base class for objects that can save data to storage
+  ///  from a vault within the database.</summary>
+  TVaultSaver = class abstract (TInterfacedObject,
+    IVaultSaver
   )
   strict private
     var
-      fWriter: IDataWriter;             // Object used to write to storage
+      fWriter: IVaultStorageWriter;     // Object used to write to storage
       fSnipList: TSnippetList;          // List of snippets to be written
       fCategories: TCategoryList;       // List of categories to be written
       fProvider: IDBDataProvider;       // Object used to get data to be written
@@ -323,14 +303,13 @@ type
     ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
     ///  obtain details of the data to be stored.</param>
     procedure DoSave(const SnipList: TSnippetList;
-      const Categories: TCategoryList;
-      const Provider: IDBDataProvider
+      const Categories: TCategoryList; const Provider: IDBDataProvider
     );
 
     ///  <summary>Creates an object that can write data to storage in the
     ///  required format.</summary>
-    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
-    function CreateWriter: IDataWriter; virtual; abstract;
+    ///  <returns><c>IVaultStorageWriter</c>. Required writer object.</returns>
+    function CreateWriter: IVaultStorageWriter; virtual; abstract;
 
     ///  <summary>Vault being saved.</summary>
     property Vault: TVault read fVault;
@@ -346,39 +325,32 @@ type
     ///  categories in the database.</param>
     ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
     ///  obtain details of the data to be stored.</param>
-    ///  <remarks>Method of IDataFormatSaver.</remarks>
+    ///  <remarks>Method of IVaultSaver.</remarks>
     procedure Save(const SnipList: TSnippetList;
-      const Categories: TCategoryList;
-      const Provider: IDBDataProvider); virtual; abstract;
+      const Categories: TCategoryList; const Provider: IDBDataProvider);
+      virtual; abstract;
   end;
 
-  ///  <summary>Class used to write data from a vault to storage in the
+  ///  <summary>Class used to write data from a vault to storage using the
   ///  DelphiDabbler Code Snippets v2 data format.</summary>
-  TDCSCV2FormatSaver = class(TFormatSaver,
-    IDataFormatSaver
+  TDCSCV2VaultSaver = class sealed (TVaultSaver,
+    IVaultSaver
   )
   strict private
     var
       fBakFile: string;                 // Backup file used in case of failure
-
     ///  <summary>Backup current data.</summary>
     procedure Backup;
-
     ///  <summary>Restore current data.</summary>
     procedure Restore;
-
   strict protected
-
     ///  <summary>Creates an object that can write data to storage in
     ///  DelphiDabbler Code Snippets v2 data format.</summary>
-    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
-    function CreateWriter: IDataWriter; override;
-
+    ///  <returns><c>IVaultStorageWriter</c>. Required writer object.</returns>
+    function CreateWriter: IVaultStorageWriter; override;
   public
-
     ///  <summary>Creates object that can save the given vault.</summary>
     constructor Create(const AVault: TVault);
-
     ///  <summary>Saves data to storage.</summary>
     ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
     ///  in the database.</param>
@@ -386,26 +358,23 @@ type
     ///  categories in the database.</param>
     ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
     ///  obtain details of the data to be stored.</param>
-    ///  <remarks>Method of IDataFormatSaver.</remarks>
+    ///  <remarks>Method of IVaultSaver.</remarks>
     procedure Save(const SnipList: TSnippetList;
-      const Categories: TCategoryList;
-      const Provider: IDBDataProvider); override;
+      const Categories: TCategoryList; const Provider: IDBDataProvider);
+      override;
   end;
 
-  ///  <summary>Class used to write data from a vault to storage in CodeSnip's
-  ///  native v4 data format.</summary>
-  TNativeV4FormatSaver = class(TFormatSaver,
-    IDataFormatSaver
+  ///  <summary>Class used to write data from a vault to storage using the
+  ///  CodeSnip 4 user data format.</summary>
+  TCS4VaultSaver = class sealed (TVaultSaver,
+    IVaultSaver
   )
   strict protected
-
     ///  <summary>Creates an object that can write data to storage in
     ///  CodeSnip's native v4 data format.</summary>
-    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
-    function CreateWriter: IDataWriter; override;
-
+    ///  <returns><c>IVaultStorageWriter</c>. Required writer object.</returns>
+    function CreateWriter: IVaultStorageWriter; override;
   public
-
     ///  <summary>Saves data to storage.</summary>
     ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
     ///  in the database.</param>
@@ -413,24 +382,23 @@ type
     ///  categories in the database.</param>
     ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
     ///  obtain details of the data to be stored.</param>
-    ///  <remarks>Method of IDataFormatSaver.</remarks>
+    ///  <remarks>Method of IVaultSaver.</remarks>
     procedure Save(const SnipList: TSnippetList;
-      const Categories: TCategoryList;
-      const Provider: IDBDataProvider); override;
+      const Categories: TCategoryList; const Provider: IDBDataProvider);
+      override;
   end;
 
-  TNativeVaultFormatSaver = class(TFormatSaver,
-    IDataFormatSaver
+  ///  <summary>Class that saves data from a vault within the database to
+  ///  storage using the native CodeSnip Vault data format.</summary>
+  TNativeVaultSaver = class sealed (TVaultSaver,
+    IVaultSaver
   )
   strict protected
-
     ///  <summary>Creates an object that can write data to storage in
     ///  CodeSnip's native v4 data format.</summary>
-    ///  <returns><c>IDataWriter</c>. Required writer object.</returns>
-    function CreateWriter: IDataWriter; override;
-
+    ///  <returns><c>IVaultStorageWriter</c>. Required writer object.</returns>
+    function CreateWriter: IVaultStorageWriter; override;
   public
-
     ///  <summary>Saves data to storage.</summary>
     ///  <param name="SnipList"><c>TSnippetList</c> [in] List of all snippets
     ///  in the database.</param>
@@ -438,10 +406,10 @@ type
     ///  categories in the database.</param>
     ///  <param name="Provider"><c>IDBDataProvider</c> [in] Object used to
     ///  obtain details of the data to be stored.</param>
-    ///  <remarks>Method of IDataFormatSaver.</remarks>
+    ///  <remarks>Method of IVaultSaver.</remarks>
     procedure Save(const SnipList: TSnippetList;
-      const Categories: TCategoryList;
-      const Provider: IDBDataProvider); override;
+      const Categories: TCategoryList; const Provider: IDBDataProvider);
+      override;
   end;
 
   ///  <summary>Class used to save global category information, regardless of
@@ -471,33 +439,31 @@ type
 
 { TDatabaseIOFactory }
 
-class function TDatabaseIOFactory.CreateDBLoader(const AVault: TVault):
-  IDataFormatLoader;
+class function TDatabaseIOFactory.CreateVaultLoader(const AVault: TVault):
+  IVaultLoader;
 begin
-  {TODO -cUDatabaseIO: Revise database loaders to get file path and other
-          info from vault instead of hard wiring it.}
   case AVault.Storage.Format of
     TDataFormatKind.DCSC_v2:
-      Result := TDCSCV2FormatLoader.Create(AVault);
+      Result := TDCSCV2VaultLoader.Create(AVault);
     TDataFormatKind.Native_v4:
-      Result := TNativeV4FormatLoader.Create(AVault);
+      Result := TCS4VaultLoader.Create(AVault);
     TDataFormatKind.Native_Vault:
-      Result := TNativeVaultFormatLoader.Create(AVault);
+      Result := TNativeVaultLoader.Create(AVault);
     else
       Result := nil;
   end;
 end;
 
-class function TDatabaseIOFactory.CreateDBSaver(const AVault: TVault):
-  IDataFormatSaver;
+class function TDatabaseIOFactory.CreateVaultSaver(const AVault: TVault):
+  IVaultSaver;
 begin
   case AVault.Storage.Format of
     TDataFormatKind.DCSC_v2:
-      Result := TDCSCV2FormatSaver.Create(AVault);
+      Result := TDCSCV2VaultSaver.Create(AVault);
     TDataFormatKind.Native_v4:
-      Result := TNativeV4FormatSaver.Create(AVault);
+      Result := TCS4VaultSaver.Create(AVault);
     TDataFormatKind.Native_Vault:
-      Result := TNativeVaultFormatSaver.Create(AVault);
+      Result := TNativeVaultSaver.Create(AVault);
     else
       Result := nil;
   end;
@@ -515,15 +481,15 @@ begin
   Result := TGlobalCategorySaver.Create;
 end;
 
-{ TDatabaseLoader }
+{ TVaultLoader }
 
-constructor TDatabaseLoader.Create(const AVault: TVault);
+constructor TVaultLoader.Create(const AVault: TVault);
 begin
   inherited Create;
   fVault := AVault;
 end;
 
-procedure TDatabaseLoader.CreateCategory(const CatID: string;
+procedure TVaultLoader.CreateCategory(const CatID: string;
   const CatData: TCategoryData);
   {Creates a new category and adds it to the categories list.
     @param CatID [in] ID of category.
@@ -533,13 +499,13 @@ begin
   fCategories.Add(fFactory.CreateCategory(CatID, CatData));
 end;
 
-function TDatabaseLoader.FindSnippet(const SnippetKey: string;
+function TVaultLoader.FindSnippet(const SnippetKey: string;
   const SnipList: TSnippetList): TSnippet;
 begin
   Result := SnipList.Find(SnippetKey, Vault.UID);
 end;
 
-procedure TDatabaseLoader.HandleException(const E: Exception);
+procedure TVaultLoader.HandleException(const E: Exception);
   {Handles exceptions generated by loader and converts ECodeSnip and descendant
   exceptions into EDatabaseLoader exceptions.
     @param E [in] Exception to be handled.
@@ -548,17 +514,17 @@ procedure TDatabaseLoader.HandleException(const E: Exception);
 begin
   if E is ECodeSnip then
     // add message header identifying database to existing message
-    raise EDatabaseLoader.Create(ErrorMessageHeading + EOL2 + E.Message)
+    raise EVaultLoader.Create(ErrorMessageHeading + EOL2 + E.Message)
   else
     raise E;
 end;
 
-function TDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
+function TVaultLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
 begin
   Result := Snippet.VaultID = Vault.UID;
 end;
 
-procedure TDatabaseLoader.Load(const SnipList: TSnippetList;
+procedure TVaultLoader.Load(const SnipList: TSnippetList;
   const Categories: TCategoryList; const DBDataItemFactory: IDBDataItemFactory);
   {Loads data from storage and updates database object.
     @param SnipList [in] Receives information about each snippet in the
@@ -600,7 +566,7 @@ begin
   end;
 end;
 
-procedure TDatabaseLoader.LoadCategories;
+procedure TVaultLoader.LoadCategories;
   {Loads all categories from storage
   }
 var
@@ -624,12 +590,11 @@ begin
   end;
 end;
 
-procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
+procedure TVaultLoader.LoadReferences(const Snippet: TSnippet);
   {Loads all of a snippet's references.
     @param Snippet [in] Snippet for which references are required.
   }
 
-  // ---------------------------------------------------------------------------
   procedure LoadSnippetReferences(const RefList: TSnippetList;
     const RefKeys: IStringList);
     {Creates a snippet list from keys of snippets in a string list. If no
@@ -649,7 +614,6 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
         RefList.Add(Reference);
     end;
   end;
-  // ---------------------------------------------------------------------------
 
 begin
   LoadSnippetReferences(
@@ -661,7 +625,7 @@ begin
   fReader.GetSnippetUnits(Snippet.Key).CopyTo(Snippet.Units);
 end;
 
-procedure TDatabaseLoader.LoadSnippets(const Cat: TCategory);
+procedure TVaultLoader.LoadSnippets(const Cat: TCategory);
   {Loads all snippets in a category.
     @param Cat [in] Category to be loaded.
   }
@@ -693,20 +657,20 @@ begin
   end;
 end;
 
-{ TDCSCV2FormatLoader }
+{ TDCSCV2VaultLoader }
 
-function TDCSCV2FormatLoader.CreateReader: IDataReader;
+function TDCSCV2VaultLoader.CreateReader: IVaultStorageReader;
   {Creates reader object. If main database doesn't exist a nul reader is
   created.
     @return Reader object instance.
   }
 begin
-  Result := TIniDataReader.Create(Vault.Storage.Directory);
+  Result := TDCSCV2VaultStorageReader.Create(Vault.Storage.Directory);
   if not Result.DatabaseExists then
-    Result := TNulDataReader.Create;
+    Result := TNullVaultStorageReader.Create;
 end;
 
-function TDCSCV2FormatLoader.ErrorMessageHeading: string;
+function TDCSCV2VaultLoader.ErrorMessageHeading: string;
   {Returns heading to use in error messages. Identifies main database.
     @return Required heading.
   }
@@ -716,20 +680,20 @@ begin
   Result := sError;
 end;
 
-{ TNativeV4FormatLoader }
+{ TCS4VaultLoader }
 
-function TNativeV4FormatLoader.CreateReader: IDataReader;
+function TCS4VaultLoader.CreateReader: IVaultStorageReader;
   {Creates reader object. If user database doesn't exist a nul reader is
   created.
     @return Reader object instance.
   }
 begin
-  Result := TXMLDataReader.Create(Vault.Storage.Directory);
+  Result := TCS4VaultStorageReader.Create(Vault.Storage.Directory);
   if not Result.DatabaseExists then
-    Result := TNulDataReader.Create;
+    Result := TNullVaultStorageReader.Create;
 end;
 
-function TNativeV4FormatLoader.ErrorMessageHeading: string;
+function TCS4VaultLoader.ErrorMessageHeading: string;
   {Returns heading to use in error messages. Identifies main database.
     @return Required heading.
   }
@@ -739,16 +703,16 @@ begin
   Result := sError;
 end;
 
-{ TNativeVaultFormatLoader }
+{ TNativeVaultLoader }
 
-function TNativeVaultFormatLoader.CreateReader: IDataReader;
+function TNativeVaultLoader.CreateReader: IVaultStorageReader;
 begin
-  Result := TNativeDataReader.Create(Vault.Storage.Directory);
+  Result := TNativeVaultStorageReader.Create(Vault.Storage.Directory);
   if not Result.DatabaseExists then
-    Result := TNulDataReader.Create;
+    Result := TNullVaultStorageReader.Create;
 end;
 
-function TNativeVaultFormatLoader.ErrorMessageHeading: string;
+function TNativeVaultLoader.ErrorMessageHeading: string;
 resourcestring
   sError = 'Error loading the vault %0:s using the %1:s data format:';
 begin
@@ -758,15 +722,15 @@ begin
   );
 end;
 
-{ TFormatSaver }
+{ TVaultSaver }
 
-constructor TFormatSaver.Create(const AVault: TVault);
+constructor TVaultSaver.Create(const AVault: TVault);
 begin
   inherited Create;
   fVault := AVault;
 end;
 
-procedure TFormatSaver.DoSave(const SnipList: TSnippetList;
+procedure TVaultSaver.DoSave(const SnipList: TSnippetList;
   const Categories: TCategoryList; const Provider: IDBDataProvider);
 begin
   fSnipList := SnipList;
@@ -780,7 +744,7 @@ begin
   fWriter.Finalise;
 end;
 
-procedure TFormatSaver.WriteCategories;
+procedure TVaultSaver.WriteCategories;
 var
   Cat: TCategory;         // loops through each category
   Props: TCategoryData;   // category properties
@@ -799,12 +763,12 @@ begin
   end;
 end;
 
-procedure TFormatSaver.WriteMetaData;
+procedure TVaultSaver.WriteMetaData;
 begin
   fWriter.WriteMetaData(Vault.MetaData);
 end;
 
-procedure TFormatSaver.WriteSnippets;
+procedure TVaultSaver.WriteSnippets;
 
   // Adds snippet keys from IDList to a string list
   function IDListToStrings(const IDList: ISnippetIDList): IStringList;
@@ -837,9 +801,9 @@ begin
   end;
 end;
 
-{ TDCSCV2FormatSaver }
+{ TDCSCV2VaultSaver }
 
-procedure TDCSCV2FormatSaver.Backup;
+procedure TDCSCV2VaultSaver.Backup;
 var
   FB: TVaultBackup;
 begin
@@ -851,7 +815,7 @@ begin
   end;
 end;
 
-constructor TDCSCV2FormatSaver.Create(const AVault: TVault);
+constructor TDCSCV2VaultSaver.Create(const AVault: TVault);
 begin
   inherited Create(AVault);
   // Find a temp file name in system temp directory that doesn't yet exist
@@ -862,12 +826,12 @@ begin
   until not TFile.Exists(fBakFile);
 end;
 
-function TDCSCV2FormatSaver.CreateWriter: IDataWriter;
+function TDCSCV2VaultSaver.CreateWriter: IVaultStorageWriter;
 begin
-  Result := TIniDataWriter.Create(Vault.Storage.Directory);
+  Result := TDCSCV2VaultStorageWriter.Create(Vault.Storage.Directory);
 end;
 
-procedure TDCSCV2FormatSaver.Restore;
+procedure TDCSCV2VaultSaver.Restore;
 var
   FB: TVaultBackup;
 begin
@@ -879,7 +843,7 @@ begin
   end;
 end;
 
-procedure TDCSCV2FormatSaver.Save(const SnipList: TSnippetList;
+procedure TDCSCV2VaultSaver.Save(const SnipList: TSnippetList;
   const Categories: TCategoryList; const Provider: IDBDataProvider);
 begin
   Backup;
@@ -895,28 +859,28 @@ begin
   end;
 end;
 
-{ TNativeV4FormatSaver }
+{ TCS4VaultSaver }
 
-function TNativeV4FormatSaver.CreateWriter: IDataWriter;
+function TCS4VaultSaver.CreateWriter: IVaultStorageWriter;
 begin
-  Result := TXMLDataWriter.Create(Vault.Storage.Directory);
+  Result := TCS4VaultStorageWriter.Create(Vault.Storage.Directory);
 end;
 
-procedure TNativeV4FormatSaver.Save(const SnipList: TSnippetList;
+procedure TCS4VaultSaver.Save(const SnipList: TSnippetList;
   const Categories: TCategoryList; const Provider: IDBDataProvider);
 begin
   {TODO -cVault: Backup and restore this vault per the DCSC v2 loader}
   DoSave(SnipList, Categories, Provider);
 end;
 
-{ TNativeVaultFormatSaver }
+{ TNativeVaultSaver }
 
-function TNativeVaultFormatSaver.CreateWriter: IDataWriter;
+function TNativeVaultSaver.CreateWriter: IVaultStorageWriter;
 begin
-  Result := TNativeDataWriter.Create(Vault.Storage.Directory);
+  Result := TNativeVaultStorageWriter.Create(Vault.Storage.Directory);
 end;
 
-procedure TNativeVaultFormatSaver.Save(const SnipList: TSnippetList;
+procedure TNativeVaultSaver.Save(const SnipList: TSnippetList;
   const Categories: TCategoryList; const Provider: IDBDataProvider);
 begin
   DoSave(SnipList, Categories, Provider);
@@ -927,13 +891,13 @@ end;
 procedure TGlobalCategoryLoader.Load(const Categories: TCategoryList;
   const DBDataItemFactory: IDBDataItemFactory);
 var
-  Reader: TCategoryReader;
-  CatInfo: TCategoryReader.TCategoryIDAndData;
+  Reader: TCategoryStorageReader;
+  CatInfo: TCategoryStorageReader.TCategoryIDAndData;
   Cat: TCategory;
 begin
   if not TFile.Exists(TAppInfo.UserCategoriesFileName) then
     Exit;
-  Reader := TCategoryReader.Create(TAppInfo.UserCategoriesFileName);
+  Reader := TCategoryStorageReader.Create(TAppInfo.UserCategoriesFileName);
   try
     for CatInfo in Reader.Read do
     begin
@@ -959,9 +923,9 @@ end;
 
 procedure TGlobalCategorySaver.Save(const Categories: TCategoryList);
 var
-  Writer: TCategoryWriter;
+  Writer: TCategoryStorageWriter;
 begin
-  Writer := TCategoryWriter.Create(TAppInfo.UserCategoriesFileName);
+  Writer := TCategoryStorageWriter.Create(TAppInfo.UserCategoriesFileName);
   try
     Writer.Write(Categories);
   finally

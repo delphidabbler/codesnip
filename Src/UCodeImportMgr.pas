@@ -23,7 +23,7 @@ uses
   Generics.Defaults,
   // Project
   DB.Vaults,
-  UCodeImportExport,
+  DB.IO.ImportExport.CS4,
   UExceptions,
   UIStringList;
 
@@ -193,11 +193,11 @@ begin
   fImportInfoList.Clear;
   try
     Data := TFileIO.ReadAllBytes(FileName);
-    TCodeImporter.ImportData(fSnippetInfoList, Data);
+    TCS4SnippetImporter.ImportData(fSnippetInfoList, Data);
   except
     on E: EStreamError do
       raise ECodeImportMgr.Create(E);
-    on E: ECodeImporter do
+    on E: ECS4SnippetImporter do
       raise ECodeImportMgr.Create(E);
   end;
   InitImportInfoList;

@@ -9,7 +9,7 @@
 }
 
 
-unit DBIO.UNulDataReader;
+unit DB.IO.Vault.Null;
 
 
 interface
@@ -20,18 +20,16 @@ uses
   DB.MetaData,
   DB.UCategory,
   DB.USnippet,
-  DBIO.UFileIOIntf,
+  DB.IO.Vault,
   UIStringList;
 
 
 type
 
-  {
-  TNulDataReader:
-    A do nothing data reader used when a database does not exist.
-  }
-  TNulDataReader = class(TInterfacedObject,
-    IDataReader
+  ///  <summary>A do nothing vault data reader used when no vaults exist.
+  ///  </summary>
+  TNullVaultStorageReader = class(TInterfacedObject,
+    IVaultStorageReader
   )
   public
     { IDataReader methods }
@@ -87,9 +85,9 @@ type
 implementation
 
 
-{ TNulDataReader }
+{ TNullVaultStorageReader }
 
-function TNulDataReader.DatabaseExists: Boolean;
+function TNullVaultStorageReader.DatabaseExists: Boolean;
   {Checks if the database exists. This method is always called first. No other
   methods are called if this method returns false.
     @return Always returns True. It always can read a do-nothing database.
@@ -98,7 +96,7 @@ begin
   Result := True;
 end;
 
-function TNulDataReader.GetAllCatIDs: IStringList;
+function TNullVaultStorageReader.GetAllCatIDs: IStringList;
   {Gets ids of all categories in database.
     @return Empty string list.
   }
@@ -106,7 +104,7 @@ begin
   Result := TIStringList.Create;
 end;
 
-procedure TNulDataReader.GetCatProps(const CatID: string;
+procedure TNullVaultStorageReader.GetCatProps(const CatID: string;
   var Props: TCategoryData);
   {Gets properties of a category.
     @param CatID [in] Id of required category.
@@ -116,7 +114,8 @@ begin
   // Do nothing
 end;
 
-function TNulDataReader.GetCatSnippets(const CatID: string): IStringList;
+function TNullVaultStorageReader.GetCatSnippets(const CatID: string):
+  IStringList;
   {Gets keys of all snippets in a category.
     @param CatID [in] Id of category containing snippets.
     @return Empty snippey key list.
@@ -125,12 +124,12 @@ begin
   Result := TIStringList.Create;
 end;
 
-function TNulDataReader.GetMetaData: TMetaData;
+function TNullVaultStorageReader.GetMetaData: TMetaData;
 begin
   Result := TMetaData.CreateNull;
 end;
 
-function TNulDataReader.GetSnippetDepends(const SnippetKey: string):
+function TNullVaultStorageReader.GetSnippetDepends(const SnippetKey: string):
   IStringList;
   {Gets list of all snippets on which a given snippet depends.
     @param SnippetKey [in] Key of required snippet.
@@ -140,7 +139,7 @@ begin
   Result := TIStringList.Create;
 end;
 
-procedure TNulDataReader.GetSnippetProps(const SnippetKey: string;
+procedure TNullVaultStorageReader.GetSnippetProps(const SnippetKey: string;
   var Props: TSnippetData);
   {Gets properties of a snippet. These are the fields of the snippet's record in
   the snippets "table".
@@ -151,7 +150,8 @@ begin
   // Do nothing
 end;
 
-function TNulDataReader.GetSnippetUnits(const SnippetKey: string): IStringList;
+function TNullVaultStorageReader.GetSnippetUnits(const SnippetKey: string):
+  IStringList;
   {Gets list of all units referenced by a snippet.
     @param SnippetKey [in] Key of required snippet.
     @return Empty unit name list.
@@ -160,7 +160,8 @@ begin
   Result := TIStringList.Create;
 end;
 
-function TNulDataReader.GetSnippetXRefs(const SnippetKey: string): IStringList;
+function TNullVaultStorageReader.GetSnippetXRefs(const SnippetKey: string):
+  IStringList;
   {Gets list of all snippets that are cross referenced by a snippet.
     @param SnippetKey [in] Key of snippet we need cross references for.
     @return Empty snippet key list.

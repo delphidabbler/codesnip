@@ -10,7 +10,7 @@
 }
 
 
-unit DBIO.UXMLDataIO;
+unit DB.IO.Vault.CS4;
 
 
 interface
@@ -23,7 +23,7 @@ uses
   DB.MetaData,
   DB.UCategory,
   DB.USnippet,
-  DBIO.UFileIOIntf,
+  DB.IO.Vault,
   UIStringList,
   UREMLDataIO,
   UXMLDocumentEx;
@@ -31,15 +31,13 @@ uses
 
 type
 
-  {
-  TXMLDataIO:
-    Base class for classes that read and write databases stored in an XML file
-    and linked data files.
-  }
-  TXMLDataIO = class(TInterfacedObject)
+  ///  <summary>Base class for classes that read and write vault data in the
+  ///  CodeSnip 4 user data format.</summary>
+  TCS4VaultStorage = class(TInterfacedObject)
   strict protected
-    fDBDir: string;           // Database directory
-    fXMLDoc: IXMLDocumentEx;  // Extended XML document object
+    var
+      fDBDir: string;           // Database directory
+      fXMLDoc: IXMLDocumentEx;  // Extended XML document object
     function PathToXMLFile: string;
       {Gets fully specified path to the XML file. Path depends on which database
       is being accessed.
@@ -76,13 +74,10 @@ type
       }
   end;
 
-  {
-  TXMLDataReader:
-    Class that can read a database from an XML file and various linked data
-    files.
-  }
-  TXMLDataReader = class(TXMLDataIO,
-    IDataReader
+  ///  <summary>Reads a vault's data from storage in the CodeSnip 4 user data
+  ///  format.</summary>
+  TCS4VaultStorageReader = class(TCS4VaultStorage,
+    IVaultStorageReader
   )
   strict private
     fVersion: Integer;
@@ -165,13 +160,10 @@ type
     function GetMetaData: TMetaData;
   end;
 
-  {
-  TXMLDataWriter:
-    Class that can write a database to an XML file and various linked data
-    files.
-  }
-  TXMLDataWriter = class(TXMLDataIO,
-    IDataWriter
+  ///  <summary>Writes a vault's data to storage in the CodeSnip 4 user data
+  ///  format.</summary>
+  TCS4VaultStorageWriter = class(TCS4VaultStorage,
+    IVaultStorageWriter
   )
   strict private
     fFileNum: Integer;          // Number of next available unused data file
@@ -266,21 +258,45 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes, ActiveX, XMLDom,
+  SysUtils,
+  Classes,
+  ActiveX,
+  XMLDom,
   // Project
-  ActiveText.UMain, DB.USnippetKind, UConsts, UExceptions, UIOUtils,
-  USnippetExtraHelper, UStructs, UUtils, UXMLDocConsts, UXMLDocHelper;
+  ActiveText.UMain,
+  DB.IO.Common.CS4,
+  DB.USnippetKind,
+  UConsts,
+  UExceptions,
+  UIOUtils,
+  USnippetExtraHelper,
+  UStructs,
+  UUtils,
+  UXMLDocHelper;
 
 
-const
-  // Database file name
-  cDatabaseFileName     = 'database.xml';
-  // File markers: attributes of root node
-  // watermark (never changes for all versions)
-  cWatermark            = '531257EA-1EE3-4B0F-8E46-C6E7F7140106';
-  // supported file format versions
-  cEarliestVersion      = 1;
-  cLatestVersion        = 6;
+type
+  TCS4VaultFormatHelper = class(TCS4FormatHelper)
+  public
+    const
+      // Database file name
+      DatabaseFileName = 'database.xml';
+      // File markers: attributes of root node
+      // watermark (never changes for all versions)
+      Watermark = '531257EA-1EE3-4B0F-8E46-C6E7F7140106';
+      // supported file format versions
+      EarliestVersion = 1;
+      LatestVersion = 6;
+      // node & attribute names
+      CatIdNodeName = 'cat-id';
+      UserDataRootNodeName = 'codesnip-data';
+      CategoriesNodeName = 'categories';
+      CategoryNodeName = 'category';
+      CategoryNodeIdAttrName = 'id';
+      CatSnippetsNodeName = 'cat-routines';
+      SourceCodeNodeName = 'source-code';
+      XRefNodeName = 'xref';
+  end;
 
 
 { Support routines }
@@ -304,13 +320,13 @@ begin
   raise EDataIO.CreateFmt(FmtStr, Args);
 end;
 
-{ TXMLDataIO }
+{ TCS4VaultStorage }
 
 resourcestring
   // Error message
   sMissingNode = 'Document has no %s node.';
 
-constructor TXMLDataIO.Create(const DBDir: string);
+constructor TCS4VaultStorage.Create(const DBDir: string);
   {Class constructor. Creates object and XML document for a given database.
     @param DBDir [in] Directory where database is stored.
   }
@@ -320,10 +336,10 @@ begin
   // For some reason we must call OleInitialize here rather than in
   // initialization section
   OleInitialize(nil);
-  fXMLDoc := TXMLDocHelper.CreateXMLDoc;
+  fXMLDoc := TCS4VaultFormatHelper.CreateXMLDoc;
 end;
 
-function TXMLDataIO.DataDir: string;
+function TCS4VaultStorage.DataDir: string;
   {Gets name of directory storing the database being accessed. Path varies
   according to which database is being accessed.
     @return Path to directory.
@@ -332,7 +348,7 @@ begin
   Result := ExcludeTrailingPathDelimiter(fDBDir);
 end;
 
-function TXMLDataIO.DataFile(const FileName: string): string;
+function TCS4VaultStorage.DataFile(const FileName: string): string;
   {Gets full path to a file name. Path depends on which database is being
   accessed.
     @param FileName [in] File name for which path is required.
@@ -342,7 +358,7 @@ begin
   Result := IncludeTrailingPathDelimiter(DataDir) + FileName;
 end;
 
-destructor TXMLDataIO.Destroy;
+destructor TCS4VaultStorage.Destroy;
   {Class destructor. Tears down object.
   }
 begin
@@ -352,7 +368,7 @@ begin
   inherited;
 end;
 
-function TXMLDataIO.FindCategoryNode(const CatID: string): IXMLNode;
+function TCS4VaultStorage.FindCategoryNode(const CatID: string): IXMLNode;
   {Finds a specified category node in the file.
     @param CatID [in] Id of required category.
     @return Required node or nil if node doesn't exist.
@@ -362,16 +378,23 @@ var
 begin
   Result := nil;
   // Find <categories> node
-  CatListNode := fXMLDoc.FindNode(cUserDataRootNode + '\' + cCategoriesNode);
+  CatListNode := fXMLDoc.FindNode(
+    TCS4VaultFormatHelper.UserDataRootNodeName
+      + '\'
+      + TCS4VaultFormatHelper.CategoriesNodeName
+  );
   if not Assigned(CatListNode) then
-    Error(sMissingNode, [cCategoriesNode]);
+    Error(sMissingNode, [TCS4VaultFormatHelper.CategoriesNodeName]);
   // Find required <category> node
   Result := fXMLDoc.FindFirstChildNode(
-    CatListNode, cCategoryNode, cCategoryIdAttr, CatID
+    CatListNode,
+    TCS4VaultFormatHelper.CategoryNodeName,
+    TCS4VaultFormatHelper.CategoryNodeIdAttrName,
+    CatID
   )
 end;
 
-function TXMLDataIO.FindSnippetNode(const SnippetKey: string): IXMLNode;
+function TCS4VaultStorage.FindSnippetNode(const SnippetKey: string): IXMLNode;
   {Finds a specified snippet node for a snippet in the file.
     @param SnippetKey [in] Key of required snippet.
     @return Required node or nil if node doesn't exist.
@@ -381,25 +404,32 @@ var
 begin
   Result := nil;
   // Find snippets node
-  SnippetListNode := fXMLDoc.FindNode(cUserDataRootNode + '\' + cSnippetsNode);
+  SnippetListNode := fXMLDoc.FindNode(
+    TCS4VaultFormatHelper.UserDataRootNodeName
+      + '\'
+      + TCS4VaultFormatHelper.SnippetsNodeName
+  );
   if not Assigned(SnippetListNode) then
-    Error(sMissingNode, [cSnippetsNode]);
+    Error(sMissingNode, [TCS4VaultFormatHelper.SnippetsNodeName]);
   // Find required snippet node
   Result := fXMLDoc.FindFirstChildNode(
-    SnippetListNode, cSnippetNode, cSnippetNameAttr, SnippetKey
+    SnippetListNode,
+    TCS4VaultFormatHelper.SnippetNodeName,
+    TCS4VaultFormatHelper.SnippetNodeNameAttr,
+    SnippetKey
   );
 end;
 
-function TXMLDataIO.PathToXMLFile: string;
+function TCS4VaultStorage.PathToXMLFile: string;
   {Gets fully specified path to the XML file. Path depends on which database is
   being accessed.
     @return Required path.
   }
 begin
-  Result := DataFile(cDatabaseFileName);
+  Result := DataFile(TCS4VaultFormatHelper.DatabaseFileName);
 end;
 
-{ TXMLDataReader }
+{ TCS4VaultStorageReader }
 
 resourcestring
   // Error messages
@@ -409,7 +439,7 @@ resourcestring
   sMissingSource = 'Source code file name missing for snippet "%s"';
   sDBError = 'The database is corrupt and had been deleted.' + EOL2 + '%s';
 
-constructor TXMLDataReader.Create(const DBDir: string);
+constructor TCS4VaultStorageReader.Create(const DBDir: string);
   {Class constructor. Sets up object and loads XML from file if database master
   file exists, otherwise creates a minimal empty document.
     @param DBDir [in] Directory where database is stored.
@@ -433,16 +463,19 @@ begin
   begin
     // Database doesn't exist: create sufficient nodes for main code to find
     fXMLDoc.Active := True;
-    TXMLDocHelper.CreateXMLProcInst(fXMLDoc);
-    RootNode := TXMLDocHelper.CreateRootNode(
-      fXMLDoc, cUserDataRootNode, cWatermark, cLatestVersion
+    TCS4VaultFormatHelper.CreateXMLProcInst(fXMLDoc);
+    RootNode := TCS4VaultFormatHelper.CreateRootNode(
+      fXMLDoc,
+      TCS4VaultFormatHelper.UserDataRootNodeName,
+      TCS4VaultFormatHelper.Watermark,
+      TCS4VaultFormatHelper.LatestVersion
     );
-    fXMLDoc.CreateElement(RootNode, cCategoriesNode);
-    fXMLDoc.CreateElement(RootNode, cSnippetsNode);
+    fXMLDoc.CreateElement(RootNode, TCS4VaultFormatHelper.CategoriesNodeName);
+    fXMLDoc.CreateElement(RootNode, TCS4VaultFormatHelper.SnippetsNodeName);
   end;
 end;
 
-function TXMLDataReader.DatabaseExists: Boolean;
+function TCS4VaultStorageReader.DatabaseExists: Boolean;
   {Check if the database exists. This method is always called first. No
   other methods are called if this method returns false.
     @return True if database exists, False if not.
@@ -451,7 +484,7 @@ begin
   Result := FileExists(PathToXMLFile);
 end;
 
-function TXMLDataReader.GetAllCatIDs: IStringList;
+function TCS4VaultStorageReader.GetAllCatIDs: IStringList;
   {Get ids of all categories in database.
     @return List of category names.
   }
@@ -462,18 +495,26 @@ var
 begin
   try
     Result := TIStringList.Create;
-    CatListNode := fXMLDoc.FindNode(cUserDataRootNode + '\' + cCategoriesNode);
+    CatListNode := fXMLDoc.FindNode(
+      TCS4VaultFormatHelper.UserDataRootNodeName
+        + '\'
+        + TCS4VaultFormatHelper.CategoriesNodeName
+    );
     if not Assigned(CatListNode) then
       Error(sNoCategoriesNode);
-    CatNodes := fXMLDoc.FindChildNodes(CatListNode, cCategoryNode);
+    CatNodes := fXMLDoc.FindChildNodes(
+      CatListNode, TCS4VaultFormatHelper.CategoryNodeName
+    );
     for CatNode in CatNodes do
-      Result.Add(CatNode.Attributes[cCategoryIdAttr]);
+      Result.Add(
+        CatNode.Attributes[TCS4VaultFormatHelper.CategoryNodeIdAttrName]
+      );
   except
     HandleCorruptDatabase(ExceptObject);
   end;
 end;
 
-procedure TXMLDataReader.GetCatProps(const CatID: string;
+procedure TCS4VaultStorageReader.GetCatProps(const CatID: string;
   var Props: TCategoryData);
   {Get properties of a category.
     @param CatID [in] Id of required category.
@@ -489,15 +530,16 @@ begin
       // Properties will not be requested for a category that doesn't exist in
       // this database, so this should never happen
       Error(sCatNotFound);
-    Props.Desc := TXMLDocHelper.GetSubTagText(
-      fXMLDoc, CatNode, cDescriptionNode
+    Props.Desc := TCS4VaultFormatHelper.GetSubTagText(
+      fXMLDoc, CatNode, TCS4VaultFormatHelper.DescriptionNodeName
     );
   except
     HandleCorruptDatabase(ExceptObject);
   end;
 end;
 
-function TXMLDataReader.GetCatSnippets(const CatID: string): IStringList;
+function TCS4VaultStorageReader.GetCatSnippets(const CatID: string):
+  IStringList;
   {Get keys of all snippets in a category.
     @param CatID [in] Id of category containing snippets.
     @return List of snippet keys.
@@ -512,31 +554,36 @@ begin
       // This is not an error since it is possible that a category exists in
       // another database and loader will request info from here also
       Exit;
-    TXMLDocHelper.GetPascalNameList(
-      fXMLDoc, fXMLDoc.FindFirstChildNode(CatNode, cCatSnippetsNode), Result
+    TCS4VaultFormatHelper.GetPascalNameList(
+      fXMLDoc, fXMLDoc.FindFirstChildNode(
+        CatNode, TCS4VaultFormatHelper.CatSnippetsNodeName
+      ),
+      Result
     );
   except
     HandleCorruptDatabase(ExceptObject);
   end;
 end;
 
-function TXMLDataReader.GetMetaData: TMetaData;
+function TCS4VaultStorageReader.GetMetaData: TMetaData;
 begin
   // Meta data not supported by this data format
   Result := TMetaData.CreateNull;
 end;
 
-function TXMLDataReader.GetSnippetDepends(const SnippetKey: string):
+function TCS4VaultStorageReader.GetSnippetDepends(const SnippetKey: string):
   IStringList;
   {Get list of all snippets on which a given snippet depends.
     @param SnippetKey [in] Key of required snippet.
     @return List of snippet keys.
   }
 begin
-  Result := GetSnippetReferences(SnippetKey, cDependsNode);
+  Result := GetSnippetReferences(
+    SnippetKey, TCS4VaultFormatHelper.DependsNodeName
+  );
 end;
 
-procedure TXMLDataReader.GetSnippetProps(const SnippetKey: string;
+procedure TCS4VaultStorageReader.GetSnippetProps(const SnippetKey: string;
   var Props: TSnippetData);
   {Get properties of a snippet.
     @param SnippetKey [in] Key of required snippet.
@@ -546,14 +593,15 @@ procedure TXMLDataReader.GetSnippetProps(const SnippetKey: string;
 var
   SnippetNode: IXMLNode;  // node for required snippet
 
-  // ---------------------------------------------------------------------------
   function GetPropertyText(const PropTagName: string): string;
     {Gets text of a specified property.
       @param PropTagName [in] Tag associated with property.
       @return Property value from tag's text.
     }
   begin
-    Result := TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, PropTagName);
+    Result := TCS4VaultFormatHelper.GetSubTagText(
+      fXMLDoc, SnippetNode, PropTagName
+    );
   end;
 
   function GetSourceCodePropertyText: string;
@@ -563,7 +611,7 @@ var
   var
     DataFileName: string; // name of file containing source code
   begin
-    DataFileName := GetPropertyText(cSourceCodeFileNode);
+    DataFileName := GetPropertyText(TCS4VaultFormatHelper.SourceCodeNodeName);
     if DataFileName = '' then
       Error(sMissingSource, [SnippetKey]);
     try
@@ -591,7 +639,7 @@ var
       @return True if standard format, False if not.
     }
   begin
-    Result := TXMLDocHelper.GetStandardFormat(
+    Result := TCS4VaultFormatHelper.GetStandardFormat(
       fXMLDoc, SnippetNode, False
     );
   end;
@@ -610,7 +658,9 @@ var
       Default := skRoutine
     else
       Default := skFreeform;
-    Result := TXMLDocHelper.GetSnippetKind(fXMLDoc, SnippetNode, Default);
+    Result := TCS4VaultFormatHelper.GetSnippetKind(
+      fXMLDoc, SnippetNode, Default
+    );
   end;
 
   function GetExtraProperty: IActiveText;
@@ -624,14 +674,14 @@ var
         // version 1: build extra data from comments, credits and credits URL
         // nodes
         Result := TSnippetExtraHelper.BuildActiveText(
-          GetPropertyText(cCommentsNode),
-          GetPropertyText(cCreditsNode),
-          GetPropertyText(cCreditsUrlNode)
+          GetPropertyText(TCS4VaultFormatHelper.CommentsNodeName),
+          GetPropertyText(TCS4VaultFormatHelper.CreditsNodeName),
+          GetPropertyText(TCS4VaultFormatHelper.CreditsUrlNodeName)
         )
       else
         // version 2 & later: build extra data from REML in extra node
         Result := TSnippetExtraHelper.BuildActiveText(
-          GetPropertyText(cExtraNode)
+          GetPropertyText(TCS4VaultFormatHelper.ExtraNodeName)
         );
     except
       // error: provide an empty property value
@@ -643,7 +693,7 @@ var
   var
     Desc: string; // text read from description node
   begin
-    Desc := GetPropertyText(cDescriptionNode);
+    Desc := GetPropertyText(TCS4VaultFormatHelper.DescriptionNodeName);
     if Desc <> '' then
     begin
       if fVersion < 6 then
@@ -656,7 +706,6 @@ var
     else
       Result := TActiveTextFactory.CreateActiveText;
   end;
-  // ---------------------------------------------------------------------------
 
 begin
   try
@@ -665,16 +714,16 @@ begin
     if not Assigned(SnippetNode) then
       Error(sSnippetNotFound, [SnippetKey]);
     // Snippet found: read properties
-    Props.Cat := GetPropertyText(cCatIdNode);
-    Props.DisplayName := GetPropertyText(cDisplayNameNode);
+    Props.Cat := GetPropertyText(TCS4VaultFormatHelper.CatIdNodeName);
+    Props.DisplayName := GetPropertyText(TCS4VaultFormatHelper.DisplayNameNodeName);
     Props.Kind := GetKindProperty;
     Props.Desc := GetDescriptionProperty;
     Props.Extra := GetExtraProperty;
     Props.SourceCode := GetSourceCodePropertyText;
-    Props.HiliteSource := TXMLDocHelper.GetHiliteSource(
+    Props.HiliteSource := TCS4VaultFormatHelper.GetHiliteSource(
       fXMLDoc, SnippetNode, True
     );
-    Props.CompilerResults := TXMLDocHelper.GetCompilerResults(
+    Props.CompilerResults := TCS4VaultFormatHelper.GetCompilerResults(
       fXMLDoc, SnippetNode
     );
   except
@@ -682,8 +731,8 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetSnippetReferences(const SnippetKey, RefName: string):
-  IStringList;
+function TCS4VaultStorageReader.GetSnippetReferences(const SnippetKey,
+  RefName: string): IStringList;
   {Get list of all specified references made by a snippet.
     @param SnippetKey [in] Key of required snippet.
     @param RefName [in] Name of node containing snippet's references.
@@ -692,13 +741,14 @@ function TXMLDataReader.GetSnippetReferences(const SnippetKey, RefName: string):
 var
   SnippetNode: IXMLNode;  // node for required snippet
 begin
-  try
+    {TODO -cRefactor: Pull reading snippet references into TCS4VaultFormatHelper ???}
+    try
     Result := TIStringList.Create;
     SnippetNode := FindSnippetNode(SnippetKey);
     if not Assigned(SnippetNode) then
       Error(sSnippetNotFound, [SnippetKey]);
     // References are contained in a list of contained <pascal-name> nodes
-    TXMLDocHelper.GetPascalNameList(
+    TCS4VaultFormatHelper.GetPascalNameList(
       fXMLDoc, fXMLDoc.FindFirstChildNode(SnippetNode, RefName), Result
     );
   except
@@ -706,25 +756,29 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetSnippetUnits(const SnippetKey: string): IStringList;
+function TCS4VaultStorageReader.GetSnippetUnits(const SnippetKey: string):
+  IStringList;
   {Get list of all units referenced by a snippet.
     @param SnippetKey [in] Key of required snippet.
     @return List of unit keys.
   }
 begin
-  Result := GetSnippetReferences(SnippetKey, cUnitsNode);
+  Result := GetSnippetReferences(SnippetKey, TCS4VaultFormatHelper.UnitsNodeName);
 end;
 
-function TXMLDataReader.GetSnippetXRefs(const SnippetKey: string): IStringList;
+function TCS4VaultStorageReader.GetSnippetXRefs(const SnippetKey: string):
+  IStringList;
   {Get list of all snippets that are cross referenced by a snippet.
     @param SnippetKey [in] Key of snippet we need cross references for.
     @return List of snippet keys.
   }
 begin
-  Result := GetSnippetReferences(SnippetKey, cXRefNode);
+  Result := GetSnippetReferences(
+    SnippetKey, TCS4VaultFormatHelper.XRefNodeName
+  );
 end;
 
-procedure TXMLDataReader.HandleCorruptDatabase(const EObj: TObject);
+procedure TCS4VaultStorageReader.HandleCorruptDatabase(const EObj: TObject);
   {Called when a corrupt database is encountered. Deletes all files and raises
   exception.
     @param EObj [in] Reference to exception that caused this method to be
@@ -747,35 +801,47 @@ begin
     raise EObj;
 end;
 
-function TXMLDataReader.ValidateDoc: Integer;
+function TCS4VaultStorageReader.ValidateDoc: Integer;
   {Validates XML document and gets file version.
     @return XML file version number.
     @except EDataIO raised if XML is not valid.
   }
 begin
-  TXMLDocHelper.ValidateProcessingInstr(fXMLDoc);
-  Result := TXMLDocHelper.ValidateRootNode(
+  TCS4VaultFormatHelper.ValidateProcessingInstr(fXMLDoc);
+  Result := TCS4VaultFormatHelper.ValidateRootNode(
     fXMLDoc,
-    cUserDataRootNode,
-    cWatermark,
-    TRange.Create(cEarliestVersion, cLatestVersion)
+    TCS4VaultFormatHelper.UserDataRootNodeName,
+    TCS4VaultFormatHelper.Watermark,
+    TRange.Create(
+      TCS4VaultFormatHelper.EarliestVersion, TCS4VaultFormatHelper.LatestVersion
+    )
   );
   // Both a categories and a snippets node must exist
-  if fXMLDoc.FindNode(cUserDataRootNode + '\' + cCategoriesNode) = nil then
-    Error(sMissingNode, [cCategoriesNode]);
-  if fXMLDoc.FindNode(cUserDataRootNode + '\' + cSnippetsNode) = nil then
-    Error(sMissingNode, [cSnippetsNode]);
+  if fXMLDoc.FindNode(
+    TCS4VaultFormatHelper.UserDataRootNodename
+      + '\'
+      + TCS4VaultFormatHelper.CategoriesNodeName
+  ) = nil then
+    Error(sMissingNode, [TCS4VaultFormatHelper.CategoriesNodeName]);
+  if fXMLDoc.FindNode(
+    TCS4VaultFormatHelper.UserDataRootNodeName
+      + '\'
+      + TCS4VaultFormatHelper.SnippetsNodeName
+  ) = nil then
+    Error(sMissingNode, [TCS4VaultFormatHelper.SnippetsNodeName]);
 end;
 
-{ TXMLDataWriter }
+{ TCS4VaultStorageWriter }
 
-procedure TXMLDataWriter.Finalise;
+procedure TCS4VaultStorageWriter.Finalise;
   {Finalises the database. Always called after all other methods.
   }
 var
   FS: TFileStream;      // stream onto output file
 begin
-  fXMLDoc.DocumentElement.SetAttribute(cRootVersionAttr, cLatestVersion);
+  fXMLDoc.DocumentElement.SetAttribute(
+    TCS4VaultFormatHelper.RootVersionAttr, TCS4VaultFormatHelper.LatestVersion
+  );
   // We use a TFileStream and TXMLDocument.SaveToStream rather than calling
   // TXMLDocument.SaveToFile so that any problem creating file is reported via
   // a known Delphi exception that can be handled.
@@ -793,7 +859,7 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.HandleException(const EObj: TObject);
+procedure TCS4VaultStorageWriter.HandleException(const EObj: TObject);
   {Handles exceptions raised by converting expected exceptions into ECodeSnip
   derived exceptions.
     @param EObj [in] Reference to exception to be handled.
@@ -805,7 +871,7 @@ begin
   raise EObj;
 end;
 
-procedure TXMLDataWriter.Initialise;
+procedure TCS4VaultStorageWriter.Initialise;
   {Initialise the database. Always called before any other methods.
   }
 var
@@ -828,22 +894,29 @@ begin
     // methods
     fXMLDoc.Active := True;
     // xml processing instruction: id file as XML
-    TXMLDocHelper.CreateXMLProcInst(fXMLDoc);
+    TCS4VaultFormatHelper.CreateXMLProcInst(fXMLDoc);
     // comments
-    TXMLDocHelper.CreateComment(fXMLDoc, sFileComment);
+    TCS4VaultFormatHelper.CreateComment(fXMLDoc, sFileComment);
     // root node
-    RootNode := TXMLDocHelper.CreateRootNode(
-      fXMLDoc, cUserDataRootNode, cWatermark, cLatestVersion
+    RootNode := TCS4VaultFormatHelper.CreateRootNode(
+      fXMLDoc,
+      TCS4VaultFormatHelper.UserDataRootNodeName,
+      TCS4VaultFormatHelper.Watermark,
+      TCS4VaultFormatHelper.LatestVersion
     );
     // empty categories and snippets nodes
-    fCategoriesNode := fXMLDoc.CreateElement(RootNode, cCategoriesNode);
-    fSnippetsNode := fXMLDoc.CreateElement(RootNode, cSnippetsNode);
+    fCategoriesNode := fXMLDoc.CreateElement(
+      RootNode, TCS4VaultFormatHelper.CategoriesNodeName
+    );
+    fSnippetsNode := fXMLDoc.CreateElement(
+      RootNode, TCS4VaultFormatHelper.SnippetsNodeName
+    );
   except
     HandleException(ExceptObject);
   end;
 end;
 
-procedure TXMLDataWriter.WriteCatProps(const CatID: string;
+procedure TCS4VaultStorageWriter.WriteCatProps(const CatID: string;
   const Props: TCategoryData);
   {Write the properties of a category. Always called before WriteCatSnippets for
   a given category, so can be used to perform any per-category initialisation.
@@ -855,15 +928,19 @@ var
 begin
   try
     // Create <category id='CatName'> node
-    CatNode := fXMLDoc.CreateElement(fCategoriesNode, cCategoryNode);
-    CatNode.Attributes[cCategoryIdAttr] := CatID;
-    fXMLDoc.CreateElement(CatNode, cDescriptionNode, Props.Desc);
+    CatNode := fXMLDoc.CreateElement(
+      fCategoriesNode, TCS4VaultFormatHelper.CategoryNodeName
+    );
+    CatNode.Attributes[TCS4VaultFormatHelper.CategoryNodeIdAttrName] := CatID;
+    fXMLDoc.CreateElement(
+      CatNode, TCS4VaultFormatHelper.DescriptionNodeName, Props.Desc
+    );
   except
     HandleException(ExceptObject);
   end;
 end;
 
-procedure TXMLDataWriter.WriteCatSnippets(const CatID: string;
+procedure TCS4VaultStorageWriter.WriteCatSnippets(const CatID: string;
   const SnipList: IStringList);
   {Write the list of snippets belonging to a category. Always called after
   WriteCatProps for any given category.
@@ -882,19 +959,27 @@ begin
     Assert(Assigned(CatNode),
       ClassName + '.WriteCatSnippets: Can''t find category node');
     // Write the list
-    WriteNameList(CatNode, cCatSnippetsNode, cPascalNameNode, SnipList);
+    {TODO -cRefactor: Call TCS4VaultFormatHelper.WritePascalNameList instead? If this
+          is done then TCS4VaultFormatHelper.PascalNameNodeName can be made private
+          again.}
+    WriteNameList(
+      CatNode,
+      TCS4VaultFormatHelper.CatSnippetsNodeName,
+      TCS4VaultFormatHelper.PascalNameNodeName,
+      SnipList
+    );
   except
     HandleException(ExceptObject);
   end;
 end;
 
-procedure TXMLDataWriter.WriteMetaData(const AMetaData: TMetaData);
+procedure TCS4VaultStorageWriter.WriteMetaData(const AMetaData: TMetaData);
 begin
   // Do nothing: meta data not supported.
 end;
 
-procedure TXMLDataWriter.WriteNameList(const Parent: IXMLNode; const ListName,
-  ItemName: string; const Items: IStringList);
+procedure TCS4VaultStorageWriter.WriteNameList(const Parent: IXMLNode;
+  const ListName, ItemName: string; const Items: IStringList);
   {Writes a list of names to XML.
     @param Parent [in] Reference to node under which list is to be stored.
     @param ListName [in] Name of tag that encloses the list items.
@@ -910,8 +995,8 @@ begin
     fXMLDoc.CreateElement(ListNode, ItemName, Item);
 end;
 
-procedure TXMLDataWriter.WriteReferenceList(const SnippetKey, ListName: string;
-  const Items: IStringList);
+procedure TCS4VaultStorageWriter.WriteReferenceList(const SnippetKey,
+  ListName: string; const Items: IStringList);
   {Writes a snippet's reference list to XML.
     @param SnippetKey [in] Key of snippet whose reference list is to be
       written.
@@ -930,7 +1015,7 @@ begin
     Assert(Assigned(SnippetNode),
       ClassName + '.WriteReferenceList: Can''t find snippet node');
     // Write the list
-    TXMLDocHelper.WritePascalNameList(
+    TCS4VaultFormatHelper.WritePascalNameList(
       fXMLDoc, SnippetNode, ListName, Items
     );
   except
@@ -938,17 +1023,18 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteSnippetDepends(const SnippetKey: string;
+procedure TCS4VaultStorageWriter.WriteSnippetDepends(const SnippetKey: string;
   const Depends: IStringList);
   {Write the list of snippets on which a snippet depends.
     @param SnippetKey [in] Snippet's key.
     @param Depends [in] List of snippet keys.
   }
 begin
-  WriteReferenceList(SnippetKey, cDependsNode, Depends);
+  {TODO -cRefactor: Pull writing Depends node into TCS4VaultFormatHelper}
+  WriteReferenceList(SnippetKey, TCS4VaultFormatHelper.DependsNodeName, Depends);
 end;
 
-procedure TXMLDataWriter.WriteSnippetProps(const SnippetKey: string;
+procedure TCS4VaultStorageWriter.WriteSnippetProps(const SnippetKey: string;
   const Props: TSnippetData);
   {Write the properties of a snippet. Always called after all categories are
   written and before WriteSnippetsUnits, so can be used to perform any per-
@@ -965,14 +1051,18 @@ const
 begin
   try
     // Create snippet node
-    SnippetNode := fXMLDoc.CreateElement(fSnippetsNode, cSnippetNode);
-    SnippetNode.Attributes[cSnippetNameAttr] := SnippetKey;
+    SnippetNode := fXMLDoc.CreateElement(
+      fSnippetsNode, TCS4VaultFormatHelper.SnippetNodeName
+    );
+    SnippetNode.Attributes[TCS4VaultFormatHelper.SnippetNodeNameAttr] := SnippetKey;
     // Add properties
-    fXMLDoc.CreateElement(SnippetNode, cCatIdNode, Props.Cat);
+    fXMLDoc.CreateElement(
+      SnippetNode, TCS4VaultFormatHelper.CatIdNodeName, Props.Cat
+    );
     // description node is written even if empty (which it shouldn't be)
     fXMLDoc.CreateElement(
       SnippetNode,
-      cDescriptionNode,
+      TCS4VaultFormatHelper.DescriptionNodeName,
       TSnippetExtraHelper.BuildREMLMarkup(Props.Desc)
     );
     // source code is written to a UTF-8 encoded file with no BOM and filename
@@ -982,23 +1072,31 @@ begin
     TFileIO.WriteAllText(
       DataFile(FileName), Props.SourceCode, TEncoding.UTF8, False
     );
-    fXMLDoc.CreateElement(SnippetNode, cSourceCodeFileNode, FileName);
     fXMLDoc.CreateElement(
-      SnippetNode, cHighlightSource, IntToStr(Ord(Props.HiliteSource))
+      SnippetNode, TCS4VaultFormatHelper.SourceCodeNodeName, FileName
     );
-    fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Props.DisplayName);
+    {TODO -cRefactor: Move following method call into TCS4VaultFormatHelper}
+    fXMLDoc.CreateElement(
+      SnippetNode,
+      TCS4VaultFormatHelper.HighlightSourceNodeName,
+      IntToStr(Ord(Props.HiliteSource))
+    );
+    fXMLDoc.CreateElement(
+      SnippetNode, TCS4VaultFormatHelper.DisplayNameNodeName, Props.DisplayName
+    );
+    {TODO -cRefactor: Move code that writes Extra into TCS4VaultFormatHelper}
     // extra node is only written if extra property has a value
     if Props.Extra.HasContent then
     begin
       fXMLDoc.CreateElement(
         SnippetNode,
-        cExtraNode,
+        TCS4VaultFormatHelper.ExtraNodeName,
         TSnippetExtraHelper.BuildREMLMarkup(Props.Extra)
       );
     end;
-    TXMLDocHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Props.Kind);
+    TCS4VaultFormatHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Props.Kind);
     // only known compiler results are written
-    TXMLDocHelper.WriteCompilerResults(
+    TCS4VaultFormatHelper.WriteCompilerResults(
       fXMLDoc, SnippetNode, Props.CompilerResults
     );
   except
@@ -1006,24 +1104,24 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteSnippetUnits(const SnippetKey: string;
+procedure TCS4VaultStorageWriter.WriteSnippetUnits(const SnippetKey: string;
   const Units: IStringList);
   {Write the list of units required by a snippet.
     @param SnippetKey [in] Snippet's key.
     @param Units [in] List of names of required units.
   }
 begin
-  WriteReferenceList(SnippetKey, cUnitsNode, Units);
+  WriteReferenceList(SnippetKey, TCS4VaultFormatHelper.UnitsNodeName, Units);
 end;
 
-procedure TXMLDataWriter.WriteSnippetXRefs(const SnippetKey: string;
+procedure TCS4VaultStorageWriter.WriteSnippetXRefs(const SnippetKey: string;
   const XRefs: IStringList);
   {Write the list of snippets that a snippet cross-references.
     @param SnippetKey [in] Snippet's key.
     @param XRefs [in] List of cross references snippets.
   }
 begin
-  WriteReferenceList(SnippetKey, cXRefNode, XRefs);
+  WriteReferenceList(SnippetKey, TCS4VaultFormatHelper.XRefNodeName, XRefs);
 end;
 
 end.

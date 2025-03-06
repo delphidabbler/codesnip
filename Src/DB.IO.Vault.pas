@@ -11,7 +11,7 @@
 }
 
 
-unit DBIO.UFileIOIntf;
+unit DB.IO.Vault;
 
 
 interface
@@ -27,14 +27,9 @@ uses
 
 
 type
-  {
-  IDataReader:
-    Interface that defines operations that must be implemented by objects that
-    read the CodeSnip and/or user database.
-    NOTE: Any object that is to be used to read a database must implement this
-    interface.
-  }
-  IDataReader = interface(IInterface)
+  ///  <summary>Interface that defines operations that must be implemented by
+  ///  objects that read vault data from storage.</summary>
+  IVaultStorageReader = interface(IInterface)
     ['{72A8EAD4-05CE-41BF-AE0F-33495757BBFC}']
     function DatabaseExists: Boolean;
       {Check if the database exists. This method is always called first. No
@@ -56,7 +51,8 @@ type
         @param CatID [in] Id of category containing snippets.
         @return List of snippet IDs.
       }
-    procedure GetSnippetProps(const SnippetKey: string; var Props: TSnippetData);
+    procedure GetSnippetProps(const SnippetKey: string;
+      var Props: TSnippetData);
       {Get properties of a snippet. These are the fields of the snippet's
       record in the snippets "table".
         @param SnippetKey [in] Snippet's key.
@@ -85,14 +81,9 @@ type
     function GetMetaData: TMetaData;
   end;
 
-  {
-  IDataWriter:
-    Interface that defines operations that must be implemented by objects that
-    write user database.
-    NOTE: Any object that is to be used to write the user database must
-    implement this interface.
-  }
-  IDataWriter = interface(IInterface)
+  ///  <summary>Interface that defines operations that must be implemented by
+  ///  objects that write vault data to storage.</summary>
+  IVaultStorageWriter = interface(IInterface)
     ['{71E892C4-6E0F-480A-9DF4-70835F83A0CA}']
     procedure Initialise;
       {Initialise the database. Always called before any other methods.

@@ -10,7 +10,7 @@
 }
 
 
-unit DB.IO.DataFormat.Native;
+unit DB.IO.Vault.Native;
 
 interface
 
@@ -23,7 +23,7 @@ uses
   DB.UCategory,
   DB.USnippet,
   DB.USnippetKind,
-  DBIO.UFileIOIntf,
+  DB.IO.Vault,
   UIStringList,
   UVersionInfo,
   UXMLDocumentEx;
@@ -31,8 +31,8 @@ uses
 type
 
   ///  <summary>Base class for classes that read and write vault data in the
-  ///  native data format.</summary>
-  TNativeDataRW = class abstract(TInterfacedObject)
+  ///  CodeSnip Vault native data format.</summary>
+  TNativeVaultStorage = class abstract(TInterfacedObject)
   strict private
     var
       ///  <summary>Value of <c>DataDirectory</c> property.</summary>
@@ -178,10 +178,11 @@ type
 
   end;
 
-  ///  <summary>Class that performs the low level reading of vault data in
-  ///  CodeSnip Vault native format from an XML file and linked data files.
-  ///  </summary>
-  TNativeDataReader = class sealed(TNativeDataRW, IDataReader)
+  ///  <summary>Reads a vault's data from storage in the CodeSnip Vault native
+  ///  format.</summary>
+  TNativeVaultStorageReader = class sealed(TNativeVaultStorage,
+    IVaultStorageReader
+  )
   strict private
     var
       ///  <summary>Flag that indicates if unit & depends-upon lists are
@@ -315,10 +316,11 @@ type
     function GetMetaData: TMetaData;
   end;
 
-  ///  <summary>Class that performs the low level writing of vault data in
-  ///  CodeSnip Vault native format to an XML file and linked data files.
-  ///  </summary>
-  TNativeDataWriter = class sealed(TNativeDataRW, IDataWriter)
+  ///  <summary>Writes a vault's data to storage in the CodeSnip Vault native
+  ///  format.</summary>
+  TNativeVaultStorageWriter = class sealed(TNativeVaultStorage,
+    IVaultStorageWriter
+  )
   strict private
     var
       ///  <summary>Reference to root node.</summary>
@@ -472,7 +474,7 @@ uses
 resourcestring
   // TNativeDataRW error message
   sMissingNode = 'Document has no %s node.';
-  // TNativeDataReader error messages
+  // TNativeVaultStorageReader error messages
   sParseError = 'Error parsing XML file';
   sBadDataFormat = 'Invalid native vault data format: %s';
   sNoRootNode = 'Invalid document: no root element present';
@@ -487,9 +489,9 @@ resourcestring
   sBadTestInfo = 'Invalid test information for snippet "%s"';
   sMissingLicenseText = 'License text file "%s" is missing';
 
-{ TNativeDataRW }
+{ TNativeVaultStorage }
 
-constructor TNativeDataRW.Create(const ADataDirectory: string);
+constructor TNativeVaultStorage.Create(const ADataDirectory: string);
 begin
   inherited Create;
   fDataDirectory := ADataDirectory;
@@ -499,12 +501,12 @@ begin
   fXMLDoc := TXMLDocHelper.CreateXMLDoc;
 end;
 
-function TNativeDataRW.FilePath(const AFileName: string): string;
+function TNativeVaultStorage.FilePath(const AFileName: string): string;
 begin
   Result := TPath.Combine(DataDirectory, AFileName);
 end;
 
-function TNativeDataRW.FindCategoryNode(const ACatID: string): IXMLNode;
+function TNativeVaultStorage.FindCategoryNode(const ACatID: string): IXMLNode;
 var
   CatListNode: IXMLNode;  // node that contains category nodes
 begin
@@ -519,7 +521,8 @@ begin
   )
 end;
 
-function TNativeDataRW.FindSnippetNode(const ASnippetKey: string): IXMLNode;
+function TNativeVaultStorage.FindSnippetNode(const ASnippetKey: string):
+  IXMLNode;
 var
   SnippetListNode: IXMLNode;  // list node that contains snippets nodes
 begin
@@ -534,7 +537,7 @@ begin
   );
 end;
 
-function TNativeDataRW.InitXMLDocAndRootNode: IXMLNode;
+function TNativeVaultStorage.InitXMLDocAndRootNode: IXMLNode;
 begin
   XMLDoc.Active := True;
   TXMLDocHelper.CreateXMLProcInst(XMLDoc);
@@ -547,14 +550,14 @@ begin
   XMLDoc.ChildNodes.Add(Result);
 end;
 
-function TNativeDataRW.PathToXMLFile: string;
+function TNativeVaultStorage.PathToXMLFile: string;
 begin
   Result := FilePath(XMLFileName);
 end;
 
-{ TNativeDataReader }
+{ TNativeVaultStorageReader }
 
-constructor TNativeDataReader.Create(const ADirectory: string);
+constructor TNativeVaultStorageReader.Create(const ADirectory: string);
 var
   RootNode: IXMLNode; // reference to document's root node
 begin
@@ -579,12 +582,12 @@ begin
   end;
 end;
 
-function TNativeDataReader.DatabaseExists: Boolean;
+function TNativeVaultStorageReader.DatabaseExists: Boolean;
 begin
   Result := TFile.Exists(PathToXMLFile);
 end;
 
-function TNativeDataReader.GetAllCatIDs: IStringList;
+function TNativeVaultStorageReader.GetAllCatIDs: IStringList;
 var
   CatListNode: IXMLNode;        // node containing list of categories
   CatNodes: IXMLSimpleNodeList; // list of all category nodes of categories
@@ -603,7 +606,7 @@ begin
   end;
 end;
 
-procedure TNativeDataReader.GetCatProps(const CatID: string;
+procedure TNativeVaultStorageReader.GetCatProps(const CatID: string;
   var Props: TCategoryData);
 var
   CatNode: IXMLNode;  // reference to node for required category
@@ -622,7 +625,8 @@ begin
   end;
 end;
 
-function TNativeDataReader.GetCatSnippets(const CatID: string): IStringList;
+function TNativeVaultStorageReader.GetCatSnippets(const CatID: string):
+  IStringList;
 var
   CatNode: IXMLNode;  // reference to required category node
 begin
@@ -642,8 +646,9 @@ begin
   end;
 end;
 
-function TNativeDataReader.GetEnclosedListItems(const AParentNode: IXMLNode;
-  const AListNodeName, AItemNodeName: string): IStringList;
+function TNativeVaultStorageReader.GetEnclosedListItems(
+  const AParentNode: IXMLNode; const AListNodeName, AItemNodeName: string):
+  IStringList;
 var
   ListNode: IXMLNode;
   ItemNode: IXMLNode;
@@ -661,7 +666,7 @@ begin
       Result.Add(ItemNode.Text);
 end;
 
-function TNativeDataReader.GetMetaData: TMetaData;
+function TNativeVaultStorageReader.GetMetaData: TMetaData;
 var
   RootNode: IXMLNode;
   LicenseNode: IXMLNode;
@@ -718,7 +723,7 @@ begin
   );
 end;
 
-function TNativeDataReader.GetSnippetDepends(const SnippetKey: string):
+function TNativeVaultStorageReader.GetSnippetDepends(const SnippetKey: string):
   IStringList;
 begin
   if fCanReadRequiredLists then
@@ -729,7 +734,7 @@ begin
     Result := TIStringList.Create;
 end;
 
-procedure TNativeDataReader.GetSnippetProps(const SnippetKey: string;
+procedure TNativeVaultStorageReader.GetSnippetProps(const SnippetKey: string;
   var Props: TSnippetData);
 var
   SnippetNode: IXMLNode;  // node for required snippet
@@ -954,7 +959,7 @@ begin
   end;
 end;
 
-function TNativeDataReader.GetSnippetReferences(const ASnippetKey,
+function TNativeVaultStorageReader.GetSnippetReferences(const ASnippetKey,
   AListNodeName, AListItemName: string): IStringList;
 var
   SnippetNode: IXMLNode;
@@ -966,7 +971,7 @@ begin
   Result := GetEnclosedListItems(SnippetNode, AListNodeName, AListItemName);
 end;
 
-function TNativeDataReader.GetSnippetUnits(const SnippetKey: string):
+function TNativeVaultStorageReader.GetSnippetUnits(const SnippetKey: string):
   IStringList;
 begin
   if fCanReadRequiredLists then
@@ -977,7 +982,7 @@ begin
     Result := TIStringList.Create;
 end;
 
-function TNativeDataReader.GetSnippetXRefs(const SnippetKey: string):
+function TNativeVaultStorageReader.GetSnippetXRefs(const SnippetKey: string):
   IStringList;
 begin
   Result := GetSnippetReferences(
@@ -985,7 +990,7 @@ begin
   )
 end;
 
-procedure TNativeDataReader.HandleException(const EObj: TObject);
+procedure TNativeVaultStorageReader.HandleException(const EObj: TObject);
 begin
   {TODO -cVault: Query whether database files should be deleted on error.
           This is not being done while debugging}
@@ -1006,7 +1011,7 @@ begin
     raise EObj;
 end;
 
-procedure TNativeDataReader.ValidateDoc;
+procedure TNativeVaultStorageReader.ValidateDoc;
 var
   RootNode: IXMLNode;
   Version: TVersionNumber;
@@ -1029,9 +1034,9 @@ begin
     raise EDataIO.CreateFmt(sBadVersion, [Version.V1, Version.V2]);
 end;
 
-{ TNativeDataWriter }
+{ TNativeVaultStorageWriter }
 
-procedure TNativeDataWriter.Finalise;
+procedure TNativeVaultStorageWriter.Finalise;
 var
   FS: TFileStream;      // stream onto output file
 begin
@@ -1052,14 +1057,14 @@ begin
   end;
 end;
 
-procedure TNativeDataWriter.HandleException(const EObj: TObject);
+procedure TNativeVaultStorageWriter.HandleException(const EObj: TObject);
 begin
   if (EObj is EFileStreamError) or (EObj is ECodeSnip) then
     raise EDataIO.Create(EObj as Exception);
   raise EObj;
 end;
 
-procedure TNativeDataWriter.Initialise;
+procedure TNativeVaultStorageWriter.Initialise;
 //var
 //  RootNode: IXMLNode;   // document root node
 begin
@@ -1078,7 +1083,7 @@ begin
   end;
 end;
 
-procedure TNativeDataWriter.WriteCatProps(const CatID: string;
+procedure TNativeVaultStorageWriter.WriteCatProps(const CatID: string;
   const Props: TCategoryData);
 var
   CatNode: IXMLNode;  // referenced to required category node
@@ -1093,7 +1098,7 @@ begin
   end;
 end;
 
-procedure TNativeDataWriter.WriteCatSnippets(const CatID: string;
+procedure TNativeVaultStorageWriter.WriteCatSnippets(const CatID: string;
   const SnipList: IStringList);
 var
   CatNode: IXMLNode;  // reference to required category node
@@ -1118,7 +1123,7 @@ begin
   end;
 end;
 
-procedure TNativeDataWriter.WriteEnclosedList(const AParent: IXMLNode;
+procedure TNativeVaultStorageWriter.WriteEnclosedList(const AParent: IXMLNode;
   const AListNodeName, AItemNodeName: string; const AItems: IStringList);
 var
   ListNode: IXMLNode; // reference to enclosing list node
@@ -1129,7 +1134,7 @@ begin
     XMLDoc.CreateElement(ListNode, AItemNodeName, Item);
 end;
 
-procedure TNativeDataWriter.WriteMetaData(const AMetaData: TMetaData);
+procedure TNativeVaultStorageWriter.WriteMetaData(const AMetaData: TMetaData);
 var
   LicenseNode: IXMLNode;
   CopyrightNode: IXMLNode;
@@ -1178,7 +1183,7 @@ begin
 
 end;
 
-procedure TNativeDataWriter.WriteReferenceList(const ASnippetKey,
+procedure TNativeVaultStorageWriter.WriteReferenceList(const ASnippetKey,
   AListNodeName, AItemNodeName: string; const AItems: IStringList);
 var
   SnippetNode: IXMLNode;  // reference to snippet's node
@@ -1198,8 +1203,8 @@ begin
   end;
 end;
 
-procedure TNativeDataWriter.WriteSnippetDepends(const SnippetKey: string;
-  const Depends: IStringList);
+procedure TNativeVaultStorageWriter.WriteSnippetDepends(
+  const SnippetKey: string; const Depends: IStringList);
 begin
   if not fCanWriteRequiredLists then
     Exit;
@@ -1211,7 +1216,7 @@ begin
   );
 end;
 
-procedure TNativeDataWriter.WriteSnippetProps(const SnippetKey: string;
+procedure TNativeVaultStorageWriter.WriteSnippetProps(const SnippetKey: string;
   const Props: TSnippetData);
 var
   SnippetNode: IXMLNode;  // snippet's node
@@ -1309,7 +1314,7 @@ begin
   end;
 end;
 
-procedure TNativeDataWriter.WriteSnippetUnits(const SnippetKey: string;
+procedure TNativeVaultStorageWriter.WriteSnippetUnits(const SnippetKey: string;
   const Units: IStringList);
 begin
   if not fCanWriteRequiredLists then
@@ -1322,7 +1327,7 @@ begin
   );
 end;
 
-procedure TNativeDataWriter.WriteSnippetXRefs(const SnippetKey: string;
+procedure TNativeVaultStorageWriter.WriteSnippetXRefs(const SnippetKey: string;
   const XRefs: IStringList);
 begin
   WriteReferenceList(
