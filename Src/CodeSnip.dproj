@@ -67,7 +67,7 @@
 			<DCCReference Include="Compilers.URunner.pas"/>
 			<DCCReference Include="Compilers.USearchDirs.pas"/>
 			<DCCReference Include="DB.UCategory.pas"/>
-			<DCCReference Include="DB.UDatabaseIO.pas"/>
+			<DCCReference Include="DB.IO.Manager.pas"/>
 			<DCCReference Include="DB.UMain.pas"/>
 			<DCCReference Include="DB.USnippet.pas"/>
 			<DCCReference Include="DB.USnippetKind.pas"/>

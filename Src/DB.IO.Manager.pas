@@ -5,15 +5,12 @@
  *
  * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements objects that can load data into the Database object from both the
- * user and main databases. Also provides a class that can write the user
- * database to storage.
- *
- * Uses file I/O interface implementations to read / write the physical files.
+ * Manages loading and saving the entire database using the various supported
+ * data formats.
 }
 
 
-unit DB.UDatabaseIO;
+unit DB.IO.Manager;
 
 
 interface

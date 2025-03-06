@@ -320,7 +320,7 @@ uses
   SysUtils,
   Generics.Defaults,
   // Project
-  DB.UDatabaseIO,
+  DB.IO.Manager,
   DB.IO.Categories,
   IntfCommon,
   UExceptions,

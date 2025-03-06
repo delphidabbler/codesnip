@@ -64,7 +64,7 @@ uses
   Compilers.URunner in 'Compilers.URunner.pas',
   Compilers.USearchDirs in 'Compilers.USearchDirs.pas',
   DB.UCategory in 'DB.UCategory.pas',
-  DB.UDatabaseIO in 'DB.UDatabaseIO.pas',
+  DB.IO.Manager in 'DB.IO.Manager.pas',
   DB.UMain in 'DB.UMain.pas',
   DB.USnippet in 'DB.USnippet.pas',
   DB.USnippetKind in 'DB.USnippetKind.pas',
