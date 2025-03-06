@@ -362,7 +362,6 @@ uses
   UWBExternal in 'UWBExternal.pas',
   UWBPopupMenus in 'UWBPopupMenus.pas',
   UWindowSettings in 'UWindowSettings.pas',
-  UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas',
   UI.Forms.DeleteVaultDlg in 'UI.Forms.DeleteVaultDlg.pas' {DeleteVaultDlg},
@@ -378,7 +377,8 @@ uses
   UI.Forms.BackupVaultDlg in 'UI.Forms.BackupVaultDlg.pas' {VaultBackupDlg},
   DB.DataFormats in 'DB.DataFormats.pas',
   DB.IO.Vault.Native in 'DB.IO.Vault.Native.pas',
-  DB.MetaData in 'DB.MetaData.pas';
+  DB.MetaData in 'DB.MetaData.pas',
+  DB.IO.Common.CS4 in 'DB.IO.Common.CS4.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

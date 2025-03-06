@@ -564,7 +564,6 @@
 			<DCCReference Include="UWBExternal.pas"/>
 			<DCCReference Include="UWBPopupMenus.pas"/>
 			<DCCReference Include="UWindowSettings.pas"/>
-			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
 			<DCCReference Include="UI.Forms.DeleteVaultDlg.pas">
@@ -587,6 +586,7 @@
 			<DCCReference Include="DB.DataFormats.pas"/>
 			<DCCReference Include="DB.IO.Vault.Native.pas"/>
 			<DCCReference Include="DB.MetaData.pas"/>
+			<DCCReference Include="DB.IO.Common.CS4.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
