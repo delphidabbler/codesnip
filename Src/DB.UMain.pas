@@ -1063,7 +1063,7 @@ procedure TDatabase.Load;
   }
 var
   DataItemFactory: IDBDataItemFactory;
-  VaultLoader: IDataFormatLoader;
+  VaultLoader: IVaultLoader;
   Vault: TVault;
   CatLoader: IGlobalCategoryLoader;
 begin
@@ -1077,7 +1077,7 @@ begin
     // Load all vaults
     for Vault in TVaults.Instance do
     begin
-      VaultLoader := TDatabaseIOFactory.CreateDBLoader(Vault);
+      VaultLoader := TDatabaseIOFactory.CreateVaultLoader(Vault);
       if Assigned(VaultLoader) then
         VaultLoader.Load(fSnippets, fCategories, DataItemFactory);
     end;
@@ -1109,7 +1109,7 @@ procedure TDatabase.Save;
   }
 var
   Provider: IDBDataProvider;
-  VaultSaver: IDataFormatSaver;
+  VaultSaver: IVaultSaver;
   Vault: TVault;
   CatSaver: IGlobalCategorySaver;
 begin
@@ -1122,7 +1122,7 @@ begin
     Provider := TVaultDataProvider.Create(
       Vault.UID, fSnippets, fCategories
     );
-    VaultSaver := TDatabaseIOFactory.CreateDBSaver(Vault);
+    VaultSaver := TDatabaseIOFactory.CreateVaultSaver(Vault);
     if Assigned(VaultSaver) then
       VaultSaver.Save(fSnippets, fCategories, Provider);
   end;
