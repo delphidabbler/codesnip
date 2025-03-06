@@ -903,7 +903,7 @@ begin
   List := TSnippetList.Create;
   try
     GetDependentList(Snippet, List);
-    Result := TSnippetIDListEx.Create(List);
+    Result := List.IDs;
   finally
     FreeAndNil(List);
   end;
@@ -950,7 +950,7 @@ begin
   List := TSnippetList.Create;
   try
     GetReferrerList(Snippet, List);
-    Result := TSnippetIDListEx.Create(List);
+    Result := List.IDs;
   finally
     FreeAndNil(List);
   end;

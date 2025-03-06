@@ -352,6 +352,10 @@ type
         @return Required enumerator.
       }
 
+    ///  <summary>Returns a list the IDs of all snippets in this list.</summary>
+    ///  <returns><c>ISnippetIDList</c>. Required list of snippet IDs.</returns>
+    function IDs: ISnippetIDList;
+
     ///  <summary>Counts number of snippets in list that belong to a specified
     ///  vault.</summary>
     ///  <param name="AVaultID"><c>TVaultID</c> [in] ID of required vault.
@@ -394,21 +398,6 @@ type
       {Deletes a snippet from list.
         @param Snippet [in] Snippet to be deleted. No action taken if snippet
           not in list.
-      }
-  end;
-
-  {
-  TSnippetIDListEx:
-    Extension of TSnippetIDList that provides an additional constructor that can
-    create a snippet ID list from a TSnippetList.
-  }
-  TSnippetIDListEx = class(TSnippetIDList)
-  public
-    constructor Create(const SnipList: TSnippetList); overload;
-      {Constructor overload that creates a snippets ID list from a
-      TSnippetList object.
-        @param SnipList [in] List of snippets objects for which ID list is
-          required.
       }
   end;
 
@@ -508,8 +497,8 @@ end;
 function TSnippet.GetReferences: TSnippetReferences;
 begin
   Result.Units := TIStringList.Create(Units);
-  Result.Depends := TSnippetIDListEx.Create(Depends);
-  Result.XRef := TSnippetIDListEx.Create(XRef);
+  Result.Depends := Depends.IDs;
+  Result.XRef := XRef.IDs;
 end;
 
 function TSnippet.Hash: Integer;
@@ -771,6 +760,15 @@ begin
   Result := Count = 0;
 end;
 
+function TSnippetList.IDs: ISnippetIDList;
+var
+  Snippet: TSnippet;
+begin
+  Result := TSnippetIDList.Create;
+  for Snippet in fList do
+    Result.Add(Snippet.ID);
+end;
+
 function TSnippetList.IsEmpty(const AVaultID: TVaultID): Boolean;
 begin
   Result := Count(AVaultID) = 0;
@@ -903,22 +901,6 @@ procedure TSnippetEditData.Init;
 begin
   Props.Init;
   Refs.Init;
-end;
-
-{ TSnippetIDListEx }
-
-constructor TSnippetIDListEx.Create(const SnipList: TSnippetList);
-  {Constructor overload that creates a snippets ID list from a TSnippetList
-  object.
-    @param SnipList [in] List of snippets objects for which ID list is
-      required.
-  }
-var
-  Snippet: TSnippet;  // references each snippet in list
-begin
-  inherited Create;
-  for Snippet in SnipList do
-    Add(Snippet.ID);
 end;
 
 end.
