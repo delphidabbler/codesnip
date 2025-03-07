@@ -918,7 +918,7 @@ function TDatabase.GetEditableCategoryInfo(
   }
 begin
   if Assigned(Category) then
-    Result := (Category as TCategoryEx).GetEditData
+    Result := Category.GetEditData
   else
     Result.Init;
 end;
@@ -1010,7 +1010,7 @@ function TDatabase.InternalAddCategory(const CatID: string;
     @return Reference to new category object.
   }
 begin
-  Result := TCategoryEx.Create(CatID, Data);
+  Result := TCategory.Create(CatID, Data);
   fCategories.Add(Result);
 end;
 
@@ -1084,7 +1084,7 @@ begin
     CatLoader.Load(fCategories, DataItemFactory);
     // Ensure that the default category is present, if it's not already loaded
     if not Assigned(fCategories.Find(TCategory.DefaultID)) then
-      fCategories.Add(TCategoryEx.CreateDefault);
+      fCategories.Add(TCategory.CreateDefault);
     fUpdated := False;
   except
     // If an exception occurs clear the database
@@ -1276,7 +1276,7 @@ end;
 function TDBDataItemFactory.CreateCategory(const CatID: string;
   const Data: TCategoryData): TCategory;
 begin
-  Result := TCategoryEx.Create(CatID, Data);
+  Result := TCategory.Create(CatID, Data);
 end;
 
 function TDBDataItemFactory.CreateSnippet(const Key: string;
