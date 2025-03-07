@@ -10,7 +10,7 @@
 }
 
 
-unit DB.UMain;
+unit DB.Main;
 
 
 interface
@@ -23,13 +23,13 @@ uses
   // Project
   ActiveText.UMain,
   Compilers.UGlobals,
-  DB.UCategory,
-  DB.USnippet,
+  DB.Categories,
+  DB.SnippetIDs,
+  DB.Snippets,
   DB.Vaults,
   UContainers,
   UIStringList,
-  UMultiCastEvents,
-  USnippetIDs;
+  UMultiCastEvents;
 
 
 type
@@ -168,18 +168,6 @@ type
       {Gets list of categories in the database.
         @return Required list.
       }
-    property Categories: TCategoryList read GetCategories;
-      {List of categories in the database}
-    property Snippets: TSnippetList read GetSnippets;
-      {List of snippets in the database}
-  end;
-
-  {
-  IDatabaseEdit:
-    Interface to object that can be used to edit the database.
-  }
-  IDatabaseEdit = interface(IInterface)
-    ['{CBF6FBB0-4C18-481F-A378-84BB09E5ECF4}']
 
     ///  <summary>Creates a new snippet key that is unique within the given
     ///  vault.</summary>
@@ -188,25 +176,29 @@ type
     ///  <returns><c>string</c> containing the key.</returns>
     function GetUniqueSnippetKey(const AVaultID: TVaultID): string;
 
+    ///  <summary>Provides details of all a snippet's data (properties and
+    ///  references) that may be edited.</summary>
+    ///  <param name="Snippet"><c>TSnippet</c> [in] Snippet for which data is
+    ///  required. May be nil in which case a blank record is returned.</param>
+    ///  <returns><c>TSnippetEditData</c>. Required data.</returns>
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
-      {Provides details of all a snippet's data (properties and references) that
-      may be edited.
-        @param Snippet [in] Snippet for which data is required. May be nil in
-          which case a blank record is returned.
-        @return Required data.
-      }
+
+    ///  <summary>Builds an ID list of all snippets that depend on a specified
+    ///  snippet.</summary>
+    ///  <param name="Snippet"><c>TSnippet</c> [in] Snippet for which dependents
+    ///  are required.</param>
+    ///  <returns><c>ISnippetIDList</c>. List of IDs of dependent snippets.
+    ///  </returns>
     function GetDependents(const Snippet: TSnippet): ISnippetIDList;
-      {Builds an ID list of all snippets that depend on a specified snippet.
-        @param Snippet [in] Snippet for which dependents are required.
-        @return List of IDs of dependent snippets.
-      }
+
+    ///  <summary>Builds an ID list of all snippets that cross reference a
+    ///  specified snippet.</summary>
+    ///  <param name="Snippet"><c>TSnippet</c> [in] Snippet for which cross
+    ///  referers are required.</param>
+    ///  <returns><c>ISnippetIDList</c>. List of IDs of referring snippets.
+    ///  </returns>
     function GetReferrers(const Snippet: TSnippet): ISnippetIDList;
-      {Builds an ID list of all snippets that cross reference a specified
-      snippet.
-        @param Snippet [in] Snippet for which cross referers are required.
-        @return List of IDs of referring snippets.
-      }
 
     ///  <summary>Updates a snippet's properties and references using the
     ///  provided data.</summary>
@@ -260,51 +252,66 @@ type
     function CreateTempSnippet(const AKey: string; const AVaultID: TVaultID;
       const AData: TSnippetEditData): TSnippet; overload;
 
+    ///  <summary>Creates a new temporary copy of a snippet without adding it to
+    ///  the Snippets object's snippets list. The new instance may not be added
+    ///  to the Snippets object.</summary>
+    ///  <param name="Snippet"><c>TSnippetList</c> [in] Snippet to be copied.
+    ///  </param>
+    ///  <returns><c>TSnippet</c> [in] Reference to new copied snippet.
+    ///  </returns>
     function CreateTempSnippet(const Snippet: TSnippet): TSnippet; overload;
-      {Creates a new temporary copy of a snippet without adding it to the
-      Snippets object's snippets list. The new instance may not be added to the
-      Snippets object.
-        @param Snippet [in] Snippet to be copied.
-        @return Reference to new copied snippet.
-      }
+
+    ///  <summary>Provides details of all a category's data that may be edited.
+    ///  </summary>
+    ///  <param name="Category"><c>TCategory</c> [in] Category for which data is
+    ///  required. May be nil in whih case a blank record is returned.</param>
+    ///  <returns><c>TCategoryData</c>. Required data.</returns>
+    function GetEditableCategoryInfo(const Category: TCategory = nil):
+      TCategoryData;
+
+    ///  <summary>Adds a new category to the database.</summary>
+    ///  <param name="CatID"><c>string</c> [in] ID of new category.</param>
+    ///  <param name="Data"><c>TCategoryData</c> [in] Record storing new
+    ///  category's properties.</param>
+    ///  <returns><c>TCategory</c>. Reference to new category.</returns>
+    function AddCategory(const CatID: string; const Data: TCategoryData):
+      TCategory;
+
+    ///  <summary>Deletes a snippet from the database.</summary>
+    ///  <param name="Snippet"><c>TSnippet</c> [in] Snippet to be deleted.
+    ///  </param>
     procedure DeleteSnippet(const Snippet: TSnippet);
-      {Deletes a snippet from the database.
-        @param Snippet [in] Snippet to be deleted.
-      }
-    function GetEditableCategoryInfo(
-      const Category: TCategory = nil): TCategoryData;
-      {Provides details of all a category's data that may be edited.
-        @param Category [in] Category for which data is required. May be nil in
-          whih case a blank record is returned.
-        @return Required data.
-      }
-    function AddCategory(const CatID: string;
-      const Data: TCategoryData): TCategory;
-      {Adds a new category to the database.
-        @param CatID [in] ID of new category.
-        @param Data [in] Record storing new category's properties.
-        @return Reference to new category.
-      }
+
+    ///  <summary>Updates a category's properties.</summary>
+    ///  <param name="Category"><c>TCategory</c> [in] Category to be updated.
+    ///  </param>
+    ///  <param name="Data"><c>TCategoryData</c> [in] Record containing revised
+    ///  data.</param>
+    ///  <returns><c>TCategory</c>.Reference to updated category. Will have
+    ///  changed.</returns>
     function UpdateCategory(const Category: TCategory;
       const Data: TCategoryData): TCategory;
-      {Updates a category's properties.
-        @param Category [in] Category to be updated.
-        @param Data [in] Record containing revised data.
-        @return Reference to updated category. Will have changed.
-      }
-    procedure DeleteCategory(const Category: TCategory);
-      {Deletes a category and all its snippets from the database.
-        @param Category [in] Category to be deleted.
-      }
-    function Updated: Boolean;
-      {Checks if the database has been updated since the last save.
-        @return True if database has been updated, False otherwise.
-      }
-    procedure Save;
-      {Saves the database.
-      }
-  end;
 
+    ///  <summary>Deletes a category and all its snippets from the database.
+    ///  </summary>
+    ///  <param name="Category"><c>TCategory</c> [in] Category to be deleted.
+    ///  </param>
+    procedure DeleteCategory(const Category: TCategory);
+
+    ///  <summary>Checks if the database has been updated since the last save.
+    ///  </summary>
+    ///  <returns><c>Boolean</c> <c>True</c> if database has been updated,
+    ///  <c>False</c> otherwise.</returns>
+    function Updated: Boolean;
+
+    ///  <summary>Saves the database.</summary>
+    procedure Save;
+
+    property Categories: TCategoryList read GetCategories;
+      {List of categories in the database}
+    property Snippets: TSnippetList read GetSnippets;
+      {List of snippets in the database}
+  end;
 
 function Database: IDatabase;
   {Returns singleton instance of object that encapsulates the database.
@@ -362,15 +369,11 @@ type
 
   end;
 
-  {
-  TDatabase:
-    Class that encapsulates the database. Provides access to all snippets and
-    all categories via the IDatabase interface. Also enables the database to be
-    modified via the IDatabaseEdit interface.
-  }
+  ///  <summary>Class that encapsulates the database. Provides access to and
+  ///  modify all snippets and all categories via the IDatabase interface.
+  ///  </summary>
   TDatabase = class(TInterfacedObject,
-    IDatabase,
-    IDatabaseEdit
+    IDatabase
   )
   strict private
     fUpdated: Boolean;                // Flags if database has been updated
@@ -485,14 +488,12 @@ type
         @param Handler [in] Handler to remove from list.
       }
 
-    { IDatabaseEdit methods }
-
     ///  <summary>Creates a new snippet key that is unique within the given
     ///  vault.</summary>
     ///  <param name="AVaultID"><c>TVaultID</c> ID of vault that the new key
     ///  must be unique within.</param>
     ///  <returns><c>string</c> containing the key.</returns>
-    ///  <remarks>Method of <c>IDatabaseEdit</c>.</remarks>
+    ///  <remarks>Method of <c>IDatabase</c>.</remarks>
     function GetUniqueSnippetKey(const AVaultID: TVaultID): string;
 
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
@@ -525,7 +526,7 @@ type
     ///  <remarks>
     ///  <para>The returned <c>TSnippet</c> object will be a different object
     ///  to <c>ASnippet</c>.</para>
-    ///  <para>Method of <c>IDatabaseEdit</c>.</para>
+    ///  <para>Method of <c>IDatabase</c>.</para>
     ///  </remarks>
     function UpdateSnippet(const ASnippet: TSnippet;
       const AData: TSnippetEditData): TSnippet;
@@ -537,7 +538,7 @@ type
     ///  <param name="AData"><c>TSnippetEditData</c> [in] Record storing the new
     ///  snippet's properties and references.</param>
     ///  <returns><c>TSnippet</c>. Reference to the new snippet.</returns>
-    ///  <remarks>Method of <c>IDatabaseEdit</c>.</remarks>
+    ///  <remarks>Method of <c>IDatabase</c>.</remarks>
     function AddSnippet(const AKey: string; const AVaultID: TVaultID;
       const AData: TSnippetEditData): TSnippet;
 
@@ -554,7 +555,7 @@ type
     ///  duplicated snippet will belong.</param>
     ///  <returns><c>TSnippet</c>. Reference to the duplicated snippet.
     ///  </returns>
-    ///  <remarks>Method of <c>IDatabaseEdit</c>.</remarks>
+    ///  <remarks>Method of <c>IDatabase</c>.</remarks>
     function DuplicateSnippet(const ASnippet: TSnippet; const ANewKey: string;
       const ANewVaultID: TVaultID; const ANewDisplayName: string;
       const ACatID: string): TSnippet;
@@ -569,7 +570,7 @@ type
     ///  <returns><c>TSnippet</c> Reference to new snippet.</returns>
     ///  <remarks>
     ///  <para>The returned snippet must not be added to the database.</para>
-    ///  <para>Method of <c>IDatabaseEdit</c>.</para>
+    ///  <para>Method of <c>IDatabase</c>.</para>
     ///  </remarks>
     function CreateTempSnippet(const AKey: string; const AVaultID: TVaultID;
       const AData: TSnippetEditData): TSnippet; overload;
@@ -755,8 +756,8 @@ constructor TDatabase.Create;
   }
 begin
   inherited Create;
-  fSnippets := TSnippetListEx.Create(True);
-  fCategories := TCategoryListEx.Create(True);
+  fSnippets := TSnippetList.Create(True);
+  fCategories := TCategoryList.Create(True);
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
@@ -771,21 +772,16 @@ var
   Data: TSnippetEditData; // data describing snippet's properties and references
 begin
   Assert(Assigned(Snippet), ClassName + '.CreateTempSnippet: Snippet is nil');
-  Assert(Snippet is TSnippetEx,
-    ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
-  Data := (Snippet as TSnippetEx).GetEditData;
-  Result := TTempSnippet.Create(
-    Snippet.Key, Snippet.VaultID, (Snippet as TSnippetEx).GetProps);
-  (Result as TTempSnippet).UpdateRefs(
-    (Snippet as TSnippetEx).GetReferences, fSnippets
-  );
+  Data := Snippet.GetEditData;
+  Result := TSnippet.Create(Snippet.Key, Snippet.VaultID, Snippet.GetProps);
+  Result.UpdateRefs(Snippet.GetReferences, fSnippets);
 end;
 
 function TDatabase.CreateTempSnippet(const AKey: string;
   const AVaultID: TVaultID; const AData: TSnippetEditData): TSnippet;
 begin
-  Result := TTempSnippet.Create(AKey, AVaultID, AData.Props);
-  (Result as TTempSnippet).UpdateRefs(AData.Refs, fSnippets);
+  Result := TSnippet.Create(AKey, AVaultID, AData.Props);
+  Result.UpdateRefs(AData.Refs, fSnippets);
 end;
 
 procedure TDatabase.DeleteCategory(const Category: TCategory);
@@ -833,9 +829,9 @@ begin
     GetReferrerList(Snippet, Referrers);
     // Delete snippet for XRef or Depends list of referencing snippets
     for Referrer in Referrers do
-      (Referrer.XRef as TSnippetListEx).Delete(Snippet);
+      Referrer.XRef.Delete(Snippet);
     for Dependent in Dependents do
-      (Dependent.Depends as TSnippetListEx).Delete(Snippet);
+      Dependent.Depends.Delete(Snippet);
     // Delete snippet itself
     InternalDeleteSnippet(Snippet);
     Query.Update;
@@ -866,7 +862,7 @@ var
 begin
   {TODO -cVault: Update edit data before calling this method and replace
           and ANewDisplayName and ACatID with a single AData parameter.}
-  Data := (ASnippet as TSnippetEx).GetEditData;
+  Data := ASnippet.GetEditData;
   Data.Props.Cat := ACatID;
   Data.Props.DisplayName := ANewDisplayName;
   Result := AddSnippet(ANewKey, ANewVaultID, Data);
@@ -906,7 +902,7 @@ begin
   List := TSnippetList.Create;
   try
     GetDependentList(Snippet, List);
-    Result := TSnippetIDListEx.Create(List);
+    Result := List.IDs;
   finally
     FreeAndNil(List);
   end;
@@ -921,13 +917,13 @@ function TDatabase.GetEditableCategoryInfo(
   }
 begin
   if Assigned(Category) then
-    Result := (Category as TCategoryEx).GetEditData
+    Result := Category.GetEditData
   else
     Result.Init;
 end;
 
-function TDatabase.GetEditableSnippetInfo(
-  const Snippet: TSnippet): TSnippetEditData;
+function TDatabase.GetEditableSnippetInfo(const Snippet: TSnippet):
+  TSnippetEditData;
   {Provides details of all a snippet's data (properties and references) that may
   be edited.
     @param Snippet [in] Snippet for which data is required. May be nil in which
@@ -936,7 +932,7 @@ function TDatabase.GetEditableSnippetInfo(
   }
 begin
   if Assigned(Snippet) then
-    Result := (Snippet as TSnippetEx).GetEditData
+    Result := Snippet.GetEditData
   else
     Result.Init;
 end;
@@ -953,7 +949,7 @@ begin
   List := TSnippetList.Create;
   try
     GetReferrerList(Snippet, List);
-    Result := TSnippetIDListEx.Create(List);
+    Result := List.IDs;
   finally
     FreeAndNil(List);
   end;
@@ -1013,7 +1009,7 @@ function TDatabase.InternalAddCategory(const CatID: string;
     @return Reference to new category object.
   }
 begin
-  Result := TCategoryEx.Create(CatID, Data);
+  Result := TCategory.Create(CatID, Data);
   fCategories.Add(Result);
 end;
 
@@ -1026,8 +1022,8 @@ resourcestring
   sCatNotFound = 'Category "%0:s" referenced by new snippet with key "%1:s" '
     + 'does not exist';
 begin
-  Result := TSnippetEx.Create(AKey, AVaultID, AData.Props);
-  (Result as TSnippetEx).UpdateRefs(AData.Refs, fSnippets);
+  Result := TSnippet.Create(AKey, AVaultID, AData.Props);
+  Result.UpdateRefs(AData.Refs, fSnippets);
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
     raise ECodeSnip.CreateFmt(sCatNotFound, [Result.Category, Result.Key]);
@@ -1040,7 +1036,7 @@ procedure TDatabase.InternalDeleteCategory(const Cat: TCategory);
     @param Cat [in] Category to delete from database.
   }
 begin
-  (fCategories as TCategoryListEx).Delete(Cat);
+  fCategories.Delete(Cat);
 end;
 
 procedure TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
@@ -1053,9 +1049,9 @@ begin
   // Delete from category if found
   Cat := fCategories.Find(Snippet.Category);
   if Assigned(Cat) then
-    (Cat.Snippets as TSnippetListEx).Delete(Snippet);
+    Cat.Snippets.Delete(Snippet);
   // Delete from "master" list: this frees Snippet
-  (fSnippets as TSnippetListEx).Delete(Snippet);
+  fSnippets.Delete(Snippet);
 end;
 
 procedure TDatabase.Load;
@@ -1087,7 +1083,7 @@ begin
     CatLoader.Load(fCategories, DataItemFactory);
     // Ensure that the default category is present, if it's not already loaded
     if not Assigned(fCategories.Find(TCategory.DefaultID)) then
-      fCategories.Add(TCategoryEx.CreateDefault);
+      fCategories.Add(TCategory.CreateDefault);
     fUpdated := False;
   except
     // If an exception occurs clear the database
@@ -1211,9 +1207,9 @@ begin
 
     // remove references to pre-update snippet from referring snippets
     for Referrer in Referrers do
-      (Referrer.XRef as TSnippetListEx).Delete(ASnippet);
+      Referrer.XRef.Delete(ASnippet);
     for Dependent in Dependents do
-      (Dependent.Depends as TSnippetListEx).Delete(ASnippet);
+      Dependent.Depends.Delete(ASnippet);
 
     // record snippet's key and vault ID for use in re-created updated snippet
     PreservedSnippetID := ASnippet.ID;
@@ -1279,13 +1275,13 @@ end;
 function TDBDataItemFactory.CreateCategory(const CatID: string;
   const Data: TCategoryData): TCategory;
 begin
-  Result := TCategoryEx.Create(CatID, Data);
+  Result := TCategory.Create(CatID, Data);
 end;
 
 function TDBDataItemFactory.CreateSnippet(const Key: string;
   const AVaultID: TVaultID; const Props: TSnippetData): TSnippet;
 begin
-  Result := TSnippetEx.Create(Key, AVaultID, Props);
+  Result := TSnippet.Create(Key, AVaultID, Props);
 end;
 
 { TVaultDataProvider }
@@ -1319,13 +1315,13 @@ end;
 function TVaultDataProvider.GetSnippetProps(
   const Snippet: TSnippet): TSnippetData;
 begin
-  Result := (Snippet as TSnippetEx).GetProps;
+  Result := Snippet.GetProps;
 end;
 
 function TVaultDataProvider.GetSnippetRefs(
   const Snippet: TSnippet): TSnippetReferences;
 begin
-  Result := (Snippet as TSnippetEx).GetReferences;
+  Result := Snippet.GetReferences;
 end;
 
 

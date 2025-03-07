@@ -19,7 +19,7 @@ uses
   XMLIntf,
   // Project
   Compilers.UGlobals,
-  DB.USnippetKind,
+  DB.SnippetKind,
   UIStringList,
   UStructs,
   UXMLDocHelper,

@@ -23,7 +23,7 @@ uses
   ExtCtrls,
   Classes,
   // Project
-  DB.USnippet,
+  DB.Snippets,
   DB.Vaults,
   FmGenericOKDlg,
   UBaseObjects,
@@ -90,13 +90,13 @@ uses
   // Delphi
   Math,
   // Project
-  DB.UCategory,
-  DB.UMain,
+  DB.Categories,
+  DB.Main,
+  DB.SnippetIDs,
   UCtrlArranger,
   UExceptions,
   UMessageBox,
   USettings,
-  USnippetIDs,
   USnippetValidator,
   UStructs,
   UStrUtils,
@@ -144,9 +144,7 @@ procedure TDuplicateSnippetDlg.btnOKClick(Sender: TObject);
 begin
   try
     ValidateData;
-    fSnippetKey := (Database as IDatabaseEdit).GetUniqueSnippetKey(
-      SelectedVaultID
-    );
+    fSnippetKey := Database.GetUniqueSnippetKey(SelectedVaultID);
     UpdateDatabase;
   except
     on E: Exception do
@@ -231,7 +229,7 @@ end;
 
 procedure TDuplicateSnippetDlg.UpdateDatabase;
 begin
-  (Database as IDatabaseEdit).DuplicateSnippet(
+  Database.DuplicateSnippet(
     fSnippet,
     fSnippetKey,
     SelectedVaultID,

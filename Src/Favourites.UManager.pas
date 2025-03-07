@@ -18,7 +18,10 @@ interface
 
 uses
   // Delphi
-  Favourites.UFavourites, USnippetIDs, IntfNotifier, UView;
+  DB.SnippetIDs,
+  Favourites.UFavourites,
+  IntfNotifier,
+  UView;
 
 
 type
@@ -78,7 +81,10 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, DB.USnippet, Favourites.UPersist, FmFavouritesDlg;
+  DB.Main,
+  DB.Snippets,
+  Favourites.UPersist,
+  FmFavouritesDlg;
 
 
 { TFavouritesManager }

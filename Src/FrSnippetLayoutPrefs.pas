@@ -18,9 +18,17 @@ interface
 
 uses
   // Delphi
-  StdCtrls, ImgList, Controls, Classes, ActnList, Buttons,
+  StdCtrls,
+  ImgList,
+  Controls,
+  Classes,
+  ActnList,
+  Buttons,
   // Project
-  DB.USnippetKind, FrPrefsBase, UPreferences, USnippetPageStructure;
+  DB.SnippetKind,
+  FrPrefsBase,
+  UPreferences,
+  USnippetPageStructure;
 
 type
   TSnippetLayoutPrefsFrame = class(TPrefsBaseFrame)

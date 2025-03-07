@@ -20,7 +20,9 @@ uses
   // Delphi
   Classes, Controls,
   // Project
-  Compilers.UGlobals, DB.USnippet, UView;
+  Compilers.UGlobals,
+  DB.Snippets,
+  UView;
 
 
 type
@@ -138,7 +140,7 @@ uses
   Compilers.UAutoDetect,
   Compilers.UCompilers,
   Compilers.USettings,
-  DB.UMain,
+  DB.Main,
   FmCompErrorDlg,
   FmCompilersDlg,
   FmRegisterCompilersDlg,
@@ -169,9 +171,7 @@ begin
     DisplayProc(fCompilers);
   // Copy snippet to LastCompiledSnippet property
   fLastCompiledSnippet.Free;
-  fLastCompiledSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
-    Snippet
-  );
+  fLastCompiledSnippet := Database.CreateTempSnippet(Snippet);
 end;
 
 constructor TCompileMgr.Create(AOwner: TComponent);

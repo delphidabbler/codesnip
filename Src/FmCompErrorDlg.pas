@@ -17,11 +17,24 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes, Tabs, ActnList, ImgList,
+  Forms,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
+  Tabs,
+  ActnList,
+  ImgList,
   Generics.Collections,
   // Project
-  Compilers.UGlobals, DB.USnippet, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
-  FrHTMLTpltDlg, UBaseObjects, USnippetIDs;
+  Compilers.UGlobals,
+  DB.SnippetIDs,
+  DB.Snippets,
+  FmGenericViewDlg,
+  FrBrowserBase,
+  FrHTMLDlg,
+  FrHTMLTpltDlg,
+  UBaseObjects;
 
 
 type
@@ -130,7 +143,11 @@ uses
   // Delphi
   Graphics,
   // Project
-  DB.UMain, UConsts, UExceptions, UHTMLUtils, UHTMLTemplate;
+  DB.Main,
+  UConsts,
+  UExceptions,
+  UHTMLUtils,
+  UHTMLTemplate;
 
 
 {$R *.dfm}

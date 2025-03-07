@@ -18,7 +18,9 @@ interface
 
 uses
   // Project
-  DB.UCategory, DB.USnippet, USearch;
+  DB.Categories,
+  DB.Snippets,
+  USearch;
 
 
 type
@@ -90,9 +92,12 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Collections,
+  SysUtils,
+  Generics.Collections,
   // Project
-  DB.UMain, UBaseObjects, USingleton;
+  DB.Main,
+  UBaseObjects,
+  USingleton;
 
 
 type

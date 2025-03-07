@@ -20,9 +20,9 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  DB.UCategory,
-  DB.USnippet,
-  DB.USnippetKind,
+  DB.Categories,
+  DB.SnippetKind,
+  DB.Snippets,
   UBaseObjects,
   UInitialLetter;
 
@@ -198,7 +198,10 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UExceptions, USnippetIDs, UStrUtils;
+  DB.Main,
+  DB.SnippetIDs,
+  UExceptions,
+  UStrUtils;
 
 type
   ///  <summary>

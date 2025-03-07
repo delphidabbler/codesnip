@@ -64,7 +64,9 @@ implementation
 
 uses
   // Project
-  DB.UCategory, DB.UMain, UView;
+  DB.Categories,
+  DB.Main,
+  UView;
 
 
 { TCategoryAction }

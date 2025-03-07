@@ -23,7 +23,10 @@ uses
   // 3rd party
   LVEx,
   // Project
-  FmGenericNonModalDlg, Favourites.UFavourites, IntfNotifier, USnippetIDs,
+  DB.SnippetIDs,
+  FmGenericNonModalDlg,
+  Favourites.UFavourites,
+  IntfNotifier,
   UWindowSettings;
 
 
@@ -276,8 +279,8 @@ uses
   Windows,
   Graphics,
   // Project
-  DB.UMain,
-  DB.USnippet,
+  DB.Main,
+  DB.Snippets,
   DB.Vaults,
   UCtrlArranger,
   UMessageBox,

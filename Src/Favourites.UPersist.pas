@@ -58,13 +58,13 @@ uses
   IOUtils,
   Classes,
   /// Project
-  DB.UMain,
+  DB.Main,
+  DB.SnippetIDs,
   DB.Vaults,
   UAppInfo,
   UConsts,
   UIOUtils,
   UIStringList,
-  USnippetIDs,
   UStrUtils,
   UTabSeparatedFileIO;
 

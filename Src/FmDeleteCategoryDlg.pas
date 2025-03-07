@@ -17,9 +17,16 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes,
+  Forms,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
   // Project
-  DB.UCategory, FmCategoryEditDlg, FrCategoryList, UBaseObjects;
+  DB.Categories,
+  FmCategoryEditDlg,
+  FrCategoryList,
+  UBaseObjects;
 
 
 type
@@ -69,7 +76,10 @@ implementation
 
 uses
   // Project
-  DB.UMain, UColours, UCtrlArranger, UFontHelper;
+  DB.Main,
+  UColours,
+  UCtrlArranger,
+  UFontHelper;
 
 {$R *.dfm}
 
@@ -115,7 +125,7 @@ end;
 procedure TDeleteCategoryDlg.DeleteCategory(const Cat: TCategory);
 begin
   Assert(Cat.CanDelete, ClassName + '.DeleteCategory: Cat can''t be deleted');
-  (Database as IDatabaseEdit).DeleteCategory(Cat);
+  Database.DeleteCategory(Cat);
 end;
 
 class function TDeleteCategoryDlg.Execute(AOwner: TComponent;

@@ -18,9 +18,16 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes,
+  Forms,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
   // Project
-  DB.UCategory, FmCategoryEditDlg, FrCategoryList, FrCategoryDescEdit,
+  DB.Categories,
+  FmCategoryEditDlg,
+  FrCategoryList,
+  FrCategoryDescEdit,
   UBaseObjects;
 
 
@@ -92,7 +99,9 @@ uses
   // Delphi
   Windows {for inlining},
   // Project
-  DB.UMain, UCtrlArranger, UStrUtils;
+  DB.Main,
+  UCtrlArranger,
+  UStrUtils;
 
 {$R *.dfm}
 
@@ -203,9 +212,9 @@ procedure TRenameCategoryDlg.RenameCategory(const Category: TCategory;
 var
   EditData: TCategoryData;  // category properties
 begin
-  EditData := (Database as IDatabaseEdit).GetEditableCategoryInfo(Category);
+  EditData := Database.GetEditableCategoryInfo(Category);
   EditData.Desc := NewDesc;
-  (Database as IDatabaseEdit).UpdateCategory(Category, EditData);
+  Database.UpdateCategory(Category, EditData);
 end;
 
 procedure TRenameCategoryDlg.UpdateOKBtn;

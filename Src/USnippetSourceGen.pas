@@ -95,8 +95,8 @@ uses
   SysUtils,
   // Project
   DB.DataFormats,
-  DB.USnippet,
-  DB.USnippetKind,
+  DB.SnippetKind,
+  DB.Snippets,
   UConsts,
   UAppInfo,
   UQuery,

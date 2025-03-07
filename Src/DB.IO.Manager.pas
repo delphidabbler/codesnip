@@ -18,9 +18,9 @@ interface
 
 uses
   // Project
-  DB.UCategory,
-  DB.UMain,
-  DB.USnippet,
+  DB.Categories,
+  DB.Main,
+  DB.Snippets,
   DB.Vaults,
   UBaseObjects,
   UExceptions;
@@ -129,10 +129,10 @@ uses
   DB.IO.Vault,
   DB.IO.Vault.Null,
   DB.IO.Categories,
+  DB.SnippetIDs,
   UAppInfo,
   UConsts,
   UIStringList,
-  USnippetIDs,
   VaultBackup;
 
 

@@ -17,7 +17,9 @@ interface
 
 uses
   // Project
-  ActiveText.UMain, DB.UCategory, DB.USnippet;
+  ActiveText.UMain,
+  DB.Categories,
+  DB.Snippets;
 
 
 type
@@ -96,9 +98,19 @@ uses
   // Delphi
   SysUtils,
   // Project
-  ActiveText.UHTMLRenderer, DB.UMain, DB.USnippetKind, Hiliter.UAttrs,
-  Hiliter.UGlobals, Hiliter.UHiliters, UCompResHTML, UHTMLBuilder,
-  UHTMLUtils, UIStringList, UJavaScriptUtils, UResourceUtils, UStrUtils;
+  ActiveText.UHTMLRenderer,
+  DB.Main,
+  DB.SnippetKind,
+  Hiliter.UAttrs,
+  Hiliter.UGlobals,
+  Hiliter.UHiliters,
+  UCompResHTML,
+  UHTMLBuilder,
+  UHTMLUtils,
+  UIStringList,
+  UJavaScriptUtils,
+  UResourceUtils,
+  UStrUtils;
 
 
 { TSnippetHTML }

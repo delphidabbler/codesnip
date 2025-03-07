@@ -16,7 +16,12 @@ interface
 
 uses
   Generics.Collections,
-  DB.USnippetKind, IntfCommon, UBaseObjects, UContainers, USettings, USingleton;
+  DB.SnippetKind,
+  IntfCommon,
+  UBaseObjects,
+  UContainers,
+  USettings,
+  USingleton;
 
 type
 

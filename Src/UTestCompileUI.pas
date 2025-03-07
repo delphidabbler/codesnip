@@ -21,7 +21,9 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects;
+  Compilers.UGlobals,
+  DB.Snippets,
+  UBaseObjects;
 
 
 type

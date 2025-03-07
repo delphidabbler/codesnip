@@ -19,7 +19,11 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  DB.UCategory, DB.USnippet, DB.USnippetKind, UContainers, UInitialLetter;
+  DB.Categories,
+  DB.SnippetKind,
+  DB.Snippets,
+  UContainers,
+  UInitialLetter;
 
 
 type
@@ -262,7 +266,8 @@ uses
   // Delphi
   Generics.Defaults,
   // Project
-  DB.UMain, UStrUtils;
+  DB.Main,
+  UStrUtils;
 
 
 { TGrouping }

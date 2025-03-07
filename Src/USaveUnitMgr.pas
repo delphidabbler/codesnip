@@ -20,7 +20,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  DB.USnippet,
+  DB.Snippets,
   DB.Vaults,
   UIStringList,
   USourceFileInfo,

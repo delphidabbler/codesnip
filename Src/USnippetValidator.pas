@@ -18,8 +18,8 @@ interface
 uses
   // Project
   ActiveText.UMain,
-  DB.USnippet,
-  DB.USnippetKind,
+  DB.SnippetKind,
+  DB.Snippets,
   DB.Vaults,
   UBaseObjects,
   UStructs;
@@ -133,7 +133,7 @@ uses
   SysUtils,
   // Project
   ActiveText.UValidator,
-  DB.UMain,
+  DB.Main,
   UStrUtils;
 
 
@@ -273,9 +273,7 @@ class function TSnippetValidator.ValidateDependsList(const AKey: string;
 var
   TempSnippet: TSnippet;  // temporary snippet that is checked for dependencies
 begin
-  TempSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
-    AKey, AVaultID, AData
-  );
+  TempSnippet := Database.CreateTempSnippet(AKey, AVaultID, AData);
   try
     Result := ValidateDependsList(TempSnippet, AErrorMsg);
   finally

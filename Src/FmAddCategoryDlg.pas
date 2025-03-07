@@ -68,7 +68,9 @@ implementation
 
 uses
   // Project
-  DB.UCategory, DB.UMain, UUniqueID;
+  DB.Categories,
+  DB.Main,
+  UUniqueID;
 
 {$R *.dfm}
 
@@ -82,11 +84,11 @@ procedure TAddCategoryDlg.AddCategory(const Desc: string);
 var
   Data: TCategoryData;  // category properties
 begin
-  Data := (Database as IDatabaseEdit).GetEditableCategoryInfo;
+  Data := Database.GetEditableCategoryInfo;
   Data.Desc := Desc;
   // add category with a unique id string as name (name must be unique and is
   // for internal use only)
-  (Database as IDatabaseEdit).AddCategory(TUniqueID.Generate, Data);
+  Database.AddCategory(TUniqueID.Generate, Data);
 end;
 
 procedure TAddCategoryDlg.ArrangeForm;

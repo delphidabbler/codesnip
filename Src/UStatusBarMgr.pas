@@ -121,7 +121,7 @@ uses
   SysUtils,
   Forms,
   // Project
-  DB.UMain,
+  DB.Main,
   DB.Vaults,
   UQuery,
   USearch,
@@ -386,7 +386,7 @@ begin
   // status bar to draw the panel.
 
   // We hide message if database not updated
-  fUserDBInfoVisible := (Database as IDatabaseEdit).Updated;
+  fUserDBInfoVisible := Database.Updated;
   fStatusBar.Repaint;
 end;
 

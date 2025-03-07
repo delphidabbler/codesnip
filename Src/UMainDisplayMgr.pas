@@ -301,7 +301,9 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UPreferences, UQuery;
+  DB.Main,
+  UPreferences,
+  UQuery;
 
 
 { TMainDisplayMgr }

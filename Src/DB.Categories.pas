@@ -10,7 +10,7 @@
 }
 
 
-unit DB.UCategory;
+unit DB.Categories;
 
 
 interface
@@ -20,7 +20,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  DB.USnippet,
+  DB.Snippets,
   DB.Vaults;
 
 
@@ -64,12 +64,17 @@ type
       ///  <summary>ID of default category.</summary>
       DefaultID = '__default__';
 
+  public
     ///  <summary>Object constructor. Sets up category object with given
     ///  property values.</summary>
     ///  <param name="CatID"><c>CatID</c> [in] Category ID.</param>
     ///  <param name="Data"><c>TCategoryData</c> [in] category properties.
     ///  </param>
     constructor Create(const CatID: string; const Data: TCategoryData);
+
+    ///  <summary>Creates the default category with its default description.
+    ///  </summary>
+    class function CreateDefault: TCategory;
 
     destructor Destroy; override;
       {Destructor. Tears down object.
@@ -79,6 +84,10 @@ type
     ///  <param name="Data"><c>TCategoryData</c> [in] Updated category
     ///  properties.</param>
     procedure Update(const Data: TCategoryData);
+
+    ///  <summary>Returns a record containing all editable data of a category.
+    ///  </summary>
+    function GetEditData: TCategoryData;
 
     function IsEqual(const Cat: TCategory): Boolean;
       {Checks if this category is same as another category. Categories are
@@ -105,22 +114,6 @@ type
       {Description of category}
     property Snippets: TSnippetList read fSnippets;
       {List of snippets in this category}
-  end;
-
-  {
-  TCategoryEx:
-    Private extension of TCategory for use internally by Snippets object.
-  }
-  TCategoryEx = class(TCategory)
-  public
-    ///  <summary>Creates the default category with its default description.
-    ///  </summary>
-    class function CreateDefault: TCategory;
-
-    function GetEditData: TCategoryData;
-      {Gets details of all editable data of category.
-        @return Required editable data.
-      }
   end;
 
   {
@@ -157,6 +150,12 @@ type
         @param Category [in] Category to be added.
         @return Index where category inserted in list.
       }
+
+    ///  <summary>Deletes a category from the list.</summary>
+    ///  <param name="Category"><c>TCategory</c> [in] Category to be deleted.
+    ///  </param>
+    procedure Delete(const Category: TCategory);
+
     function Find(const CatID: string): TCategory;
       {Finds a named category in list.
         @param CatID [in] ID of required category.
@@ -176,18 +175,6 @@ type
       {List of categories}
     property Count: Integer read GetCount;
       {Number of categories in list}
-  end;
-
-  {
-  TCategoryListEx:
-    Private extension of TCategoryList for use internally by snippets object.
-  }
-  TCategoryListEx = class(TCategoryList)
-  public
-    procedure Delete(const Category: TCategory);
-      {Deletes a category from the list.
-        @param Category [in] Category to be deleted.
-      }
   end;
 
 
@@ -239,16 +226,22 @@ end;
 
 constructor TCategory.Create(const CatID: string; const Data: TCategoryData);
 begin
-  {TODO -cVault: Add a simpler contructor that takes only the category ID and
-          description and creates does all the convoluted TCategoryData setting!
-  }
-  Assert(ClassType <> TCategory,
-    ClassName + '.Create: must only be called from descendants.');
   inherited Create;
   fID := CatID;
   fDescription := Data.Desc;
   // Create list to store snippets in category
-  fSnippets := TSnippetListEx.Create;
+  fSnippets := TSnippetList.Create;
+end;
+
+class function TCategory.CreateDefault: TCategory;
+var
+  Data: TCategoryData;
+resourcestring
+  sDefCatDesc = 'My Snippets';
+begin
+  Data.Init;
+  Data.Desc := sDefCatDesc;
+  Result := Create(DefaultID, Data);
 end;
 
 destructor TCategory.Destroy;
@@ -257,6 +250,11 @@ destructor TCategory.Destroy;
 begin
   FreeAndNil(fSnippets);
   inherited;
+end;
+
+function TCategory.GetEditData: TCategoryData;
+begin
+  Result.Desc := Self.Description;
 end;
 
 function TCategory.IsEqual(const Cat: TCategory): Boolean;
@@ -272,27 +270,6 @@ end;
 procedure TCategory.Update(const Data: TCategoryData);
 begin
   fDescription := Data.Desc;
-end;
-
-{ TCategoryEx }
-
-class function TCategoryEx.CreateDefault: TCategory;
-var
-  Data: TCategoryData;
-resourcestring
-  sDefCatDesc = 'My Snippets';
-begin
-  Data.Init;
-  Data.Desc := sDefCatDesc;
-  Result := Create(DefaultID, Data);
-end;
-
-function TCategoryEx.GetEditData: TCategoryData;
-  {Gets details of all editable data of category.
-    @return Required editable data.
-  }
-begin
-  Result.Desc := Self.Description;
 end;
 
 { TCategoryList }
@@ -332,6 +309,16 @@ constructor TCategoryList.Create(const OwnsObjects: Boolean);
 begin
   inherited Create;
   fList := TObjectList<TCategory>.Create(OwnsObjects);
+end;
+
+procedure TCategoryList.Delete(const Category: TCategory);
+var
+  Idx: Integer; // index of snippet in list.
+begin
+  Idx := fList.IndexOf(Category);
+  if Idx = -1 then
+    Exit;
+  fList.Delete(Idx);  // this frees category if list owns objects
 end;
 
 destructor TCategoryList.Destroy;
@@ -385,21 +372,6 @@ function TCategoryList.GetItem(Idx: Integer): TCategory;
   }
 begin
   Result := fList[Idx];
-end;
-
-{ TCategoryListEx }
-
-procedure TCategoryListEx.Delete(const Category: TCategory);
-  {Deletes a category from the list.
-    @param Category [in] Category to be deleted.
-  }
-var
-  Idx: Integer; // index of snippet in list.
-begin
-  Idx := fList.IndexOf(Category);
-  if Idx = -1 then
-    Exit;
-  fList.Delete(Idx);  // this frees category if list owns objects
 end;
 
 { TCategoryData }

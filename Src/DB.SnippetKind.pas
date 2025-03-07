@@ -11,7 +11,7 @@
 }
 
 
-unit DB.USnippetKind;
+unit DB.SnippetKind;
 
 
 interface

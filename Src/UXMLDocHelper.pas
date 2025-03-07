@@ -21,7 +21,7 @@ uses
   XMLIntf,
   // Project
   Compilers.UGlobals,
-  DB.USnippetKind,
+  DB.SnippetKind,
   UBaseObjects,
   UExceptions,
   UIStringList,

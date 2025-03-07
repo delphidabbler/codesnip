@@ -20,7 +20,11 @@ uses
   // Delphi
   Graphics,
   // Project
-  ActiveText.URTFRenderer, DB.UCategory, DB.USnippet, UEncodings, URTFBuilder,
+  ActiveText.URTFRenderer,
+  DB.Categories,
+  DB.Snippets,
+  UEncodings,
+  URTFBuilder,
   URTFStyles;
 
 

@@ -108,7 +108,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UExceptions;
+  DB.Main,
+  UExceptions;
 
 
 { THistory }

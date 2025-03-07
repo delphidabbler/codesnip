@@ -26,7 +26,7 @@ uses
   Buttons,
   Menus,
   // Project
-  DB.USnippet,
+  DB.Snippets,
   DB.Vaults,
   FmGenericOKDlg,
   FrCheckedTV,
@@ -118,7 +118,7 @@ uses
   SysUtils,
   Types,
   // Project
-  DB.UMain,
+  DB.Main,
   UCtrlArranger,
   UQuery;
 

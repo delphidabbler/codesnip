@@ -15,10 +15,21 @@ unit FmTestCompileDlg;
 interface
 
 uses
-  Classes, ActnList, StdCtrls, Forms, Controls, ExtCtrls, Messages,
+  // Delphi
+  Classes,
+  ActnList,
+  StdCtrls,
+  Forms,
+  Controls,
+  ExtCtrls,
+  Messages,
   Generics.Collections,
-
-  Compilers.UGlobals, DB.USnippet, FmGenericViewDlg, UBaseObjects, UCompileMgr,
+  // Project
+  Compilers.UGlobals,
+  DB.Snippets,
+  FmGenericViewDlg,
+  UBaseObjects,
+  UCompileMgr,
   ULEDImageList;
 
 type

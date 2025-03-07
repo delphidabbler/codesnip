@@ -21,7 +21,9 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.USnippet, DB.USnippetKind, UContainers;
+  DB.SnippetKind,
+  DB.Snippets,
+  UContainers;
 
 
 type

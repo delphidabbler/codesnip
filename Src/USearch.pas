@@ -20,7 +20,10 @@ uses
   // Delphi
   Classes, Graphics,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects, USnippetIDs;
+  Compilers.UGlobals,
+  DB.SnippetIDs,
+  DB.Snippets,
+  UBaseObjects;
 
 
 type
@@ -296,9 +299,13 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Character,
+  SysUtils,
+  Character,
   // Project
-  DB.UMain, IntfCommon, UConsts, UStrUtils;
+  DB.Main,
+  IntfCommon,
+  UConsts,
+  UStrUtils;
 
 
 type
@@ -1077,14 +1084,14 @@ procedure TXRefSearchFilter.ReferenceReverseRequired(const Snippet: TSnippet);
 begin
   if not (soRequiredReverse in fOptions) then
     Exit;
-  AddToXRefs((Database as IDatabaseEdit).GetDependents(Snippet));
+  AddToXRefs(Database.GetDependents(Snippet));
 end;
 
 procedure TXRefSearchFilter.ReferenceReverseSeeAlso(const Snippet: TSnippet);
 begin
   if not (soSeeAlsoReverse in fOptions) then
     Exit;
-  AddToXRefs((Database as IDatabaseEdit).GetReferrers(Snippet));
+  AddToXRefs(Database.GetReferrers(Snippet));
 end;
 
 procedure TXRefSearchFilter.ReferenceSeeAlso(const Snippet: TSnippet);

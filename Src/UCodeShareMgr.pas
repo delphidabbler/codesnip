@@ -18,7 +18,7 @@ interface
 
 uses
   // Project
-  DB.USnippet,
+  DB.Snippets,
   UBaseObjects,
   UView;
 
@@ -59,7 +59,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain,
+  DB.Main,
   DB.Vaults,
   FmCodeExportDlg,
   FmCodeImportDlg,

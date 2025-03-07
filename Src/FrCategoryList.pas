@@ -23,7 +23,7 @@ uses
   StdCtrls,
   Classes,
   // Project
-  DB.UCategory,
+  DB.Categories,
   UI.Adapters.CategoryList;
 
 
@@ -93,7 +93,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UCtrlArranger;
+  DB.Main,
+  UCtrlArranger;
 
 {$R *.dfm}
 

@@ -10,7 +10,7 @@
 }
 
 
-unit USnippetIDs;
+unit DB.SnippetIDs;
 
 
 interface

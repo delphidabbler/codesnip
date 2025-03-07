@@ -23,8 +23,8 @@ uses
   Classes,
   ComCtrls,
   // Project
-  DB.UCategory,
-  DB.USnippet,
+  DB.Categories,
+  DB.Snippets,
   DB.Vaults,
   FrCheckedTV,
   USnippetsTVDraw;
@@ -133,7 +133,7 @@ uses
   SysUtils,
   StdCtrls,
   // Project
-  DB.UMain,
+  DB.Main,
   UGroups;
 
 

@@ -19,7 +19,7 @@ uses
   // Delphi
   Classes,
   // Project
-  USnippetIDs;
+  DB.SnippetIDs;
 
 
 type

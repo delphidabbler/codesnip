@@ -20,9 +20,15 @@ interface
 
 uses
   // Delphi
-  StdCtrls, Controls, ExtCtrls, Classes,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
   // Project
-  DB.USnippet, FmGenericOKDlg, UBaseObjects, USearch;
+  DB.Snippets,
+  FmGenericOKDlg,
+  UBaseObjects,
+  USearch;
 
 
 type

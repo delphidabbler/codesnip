@@ -10,7 +10,7 @@ inherited TestCompileDlg: TTestCompileDlg
     object lblSnippetName: TLabel
       Left = 96
       Top = 8
-      Width = 89
+      Width = 88
       Height = 13
       Caption = 'lblSnippetName'
       Font.Charset = DEFAULT_CHARSET
@@ -23,7 +23,7 @@ inherited TestCompileDlg: TTestCompileDlg
     object lblSnippetNameDesc: TLabel
       Left = 0
       Top = 8
-      Width = 53
+      Width = 55
       Height = 13
       Caption = 'Results for '
     end

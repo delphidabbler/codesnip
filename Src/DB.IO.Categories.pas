@@ -17,7 +17,7 @@ uses
   SysUtils,
   Generics.Collections,
   // Project
-  DB.UCategory,
+  DB.Categories,
   UExceptions,
   UTabSeparatedFileIO;
 

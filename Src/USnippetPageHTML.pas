@@ -19,7 +19,9 @@ interface
 
 uses
   // Project
-  DB.USnippet, USnippetHTML, USnippetPageStructure;
+  DB.Snippets,
+  USnippetHTML,
+  USnippetPageStructure;
 
 
 type

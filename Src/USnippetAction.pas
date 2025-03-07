@@ -75,8 +75,8 @@ implementation
 
 uses
   // Project
-  DB.UMain,
-  DB.USnippet,
+  DB.Main,
+  DB.Snippets,
   UView;
 
 

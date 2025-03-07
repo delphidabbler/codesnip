@@ -19,8 +19,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UExceptions,
-  USnippetIDs;
+  DB.SnippetIDs,
+  UExceptions;
 
 
 type
