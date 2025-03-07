@@ -226,9 +226,6 @@ end;
 
 constructor TCategory.Create(const CatID: string; const Data: TCategoryData);
 begin
-  {TODO -cVault: Add a simpler contructor that takes only the category ID and
-          description and creates does all the convoluted TCategoryData setting!
-  }
   inherited Create;
   fID := CatID;
   fDescription := Data.Desc;
