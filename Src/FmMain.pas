@@ -243,6 +243,7 @@ type
     tbTestCompile: TToolButton;
     miSaveInfo: TMenuItem;
     actSaveInfo: TAction;
+    miVaults: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>

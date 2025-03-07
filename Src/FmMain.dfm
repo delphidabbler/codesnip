@@ -614,7 +614,7 @@ inherited MainForm: TMainForm
       OnUpdate = actPrintUpdate
     end
     object actBackupVault: TAction
-      Category = 'Database'
+      Category = 'Vaults'
       Caption = 'Backup Vault...'
       Hint = 'Backup a vault|Backup a vault'#39's data files'
       ImageIndex = 33
@@ -622,7 +622,7 @@ inherited MainForm: TMainForm
       OnUpdate = ActNonEmptyDBUpdate
     end
     object actRestoreVault: TAction
-      Category = 'Database'
+      Category = 'Vaults'
       Caption = 'Restore Vault...'
       Hint = 'Restore a vault|Restore a vaults'#39's data files from a backup'
       ImageIndex = 32
@@ -840,8 +840,8 @@ inherited MainForm: TMainForm
       OnUpdate = actAddFavouriteUpdate
     end
     object actMoveVault: TAction
-      Category = 'Database'
-      Caption = 'Move Vault Data Files...'
+      Category = 'Vaults'
+      Caption = 'Move Vault...'
       Hint = 'Move a vault|Move a vault'#39's data files to a new directory'
       OnExecute = actMoveVaultExecute
       OnUpdate = ActNonEmptyDBUpdate
@@ -863,11 +863,11 @@ inherited MainForm: TMainForm
       ImageIndex = 6
     end
     object actDeleteVault: TAction
-      Category = 'Database'
+      Category = 'Vaults'
       Caption = 'Delete All Snippets From Vault'
       Hint = 
-        'Delete All Snippets From A Vault|Deletes all the snippets from a' +
-        ' chosen vault - USE WITH CAUTION'
+        'Delete all snippets from a vault|Delete all the snippets from a ' +
+        'chosen vault - USE WITH CAUTION'
       OnExecute = actDeleteVaultExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
@@ -1085,19 +1085,31 @@ inherited MainForm: TMainForm
         Action = actDeleteCategory
       end
     end
-    object miDatabase: TMenuItem
-      Caption = 'Database'
-      object miSaveDatabase: TMenuItem
-        Action = actSaveDatabase
-      end
-      object miSpacer11: TMenuItem
-        Caption = '-'
-      end
+    object miVaults: TMenuItem
+      Caption = 'Vaults'
       object miBackupVault: TMenuItem
         Action = actBackupVault
       end
       object miRestoreVault: TMenuItem
         Action = actRestoreVault
+      end
+      object miSpacer11: TMenuItem
+        Caption = '-'
+      end
+      object miMoveVault: TMenuItem
+        Action = actMoveVault
+      end
+      object miSpacer20: TMenuItem
+        Caption = '-'
+      end
+      object miDeleteVault: TMenuItem
+        Action = actDeleteVault
+      end
+    end
+    object miDatabase: TMenuItem
+      Caption = 'Database'
+      object miSaveDatabase: TMenuItem
+        Action = actSaveDatabase
       end
       object miSpacer13: TMenuItem
         Caption = '-'
@@ -1105,17 +1117,8 @@ inherited MainForm: TMainForm
       object miUpdateDbase: TMenuItem
         Action = actUpdateDbase
       end
-      object miSpacer20: TMenuItem
-        Caption = '-'
-      end
-      object miMoveVault: TMenuItem
-        Action = actMoveVault
-      end
       object miSpacer21: TMenuItem
         Caption = '-'
-      end
-      object miDeleteVault: TMenuItem
-        Action = actDeleteVault
       end
     end
     object miCompile: TMenuItem
