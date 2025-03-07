@@ -90,13 +90,13 @@ uses
   // Delphi
   Math,
   // Project
+  DB.SnippetIDs,
   DB.UCategory,
   DB.UMain,
   UCtrlArranger,
   UExceptions,
   UMessageBox,
   USettings,
-  USnippetIDs,
   USnippetValidator,
   UStructs,
   UStrUtils,

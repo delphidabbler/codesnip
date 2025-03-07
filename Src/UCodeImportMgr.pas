@@ -157,11 +157,11 @@ uses
   Classes,
   // Project
   ActiveText.UMain,
+  DB.SnippetIDs,
   DB.UMain,
   DB.USnippet,
   IntfCommon,
   UIOUtils,
-  USnippetIDs,
   UStrUtils;
 
 

@@ -21,9 +21,9 @@ uses
   // Delphi
   Classes,
   // Project
+  DB.SnippetIDs,
   DB.UCategory,
   UBaseObjects,
-  USnippetIDs,
   UView;
 
 

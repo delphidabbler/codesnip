@@ -129,10 +129,10 @@ uses
   DB.IO.Vault,
   DB.IO.Vault.Null,
   DB.IO.Categories,
+  DB.SnippetIDs,
   UAppInfo,
   UConsts,
   UIStringList,
-  USnippetIDs,
   VaultBackup;
 
 

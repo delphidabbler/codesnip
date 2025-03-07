@@ -26,12 +26,12 @@ uses
   Windows,
   ActnList,
   // Project
+  DB.SnippetIDs,
   DB.USnippet,
   DB.Vaults,
   FmGenericViewDlg,
   UBaseObjects,
   USearch,
-  USnippetIDs,
   USnippetsTVDraw;
 
 

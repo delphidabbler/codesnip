@@ -22,12 +22,12 @@ uses
   XMLIntf,
   Generics.Collections,
   // Project
+  DB.SnippetIDs,
   DB.UCategory,
   DB.USnippet,
   UBaseObjects,
   UEncodings,
   UIStringList,
-  USnippetIDs,
   UXMLDocHelper,
   UXMLDocumentEx;
 

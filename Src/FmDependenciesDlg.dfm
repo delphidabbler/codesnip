@@ -52,6 +52,10 @@ inherited DependenciesDlg: TDependenciesDlg
       object tsRequiredBy: TTabSheet
         Caption = 'Required By'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblNoDependents: TLabel
           Left = 8
           Top = 8

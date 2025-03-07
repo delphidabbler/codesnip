@@ -18,9 +18,12 @@ interface
 
 uses
   // Delphi
-  Controls, CheckLst, Windows,
+  Controls,
+  CheckLst,
+  Windows,
   // Project
-  DB.USnippet, USnippetIDs;
+  DB.SnippetIDs,
+  DB.USnippet;
 
 
 type

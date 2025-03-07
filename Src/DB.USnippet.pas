@@ -24,11 +24,11 @@ uses
   // Project
   ActiveText.UMain,
   Compilers.UGlobals,
+  DB.SnippetIDs,
   DB.USnippetKind,
   DB.Vaults,
   UContainers,
-  UIStringList,
-  USnippetIDs;
+  UIStringList;
 
 type
   ///  <summary>Enumeration providing information about the level to which a

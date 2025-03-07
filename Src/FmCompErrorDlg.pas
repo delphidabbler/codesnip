@@ -17,11 +17,24 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes, Tabs, ActnList, ImgList,
+  Forms,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
+  Tabs,
+  ActnList,
+  ImgList,
   Generics.Collections,
   // Project
-  Compilers.UGlobals, DB.USnippet, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
-  FrHTMLTpltDlg, UBaseObjects, USnippetIDs;
+  Compilers.UGlobals,
+  DB.SnippetIDs,
+  DB.USnippet,
+  FmGenericViewDlg,
+  FrBrowserBase,
+  FrHTMLDlg,
+  FrHTMLTpltDlg,
+  UBaseObjects;
 
 
 type

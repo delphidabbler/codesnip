@@ -198,7 +198,10 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UExceptions, USnippetIDs, UStrUtils;
+  DB.SnippetIDs,
+  DB.UMain,
+  UExceptions,
+  UStrUtils;
 
 type
   ///  <summary>

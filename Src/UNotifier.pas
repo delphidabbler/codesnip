@@ -187,11 +187,11 @@ uses
   SysUtils, StdActns,
   // Project
   Compilers.UGlobals,
+  DB.SnippetIDs,
   UCategoryAction,
   UDetailTabAction,
   UEditSnippetAction,
   USnippetAction,
-  USnippetIDs,
   UViewItemAction;
 
 

@@ -20,7 +20,10 @@ uses
   // Delphi
   Classes, Graphics,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects, USnippetIDs;
+  Compilers.UGlobals,
+  DB.SnippetIDs,
+  DB.USnippet,
+  UBaseObjects;
 
 
 type

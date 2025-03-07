@@ -23,7 +23,10 @@ uses
   // 3rd party
   LVEx,
   // Project
-  FmGenericNonModalDlg, Favourites.UFavourites, IntfNotifier, USnippetIDs,
+  DB.SnippetIDs,
+  FmGenericNonModalDlg,
+  Favourites.UFavourites,
+  IntfNotifier,
   UWindowSettings;
 
 

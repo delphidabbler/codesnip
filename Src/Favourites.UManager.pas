@@ -18,7 +18,10 @@ interface
 
 uses
   // Delphi
-  Favourites.UFavourites, USnippetIDs, IntfNotifier, UView;
+  DB.SnippetIDs,
+  Favourites.UFavourites,
+  IntfNotifier,
+  UView;
 
 
 type

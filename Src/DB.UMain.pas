@@ -23,13 +23,13 @@ uses
   // Project
   ActiveText.UMain,
   Compilers.UGlobals,
+  DB.SnippetIDs,
   DB.UCategory,
   DB.USnippet,
   DB.Vaults,
   UContainers,
   UIStringList,
-  UMultiCastEvents,
-  USnippetIDs;
+  UMultiCastEvents;
 
 
 type
