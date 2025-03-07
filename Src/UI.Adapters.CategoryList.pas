@@ -21,7 +21,8 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCategory, UContainers;
+  DB.Categories,
+  UContainers;
 
 
 type

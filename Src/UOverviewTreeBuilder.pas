@@ -20,7 +20,10 @@ uses
   // Delphu
   ComCtrls,
   // Project
-  DB.USnippet, UGroups, UView, UViewItemTreeNode;
+  DB.Snippets,
+  UGroups,
+  UView,
+  UViewItemTreeNode;
 
 
 type

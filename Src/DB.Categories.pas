@@ -10,7 +10,7 @@
 }
 
 
-unit DB.UCategory;
+unit DB.Categories;
 
 
 interface
@@ -20,7 +20,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  DB.USnippet,
+  DB.Snippets,
   DB.Vaults;
 
 

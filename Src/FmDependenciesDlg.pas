@@ -27,7 +27,7 @@ uses
   ActnList,
   // Project
   DB.SnippetIDs,
-  DB.USnippet,
+  DB.Snippets,
   DB.Vaults,
   FmGenericViewDlg,
   UBaseObjects,
@@ -176,8 +176,8 @@ uses
   SysUtils,
   Graphics,
   // Project
-  DB.UMain,
-  DB.USnippetKind,
+  DB.Main,
+  DB.SnippetKind,
   UBox,
   UColours,
   UCtrlArranger,

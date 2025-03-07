@@ -21,8 +21,8 @@ uses
   // Delphi
   Classes,
   // Project
+  DB.Categories,
   DB.SnippetIDs,
-  DB.UCategory,
   UBaseObjects,
   UView;
 
@@ -96,8 +96,8 @@ uses
   Windows {for inlining},
   IOUtils,
   // Project
-  DB.UMain,
-  DB.USnippet,
+  DB.Main,
+  DB.Snippets,
   DB.Vaults,
   FmAddCategoryDlg,
   UI.Forms.BackupVaultDlg,

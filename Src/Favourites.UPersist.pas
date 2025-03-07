@@ -58,8 +58,8 @@ uses
   IOUtils,
   Classes,
   /// Project
+  DB.Main,
   DB.SnippetIDs,
-  DB.UMain,
   DB.Vaults,
   UAppInfo,
   UConsts,

@@ -47,7 +47,7 @@ uses
   Dialogs,
   // Project
   DB.SnippetIDs,
-  DB.USnippet,
+  DB.Snippets,
   UConsts,
   UMessageBox,
   UOpenDialogEx,

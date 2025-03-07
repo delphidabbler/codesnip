@@ -1,5 +1,6 @@
 inherited DeleteCategoryDlg: TDeleteCategoryDlg
   Caption = 'Delete Category'
+  ExplicitWidth = 320
   ExplicitHeight = 375
   PixelsPerInch = 96
   TextHeight = 13

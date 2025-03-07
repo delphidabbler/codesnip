@@ -24,7 +24,7 @@ uses
   DB.Vaults,
   ActiveText.UMain,
   Compilers.UGlobals,
-  DB.USnippet,
+  DB.Snippets,
   UEncodings,
   UIStringList;
 
@@ -124,9 +124,9 @@ uses
   // Project
   Compilers.UCompilers,
   DB.DataFormats,
+  DB.Main,
   DB.MetaData,
-  DB.UMain,
-  DB.USnippetKind,
+  DB.SnippetKind,
   UStrUtils,
   UUrl;
 

@@ -22,7 +22,7 @@ uses
   // Project
   Compilers.UGlobals,
   DB.SnippetIDs,
-  DB.USnippet,
+  DB.Snippets,
   UBaseObjects;
 
 
@@ -299,9 +299,13 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Character,
+  SysUtils,
+  Character,
   // Project
-  DB.UMain, IntfCommon, UConsts, UStrUtils;
+  DB.Main,
+  IntfCommon,
+  UConsts,
+  UStrUtils;
 
 
 type

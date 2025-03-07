@@ -57,7 +57,8 @@ implementation
 
 uses
   // Project
-  UQuery, DB.UMain;
+  UQuery,
+  DB.Main;
 
 
 { TDatabaseLoader }

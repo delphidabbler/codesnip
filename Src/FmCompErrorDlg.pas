@@ -29,7 +29,7 @@ uses
   // Project
   Compilers.UGlobals,
   DB.SnippetIDs,
-  DB.USnippet,
+  DB.Snippets,
   FmGenericViewDlg,
   FrBrowserBase,
   FrHTMLDlg,
@@ -143,7 +143,11 @@ uses
   // Delphi
   Graphics,
   // Project
-  DB.UMain, UConsts, UExceptions, UHTMLUtils, UHTMLTemplate;
+  DB.Main,
+  UConsts,
+  UExceptions,
+  UHTMLUtils,
+  UHTMLTemplate;
 
 
 {$R *.dfm}

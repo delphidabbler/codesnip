@@ -157,9 +157,9 @@ uses
   Classes,
   // Project
   ActiveText.UMain,
+  DB.Main,
   DB.SnippetIDs,
-  DB.UMain,
-  DB.USnippet,
+  DB.Snippets,
   IntfCommon,
   UIOUtils,
   UStrUtils;

@@ -21,8 +21,8 @@ uses
   Generics.Collections,
   // Project
   ActiveText.UMain,
-  DB.UCategory,
-  DB.USnippet,
+  DB.Categories,
+  DB.Snippets,
   DB.Vaults,
   SWAG.UCommon;
 
@@ -103,8 +103,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain,
-  DB.USnippetKind,
+  DB.Main,
+  DB.SnippetKind,
   USnippetValidator;
 
 

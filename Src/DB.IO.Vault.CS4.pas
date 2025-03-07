@@ -20,9 +20,9 @@ uses
   // Delphi
   XMLIntf,
   // Project
+  DB.Categories,
   DB.MetaData,
-  DB.UCategory,
-  DB.USnippet,
+  DB.Snippets,
   DB.IO.Vault,
   UIStringList,
   UREMLDataIO,
@@ -264,8 +264,8 @@ uses
   XMLDom,
   // Project
   ActiveText.UMain,
+  DB.SnippetKind,
   DB.IO.Common.CS4,
-  DB.USnippetKind,
   UConsts,
   UExceptions,
   UIOUtils,

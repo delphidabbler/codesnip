@@ -27,7 +27,7 @@ uses
   ToolWin,
   Menus,
   // Project
-  DB.USnippet,
+  DB.Snippets,
   DB.Vaults,
   FrTitled,
   IntfFrameMgrs,

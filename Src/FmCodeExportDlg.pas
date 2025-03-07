@@ -18,10 +18,19 @@ interface
 
 uses
   // Delphi
-  Classes, StdCtrls, Controls, Forms, ExtCtrls,
+  Classes,
+  StdCtrls,
+  Controls,
+  Forms,
+  ExtCtrls,
   // Project
-  DB.USnippet, FmGenericOKDlg, FrCheckedTV, FrSelectUserSnippets,
-  FrSelectSnippets, FrSelectSnippetsBase, UBaseObjects;
+  DB.Snippets,
+  FmGenericOKDlg,
+  FrCheckedTV,
+  FrSelectUserSnippets,
+  FrSelectSnippets,
+  FrSelectSnippetsBase,
+  UBaseObjects;
 
 
 type

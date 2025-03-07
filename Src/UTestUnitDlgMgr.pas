@@ -20,7 +20,8 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.USnippet, UBaseObjects;
+  DB.Snippets,
+  UBaseObjects;
 
 
 type

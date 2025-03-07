@@ -33,7 +33,7 @@ uses
   // Project
   ActiveText.UMain,
   Compilers.UGlobals,
-  DB.USnippet,
+  DB.Snippets,
   DB.Vaults,
   FmGenericOKDlg,
   FrBrowserBase,
@@ -297,10 +297,10 @@ uses
   // Delphi
   Windows {for inlining}, Graphics,
   // Project
+  DB.Categories,
+  DB.Main,
   DB.SnippetIDs,
-  DB.UCategory,
-  DB.UMain,
-  DB.USnippetKind,
+  DB.SnippetKind,
   FmDependenciesDlg,
   IntfCommon,
   UColours,

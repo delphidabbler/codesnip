@@ -10,7 +10,7 @@
 }
 
 
-unit DB.UMain;
+unit DB.Main;
 
 
 interface
@@ -23,9 +23,9 @@ uses
   // Project
   ActiveText.UMain,
   Compilers.UGlobals,
+  DB.Categories,
   DB.SnippetIDs,
-  DB.UCategory,
-  DB.USnippet,
+  DB.Snippets,
   DB.Vaults,
   UContainers,
   UIStringList,

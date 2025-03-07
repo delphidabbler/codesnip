@@ -25,9 +25,9 @@ uses
   IniFiles,
   // Project
   ActiveText.UMain,
+  DB.Categories,
   DB.MetaData,
-  DB.UCategory,
-  DB.USnippet,
+  DB.Snippets,
   DB.IO.Vault,
   UIStringList,
   UVersionInfo;
@@ -459,7 +459,7 @@ uses
   IOUtils,
   // Project
   Compilers.UGlobals,
-  DB.USnippetKind,
+  DB.SnippetKind,
   UComparers,
   UConsts,
   UEncodings,

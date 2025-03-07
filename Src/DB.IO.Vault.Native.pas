@@ -20,9 +20,9 @@ uses
   // Project
   Compilers.UGlobals,
   DB.MetaData,
-  DB.UCategory,
-  DB.USnippet,
-  DB.USnippetKind,
+  DB.Categories,
+  DB.SnippetKind,
+  DB.Snippets,
   DB.IO.Vault,
   UIStringList,
   UVersionInfo,

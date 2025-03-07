@@ -20,7 +20,10 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCategory, DB.USnippet, Hiliter.UGlobals, URTFUtils;
+  DB.Categories,
+  DB.Snippets,
+  Hiliter.UGlobals,
+  URTFUtils;
 
 
 type

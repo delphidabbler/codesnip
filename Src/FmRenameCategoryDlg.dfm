@@ -1,5 +1,7 @@
 inherited RenameCategoryDlg: TRenameCategoryDlg
   Caption = 'Rename Category'
+  ExplicitWidth = 320
+  ExplicitHeight = 240
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -10,10 +12,6 @@ inherited RenameCategoryDlg: TRenameCategoryDlg
       Height = 240
       TabOrder = 0
       TabStop = True
-      inherited lblCategories: TLabel
-        Width = 60
-        ExplicitWidth = 60
-      end
     end
     inline frmDescription: TCategoryDescEditFrame
       Left = 0
@@ -23,10 +21,6 @@ inherited RenameCategoryDlg: TRenameCategoryDlg
       TabOrder = 1
       TabStop = True
       ExplicitTop = 120
-      inherited lblError: TLabel
-        Width = 108
-        ExplicitWidth = 108
-      end
     end
   end
   inherited btnOK: TButton

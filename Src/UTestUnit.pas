@@ -18,7 +18,7 @@ interface
 
 uses
   // Project
-  DB.USnippet;
+  DB.Snippets;
 
 
 type
@@ -65,7 +65,12 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.USnippetKind, UEncodings, UIOUtils, USourceGen, USystemInfo, UUnitAnalyser,
+  DB.SnippetKind,
+  UEncodings,
+  UIOUtils,
+  USourceGen,
+  USystemInfo,
+  UUnitAnalyser,
   UUtils;
 
 

@@ -20,7 +20,12 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.USnippet, UBaseObjects, UPrintDocuments, UPrintInfo, URTFUtils, UView;
+  DB.Snippets,
+  UBaseObjects,
+  UPrintDocuments,
+  UPrintInfo,
+  URTFUtils,
+  UView;
 
 
 type

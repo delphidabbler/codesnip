@@ -18,8 +18,8 @@ interface
 uses
   // Project
   ActiveText.UMain,
-  DB.USnippet,
-  DB.USnippetKind,
+  DB.SnippetKind,
+  DB.Snippets,
   DB.Vaults,
   UBaseObjects,
   UStructs;
@@ -133,7 +133,7 @@ uses
   SysUtils,
   // Project
   ActiveText.UValidator,
-  DB.UMain,
+  DB.Main,
   UStrUtils;
 
 

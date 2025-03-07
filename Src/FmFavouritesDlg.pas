@@ -279,8 +279,8 @@ uses
   Windows,
   Graphics,
   // Project
-  DB.UMain,
-  DB.USnippet,
+  DB.Main,
+  DB.Snippets,
   DB.Vaults,
   UCtrlArranger,
   UMessageBox,

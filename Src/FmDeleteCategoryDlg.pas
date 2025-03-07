@@ -17,9 +17,16 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes,
+  Forms,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
   // Project
-  DB.UCategory, FmCategoryEditDlg, FrCategoryList, UBaseObjects;
+  DB.Categories,
+  FmCategoryEditDlg,
+  FrCategoryList,
+  UBaseObjects;
 
 
 type
@@ -69,7 +76,10 @@ implementation
 
 uses
   // Project
-  DB.UMain, UColours, UCtrlArranger, UFontHelper;
+  DB.Main,
+  UColours,
+  UCtrlArranger,
+  UFontHelper;
 
 {$R *.dfm}
 

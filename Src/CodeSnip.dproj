@@ -66,11 +66,11 @@
 			<DCCReference Include="Compilers.UGlobals.pas"/>
 			<DCCReference Include="Compilers.URunner.pas"/>
 			<DCCReference Include="Compilers.USearchDirs.pas"/>
-			<DCCReference Include="DB.UCategory.pas"/>
+			<DCCReference Include="DB.Categories.pas"/>
 			<DCCReference Include="DB.IO.Manager.pas"/>
-			<DCCReference Include="DB.UMain.pas"/>
-			<DCCReference Include="DB.USnippet.pas"/>
-			<DCCReference Include="DB.USnippetKind.pas"/>
+			<DCCReference Include="DB.Main.pas"/>
+			<DCCReference Include="DB.Snippets.pas"/>
+			<DCCReference Include="DB.SnippetKind.pas"/>
 			<DCCReference Include="DB.IO.Vault.pas"/>
 			<DCCReference Include="DB.IO.Vault.DCSCv2.pas"/>
 			<DCCReference Include="DB.IO.Vault.Null.pas"/>

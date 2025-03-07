@@ -23,7 +23,7 @@ uses
   Windows,
   // Project
   DB.SnippetIDs,
-  DB.USnippet;
+  DB.Snippets;
 
 
 type

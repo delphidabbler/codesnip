@@ -20,8 +20,8 @@ interface
 uses
   // Project
   DB.MetaData,
-  DB.UCategory,
-  DB.USnippet,
+  DB.Categories,
+  DB.Snippets,
   UExceptions,
   UIStringList;
 

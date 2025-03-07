@@ -68,8 +68,8 @@ uses
   // Project
   Compilers.UGlobals,
   Compilers.UCompilers,
-  DB.UMain,
-  DB.USnippet,
+  DB.Main,
+  DB.Snippets,
   DB.Vaults,
   UConsts,
   UContainers,

@@ -23,7 +23,7 @@ uses
   ExtCtrls,
   Classes,
   // Project
-  DB.USnippet,
+  DB.Snippets,
   DB.Vaults,
   FmGenericOKDlg,
   UBaseObjects,
@@ -90,9 +90,9 @@ uses
   // Delphi
   Math,
   // Project
+  DB.Categories,
+  DB.Main,
   DB.SnippetIDs,
-  DB.UCategory,
-  DB.UMain,
   UCtrlArranger,
   UExceptions,
   UMessageBox,

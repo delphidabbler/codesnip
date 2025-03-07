@@ -117,7 +117,12 @@ uses
   // Delphi
   Windows {for inlining},
   // Project
-  DB.UCategory, DB.UMain, UColours, UCtrlArranger, UFontHelper, UStrUtils;
+  DB.Categories,
+  DB.Main,
+  UColours,
+  UCtrlArranger,
+  UFontHelper,
+  UStrUtils;
 
 {$R *.dfm}
 

@@ -18,9 +18,9 @@ interface
 
 uses
   // Project
-  DB.UCategory,
-  DB.UMain,
-  DB.USnippet,
+  DB.Categories,
+  DB.Main,
+  DB.Snippets,
   DB.Vaults,
   UBaseObjects,
   UExceptions;

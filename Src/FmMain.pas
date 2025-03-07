@@ -585,9 +585,9 @@ uses
   // Project
   ClassHelpers.UControls,
   ClassHelpers.UGraphics,
-  DB.UCategory,
-  DB.UMain,
-  DB.USnippet,
+  DB.Categories,
+  DB.Main,
+  DB.Snippets,
   DB.Vaults,
   FmSplash,
   FmTrappedBugReportDlg,

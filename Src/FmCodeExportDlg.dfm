@@ -10,7 +10,7 @@ inherited CodeExportDlg: TCodeExportDlg
     object lblSnippets: TLabel
       Left = 0
       Top = 0
-      Width = 146
+      Width = 151
       Height = 13
       Caption = 'Select &snippets to be exported:'
       FocusControl = frmSnippets
@@ -18,7 +18,7 @@ inherited CodeExportDlg: TCodeExportDlg
     object lblFile: TLabel
       Left = 0
       Top = 232
-      Width = 200
+      Width = 208
       Height = 13
       Caption = 'Save to &file: (click button to browse for file)'
       FocusControl = edFile

@@ -10,7 +10,7 @@
 }
 
 
-unit DB.USnippet;
+unit DB.Snippets;
 
 
 interface
@@ -25,7 +25,7 @@ uses
   ActiveText.UMain,
   Compilers.UGlobals,
   DB.SnippetIDs,
-  DB.USnippetKind,
+  DB.SnippetKind,
   DB.Vaults,
   UContainers,
   UIStringList;

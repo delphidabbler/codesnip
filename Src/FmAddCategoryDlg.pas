@@ -68,7 +68,9 @@ implementation
 
 uses
   // Project
-  DB.UCategory, DB.UMain, UUniqueID;
+  DB.Categories,
+  DB.Main,
+  UUniqueID;
 
 {$R *.dfm}
 

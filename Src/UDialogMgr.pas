@@ -19,7 +19,9 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.USnippet, UCompileMgr, USearch;
+  DB.Snippets,
+  UCompileMgr,
+  USearch;
 
 
 type

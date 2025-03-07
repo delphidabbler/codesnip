@@ -81,7 +81,10 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, DB.USnippet, Favourites.UPersist, FmFavouritesDlg;
+  DB.Main,
+  DB.Snippets,
+  Favourites.UPersist,
+  FmFavouritesDlg;
 
 
 { TFavouritesManager }

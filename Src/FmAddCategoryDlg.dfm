@@ -12,10 +12,6 @@ inherited AddCategoryDlg: TAddCategoryDlg
       Height = 240
       TabOrder = 0
       TabStop = True
-      inherited lblError: TLabel
-        Width = 108
-        ExplicitWidth = 108
-      end
     end
   end
   inherited btnOK: TButton

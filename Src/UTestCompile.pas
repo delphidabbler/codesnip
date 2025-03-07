@@ -20,7 +20,9 @@ uses
   // Delphi
   Classes,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects;
+  Compilers.UGlobals,
+  DB.Snippets,
+  UBaseObjects;
 
 
 type
