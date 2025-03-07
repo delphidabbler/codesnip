@@ -282,8 +282,7 @@ begin
   // Create map of actual snippet ID to new unique key with default vault
   for Snippet in SnipList do
     fSnippetKeyMap.Add(
-      Snippet.ID,
-      (Database as IDatabaseEdit).GetUniqueSnippetKey(TVaultID.Default)
+      Snippet.ID, Database.GetUniqueSnippetKey(TVaultID.Default)
     );
 end;
 
@@ -428,7 +427,7 @@ begin
   begin
     ImportCatData.Init;
     ImportCatData.Desc := ImportCatDesc;
-    (Database as IDatabaseEdit).AddCategory(ImportCatID, ImportCatData);
+    Database.AddCategory(ImportCatID, ImportCatData);
   end;
 end;
 
@@ -515,8 +514,7 @@ begin
       fSnippetInfo[Idx].Key := SnippetNode.Attributes[
         TCS4ImportExportDocHelper.SnippetNodeNameAttr
       ];
-      fSnippetInfo[Idx].Data :=
-        (Database as IDatabaseEdit).GetEditableSnippetInfo;
+      fSnippetInfo[Idx].Data := Database.GetEditableSnippetInfo;
       fSnippetInfo[Idx].Data.Props.Cat := ImportCatID;
       fSnippetInfo[Idx].Data.Props.Desc := GetDescription(SnippetNode);
       fSnippetInfo[Idx].Data.Props.DisplayName :=
@@ -525,9 +523,10 @@ begin
         );
       if fSnippetInfo[Idx].Data.Props.DisplayName = '' then
         fSnippetInfo[Idx].Data.Props.DisplayName := fSnippetInfo[Idx].Key;
-      fSnippetInfo[Idx].Data.Props.SourceCode := TCS4ImportExportDocHelper.GetSubTagText(
-        fXMLDoc, SnippetNode, TCS4ImportExportDocHelper.SourceCodeTextNodeName
-      );
+      fSnippetInfo[Idx].Data.Props.SourceCode :=
+        TCS4ImportExportDocHelper.GetSubTagText(
+          fXMLDoc, SnippetNode, TCS4ImportExportDocHelper.SourceCodeTextNodeName
+        );
       fSnippetInfo[Idx].Data.Props.HiliteSource :=
         TCS4ImportExportDocHelper.GetHiliteSource(fXMLDoc, SnippetNode, True);
       // how we read extra property depends on version of file

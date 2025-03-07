@@ -299,7 +299,7 @@ end;
 class function TUserDBMgr.CanSave: Boolean;
 begin
   // We can save database if it's been changed
-  Result := (Database as IDatabaseEdit).Updated;
+  Result := Database.Updated;
 end;
 
 class procedure TUserDBMgr.DeleteACategory;
@@ -367,7 +367,7 @@ begin
     ClassName + '.Delete: Current view is not a snippet');
   Snippet := (ViewItem as ISnippetView).Snippet;
   // Check if snippet has dependents: don't allow deletion if so
-  Dependents := (Database as IDatabaseEdit).GetDependents(Snippet);
+  Dependents := Database.GetDependents(Snippet);
   if Dependents.Count > 0 then
   begin
     TMessageBox.Error(
@@ -380,7 +380,7 @@ begin
     Exit;
   end;
   // Get permission to delete. If snippet has dependents list them in prompt
-  Referrers := (Database as IDatabaseEdit).GetReferrers(Snippet);
+  Referrers := Database.GetReferrers(Snippet);
   if Referrers.Count = 0 then
     ConfirmMsg := Format(sConfirmDelete, [Snippet.DisplayName])
   else
@@ -392,7 +392,7 @@ begin
       ]
     );
   if TMessageBox.Confirm(nil, ConfirmMsg) then
-    (Database as IDatabaseEdit).DeleteSnippet(Snippet);
+    Database.DeleteSnippet(Snippet);
 end;
 
 class procedure TUserDBMgr.DuplicateSnippet(ViewItem: IView);
@@ -506,7 +506,7 @@ end;
 
 procedure TUserDBSaveUI.TSaveThread.Execute;
 begin
-  (Database as IDatabaseEdit).Save;
+  Database.Save;
 end;
 
 { TUserDBRestoreUI }

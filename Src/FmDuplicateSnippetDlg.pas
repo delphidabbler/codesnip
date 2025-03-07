@@ -144,9 +144,7 @@ procedure TDuplicateSnippetDlg.btnOKClick(Sender: TObject);
 begin
   try
     ValidateData;
-    fSnippetKey := (Database as IDatabaseEdit).GetUniqueSnippetKey(
-      SelectedVaultID
-    );
+    fSnippetKey := Database.GetUniqueSnippetKey(SelectedVaultID);
     UpdateDatabase;
   except
     on E: Exception do
@@ -231,7 +229,7 @@ end;
 
 procedure TDuplicateSnippetDlg.UpdateDatabase;
 begin
-  (Database as IDatabaseEdit).DuplicateSnippet(
+  Database.DuplicateSnippet(
     fSnippet,
     fSnippetKey,
     SelectedVaultID,

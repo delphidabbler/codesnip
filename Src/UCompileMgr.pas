@@ -171,9 +171,7 @@ begin
     DisplayProc(fCompilers);
   // Copy snippet to LastCompiledSnippet property
   fLastCompiledSnippet.Free;
-  fLastCompiledSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
-    Snippet
-  );
+  fLastCompiledSnippet := Database.CreateTempSnippet(Snippet);
 end;
 
 constructor TCompileMgr.Create(AOwner: TComponent);

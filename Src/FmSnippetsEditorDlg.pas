@@ -710,13 +710,9 @@ begin
     fEditData.Assign(UpdateData);
     // Add or update snippet
     if Assigned(fSnippet) then
-      (Database as IDatabaseEdit).UpdateSnippet(fSnippet, fEditData)
+      Database.UpdateSnippet(fSnippet, fEditData)
     else
-    begin
-      (Database as IDatabaseEdit).AddSnippet(
-        UniqueSnippetKey, SelectedVaultID, fEditData
-      )
-    end;
+      Database.AddSnippet(UniqueSnippetKey, SelectedVaultID, fEditData);
   except
     on E: Exception do
       HandleException(E);
@@ -759,7 +755,7 @@ begin
   ValidateData;
   // Create snippet object from entered data
   EditData.Assign(UpdateData);
-  Result := (Database as IDatabaseEdit).CreateTempSnippet(
+  Result := Database.CreateTempSnippet(
     UniqueSnippetKey, SelectedVaultID, EditData
   );
 end;
@@ -955,7 +951,7 @@ begin
   inherited;
   // Get data associated with snippet, or blank / default data if adding a new
   // snippet
-  fEditData := (Database as IDatabaseEdit).GetEditableSnippetInfo(fSnippet);
+  fEditData := Database.GetEditableSnippetInfo(fSnippet);
   // Populate controls with dynamic data
   PopulateControls;
   // Initialise controls to default values
@@ -1038,7 +1034,7 @@ begin
   if Assigned(fSnippet) then
     Result := fSnippet.Key
   else
-    Result := (Database as IDatabaseEdit).GetUniqueSnippetKey(SelectedVaultID);
+    Result := Database.GetUniqueSnippetKey(SelectedVaultID);
 end;
 
 function TSnippetsEditorDlg.UpdateData: TSnippetEditData;

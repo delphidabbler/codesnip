@@ -657,7 +657,7 @@ end;
 
 procedure TMainForm.actBackupVaultExecute(Sender: TObject);
 begin
-  if (Database as IDatabaseEdit).Updated then
+  if Database.Updated then
     TUserDBMgr.Save(Self);
   TUserDBMgr.BackupDatabase(Self);
   fStatusBarMgr.Update;
@@ -760,7 +760,7 @@ end;
 
 procedure TMainForm.actDeleteVaultExecute(Sender: TObject);
 begin
-  if (Database as IDatabaseEdit).Updated then
+  if Database.Updated then
     TUserDBMgr.Save(Self);
   if TUserDBMgr.DeleteDatabase then
   begin
@@ -947,7 +947,7 @@ end;
 
 procedure TMainForm.actMoveVaultExecute(Sender: TObject);
 begin
-  if (Database as IDatabaseEdit).Updated then
+  if Database.Updated then
     TUserDBMgr.Save(Self);
   TUserDBMgr.MoveDatabase;
 end;
@@ -1158,7 +1158,7 @@ begin
   if fDialogMgr.ExecDBUpdateDlg then
   begin
     // Database was updated: check if user database needs saving
-    if (Database as IDatabaseEdit).Updated
+    if Database.Updated
       and TMessageBox.Confirm(Self, sConfirmSave) then
       TUserDBMgr.Save(Self);
     // Reload the databases
@@ -1325,14 +1325,11 @@ begin
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
-var
-  EditableDB: IDatabaseEdit;
 begin
   inherited;
   // Save any changes to user database
-  EditableDB := Database as IDatabaseEdit;
-  if EditableDB.Updated then
-    EditableDB.Save;
+  if Database.Updated then
+    Database.Save;
 
   // Unhook snippets event handler
   Database.RemoveChangeEventHandler(DBChangeHandler);

@@ -273,9 +273,7 @@ class function TSnippetValidator.ValidateDependsList(const AKey: string;
 var
   TempSnippet: TSnippet;  // temporary snippet that is checked for dependencies
 begin
-  TempSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
-    AKey, AVaultID, AData
-  );
+  TempSnippet := Database.CreateTempSnippet(AKey, AVaultID, AData);
   try
     Result := ValidateDependsList(TempSnippet, AErrorMsg);
   finally

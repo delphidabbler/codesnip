@@ -177,7 +177,7 @@ begin
   begin
     SWAGCatData.Init;
     SWAGCatData.Desc := SWAGCatDesc;
-    (Database as IDatabaseEdit).AddCategory(SWAGCatID, SWAGCatData);
+    Database.AddCategory(SWAGCatID, SWAGCatData);
   end;
 end;
 
@@ -277,9 +277,9 @@ var
   SnippetKey: string;                 // unique ID of new snippet
   SnippetDetails: TSnippetEditData;   // data describing new snippet
 begin
-  SnippetKey := (Database as IDatabaseEdit).GetUniqueSnippetKey(AVaultID);
+  SnippetKey := Database.GetUniqueSnippetKey(AVaultID);
   SnippetDetails := BuildSnippetInfo(SWAGPacket);
-  (Database as IDatabaseEdit).AddSnippet(SnippetKey, AVaultID, SnippetDetails);
+  Database.AddSnippet(SnippetKey, AVaultID, SnippetDetails);
 end;
 
 procedure TSWAGImporter.IncludePacket(const SWAGPacket: TSWAGPacket);

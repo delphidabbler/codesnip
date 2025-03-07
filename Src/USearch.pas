@@ -1084,14 +1084,14 @@ procedure TXRefSearchFilter.ReferenceReverseRequired(const Snippet: TSnippet);
 begin
   if not (soRequiredReverse in fOptions) then
     Exit;
-  AddToXRefs((Database as IDatabaseEdit).GetDependents(Snippet));
+  AddToXRefs(Database.GetDependents(Snippet));
 end;
 
 procedure TXRefSearchFilter.ReferenceReverseSeeAlso(const Snippet: TSnippet);
 begin
   if not (soSeeAlsoReverse in fOptions) then
     Exit;
-  AddToXRefs((Database as IDatabaseEdit).GetReferrers(Snippet));
+  AddToXRefs(Database.GetReferrers(Snippet));
 end;
 
 procedure TXRefSearchFilter.ReferenceSeeAlso(const Snippet: TSnippet);

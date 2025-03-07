@@ -214,7 +214,7 @@ begin
     fImportInfoList.Add(
       TImportInfo.Create(
         SnippetInfo.Key,
-        (Database as IDatabaseEdit).GetUniqueSnippetKey(RequestVaultCallback),
+        Database.GetUniqueSnippetKey(RequestVaultCallback),
         StrIf(
           SnippetInfo.Data.Props.DisplayName = '',
           SnippetInfo.Key,
@@ -251,7 +251,6 @@ type
   end;
 
 var
-  Editor: IDatabaseEdit;                  // object used to update user database
   SnippetInfo: TSnippetInfo;         // info about each snippet from import file
   ImportInfo: TImportInfo;       // info about how / whether to import a snippet
   VaultID: TVaultID;                         // vault into which we're importing
@@ -266,7 +265,6 @@ begin
           fImportInfoList: include all required info in fImportInfoList?
   }
 
-  Editor := Database as IDatabaseEdit;
   VaultID := RequestVaultCallback();
 
   SavedRefs := TList<TSavedReferences>.Create(
@@ -303,7 +301,7 @@ begin
       SnippetDataNoRefs.Refs.Depends.Clear;
 
       // add snippet without any dependency
-      SavedRef.Snippet := Editor.AddSnippet(
+      SavedRef.Snippet := Database.AddSnippet(
         ImportInfo.NewKey, VaultID, SnippetDataNoRefs
       );
 
@@ -314,7 +312,7 @@ begin
     // Add back the saved snippet references
     for SavedRef in SavedRefs do
       if SavedRef.Data.Refs.Depends.Count > 0 then
-        Editor.UpdateSnippet(SavedRef.Snippet, SavedRef.Data);
+        Database.UpdateSnippet(SavedRef.Snippet, SavedRef.Data);
 
   finally
     SavedRefs.Free;

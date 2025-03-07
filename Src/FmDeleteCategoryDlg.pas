@@ -125,7 +125,7 @@ end;
 procedure TDeleteCategoryDlg.DeleteCategory(const Cat: TCategory);
 begin
   Assert(Cat.CanDelete, ClassName + '.DeleteCategory: Cat can''t be deleted');
-  (Database as IDatabaseEdit).DeleteCategory(Cat);
+  Database.DeleteCategory(Cat);
 end;
 
 class function TDeleteCategoryDlg.Execute(AOwner: TComponent;

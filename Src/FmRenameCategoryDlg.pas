@@ -212,9 +212,9 @@ procedure TRenameCategoryDlg.RenameCategory(const Category: TCategory;
 var
   EditData: TCategoryData;  // category properties
 begin
-  EditData := (Database as IDatabaseEdit).GetEditableCategoryInfo(Category);
+  EditData := Database.GetEditableCategoryInfo(Category);
   EditData.Desc := NewDesc;
-  (Database as IDatabaseEdit).UpdateCategory(Category, EditData);
+  Database.UpdateCategory(Category, EditData);
 end;
 
 procedure TRenameCategoryDlg.UpdateOKBtn;
