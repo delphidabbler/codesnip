@@ -150,6 +150,12 @@ type
         @param Category [in] Category to be added.
         @return Index where category inserted in list.
       }
+
+    ///  <summary>Deletes a category from the list.</summary>
+    ///  <param name="Category"><c>TCategory</c> [in] Category to be deleted.
+    ///  </param>
+    procedure Delete(const Category: TCategory);
+
     function Find(const CatID: string): TCategory;
       {Finds a named category in list.
         @param CatID [in] ID of required category.
@@ -169,18 +175,6 @@ type
       {List of categories}
     property Count: Integer read GetCount;
       {Number of categories in list}
-  end;
-
-  {
-  TCategoryListEx:
-    Private extension of TCategoryList for use internally by snippets object.
-  }
-  TCategoryListEx = class(TCategoryList)
-  public
-    procedure Delete(const Category: TCategory);
-      {Deletes a category from the list.
-        @param Category [in] Category to be deleted.
-      }
   end;
 
 
@@ -320,6 +314,16 @@ begin
   fList := TObjectList<TCategory>.Create(OwnsObjects);
 end;
 
+procedure TCategoryList.Delete(const Category: TCategory);
+var
+  Idx: Integer; // index of snippet in list.
+begin
+  Idx := fList.IndexOf(Category);
+  if Idx = -1 then
+    Exit;
+  fList.Delete(Idx);  // this frees category if list owns objects
+end;
+
 destructor TCategoryList.Destroy;
   {Destructor. Tears down object.
   }
@@ -371,21 +375,6 @@ function TCategoryList.GetItem(Idx: Integer): TCategory;
   }
 begin
   Result := fList[Idx];
-end;
-
-{ TCategoryListEx }
-
-procedure TCategoryListEx.Delete(const Category: TCategory);
-  {Deletes a category from the list.
-    @param Category [in] Category to be deleted.
-  }
-var
-  Idx: Integer; // index of snippet in list.
-begin
-  Idx := fList.IndexOf(Category);
-  if Idx = -1 then
-    Exit;
-  fList.Delete(Idx);  // this frees category if list owns objects
 end;
 
 { TCategoryData }

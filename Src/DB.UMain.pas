@@ -756,7 +756,7 @@ constructor TDatabase.Create;
 begin
   inherited Create;
   fSnippets := TSnippetList.Create(True);
-  fCategories := TCategoryListEx.Create(True);
+  fCategories := TCategoryList.Create(True);
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
@@ -771,8 +771,6 @@ var
   Data: TSnippetEditData; // data describing snippet's properties and references
 begin
   Assert(Assigned(Snippet), ClassName + '.CreateTempSnippet: Snippet is nil');
-//  Assert(Snippet is TSnippetEx,
-//    ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
   Data := Snippet.GetEditData;
   Result := TSnippet.Create(Snippet.Key, Snippet.VaultID, Snippet.GetProps);
   Result.UpdateRefs(Snippet.GetReferences, fSnippets);
@@ -1037,7 +1035,7 @@ procedure TDatabase.InternalDeleteCategory(const Cat: TCategory);
     @param Cat [in] Category to delete from database.
   }
 begin
-  (fCategories as TCategoryListEx).Delete(Cat);
+  fCategories.Delete(Cat);
 end;
 
 procedure TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
