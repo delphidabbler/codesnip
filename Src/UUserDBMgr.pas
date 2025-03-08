@@ -91,6 +91,7 @@ implementation
 
 uses
   // Delphi
+  Types,
   SysUtils,
   Dialogs,
   Windows {for inlining},
@@ -322,12 +323,31 @@ end;
 class function TUserDBMgr.DeleteDatabase: Boolean;
 var
   VaultToDelete: TVault;
+  KeepVault: Boolean;
+  VaultDir: string;
+  FileName, DirName: string;
 begin
-  if not TDeleteVaultDlg.Execute(nil, VaultToDelete) then
+  if not TDeleteVaultDlg.Execute(nil, VaultToDelete, KeepVault) then
     Exit(False);
-  if not TDirectory.Exists(VaultToDelete.Storage.Directory) then
+  VaultDir := VaultToDelete.Storage.Directory;
+  if not TDirectory.Exists(VaultDir) then
     Exit(False);
-  TDirectory.Delete(VaultToDelete.Storage.Directory, True);
+  if KeepVault then
+  begin
+    // delete all files and sub directories in vault directory, leaving it in
+    // place
+    for FileName in TDirectory.GetFiles(VaultDir) do
+      TFile.Delete(FileName);
+    for DirName in TDirectory.GetDirectories(VaultDir) do
+      TDirectory.Delete(DirName, True);
+  end
+  else
+  begin
+    // remove vault itself
+    TVaults.Instance.Delete(VaultToDelete.UID); // frees VaultToDelete
+    // delete the vault directory and all its files / sub directories
+    TDirectory.Delete(VaultDir, True);
+  end;
   Result := True;
 end;
 

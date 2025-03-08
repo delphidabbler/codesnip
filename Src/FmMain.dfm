@@ -864,10 +864,10 @@ inherited MainForm: TMainForm
     end
     object actDeleteVault: TAction
       Category = 'Vaults'
-      Caption = 'Delete All Snippets From Vault'
+      Caption = 'Clear or Delete Vault...'
       Hint = 
-        'Delete all snippets from a vault|Delete all the snippets from a ' +
-        'chosen vault - USE WITH CAUTION'
+        'Clear snippets and and optionally delete a vault|Delete all snip' +
+        'pets from a specified vault and optionally delete the vault'
       OnExecute = actDeleteVaultExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
