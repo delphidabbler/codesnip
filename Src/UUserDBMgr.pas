@@ -82,7 +82,7 @@ type
     ///  </summary>
     ///  <returns><c>Boolean</c>. <c>True</c> if the vault's data was deleted,
     ///  <c>False</c> otherwise.</returns>
-    class function DeleteDatabase: Boolean;
+    class function DeleteVault: Boolean;
   end;
 
 
@@ -320,37 +320,6 @@ begin
   end;
 end;
 
-class function TUserDBMgr.DeleteDatabase: Boolean;
-var
-  VaultToDelete: TVault;
-  KeepVault: Boolean;
-  VaultDir: string;
-  FileName, DirName: string;
-begin
-  if not TDeleteVaultDlg.Execute(nil, VaultToDelete, KeepVault) then
-    Exit(False);
-  VaultDir := VaultToDelete.Storage.Directory;
-  if not TDirectory.Exists(VaultDir) then
-    Exit(False);
-  if KeepVault then
-  begin
-    // delete all files and sub directories in vault directory, leaving it in
-    // place
-    for FileName in TDirectory.GetFiles(VaultDir) do
-      TFile.Delete(FileName);
-    for DirName in TDirectory.GetDirectories(VaultDir) do
-      TDirectory.Delete(DirName, True);
-  end
-  else
-  begin
-    // remove vault itself
-    TVaults.Instance.Delete(VaultToDelete.UID); // frees VaultToDelete
-    // delete the vault directory and all its files / sub directories
-    TDirectory.Delete(VaultDir, True);
-  end;
-  Result := True;
-end;
-
 class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
 
   {TODO -cVault: rename following inner method to SnippetDisplayNames for
@@ -413,6 +382,37 @@ begin
     );
   if TMessageBox.Confirm(nil, ConfirmMsg) then
     Database.DeleteSnippet(Snippet);
+end;
+
+class function TUserDBMgr.DeleteVault: Boolean;
+var
+  VaultToDelete: TVault;
+  KeepVault: Boolean;
+  VaultDir: string;
+  FileName, DirName: string;
+begin
+  if not TDeleteVaultDlg.Execute(nil, VaultToDelete, KeepVault) then
+    Exit(False);
+  VaultDir := VaultToDelete.Storage.Directory;
+  if not TDirectory.Exists(VaultDir) then
+    Exit(False);
+  if KeepVault then
+  begin
+    // delete all files and sub directories in vault directory, leaving it in
+    // place
+    for FileName in TDirectory.GetFiles(VaultDir) do
+      TFile.Delete(FileName);
+    for DirName in TDirectory.GetDirectories(VaultDir) do
+      TDirectory.Delete(DirName, True);
+  end
+  else
+  begin
+    // remove vault itself
+    TVaults.Instance.Delete(VaultToDelete.UID); // frees VaultToDelete
+    // delete the vault directory and all its files / sub directories
+    TDirectory.Delete(VaultDir, True);
+  end;
+  Result := True;
 end;
 
 class procedure TUserDBMgr.DuplicateSnippet(ViewItem: IView);

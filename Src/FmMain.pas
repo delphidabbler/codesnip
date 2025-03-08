@@ -768,7 +768,7 @@ procedure TMainForm.actDeleteVaultExecute(Sender: TObject);
 begin
   if Database.Updated then
     TUserDBMgr.Save(Self);
-  if TUserDBMgr.DeleteDatabase then
+  if TUserDBMgr.DeleteVault then
   begin
     ReloadDatabase;
     fStatusBarMgr.Update;
