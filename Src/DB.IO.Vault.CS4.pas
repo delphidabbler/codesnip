@@ -463,12 +463,13 @@ begin
   begin
     // Database doesn't exist: create sufficient nodes for main code to find
     fXMLDoc.Active := True;
+    fVersion := TCS4VaultFormatHelper.LatestVersion;
     TCS4VaultFormatHelper.CreateXMLProcInst(fXMLDoc);
     RootNode := TCS4VaultFormatHelper.CreateRootNode(
       fXMLDoc,
       TCS4VaultFormatHelper.UserDataRootNodeName,
       TCS4VaultFormatHelper.Watermark,
-      TCS4VaultFormatHelper.LatestVersion
+      fVersion
     );
     fXMLDoc.CreateElement(RootNode, TCS4VaultFormatHelper.CategoriesNodeName);
     fXMLDoc.CreateElement(RootNode, TCS4VaultFormatHelper.SnippetsNodeName);
