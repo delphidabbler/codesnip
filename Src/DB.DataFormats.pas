@@ -2,6 +2,9 @@ unit DB.DataFormats;
 
 interface
 
+uses
+  DB.MetaData;
+
 type
 
   ///  <summary>Enumeration of the kinds of supported snippet vault data
@@ -59,17 +62,31 @@ type
         Kind: TDataFormatKind;
         ///  <summary>Data format name.</summary>
         Name: string;
+
+        MetaCaps: TMetaDataCaps;
       end;
     const
       // There are so few entries in this table it's not worth the overhead
       // of using a dictionary for the lookup.
       LookupTable: array[0..2] of TMapRecord = (
         (Kind: TDataFormatKind.Native_Vault;
-          Name: 'CodeSnip Vault Native Snippet Format'),
+          Name: 'CodeSnip Vault Native Snippet Format';
+          MetaCaps: [
+            TMetaDataCap.License, TMetaDataCap.Copyright,
+            TMetaDataCap.Acknowledgements
+          ]
+        ),
         (Kind: TDataFormatKind.Native_v4;
-          Name: 'CodeSnip 4 Native Snippet Format'),
+          Name: 'CodeSnip 4 Native Snippet Format';
+          MetaCaps: []
+        ),
         (Kind: TDataFormatKind.DCSC_v2;
-          Name: 'DelphiDabbler Code Snippets Collection v2 Format')
+          Name: 'DelphiDabbler Code Snippets Collection v2 Format';
+          MetaCaps: [
+            TMetaDataCap.Version, TMetaDataCap.License,
+            TMetaDataCap.Copyright, TMetaDataCap.Acknowledgements
+          ]
+        )
       );
     class function IndexOf(const AKind: TDataFormatKind): Integer; static;
   public
@@ -82,15 +99,31 @@ type
     ///  <c>AKind</c>. Returns an empty string if no name is associated with
     ///  <c>AKind</c>.</summary>
     class function GetName(const AKind: TDataFormatKind): string; static;
+
+    class function GetMetaDataCaps(const AKind: TDataFormatKind): TMetaDataCaps;
+      static;
+
     ///  <summary>Returns an array of all supported data formats.</summary>
     ///  <returns><c>TArray&lt;TDataFormatKind&gt;</c>. Array of values
     ///  that identify the supported data formats.</returns>
     class function GetSupportedFormats: TArray<TDataFormatKind>; static;
+
   end;
 
 implementation
 
 { TDataFormatInfo }
+
+class function TDataFormatInfo.GetMetaDataCaps(const AKind: TDataFormatKind):
+  TMetaDataCaps;
+var
+  Idx: Integer;
+begin
+  Idx := IndexOf(AKind);
+  if Idx < 0 then
+    Exit([]);
+  Result := LookupTable[Idx].MetaCaps;
+end;
 
 class function TDataFormatInfo.GetName(const AKind: TDataFormatKind): string;
 var
