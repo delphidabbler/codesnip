@@ -593,6 +593,7 @@
 			<DCCReference Include="UMarkdownUtils.pas"/>
 			<DCCReference Include="ActiveText.UMarkdownRenderer.pas"/>
 			<DCCReference Include="UMarkdownSnippetDoc.pas"/>
+			<DCCReference Include="DB.MetaData.Licenses.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
