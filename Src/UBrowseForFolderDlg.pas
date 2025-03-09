@@ -54,6 +54,8 @@ type
     function GetHelpKeyword: string;
     ///  <summary>Getter for MakeFolderBtnVisible property.</summary>
     function GetMakeFolderBtnVisible: Boolean;
+    ///  <summary>Getter for FolderName property.</summary>
+    procedure SetFolderName(const Value: string);
     ///  <summary>Setter for Headline property.</summary>
     procedure SetHeadline(const Value: string);
     ///  <summary>Setter for Title property.</summary>
@@ -77,7 +79,7 @@ type
     ///  <summary>Heading line display in dialog box.</summary>
     property Headline: string read GetHeadline write SetHeadline;
     ///  <summary>Name of folder selected in dialog box.</summary>
-    property FolderName: string read GetFolderName;
+    property FolderName: string read GetFolderName write SetFolderName;
     ///  <summary>Help keyword. No help button is displayed: help topic is
     ///  displayed if F1 key is pressed.</summary>
     property HelpKeyword: string read GetHelpKeyword write SetHelpKeyword;
@@ -157,6 +159,11 @@ end;
 function TBrowseForFolderDlg.GetTitle: string;
 begin
   Result := fDialog.Title;
+end;
+
+procedure TBrowseForFolderDlg.SetFolderName(const Value: string);
+begin
+  fDialog.FolderName := Value;
 end;
 
 procedure TBrowseForFolderDlg.SetHeadline(const Value: string);
