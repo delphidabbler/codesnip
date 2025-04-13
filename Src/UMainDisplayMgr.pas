@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that manages and co-ordinates the display of the program's main UI.
  * Calls into subsidiary manager objects to perform display operations.
@@ -291,6 +291,23 @@ type
 
     /// <summary>Prepares display ready for database to be reloaded.</summary>
     procedure PrepareForDBReload;
+
+    ///  <summary>Gets the overview frame prepared for program hibernation.
+    ///  </summary>
+    ///  <remarks>Saves the overview tree view state ready for restoring after
+    ///  hibernation.</remarks>
+    procedure PrepareForHibernate;
+
+    ///  <summary>Restores the overview's tree view to have the correct IView
+    ///  instances after hibernation restores the previously saved state.
+    ///  </summary>
+    ///  <remarks>Sometimes, Windows quietly recreates the node of the tree view
+    ///  after resuming from hibernation, without restoring the associated IView
+    ///  instances, leading to access violations. This method should be called
+    ///  after resuming from hibernation to recreate the tree view with the
+    ///  correct IView instances.</remarks>
+    procedure RestoreFromHibernation;
+
   end;
 
 
@@ -566,6 +583,12 @@ begin
   fPendingViewChange := True;
 end;
 
+procedure TMainDisplayMgr.PrepareForHibernate;
+begin
+  // simply save the state of the overview tree view ready for later restoration
+  (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
+end;
+
 procedure TMainDisplayMgr.RedisplayOverview;
 begin
   (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
@@ -591,6 +614,12 @@ begin
   // Clear all tabs and force re-displayed of overview
   (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
   (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
+end;
+
+procedure TMainDisplayMgr.RestoreFromHibernation;
+begin
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
+  (fOverviewMgr as IOverviewDisplayMgr).RestoreTreeState;
 end;
 
 procedure TMainDisplayMgr.SelectAll;
