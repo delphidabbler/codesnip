@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Application's main form. Handles the program's main window display and user
  * interaction.
@@ -1517,7 +1517,6 @@ begin
 
     // Create object to handle compilation and assoicated UI and dialogues
     fCompileMgr := TMainCompileMgr.Create(Self);  // auto-freed
-
 
     // Set event handler for snippets database
     Database.AddChangeEventHandler(DBChangeHandler);
