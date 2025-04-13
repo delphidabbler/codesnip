@@ -86,6 +86,7 @@ type
             @return True if node is a section header, False if not.
           }
       end;
+
     var
       fTVDraw: TTVDraw;             // Object that renders tree view nodes
       fNotifier: INotifier;         // Notifies app of user initiated events
@@ -966,7 +967,12 @@ var
   ViewItem: IView;  // view item represented by node
 begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
-  Result := ViewItem.IsGrouping;
+  // Workaround for possibility that ViewItem might be nil when restarting after
+  // hibernation.
+  if Assigned(ViewItem) then
+    Result := ViewItem.IsGrouping
+  else
+    Result := False;
 end;
 
 function TOverviewFrame.TTVDraw.IsUserDefinedNode(
@@ -979,8 +985,12 @@ var
   ViewItem: IView;  // view item represented by node
 begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
-  // TODO -cBug: Exception reported as issue #70 seems to be triggered here
-  Result := ViewItem.IsUserDefined;
+  // Workaround for possibility that ViewItem might be nil when restarting after
+  // hibernation.
+  if Assigned(ViewItem) then
+    Result := ViewItem.IsUserDefined
+  else
+    Result := False;
 end;
 
 end.
