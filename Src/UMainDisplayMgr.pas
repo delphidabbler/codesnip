@@ -165,6 +165,11 @@ type
     procedure DisplayViewItem(ViewItem: IView; Mode: TDetailPageDisplayMode);
       overload;
 
+    ///  <summary>!! HACK event handle to redisplay the overview pane treeview.
+    ///  Called only if Windows has mysteriously recreated the treeview and lost
+    ///  necessary object references.</summary>
+    procedure _HACK_HibernateHandler(Sender: TObject);
+
   public
     ///  <summary>Object contructor. Sets up object to work with given frame
     ///  manager objects.</summary>
@@ -292,21 +297,12 @@ type
     /// <summary>Prepares display ready for database to be reloaded.</summary>
     procedure PrepareForDBReload;
 
-    ///  <summary>Gets the overview frame prepared for program hibernation.
-    ///  </summary>
+    ///  <summary>!!HACK: gets the overview frame prepared for program
+    ///  hibernation.</summary>
     ///  <remarks>Saves the overview tree view state ready for restoring after
-    ///  hibernation.</remarks>
-    procedure PrepareForHibernate;
-
-    ///  <summary>Restores the overview's tree view to have the correct IView
-    ///  instances after hibernation restores the previously saved state.
-    ///  </summary>
-    ///  <remarks>Sometimes, Windows quietly recreates the node of the tree view
-    ///  after resuming from hibernation, without restoring the associated IView
-    ///  instances, leading to access violations. This method should be called
-    ///  after resuming from hibernation to recreate the tree view with the
-    ///  correct IView instances.</remarks>
-    procedure RestoreFromHibernation;
+    ///  hibernation if Windows has recreated the overview pane's treeview,
+    ///  losing necessary IView object references..</remarks>
+    procedure _HACK_PrepareForHibernate;
 
   end;
 
@@ -583,12 +579,6 @@ begin
   fPendingViewChange := True;
 end;
 
-procedure TMainDisplayMgr.PrepareForHibernate;
-begin
-  // simply save the state of the overview tree view ready for later restoration
-  (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
-end;
-
 procedure TMainDisplayMgr.RedisplayOverview;
 begin
   (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
@@ -614,12 +604,6 @@ begin
   // Clear all tabs and force re-displayed of overview
   (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
   (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
-end;
-
-procedure TMainDisplayMgr.RestoreFromHibernation;
-begin
-  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
-  (fOverviewMgr as IOverviewDisplayMgr).RestoreTreeState;
 end;
 
 procedure TMainDisplayMgr.SelectAll;
@@ -718,6 +702,22 @@ end;
 procedure TMainDisplayMgr.UpdateOverviewTreeState(const State: TTreeNodeAction);
 begin
   (fOverviewMgr as IOverviewDisplayMgr).UpdateTreeState(State);
+end;
+
+procedure TMainDisplayMgr._HACK_HibernateHandler(Sender: TObject);
+begin
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
+  (fOverviewMgr as IOverviewDisplayMgr).RestoreTreeState;
+  // disable this handler until next resume from hibernation
+  (fOverviewMgr as IOverviewDisplayMgr)._HACK_SetHibernateHandler(nil);
+end;
+
+procedure TMainDisplayMgr._HACK_PrepareForHibernate;
+begin
+  (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
+  (fOverviewMgr as IOverviewDisplayMgr)._HACK_SetHibernateHandler(
+    _HACK_HibernateHandler
+  );
 end;
 
 end.

@@ -1,8 +1,8 @@
 # CodeSnip Version Information Macros for Including in .vi files
 
 # Version & build numbers
-version=4.24.1
-build=273
+version=4.24.2
+build=274
 
 # String file information
 copyright=Copyright © P.D.Johnson, 2005-<YEAR>.

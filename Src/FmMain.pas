@@ -524,9 +524,10 @@ type
 
     ///  <summary>Handles the <c>WM_POWERBROADCAST</c> messages to detect and
     ///  respond to hibernation messages.</summary>
-    ///  <remarks>This is necessary as part of the fix for an obscure bug. See
+    ///  <remarks>!! HACK necessary as part of the fix for an obscure bug. See
     ///  https://github.com/delphidabbler/codesnip/issues/70</remarks>
     procedure WMPowerBroadcast(var Msg: TMessage); message WM_POWERBROADCAST;
+
     ///  <summary>Displays view item given by TViewItemAction instance
     ///  referenced by Sender and adds to history list.</summary>
     procedure ActViewItemExecute(Sender: TObject);
@@ -1587,6 +1588,7 @@ end;
 
 procedure TMainForm.WMPowerBroadcast(var Msg: TMessage);
 begin
+  // !! HACK
   // Sometimes when the computer is resumed from hibernation the tree view in
   // the overview frame is destroyed and recreated by Windows. Unfortunately the
   // IView instances associated with the recreated tree nodes are lost.
@@ -1594,11 +1596,7 @@ begin
   // access violation.
   case Msg.WParam of
     PBT_APMSUSPEND:
-      // Get ready for isolation
-      fMainDisplayMgr.PrepareForHibernate;
-    PBT_APMPOWERSTATUSCHANGE:
-      // Restore from hibernation: ensure the IView instances are recreeated
-      fMainDisplayMgr.RestoreFromHibernation;
+      fMainDisplayMgr._HACK_PrepareForHibernate;
   end;
 end;
 
