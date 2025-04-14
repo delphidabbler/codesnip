@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Declares interfaces, constants and enumerations required to manage various
  * parts of CodeSnip's UI.
@@ -19,6 +19,7 @@ interface
 uses
   // Delphi
   SHDocVw, ActiveX,
+  Classes, // !! For HACK
   // Project
   Browser.IntfDocHostUI, DB.USnippet, Compilers.UGlobals, UCommandBars, UView;
 
@@ -145,6 +146,9 @@ type
     ///  <summary>Restore expand / collapse state of treeview to last save
     ///  state.</summary>
     procedure RestoreTreeState;
+    ///  <summary>!! HACK: Sets an event handler on the tree view to work
+    ///  around a bug that can occur after resuming from hibernation.</summary>
+    procedure _HACK_SetHibernateHandler(const AHandler: TNotifyEvent);
   end;
 
 type
