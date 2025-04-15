@@ -6,6 +6,18 @@ Releases are listed in reverse version number order.
 
 > Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some v3 releases have later release dates than early v4 releases.
 
+## Release v4.24.2 of 14 April 2025
+
+Hotfix release.
+
+* Updated bug fix implemented in v4.24.1 to avoid relying on a potentially problematic windows event [issue #70 (2nd attempt)].
+* Corrected release date error for v4.24.1 in `CHANGELOG.md`.
+
+## Release v4.24.1 of 13 April 2025
+
+* Fixed bug where CodeSnip occasionally crashes after a computer resumes from hibernation [issue #70].
+* Bumped some copyright dates for 2025.
+
 ## Release v4.24.0 of 23 October 2024
 
 * Compilers with which a snippet has not been tested are now omitted from snippet information that is copied to the clipboard and included in print outs [issue #143].

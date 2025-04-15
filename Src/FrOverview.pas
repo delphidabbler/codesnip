@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a titled frame that displays lists of snippets, arranged in
  * different ways, and manages user interaction with the displayed items.
@@ -40,6 +40,29 @@ uses
 
 
 type
+
+  // !! HACK
+  // Horrible hack to expose CreateWnd for overiding TTreeView.CreateWnd for the
+  // existing TTreeView component of TOverviewFrame. The hack avoids having to
+  // remove the component and replacing it with a descendant class that is
+  // manually constructed at run time.
+  // This is here to enable the tree view to be recreated with correctly
+  // instantiated TViewItemTreeNode nodes after Windows recreates the tree
+  // behind the scenes after resuming from hibernation.
+  // I am deeply ashamed of this hack.
+  TTreeView = class(ComCtrls.TTreeView)
+  strict private
+    var
+      _HACK_fOnAfterCreateNilViews: TNotifyEvent;
+  protected
+    procedure CreateWnd; override;
+  public
+    ///  <summary>!! HACK. Event triggered after the inherited CreateWnd is
+    ///  called. Only called if the tree view has nil references to IView
+    ///  objects.</summary>
+    property _HACK_OnAfterCreateNilViews: TNotifyEvent
+      read _HACK_fOnAfterCreateNilViews write _HACK_fOnAfterCreateNilViews;
+  end;
 
   {
   TOverviewFrame:
@@ -105,6 +128,7 @@ type
             @return True if node is a section header, False if not.
           }
       end;
+
     var
       fTVDraw: TTVDraw;             // Object that renders tree view nodes
       fNotifier: INotifier;         // Notifies app of user initiated events
@@ -232,6 +256,10 @@ type
     procedure RestoreTreeState;
       {Restores last saved treeview expansion state from memory.
       }
+    ///  <summary>!! HACK: Sets an event handler on the tree view to work
+    ///  around a bug that can occur after resuming from hibernation.</summary>
+    ///  <remarks>Method of IOverviewDisplayMgr.</remarks>
+    procedure _HACK_SetHibernateHandler(const AHandler: TNotifyEvent);
     { IPaneInfo }
     function IsInteractive: Boolean;
       {Checks if the pane is currently interactive with user.
@@ -975,6 +1003,12 @@ begin
   end;
 end;
 
+procedure TOverviewFrame._HACK_SetHibernateHandler(
+  const AHandler: TNotifyEvent);
+begin
+  tvSnippets._HACK_OnAfterCreateNilViews := AHandler;
+end;
+
 { TOverviewFrame.TTVDraw }
 
 function TOverviewFrame.TTVDraw.GetVaultID(const Node: TTreeNode): TVaultID;
@@ -984,7 +1018,7 @@ var
 begin
   // TODO -cBug: Exception reported as issue #70 could have moved here
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
-  if Supports(ViewItem, ISnippetView, SnippetView) then
+  if Assigned(ViewItem) and Supports(ViewItem, ISnippetView, SnippetView) then
     Result := SnippetView.Snippet.VaultID
   else
     Result := TVaultID.CreateNull;
@@ -1000,7 +1034,31 @@ var
   ViewItem: IView;  // view item represented by node
 begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
-  Result := ViewItem.IsGrouping;
+  // Workaround for possibility that ViewItem might be nil when restarting after
+  // hibernation.
+  if Assigned(ViewItem) then
+    Result := ViewItem.IsGrouping
+  else
+    Result := False;
+end;
+
+{ TTreeView }
+
+procedure TTreeView.CreateWnd;
+var
+  HasNilViews: Boolean;
+  Node: TTreeNode;
+begin
+  inherited;
+  HasNilViews := False;
+  for Node in Items do
+  begin
+    HasNilViews := not Assigned((Node as TViewItemTreeNode).ViewItem);
+    if HasNilViews then
+      Break;
+  end;
+  if HasNilViews and Assigned(_HACK_fOnAfterCreateNilViews) then
+    _HACK_fOnAfterCreateNilViews(Self);
 end;
 
 end.

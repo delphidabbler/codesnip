@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that manages and co-ordinates the display of the program's main UI.
  * Calls into subsidiary manager objects to perform display operations.
@@ -165,6 +165,11 @@ type
     procedure DisplayViewItem(ViewItem: IView; Mode: TDetailPageDisplayMode);
       overload;
 
+    ///  <summary>!! HACK event handle to redisplay the overview pane treeview.
+    ///  Called only if Windows has mysteriously recreated the treeview and lost
+    ///  necessary object references.</summary>
+    procedure _HACK_HibernateHandler(Sender: TObject);
+
   public
     ///  <summary>Object contructor. Sets up object to work with given frame
     ///  manager objects.</summary>
@@ -291,6 +296,14 @@ type
 
     /// <summary>Prepares display ready for database to be reloaded.</summary>
     procedure PrepareForDBReload;
+
+    ///  <summary>!!HACK: gets the overview frame prepared for program
+    ///  hibernation.</summary>
+    ///  <remarks>Saves the overview tree view state ready for restoring after
+    ///  hibernation if Windows has recreated the overview pane's treeview,
+    ///  losing necessary IView object references..</remarks>
+    procedure _HACK_PrepareForHibernate;
+
   end;
 
 
@@ -691,6 +704,22 @@ end;
 procedure TMainDisplayMgr.UpdateOverviewTreeState(const State: TTreeNodeAction);
 begin
   (fOverviewMgr as IOverviewDisplayMgr).UpdateTreeState(State);
+end;
+
+procedure TMainDisplayMgr._HACK_HibernateHandler(Sender: TObject);
+begin
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
+  (fOverviewMgr as IOverviewDisplayMgr).RestoreTreeState;
+  // disable this handler until next resume from hibernation
+  (fOverviewMgr as IOverviewDisplayMgr)._HACK_SetHibernateHandler(nil);
+end;
+
+procedure TMainDisplayMgr._HACK_PrepareForHibernate;
+begin
+  (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
+  (fOverviewMgr as IOverviewDisplayMgr)._HACK_SetHibernateHandler(
+    _HACK_HibernateHandler
+  );
 end;
 
 end.

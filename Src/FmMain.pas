@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Application's main form. Handles the program's main window display and user
  * interaction.
@@ -520,6 +520,12 @@ type
       fCompileMgr: TMainCompileMgr;
       ///  <summary>Object that manages favourites.</summary>
       fFavouritesMgr: TFavouritesManager;
+
+    ///  <summary>Handles the <c>WM_POWERBROADCAST</c> messages to detect and
+    ///  respond to hibernation messages.</summary>
+    ///  <remarks>!! HACK necessary as part of the fix for an obscure bug. See
+    ///  https://github.com/delphidabbler/codesnip/issues/70</remarks>
+    procedure WMPowerBroadcast(var Msg: TMessage); message WM_POWERBROADCAST;
 
     ///  <summary>Displays view item given by TViewItemAction instance
     ///  referenced by Sender and adds to history list.</summary>
@@ -1345,7 +1351,6 @@ begin
   // fStatusBarMgr MUST be nilled: otherwise it can be called after status bar
   // control has been freed and so cause AV when trying to use the control
   FreeAndNil(fStatusBarMgr);
-
 end;
 
 procedure TMainForm.FormResize(Sender: TObject);
@@ -1531,7 +1536,6 @@ begin
     // Create object to handle compilation and assoicated UI and dialogues
     fCompileMgr := TMainCompileMgr.Create(Self);  // auto-freed
 
-
     // Set event handler for snippets database
     Database.AddChangeEventHandler(DBChangeHandler);
 
@@ -1597,6 +1601,20 @@ begin
   if (NewSize < TMainWindowSettings.MinLeftPanelWidth)
     or (NewSize > ClientWidth - TMainWindowSettings.MinRightPanelWidth) then
     Accept := False;
+end;
+
+procedure TMainForm.WMPowerBroadcast(var Msg: TMessage);
+begin
+  // !! HACK
+  // Sometimes when the computer is resumed from hibernation the tree view in
+  // the overview frame is destroyed and recreated by Windows. Unfortunately the
+  // IView instances associated with the recreated tree nodes are lost.
+  // Attempting to read those (now nil) IView instances was resulting in an
+  // access violation.
+  case Msg.WParam of
+    PBT_APMSUSPEND:
+      fMainDisplayMgr._HACK_PrepareForHibernate;
+  end;
 end;
 
 end.
