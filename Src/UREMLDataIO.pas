@@ -281,12 +281,15 @@ type
           }
       end;
     class var fEntityMap: array of TREMLEntity; // Entity <=> character map
+
+    ///  <summary>Attempts to map a character to an associated mnemonic
+    ///  character entity, without the surrounding <c>&amp;</c> and <c>;</c>
+    ///  characters.</summary>
+    ///  <param name="Ch"><c>Char</c> [in] Character to be mapped.</param>
+    ///  <returns><c>string</c>. The associated mnemonic entity or an empty
+    ///  string if not such entity exists.</returns>
     class function CharToMnemonicEntity(const Ch: Char): string;
-      {Gets the mnemonic character entity that represents a character.
-        @param Entity [in] Character for which equivalent entity is required.
-        @return Required entity or '' if character has no matching mnemonic
-          entity.
-      }
+
     class function GetCount: Integer; static;
       {Read accessor for Count property.
         @return Number of supported tags.
@@ -309,13 +312,16 @@ type
     class destructor Destroy;
       {Class destructor. Clears entity map
       }
+
+    ///  <summary>Attempts to map a character to a character enitity, without
+    ///  the surrounding <c>&amp;</c> and <c>;</c> characters.</summary>
+    ///  <param name="Ch"><c>Char</c> [in] Character to be mapped.</param>
+    ///  <returns><c>string</c>. A mnemonic entity if one exists for <c>Ch</c>.
+    ///  Otherwise if <c>Ch</c> is not a printable ASCII character a numeric
+    ///  entity is returned. If <c>Ch</c> is a printable ASCII character an
+    ///  empty string is returned.</returns>
     class function MapToEntity(const Ch: Char): string;
-      {Maps a character to a character entity if appropriate.
-        @param Ch [in] Character to be mapped.
-        @return Mnemonic entity if one exists, character itself if it is
-          printable and has ascii value less than 127, or a numeric character
-          otherwise.
-      }
+
     class property Count: Integer read GetCount;
       {Number of supported tags}
     class property Entities[Idx: Integer]: string read GetEntity;
@@ -1013,10 +1019,6 @@ end;
 { TREMLEntities }
 
 class function TREMLEntities.CharToMnemonicEntity(const Ch: Char): string;
-  {Gets the mnemonic character entity that represents a character.
-    @param Entity [in] Character for which equivalent entity is required.
-    @return Required entity or '' if character has no matching mnemonic entity.
-  }
 var
   Idx: Integer; // loops thru table of entity / characters
 begin
@@ -1112,11 +1114,6 @@ begin
 end;
 
 class function TREMLEntities.MapToEntity(const Ch: Char): string;
-  {Maps a character to a character entity if appropriate.
-    @param Ch [in] Character to be mapped.
-    @return Mnemonic entity if one exists, character itself if it is printable
-      and has ascii value less than 127, or a numeric character otherwise.
-  }
 begin
   Result := CharToMnemonicEntity(Ch);
   if (Result = '') and ( (Ord(Ch) <= 31) or (Ord(Ch) >= 127) ) then
