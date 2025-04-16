@@ -241,6 +241,8 @@ type
     tbSpacer7: TToolButton;
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
+    miSaveInfo: TMenuItem;
+    actSaveInfo: TAction;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>
@@ -501,6 +503,8 @@ type
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
     procedure ActNonEmptyUserDBUpdate(Sender: TObject);
+    procedure actSaveInfoUpdate(Sender: TObject);
+    procedure actSaveInfoExecute(Sender: TObject);
   strict private
     var
       ///  <summary>Object that notifies user-initiated events by triggering
@@ -596,9 +600,9 @@ uses
   UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
   UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
   UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper,
-  UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,
-  USaveUnitMgr, USelectionIOMgr, UUrl, UUserDBMgr, UView, UViewItemAction,
-  UWBExternal;
+  UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveInfoMgr,
+  USaveSnippetMgr, USaveUnitMgr, USelectionIOMgr, UUrl, UUserDBMgr, UView,
+  UViewItemAction, UWBExternal;
 
 
 {$R *.dfm}
@@ -1023,6 +1027,17 @@ end;
 procedure TMainForm.actSaveDatabaseUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := TUserDBMgr.CanSave;
+end;
+
+procedure TMainForm.actSaveInfoExecute(Sender: TObject);
+begin
+  TSaveInfoMgr.Execute(fMainDisplayMgr.CurrentView);
+end;
+
+procedure TMainForm.actSaveInfoUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled :=
+    TSaveInfoMgr.CanHandleView(fMainDisplayMgr.CurrentView);
 end;
 
 procedure TMainForm.actSaveSelectionExecute(Sender: TObject);
