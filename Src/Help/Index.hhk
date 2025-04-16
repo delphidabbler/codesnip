@@ -317,6 +317,10 @@
     <param name="Local" value="HTML\dlg_renamecategory.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="save snippet information dialogue">
+    <param name="Local" value="HTML\dlg_saveinfo.htm">
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="save annotated source dialogue">
     <param name="Local" value="HTML\dlg_savesnippet.htm">
     </OBJECT>
