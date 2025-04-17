@@ -331,16 +331,23 @@ const
     dtHTML,       // sfXHTML
     dtRTF         // sfRTF
   );
+  PreviewFileTypeMap: array[TPreviewDocType] of TSourceFileType = (
+    sfText,       // dtPlainText
+    sfXHTML,      // dtHTML
+    sfRTF         // dtRTF
+  );
 var
-  FileType: TSourceFileType;  // type of source file to preview
+  PreviewFileType: TSourceFileType;  // type of source file to preview
+  PreviewDocType: TPreviewDocType;   // type of file to be generated for preview
 begin
-  FileType := FileTypeFromFilterIdx;
+  PreviewDocType := PreviewDocTypeMap[FileTypeFromFilterIdx];
+  PreviewFileType := PreviewFileTypeMap[PreviewDocType];
   // Display preview dialog box. We use save dialog as owner to ensure preview
   // dialog box is aligned over save dialog box
   TPreviewDlg.Execute(
     fSaveDlg,
-    GenerateOutput(FileType),
-    PreviewDocTypeMap[FileType],
+    GenerateOutput(PreviewFileType),
+    PreviewDocType,
     GetDocTitle
   );
 end;
