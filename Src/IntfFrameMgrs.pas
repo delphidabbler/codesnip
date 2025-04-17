@@ -19,7 +19,6 @@ interface
 uses
   // Delphi
   SHDocVw, ActiveX,
-  Classes, // !! For HACK
   // Project
   Browser.IntfDocHostUI, DB.USnippet, Compilers.UGlobals, UCommandBars, UView;
 
