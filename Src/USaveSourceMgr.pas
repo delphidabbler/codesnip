@@ -49,10 +49,11 @@ type
     ///  Provides array of encodings supported for a file extension.</summary>
     ///  <param name="Sender">TObject [in] Reference to object that triggered
     ///  event.</param>
-    ///  <param name="Ext">string [in] Name of extension to check.</param>
+    ///  <param name="FilterIdx">string [in] Index of file type withing dialog's
+    ///  filter string to check.</param>
     ///  <param name="Encodings">TSourceFileEncodings [in/out] Receives array of
     ///  supported encodings.</param>
-    procedure EncodingQueryHandler(Sender: TObject; const Ext: string;
+    procedure EncodingQueryHandler(Sender: TObject; const FilterIdx: Integer;
       var Encodings: TSourceFileEncodings);
     ///  <summary>Handles custom save dialog's OnPreview event. Displays source
     ///  code appropriately formatted in preview dialog box.</summary>
@@ -81,6 +82,12 @@ type
     ///  <returns>TEncodedData - Formatted source code, syntax highlighted if
     ///  required.</returns>
     function GenerateOutput(const FileType: TSourceFileType): TEncodedData;
+    ///  <summary>Returns the source file type associated with the selected
+    ///  index in the save dialogue box.</summary>
+    ///  <remarks>This method assumes that the filter string entries are in the
+    ///  same order as elements of the <c>TSourceFileType</c> enumeration.
+    ///  </remarks>
+    function FileTypeFromFilterIdx: TSourceFileType;
   strict protected
     ///  <summary>Internal constructor. Initialises managed save source dialog
     ///  box and records information about supported file types.</summary>
@@ -178,18 +185,16 @@ var
 begin
   // Set up dialog box
   fSaveDlg.Filter := fSourceFileInfo.FilterString;
-  fSaveDlg.FilterIndex := ExtToFilterIndex(
+  fSaveDlg.FilterIndex := FilterDescToIndex(
     fSaveDlg.Filter,
-    fSourceFileInfo.FileTypeInfo[Preferences.SourceDefaultFileType].Extension,
+    fSourceFileInfo.FileTypeInfo[Preferences.SourceDefaultFileType].DisplayName,
     1
   );
   fSaveDlg.FileName := fSourceFileInfo.DefaultFileName;
   // Display dialog box and save file if user OKs
   if fSaveDlg.Execute then
   begin
-    FileType := fSourceFileInfo.FileTypeFromExt(
-      ExtractFileExt(fSaveDlg.FileName)
-    );
+    FileType := FileTypeFromFilterIdx;
     FileContent := GenerateOutput(FileType).ToString;
     Encoding := TEncodingHelper.GetEncoding(fSaveDlg.SelectedEncoding);
     try
@@ -201,12 +206,25 @@ begin
 end;
 
 procedure TSaveSourceMgr.EncodingQueryHandler(Sender: TObject;
-  const Ext: string; var Encodings: TSourceFileEncodings);
+  const FilterIdx: Integer; var Encodings: TSourceFileEncodings);
 var
   FileType: TSourceFileType;  // type of file that has given extension
 begin
-  FileType := fSourceFileInfo.FileTypeFromExt(Ext);
+  FileType := FileTypeFromFilterIdx;
   Encodings := fSourceFileInfo.FileTypeInfo[FileType].Encodings;
+end;
+
+function TSaveSourceMgr.FileTypeFromFilterIdx: TSourceFileType;
+var
+  FilterIdx: Integer; // dlg FilterIndex adjusted to be 0 based
+begin
+  FilterIdx := fSaveDlg.FilterIndex - 1;
+  Assert(
+    (FilterIdx >= Ord(Low(TSourceFileType)))
+      and (FilterIdx <= Ord(High(TSourceFileType))),
+    ClassName + '.FileTypeFromFilterIdx: FilerIdx out of range'
+  );
+  Result := TSourceFileType(FilterIdx)
 end;
 
 function TSaveSourceMgr.GenerateOutput(const FileType: TSourceFileType):
@@ -231,7 +249,7 @@ end;
 procedure TSaveSourceMgr.HiliteQueryHandler(Sender: TObject; const Ext: string;
   var CanHilite: Boolean);
 begin
-  CanHilite := IsHilitingSupported(fSourceFileInfo.FileTypeFromExt(Ext));
+  CanHilite := IsHilitingSupported(FileTypeFromFilterIdx);
 end;
 
 constructor TSaveSourceMgr.InternalCreate;
@@ -259,6 +277,13 @@ begin
     GetFileTypeDesc(sfPascal),
     [
       TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
+      TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
+    ]
+  );
+  fSourceFileInfo.FileTypeInfo[sfHTML5] := TSourceFileTypeInfo.Create(
+    '.html',
+    GetFileTypeDesc(sfHTML5),
+    [
       TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
     ]
   );
@@ -305,7 +330,7 @@ const
 var
   FileType: TSourceFileType;  // type of source file to preview
 begin
-  FileType := fSourceFileInfo.FileTypeFromExt(fSaveDlg.SelectedExt);
+  FileType := FileTypeFromFilterIdx;
   // Display preview dialog box. We use save dialog as owner to ensure preview
   // dialog box is aligned over save dialog box
   TPreviewDlg.Execute(

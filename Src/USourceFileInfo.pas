@@ -105,9 +105,6 @@ type
     ///  <summary>Builds filter string for use in open / save dialog boxes from
     ///  descriptions and file extensions of each supported file type.</summary>
     function FilterString: string;
-    ///  <summary>Finds source file type associated with a file extension.
-    ///  </summary>
-    function FileTypeFromExt(const Ext: string): TSourceFileType;
     ///  <summary>Array of information about each supported file type that is
     ///  of use to save source dialog boxes.</summary>
     property FileTypeInfo[const FileType: TSourceFileType]: TSourceFileTypeInfo
@@ -131,22 +128,6 @@ uses
 
 
 { TSourceFileInfo }
-
-function TSourceFileInfo.FileTypeFromExt(const Ext: string): TSourceFileType;
-var
-  FT: TSourceFileType;  // loops thru all source file types
-begin
-  // Assume text file type if extension not recognised
-  Result := sfText;
-  for FT := Low(TSourceFileType) to High(TSourceFileType) do
-  begin
-    if StrSameText(Ext, fFileTypeInfo[FT].Extension) then
-    begin
-      Result := FT;
-      Break;
-    end;
-  end;
-end;
 
 function TSourceFileInfo.FilterString: string;
 const
