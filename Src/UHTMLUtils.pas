@@ -19,6 +19,7 @@ uses
   // Delphi
   Classes, Graphics, Generics.Collections,
   // Project
+  UBaseObjects,
   UIStringList;
 
 
@@ -123,10 +124,12 @@ type
   end;
 
 type
-  ///  <summary>
-  ///  Container for static methods that generate HTML tags and entities.
-  ///  </summary>
-  THTML = record
+
+  THTMLClass = class of THTML;
+
+  ///  <summary>Abstract base classe for static classes that return valid tags
+  ///  for different flavours of HTML.</summary>
+  THTML = class abstract(TNoConstructObject)
   strict private
     ///  <summary>Generates either an HTML start tag or a simple tag with given
     ///  name and attributes.</summary>
@@ -137,8 +140,9 @@ type
     ///  be simple (True) or the start of a compound tag (False).</param>
     ///  <returns>string. Required tag.</returns>
     class function TagWithAttrs(const Name: string; Attrs: IHTMLAttributes;
-      const IsSimple: Boolean): string; static;
-
+      const IsSimple: Boolean): string;
+  strict protected
+    class function GetSimpleTagCloser: string; virtual; abstract;
   public
     ///  <summary>Generates an opening HTML tag.</summary>
     ///  <param name="Name">string [in] Name of tag.</param>
@@ -147,13 +151,13 @@ type
     ///  <returns>String. Required tag.</returns>
     ///  <remarks>Example tag: &lt;p class=&quot;ident&quot;&gt;</remarks>
     class function OpeningTag(const Name: string; Attrs: IHTMLAttributes = nil):
-      string; static;
+      string;
 
     ///  <summary>Generates a closing HTML tag.</summary>
     ///  <param name="Name">string [in] Name of tag.</param>
     ///  <returns>String. Required tag.</returns>
     ///  <remarks>Example tag: &lt;/p&gt;</remarks>
-    class function ClosingTag(const Name: string): string; static;
+    class function ClosingTag(const Name: string): string;
 
     ///  <summary>Generates a simple HTML tag.</summary>
     ///  <param name="Name">string [in] Name of tag.</param>
@@ -162,7 +166,7 @@ type
     ///  <returns>String. Required tag.</returns>
     ///  <remarks>Example tag: &lt;img class=&quot;glyph&quot; /&gt;</remarks>
     class function SimpleTag(const Name: string; Attrs: IHTMLAttributes = nil):
-      string; static;
+      string;
 
     ///  <summary>Surrounds the given HTML in a HTML tag pair.</summary>
     ///  <param name="Name">string [in] Name of tag.</param>
@@ -172,7 +176,7 @@ type
     ///  the tag pair.</param>
     ///  <returns>String. Required tag.</returns>
     class function CompoundTag(const Name: string; Attrs: IHTMLAttributes;
-      const InnerHTML: string): string; overload; static;
+      const InnerHTML: string): string; overload;
 
     ///  <summary>Surrounds the given HTML in a HTML tag pair. The opening tag
     ///  has no attributes.</summary>
@@ -181,13 +185,26 @@ type
     ///  the tag pair.</param>
     ///  <returns>String. Required tag.</returns>
     class function CompoundTag(const Name, InnerHTML: string): string; overload;
-      static;
 
     ///  <summary>Encodes the given string replacing any HTML-incompatible
     ///  characters with character entities.</summary>
-    class function Entities(const Text: string): string; static;
+    class function Entities(const Text: string): string;
   end;
 
+
+  ///  <summary>Contains static methods that generate XHTML tags and entities.
+  ///  </summary>
+  TXHTML = class sealed (THTML)
+  strict protected
+    class function GetSimpleTagCloser: string; override;
+  end;
+
+  ///  <summary>Contains static methods that generate HTML5 tags and entities.
+  ///  </summary>
+  THTML5 = class sealed (THTML)
+  strict protected
+    class function GetSimpleTagCloser: string; override;
+  end;
 
 implementation
 
@@ -260,9 +277,23 @@ begin
   if Assigned(Attrs) and (not Attrs.IsEmpty) then
     Result := Result + ' ' + Attrs.RenderSafe;
   if IsSimple then
-    Result := Result + ' />'
+    Result := Result + GetSimpleTagCloser
   else
     Result := Result + '>';
+end;
+
+{ TXHTML }
+
+class function TXHTML.GetSimpleTagCloser: string;
+begin
+  Result := ' />';
+end;
+
+{ THTML5 }
+
+class function THTML5.GetSimpleTagCloser: string;
+begin
+  Result := '>';
 end;
 
 { THTMLAttributes }
@@ -376,8 +407,8 @@ begin
     Result := Result + Format(
       ' %0:s="%1:s"',
       [
-        THTML.Entities(fAttrs.Names[Idx]),
-        THTML.Entities(fAttrs.ValueFromIndex[Idx])
+        TXHTML.Entities(fAttrs.Names[Idx]),
+        TXHTML.Entities(fAttrs.ValueFromIndex[Idx])
       ]
     );
   Result := StrTrimLeft(Result);

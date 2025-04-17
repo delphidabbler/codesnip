@@ -391,10 +391,10 @@ end;
 
 function TNewTabPageHTML.GetBodyHTML: string;
 begin
-  Result := THTML.CompoundTag(
+  Result := TXHTML.CompoundTag(
     'div',
     THTMLAttributes.Create('id', 'newtab'),
-    THTML.Entities(View.Description)
+    TXHTML.Entities(View.Description)
   );
 end;
 
@@ -452,9 +452,9 @@ begin
     for Compiler in Compilers do
       if Compiler.IsAvailable then
         CompilerList.AppendLine(
-          THTML.CompoundTag(
+          TXHTML.CompoundTag(
             'li',
-            THTML.Entities(Compiler.GetName)
+            TXHTML.Entities(Compiler.GetName)
           )
         );
     Tplt.ResolvePlaceholderHTML('CompilerList', CompilerList.ToString);
@@ -470,9 +470,9 @@ resourcestring
   sBody = 'The database has been updated successfully.';
 begin
   Result :=
-    THTML.CompoundTag('h1', View.Description)
+    TXHTML.CompoundTag('h1', View.Description)
     +
-    THTML.CompoundTag('p', sBody);
+    TXHTML.CompoundTag('p', sBody);
 end;
 
 { TSnippetInfoPageHTML }
@@ -623,14 +623,14 @@ begin
   DescCellAttrs := THTMLAttributes.Create('class', 'desc');
   SnippetHTML := TSnippetHTML.Create(Snippet);
   try
-    Result := THTML.CompoundTag(
+    Result := TXHTML.CompoundTag(
       'tr',
-      THTML.CompoundTag(
+      TXHTML.CompoundTag(
         'td',
         NameCellAttrs,
         SnippetHTML.SnippetALink
       )
-      + THTML.CompoundTag('td', DescCellAttrs, SnippetHTML.Description)
+      + TXHTML.CompoundTag('td', DescCellAttrs, SnippetHTML.Description)
     );
   finally
     SnippetHTML.Free;

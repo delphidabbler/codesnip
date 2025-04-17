@@ -142,22 +142,22 @@ resourcestring
 
 procedure THTMLBuilder.AddText(const Text: string);
 begin
-  fBodyInner.Append(THTML.Entities(Text));
+  fBodyInner.Append(TXHTML.Entities(Text));
 end;
 
 function THTMLBuilder.BodyTag: string;
 begin
-  Result := THTML.CompoundTag(cBodyTag, EOL + HTMLFragment + EOL);
+  Result := TXHTML.CompoundTag(cBodyTag, EOL + HTMLFragment + EOL);
 end;
 
 procedure THTMLBuilder.ClosePre;
 begin
-  fBodyInner.Append(THTML.ClosingTag(cPreTag));
+  fBodyInner.Append(TXHTML.ClosingTag(cPreTag));
 end;
 
 procedure THTMLBuilder.CloseSpan;
 begin
-  fBodyInner.Append(THTML.ClosingTag(cSpanTag));
+  fBodyInner.Append(TXHTML.ClosingTag(cSpanTag));
 end;
 
 constructor THTMLBuilder.Create;
@@ -182,10 +182,10 @@ end;
 
 function THTMLBuilder.HeadTag: string;
 begin
-  Result := THTML.CompoundTag(
+  Result := TXHTML.CompoundTag(
     cHeadTag,
     EOL
-      + THTML.CompoundTag(cTitleTag, THTML.Entities(Title))
+      + TXHTML.CompoundTag(cTitleTag, TXHTML.Entities(Title))
       + EOL
       + InlineStyleSheet
   );
@@ -222,7 +222,7 @@ function THTMLBuilder.HTMLTag: string;
   // ---------------------------------------------------------------------------
 
 begin
-  Result := THTML.CompoundTag(
+  Result := TXHTML.CompoundTag(
     cHTMLTag,
     HTMLAttrs,
     EOL + HeadTag + EOL + BodyTag + EOL
@@ -237,7 +237,7 @@ begin
   begin
     Attrs := THTMLAttributes.Create('type', 'text/css');
     Result := EOL
-      + THTML.CompoundTag(cStyleTag, Attrs, EOL + fCSS + EOL)
+      + TXHTML.CompoundTag(cStyleTag, Attrs, EOL + fCSS + EOL)
       + EOL;
   end
   else
@@ -258,12 +258,12 @@ end;
 
 procedure THTMLBuilder.OpenPre(const ClassName: string);
 begin
-  fBodyInner.Append(THTML.OpeningTag(cPreTag, MakeClassAttr(ClassName)));
+  fBodyInner.Append(TXHTML.OpeningTag(cPreTag, MakeClassAttr(ClassName)));
 end;
 
 procedure THTMLBuilder.OpenSpan(const ClassName: string);
 begin
-  fBodyInner.Append(THTML.OpeningTag(cSpanTag, MakeClassAttr(ClassName)));
+  fBodyInner.Append(TXHTML.OpeningTag(cSpanTag, MakeClassAttr(ClassName)));
 end;
 
 end.

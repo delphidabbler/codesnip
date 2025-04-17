@@ -143,7 +143,7 @@ function TSnippetHTML.EmptyListSentence: string;
 resourcestring
   sEmpty = 'None';
 begin
-  Result := THTML.Entities(StrMakeSentence(sEmpty));
+  Result := TXHTML.Entities(StrMakeSentence(sEmpty));
 end;
 
 function TSnippetHTML.Extra: string;
@@ -161,7 +161,7 @@ begin
     THTMLAttribute.Create('onclick', JSFn + '; return false;'),
     THTMLAttribute.Create('class', CSSClass)
   ]);
-  Result := THTML.CompoundTag('a', Attrs, THTML.Entities(Text));
+  Result := TXHTML.CompoundTag('a', Attrs, TXHTML.Entities(Text));
 end;
 
 function TSnippetHTML.RenderActiveText(ActiveText: IActiveText): string;
@@ -199,7 +199,7 @@ end;
 
 function TSnippetHTML.SnippetName: string;
 begin
-  Result := THTML.Entities(fSnippet.DisplayName);
+  Result := TXHTML.Entities(fSnippet.DisplayName);
 end;
 
 class function TSnippetHTML.SnippetALink(const Snippet: TSnippet): string;
@@ -221,7 +221,7 @@ end;
 
 function TSnippetHTML.SnippetKind: string;
 begin
-  Result := THTML.Entities(
+  Result := TXHTML.Entities(
     StrMakeSentence(TSnippetKindInfoList.Items[fSnippet.Kind].DisplayName)
   );
 end;
@@ -267,9 +267,9 @@ var
 begin
   Attrs := THTMLAttributes.Create;
   Attrs.Add('src', MakeResourceURL(ImgSrcs[fSnippet.TestInfo].ResName));
-  Attrs.Add('title', THTML.Entities(ImgSrcs[fSnippet.TestInfo].Title));
+  Attrs.Add('title', TXHTML.Entities(ImgSrcs[fSnippet.TestInfo].Title));
   Attrs.Add('class', 'testing-img');
-  Result := THTML.SimpleTag('img', Attrs);
+  Result := TXHTML.SimpleTag('img', Attrs);
 end;
 
 function TSnippetHTML.Units: string;
@@ -277,7 +277,7 @@ begin
   if fSnippet.Units.Count = 0 then
     Result := EmptyListSentence
   else
-    Result := THTML.Entities(StrJoin(fSnippet.Units, ', ', False) + '.');
+    Result := TXHTML.Entities(StrJoin(fSnippet.Units, ', ', False) + '.');
 end;
 
 function TSnippetHTML.XRefs: string;
