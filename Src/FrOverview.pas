@@ -18,6 +18,7 @@ interface
 
 uses
   // Delphi
+  Generics.Collections,
   ComCtrls, Controls, Classes, Windows, ExtCtrls, StdCtrls, ToolWin, Menus,
   // Project
   DB.USnippet, FrTitled, IntfFrameMgrs, IntfNotifier, UCommandBars,
@@ -88,6 +89,7 @@ type
       end;
 
     var
+      fViewStore : TList<IView>;    // Stores the references of the Views
       fTVDraw: TTVDraw;             // Object that renders tree view nodes
       fNotifier: INotifier;         // Notifies app of user initiated events
       fCanChange: Boolean;          // Whether selected node allowed to change
@@ -284,6 +286,7 @@ var
   TabIdx: Integer;  // loops through tabs
 begin
   inherited;
+  fViewStore := TList<IView>.Create;
   // Create delegated (contained) command bar manager for toolbar and popup menu
   fCommandBars := TCommandBarMgr.Create(Self);
   fCommandBars.AddCommandBar(
@@ -319,6 +322,7 @@ begin
   fSelectedItem := nil;
   fSnippetList.Free;  // does not free referenced snippets
   fCommandBars.Free;
+  fViewStore.Free;
   inherited;
 end;
 
@@ -520,7 +524,7 @@ begin
       Exit;
     // Build new treeview using grouping determined by selected tab
     Builder := BuilderClasses[tcDisplayStyle.TabIndex].Create(
-      tvSnippets, fSnippetList
+      tvSnippets, fSnippetList, fViewStore
     );
     Builder.Build;
     // Restore state of treeview based on last time it was displayed

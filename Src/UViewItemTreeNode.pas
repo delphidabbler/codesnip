@@ -31,14 +31,28 @@ type
   }
   TViewItemTreeNode = class(TTreeNode)
   strict private
-    var fViewItem: IView; // Value of ViewItem property
+    function GetViewItem: IView;
+    procedure SetViewItem(const Value: IView);
+  published // Value of ViewItem property
   public
-    property ViewItem: IView read fViewItem write fViewItem;
+    property ViewItem: IView read GetViewItem write SetViewItem;
       {View item associated with tree node}
   end;
 
 
 implementation
+
+{ TViewItemTreeNode }
+
+function TViewItemTreeNode.GetViewItem: IView;
+begin
+  Result := IView(Data);
+end;
+
+procedure TViewItemTreeNode.SetViewItem(const Value: IView);
+begin
+  Data := Pointer(Value);
+end;
 
 end.
 

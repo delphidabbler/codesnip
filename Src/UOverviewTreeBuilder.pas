@@ -18,6 +18,7 @@ interface
 
 uses
   // Delphu
+  Generics.Collections,
   ComCtrls,
   // Project
   DB.USnippet, UGroups, UView, UViewItemTreeNode;
@@ -34,11 +35,14 @@ type
     var
       fTreeView: TTreeView;       // Value of TreeView property
       fSnippetList: TSnippetList; // Value of SnippetList property
+      fViewStore : TList<IView>;
   strict protected
     property TreeView: TTreeView read fTreeView;
       {Reference to treeview populated by class}
     property SnippetList: TSnippetList read fSnippetList;
       {List of snippets to be displayed in treeview}
+    property ViewStore : TList<IView> read fViewStore;
+      {List of views attached to treeview nodes}
     function AddViewItemNode(const ParentNode: TViewItemTreeNode;
       ViewItem: IView): TViewItemTreeNode;
       {Adds a new node to the tree view that represents a view item.
@@ -57,7 +61,7 @@ type
         @return Required view item object.
       }
   public
-    constructor Create(const TV: TTreeView; const SnippetList: TSnippetList);
+    constructor Create(const TV: TTreeView; const SnippetList: TSnippetList; const ViewStore : TList<IView>);
       {Class constructor. Sets up object to populate a treeview with a list of
       snippets.
         @param TV [in] Treeview control to be populated.
@@ -177,7 +181,9 @@ var
   ParentNode: TViewItemTreeNode;  // each section node in tree
   Grouping: TGrouping;            // groups snippets
   Group: TGroupItem;              // each group of snippets
+  View: IView;
 begin
+  ViewStore.Clear;
   // Create required grouping of snippets
   Grouping := CreateGrouping;
   try
@@ -186,11 +192,17 @@ begin
     begin
       if not Group.IsEmpty or Preferences.ShowEmptySections then
       begin
-        ParentNode := AddViewItemNode(nil, CreateViewItemForGroup(Group));
+        View := CreateViewItemForGroup(Group);
+        ParentNode := AddViewItemNode(nil, View);
+        ViewStore.Add(View);
         for Snippet in Group.SnippetList do
+        begin
+          View := TViewFactory.CreateSnippetView(Snippet);
           AddViewItemNode(
-            ParentNode, TViewFactory.CreateSnippetView(Snippet)
+            ParentNode, View
           );
+          ViewStore.Add(View);
+        end;
       end;
     end;
   finally
@@ -199,7 +211,7 @@ begin
 end;
 
 constructor TOverviewTreeBuilder.Create(const TV: TTreeView;
-  const SnippetList: TSnippetList);
+  const SnippetList: TSnippetList; const ViewStore : TList<IView>);
   {Class constructor. Sets up object to populate a treeview with a list of
   snippets.
     @param TV [in] Treeview control to be populated.
@@ -209,6 +221,7 @@ begin
   inherited Create;
   fTreeView := TV;
   fSnippetList := SnippetList;
+  fViewStore := ViewStore;
 end;
 
 { TOverviewCategorisedTreeBuilder }
