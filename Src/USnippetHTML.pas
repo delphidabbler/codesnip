@@ -236,7 +236,7 @@ begin
     Attrs := THiliteAttrsFactory.CreateUserAttrs
   else
     Attrs := THiliteAttrsFactory.CreateNulAttrs;
-  Builder := THTMLBuilder.Create;
+  Builder := TXHTMLBuilder.Create;
   try
     Renderer := THTMLHiliteRenderer.Create(Builder, Attrs);
     TSyntaxHiliter.Hilite(fSnippet.SourceCode, Renderer);

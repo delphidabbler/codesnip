@@ -100,6 +100,7 @@ begin
   case fFileType of
     sfRTF: HilitedDocCls := TRTFDocumentHiliter;
     sfXHTML: HilitedDocCls := TXHTMLDocumentHiliter;
+    sfHTML5: HilitedDocCls := THTML5DocumentHiliter;
     else HilitedDocCls := TNulDocumentHiliter;
   end;
   if fWantHiliting and IsHilitingSupported(fFileType) then
