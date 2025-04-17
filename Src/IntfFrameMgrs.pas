@@ -146,9 +146,6 @@ type
     ///  <summary>Restore expand / collapse state of treeview to last save
     ///  state.</summary>
     procedure RestoreTreeState;
-    ///  <summary>!! HACK: Sets an event handler on the tree view to work
-    ///  around a bug that can occur after resuming from hibernation.</summary>
-    procedure _HACK_SetHibernateHandler(const AHandler: TNotifyEvent);
   end;
 
 type
