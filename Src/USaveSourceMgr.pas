@@ -262,9 +262,9 @@ begin
       TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
     ]
   );
-  fSourceFileInfo.FileTypeInfo[sfHTML] := TSourceFileTypeInfo.Create(
+  fSourceFileInfo.FileTypeInfo[sfXHTML] := TSourceFileTypeInfo.Create(
     '.html',
-    GetFileTypeDesc(sfHTML),
+    GetFileTypeDesc(sfXHTML),
     [
       TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
     ]

@@ -28,7 +28,7 @@ type
   TSourceFileType = (
     sfText,     // plain text files
     sfPascal,   // pascal files (either .pas for units or .inc for include files
-    sfHTML,     // HTML files
+    sfXHTML,    // XHTML files
     sfRTF       // rich text files
   );
 
