@@ -325,7 +325,11 @@ procedure TSaveSourceMgr.PreviewHandler(Sender: TObject);
 const
   // Map of source file type to preview document types
   PreviewDocTypeMap: array[TSourceFileType] of TPreviewDocType = (
-    dtPlainText, dtPlainText, dtHTML, dtRTF
+    dtPlainText,  // sfText
+    dtPlainText,  // sfPascal
+    dtHTML,       // sfHTML5
+    dtHTML,       // sfXHTML
+    dtRTF         // sfRTF
   );
 var
   FileType: TSourceFileType;  // type of source file to preview

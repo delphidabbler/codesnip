@@ -99,6 +99,7 @@ resourcestring
   sCategory = 'category';
   sSnippet = 'routine';
   // File filter strings
+  sHtml5ExtDesc = 'HTML 5 file';
   sXHtmExtDesc = 'XHTML file';
   sRtfExtDesc = 'Rich text file';
   sIncExtDesc = 'Pascal include file';
@@ -170,7 +171,7 @@ function TSaveSnippetMgr.GetFileTypeDesc(
   const FileType: TSourceFileType): string;
 const
   Descriptions: array[TSourceFileType] of string = (
-    sTxtExtDesc, sIncExtDesc, sXHtmExtDesc, sRtfExtDesc
+    sTxtExtDesc, sIncExtDesc, sHtml5ExtDesc, sXHtmExtDesc, sRtfExtDesc
   );
 begin
   Result := Descriptions[FileType];

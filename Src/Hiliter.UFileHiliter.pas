@@ -116,7 +116,7 @@ class function TFileHiliter.IsHilitingSupported(
     @return True if file type supports highlighting, false if not.
   }
 begin
-  Result := FileType in [sfXHTML, sfRTF];
+  Result := FileType in [sfHTML5, sfXHTML, sfRTF];
 end;
 
 end.

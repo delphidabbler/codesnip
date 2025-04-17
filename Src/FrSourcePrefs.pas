@@ -121,7 +121,8 @@ uses
 
 resourcestring
   // File type descriptions
-  sHTMLFileDesc = 'HTML';
+  sHTML5FileDesc = 'HTML 5';
+  sXHTMLFileDesc = 'XHTML';
   sRTFFileDesc = 'Rich text';
   sPascalFileDesc = 'Pascal';
   sTextFileDesc = 'Plain text';
@@ -130,7 +131,7 @@ resourcestring
 const
   // Maps source code file types to descriptions
   cFileDescs: array[TSourceFileType] of string = (
-    sTextFileDesc, sPascalFileDesc, sHTMLFileDesc, sRTFFileDesc
+    sTextFileDesc, sPascalFileDesc, sHTML5FileDesc, sXHTMLFileDesc, sRTFFileDesc
   );
 
 
