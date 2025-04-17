@@ -99,7 +99,8 @@ var
 begin
   case fFileType of
     sfRTF: HilitedDocCls := TRTFDocumentHiliter;
-    sfHTML: HilitedDocCls := TXHTMLDocumentHiliter;
+    sfXHTML: HilitedDocCls := TXHTMLDocumentHiliter;
+    sfHTML5: HilitedDocCls := THTML5DocumentHiliter;
     else HilitedDocCls := TNulDocumentHiliter;
   end;
   if fWantHiliting and IsHilitingSupported(fFileType) then
@@ -116,7 +117,7 @@ class function TFileHiliter.IsHilitingSupported(
     @return True if file type supports highlighting, false if not.
   }
 begin
-  Result := FileType in [sfHTML, sfRTF];
+  Result := FileType in [sfHTML5, sfXHTML, sfRTF];
 end;
 
 end.

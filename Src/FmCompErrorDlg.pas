@@ -341,7 +341,7 @@ var
 begin
   Result := '';
   for Line in fLog do
-    Result := Result + THTML.CompoundTag('li', THTML.Entities(Line)) + EOL;
+    Result := Result + TXHTML.CompoundTag('li', TXHTML.Entities(Line)) + EOL;
 end;
 
 end.

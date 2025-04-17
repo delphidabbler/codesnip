@@ -23,10 +23,12 @@ uses
 
 
 type
-  ///  <summary>
-  ///  Class used to create content of a XHTML strict document.
-  ///  </summary>
-  THTMLBuilder = class(TObject)
+
+  THTMLBuilderClass = class of THTMLBuilder;
+
+  ///  <summary>Abstract base class for classes that create the content of
+  ///  different types of HTML documents.</summary>
+  THTMLBuilder = class abstract (TObject)
   strict private
     var
       ///  <summary>Value of CSS property.</summary>
@@ -48,6 +50,9 @@ type
     ///  </summary>
     function HeadTag: string;
 
+    ///  <summary>Build document's &lt;title&gt; tag and its content.</summary>
+    function TitleTag: string;
+
     ///  <summary>Builds document's compound &lt;body&gt; tag and its content.
     ///  </summary>
     function BodyTag: string;
@@ -60,6 +65,30 @@ type
     ///  <remarks>Returns default title if title is empty string.</remarks>
     function GetTitle: string;
 
+  strict protected
+    const
+      // Various HTML tag names
+      HTMLTagName = 'html';
+      HeadTagName = 'head';
+      TitleTagName = 'title';
+      MetaTagName = 'meta';
+      StyleTagName = 'style';
+      BodyTagName = 'body';
+      PreTagName = 'pre';
+      SpanTagName = 'span';
+  strict protected
+    ///  <summary>Returns the class used to generate tags for the appropriate
+    ///  type of HTML.</summary>
+    function TagGenerator: THTMLClass; virtual; abstract;
+    ///  <summary>Returns any preamble to be written to the HTML before the
+    ///  opening &lt;html&gt; tag.</summary>
+    function Preamble: string; virtual; abstract;
+    ///  <summary>Returns the attributes of the document's &lt;html&gt; tag.
+    ///  </summary>
+    function HTMLTagAttrs: IHTMLAttributes; virtual; abstract;
+    ///  <summary>Returns any &lt;meta&gt; tags to be included within the
+    ///  document's &lt;head&gt; tag.</summary>
+    function MetaTags: string; virtual; abstract;
   public
     ///  <summary>Object constructor. Initialises object with empty body.
     ///  </summary>
@@ -107,6 +136,51 @@ type
     property CSS: string read fCSS write fCSS;
   end;
 
+  ///  <summary>Class used to create the content of a XHTML strict document.
+  ///  </summary>
+  TXHTMLBuilder = class sealed(THTMLBuilder)
+  strict private
+    const
+      // XML processor instruction
+      XMLProcInstruction = '<?xml version="1.0"?>';
+      // XML document type
+      XHTMLDocType = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '
+        + '"https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+  strict protected
+    ///  <summary>Returns the class used to generate XHTML compliant tags.
+    ///  </summary>
+    function TagGenerator: THTMLClass; override;
+    ///  <summary>Returns the XML processing instruction followed by the XHTML
+    ///  doctype.</summary>
+    function Preamble: string; override;
+    ///  <summary>Returns the attributes required for an XHTML &lt;html&gt; tag.
+    ///  </summary>
+    function HTMLTagAttrs: IHTMLAttributes; override;
+    ///  <summary>Returns a &lt;meta&gt; tag that specifies the text/html
+    ///  content type and UTF-8 encodiing.</summary>
+    function MetaTags: string; override;
+  end;
+
+  ///  <summary>Class used to create the content of a HTML 5 document.</summary>
+  THTML5Builder = class sealed(THTMLBuilder)
+  strict private
+    const
+      // HTML 5 document type
+      HTML5DocType = '<!DOCTYPE HTML>';
+  strict protected
+    ///  <summary>Returns the class used to generate HTML 5 compliant tags.
+    ///  </summary>
+    function TagGenerator: THTMLClass; override;
+    ///  <summary>Returns the HTML 5 doctype.</summary>
+    function Preamble: string; override;
+    ///  <summary>Returns the attributes required for an HTML 5 &lt;html&gt;
+    ///  tag.</summary>
+    function HTMLTagAttrs: IHTMLAttributes; override;
+    ///  <summary>Returns a &lt;meta&gt; tag that specifies that the document
+    ///  uses UTF-8 encoding.</summary>
+    function MetaTags: string; override;
+  end;
+
 
 implementation
 
@@ -114,23 +188,6 @@ implementation
 uses
   // Project
   UConsts;
-
-
-const
-  // XHTML document elements
-  // XML processor instruction
-  cXMLProcInstruction = '<?xml version="1.0"?>';
-  // XML document type
-  cDocType = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '
-    + '"https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-  // Various tag names
-  cHTMLTag = 'html';
-  cHeadTag = 'head';
-  cTitleTag = 'title';
-  cStyleTag = 'style';
-  cBodyTag = 'body';
-  cPreTag = 'pre';
-  cSpanTag = 'span';
 
 
 resourcestring
@@ -142,22 +199,22 @@ resourcestring
 
 procedure THTMLBuilder.AddText(const Text: string);
 begin
-  fBodyInner.Append(THTML.Entities(Text));
+  fBodyInner.Append(TagGenerator.Entities(Text));
 end;
 
 function THTMLBuilder.BodyTag: string;
 begin
-  Result := THTML.CompoundTag(cBodyTag, EOL + HTMLFragment + EOL);
+  Result := TagGenerator.CompoundTag(BodyTagName, EOL + HTMLFragment + EOL);
 end;
 
 procedure THTMLBuilder.ClosePre;
 begin
-  fBodyInner.Append(THTML.ClosingTag(cPreTag));
+  fBodyInner.Append(TagGenerator.ClosingTag(PreTagName));
 end;
 
 procedure THTMLBuilder.CloseSpan;
 begin
-  fBodyInner.Append(THTML.ClosingTag(cSpanTag));
+  fBodyInner.Append(TagGenerator.ClosingTag(SpanTagName));
 end;
 
 constructor THTMLBuilder.Create;
@@ -182,23 +239,15 @@ end;
 
 function THTMLBuilder.HeadTag: string;
 begin
-  Result := THTML.CompoundTag(
-    cHeadTag,
-    EOL
-      + THTML.CompoundTag(cTitleTag, THTML.Entities(Title))
-      + EOL
-      + InlineStyleSheet
+  Result := TagGenerator.CompoundTag(
+    HeadTagName,
+    EOL + MetaTags + EOL + TitleTag + EOL + InlineStyleSheet
   );
 end;
 
 function THTMLBuilder.HTMLDocument: string;
 begin
-  Result := cXMLProcInstruction
-    + EOL
-    + cDocType
-    + EOL
-    + HTMLTag
-    + EOL;
+  Result := Preamble + EOL + HTMLTag + EOL;
 end;
 
 function THTMLBuilder.HTMLFragment: string;
@@ -207,24 +256,10 @@ begin
 end;
 
 function THTMLBuilder.HTMLTag: string;
-
-  // ---------------------------------------------------------------------------
-  ///  <summary>Builds object describing attributes of &lt;html&gt; tag.
-  ///  </summary>
-  function HTMLAttrs: IHTMLAttributes;
-  begin
-    Result := THTMLAttributes.Create(
-      [THTMLAttribute.Create('xmlns', 'https://www.w3.org/1999/xhtml'),
-      THTMLAttribute.Create('xml:lang', 'en'),
-      THTMLAttribute.Create('lang', 'en')]
-    );
-  end;
-  // ---------------------------------------------------------------------------
-
 begin
-  Result := THTML.CompoundTag(
-    cHTMLTag,
-    HTMLAttrs,
+  Result := TagGenerator.CompoundTag(
+    HTMLTagName,
+    HTMLTagAttrs,
     EOL + HeadTag + EOL + BodyTag + EOL
   );
 end;
@@ -236,9 +271,7 @@ begin
   if fCSS <> '' then
   begin
     Attrs := THTMLAttributes.Create('type', 'text/css');
-    Result := EOL
-      + THTML.CompoundTag(cStyleTag, Attrs, EOL + fCSS + EOL)
-      + EOL;
+    Result := TagGenerator.CompoundTag(StyleTagName, Attrs, EOL + fCSS) + EOL;
   end
   else
     Result := '';
@@ -258,12 +291,81 @@ end;
 
 procedure THTMLBuilder.OpenPre(const ClassName: string);
 begin
-  fBodyInner.Append(THTML.OpeningTag(cPreTag, MakeClassAttr(ClassName)));
+  fBodyInner.Append(
+    TagGenerator.OpeningTag(PreTagName, MakeClassAttr(ClassName))
+  );
 end;
 
 procedure THTMLBuilder.OpenSpan(const ClassName: string);
 begin
-  fBodyInner.Append(THTML.OpeningTag(cSpanTag, MakeClassAttr(ClassName)));
+  fBodyInner.Append(
+    TagGenerator.OpeningTag(SpanTagName, MakeClassAttr(ClassName))
+  );
+end;
+
+function THTMLBuilder.TitleTag: string;
+begin
+  Result := TagGenerator.CompoundTag(
+    TitleTagName, TagGenerator.Entities(Title)
+  );
+end;
+
+{ TXHTMLBuilder }
+
+function TXHTMLBuilder.HTMLTagAttrs: IHTMLAttributes;
+begin
+  Result := THTMLAttributes.Create(
+    [THTMLAttribute.Create('xmlns', 'https://www.w3.org/1999/xhtml'),
+    THTMLAttribute.Create('xml:lang', 'en'),
+    THTMLAttribute.Create('lang', 'en')]
+  );
+end;
+
+function TXHTMLBuilder.MetaTags: string;
+begin
+  Result := TagGenerator.SimpleTag(
+    MetaTagName,
+    THTMLAttributes.Create([
+      THTMLAttribute.Create('http-equiv', 'content-type'),
+      THTMLAttribute.Create('content', 'text/html; UTF-8')
+    ])
+  );
+end;
+
+function TXHTMLBuilder.Preamble: string;
+begin
+  Result := XMLProcInstruction + EOL + XHTMLDocType;
+end;
+
+function TXHTMLBuilder.TagGenerator: THTMLClass;
+begin
+  Result := TXHTML;
+end;
+
+{ THTML5Builder }
+
+function THTML5Builder.HTMLTagAttrs: IHTMLAttributes;
+begin
+  Result := THTMLAttributes.Create('lang', 'en');
+end;
+
+function THTML5Builder.MetaTags: string;
+begin
+  // <meta charset="UTF-8">
+  Result := TagGenerator.SimpleTag(
+    MetaTagName,
+    THTMLAttributes.Create('charset', 'UTF-8')
+  );
+end;
+
+function THTML5Builder.Preamble: string;
+begin
+  Result := HTML5DocType;
+end;
+
+function THTML5Builder.TagGenerator: THTMLClass;
+begin
+  Result := THTML5;
 end;
 
 end.
