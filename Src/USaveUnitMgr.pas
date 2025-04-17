@@ -107,7 +107,7 @@ resourcestring
   // Dialog box title
   sSaveDlgTitle = 'Save Unit';
   // File filter strings
-  sHTMLDesc = 'HTML file';
+  sXHTMLDesc = 'XHTML file';
   sRTFDesc = 'Rich text file';
   sPascalDesc = 'Pascal unit';
   sTextDesc = 'Plain text file';
@@ -241,7 +241,7 @@ end;
 function TSaveUnitMgr.GetFileTypeDesc(const FileType: TSourceFileType): string;
 const
   Descriptions: array[TSourceFileType] of string = (
-    sTextDesc, sPascalDesc, sHTMLDesc, sRTFDesc
+    sTextDesc, sPascalDesc, sXHTMLDesc, sRTFDesc
   );
 begin
   Result := Descriptions[FileType];
