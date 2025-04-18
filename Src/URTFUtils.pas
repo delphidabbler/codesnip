@@ -23,49 +23,51 @@ uses
 
 
 type
+  {$ScopedEnums On}
   ///  <summary>Enumeration containing identifiers for each supported RTF
   ///  control word.</summary>
   TRTFControl = (
-    rcRTF,                  // RTF version
-    rcAnsi,                 // use ANSI character set
-    rcAnsiCodePage,         // specifies ANSI code page
-    rcDefFontNum,           // default font number
-    rcDefLanguage,          // default language
-    rcFontTable,            // introduces font table
-    rcFontPitch,            // font pitch
-    rcFontCharset,          // font character set
-    rcFontFamilyNil,        // unknown font family
-    rcFontFamilyRoman,      // serif, proportional fonts
-    rcFontFamilySwiss,      // sans-serif, proportional fonts
-    rcFontFamilyModern,     // fixed pitch serif and sans-serif fonts
-    rcFontFamilyScript,     // script fonts
-    rcFontFamilyDecor,      // decorative fonts
-    rcFontFamilyTech,       // technical, symbol and maths fonts
-    rcColorTable,           // introduces colour table
-    rcRed,                  // defines red colour component
-    rcGreen,                // defines gree colour component
-    rcBlue,                 // defines blue colour component
-    rcInfo,                 // introduces information group
-    rcTitle,                // sets document title
-    rcPard,                 // resets to default paragraph format
-    rcPar,                  // begins new paragraph
-    rcPlain,                // reset font (character) formatting properties
-    rcFontNum,              // font number (index to font table)
-    rcForeColorNum,         // foreground colour number (index to colour table)
-    rcBold,                 // sets or toggles bold style
-    rcItalic,               // sets or toggles italic style
-    rcUnderline,            // sets or toggles underline style
-    rcFontSize,             // font size in 1/2 points
-    rcSpaceBefore,          // space before paragraphs in twips
-    rcSpaceAfter,           // space after paragraph in twips
-    rcUnicodeChar,          // defines a Unicode character as signed 16bit value
-    rcUnicodePair,          // introduces pair of ANSI and Unicode destinations
-    rcUnicodeDest,          // introduces Unicode destination
-    rcIgnore,               // denotes following control can be ignored
-    rcFirstLineOffset,      // first line indent in twips (relative to \li)
-    rcLeftIndent,           // left indent in twips
-    rcTabStop               // sets a tab stop in twips
+    RTF,                  // RTF version
+    Ansi,                 // use ANSI character set
+    AnsiCodePage,         // specifies ANSI code page
+    DefFontNum,           // default font number
+    DefLanguage,          // default language
+    FontTable,            // introduces font table
+    FontPitch,            // font pitch
+    FontCharset,          // font character set
+    FontFamilyNil,        // unknown font family
+    FontFamilyRoman,      // serif, proportional fonts
+    FontFamilySwiss,      // sans-serif, proportional fonts
+    FontFamilyModern,     // fixed pitch serif and sans-serif fonts
+    FontFamilyScript,     // script fonts
+    FontFamilyDecor,      // decorative fonts
+    FontFamilyTech,       // technical, symbol and maths fonts
+    ColorTable,           // introduces colour table
+    Red,                  // defines red colour component
+    Green,                // defines gree colour component
+    Blue,                 // defines blue colour component
+    Info,                 // introduces information group
+    Title,                // sets document title
+    Pard,                 // resets to default paragraph format
+    Par,                  // begins new paragraph
+    Plain,                // reset font (character) formatting properties
+    FontNum,              // font number (index to font table)
+    ForeColorNum,         // foreground colour number (index to colour table)
+    Bold,                 // sets or toggles bold style
+    Italic,               // sets or toggles italic style
+    Underline,            // sets or toggles underline style
+    FontSize,             // font size in 1/2 points
+    SpaceBefore,          // space before paragraphs in twips
+    SpaceAfter,           // space after paragraph in twips
+    UnicodeChar,          // defines a Unicode character as signed 16bit value
+    UnicodePair,          // introduces pair of ANSI and Unicode destinations
+    UnicodeDest,          // introduces Unicode destination
+    Ignore,               // denotes following control can be ignored
+    FirstLineOffset,      // first line indent in twips (relative to \li)
+    LeftIndent,           // left indent in twips
+    TabStop               // sets a tab stop in twips
   );
+  {$ScopedEnums off}
 
 type
   ///  <summary>Container for related methods for generating valid RTF control
@@ -277,7 +279,7 @@ begin
     else
       // Conversion failed: we store Unicode char in a Unicode control word
       Result := Result
-        + ControlWord(rcUnicodeChar, SmallInt(Ord(Ch)))
+        + ControlWord(TRTFControl.UnicodeChar, SmallInt(Ord(Ch)))
         + ' ?';   // fallback "unprintable" value
   end;
 end;
@@ -317,11 +319,11 @@ begin
       Encoding.Free;
     end;
     Result := '{'
-      + ControlWord(rcUnicodePair)
+      + ControlWord(TRTFControl.UnicodePair)
       + MakeDestination(AnsiStr)    // ANSI only destination
       + '{'
-      + ControlWord(rcIgnore)
-      + ControlWord(rcUnicodeDest)
+      + ControlWord(TRTFControl.Ignore)
+      + ControlWord(TRTFControl.UnicodeDest)
       + MakeDestination(ADestText)   // Unicode destinatation
       + '}'
       + '}';

@@ -269,7 +269,7 @@ end;
 
 procedure TRTFBuilder.ClearParaFormatting;
 begin
-  AddControl(TRTF.ControlWord(rcPard));
+  AddControl(TRTF.ControlWord(TRTFControl.Pard));
 end;
 
 constructor TRTFBuilder.Create(const CodePage: Integer);
@@ -296,11 +296,11 @@ end;
 
 function TRTFBuilder.DocHeader: ASCIIString;
 begin
-  Result := TRTF.ControlWord(rcRTF, TRTF.Version)
-    + TRTF.ControlWord(rcAnsi)
-    + TRTF.ControlWord(rcAnsiCodePage, fCodePage)
-    + TRTF.ControlWord(rcDefFontNum, DefaultFontIdx)
-    + TRTF.ControlWord(rcDefLanguage, DefaultLanguageID)
+  Result := TRTF.ControlWord(TRTFControl.RTF, TRTF.Version)
+    + TRTF.ControlWord(TRTFControl.Ansi)
+    + TRTF.ControlWord(TRTFControl.AnsiCodePage, fCodePage)
+    + TRTF.ControlWord(TRTFControl.DefFontNum, DefaultFontIdx)
+    + TRTF.ControlWord(TRTFControl.DefLanguage, DefaultLanguageID)
     + fFontTable.AsString
     + fColourTable.AsString
     + fDocProperties.AsString
@@ -315,7 +315,7 @@ end;
 
 procedure TRTFBuilder.EndPara;
 begin
-  AddControl(TRTF.ControlWord(rcPar));
+  AddControl(TRTF.ControlWord(TRTFControl.Par));
   AppendBody(EOL);
   fInControls := False;
 end;
@@ -327,12 +327,14 @@ end;
 
 procedure TRTFBuilder.ResetCharStyle;
 begin
-  AddControl(TRTF.ControlWord(rcPlain));
+  AddControl(TRTF.ControlWord(TRTFControl.Plain));
 end;
 
 procedure TRTFBuilder.SetColour(const Colour: TColor);
 begin
-  AddControl(TRTF.ControlWord(rcForeColorNum, fColourTable.ColourRef(Colour)));
+  AddControl(
+    TRTF.ControlWord(TRTFControl.ForeColorNum, fColourTable.ColourRef(Colour))
+  );
 end;
 
 procedure TRTFBuilder.SetFont(const FontName: string);
@@ -342,28 +344,28 @@ begin
   // We don't emit control if this is default font
   FontIdx := fFontTable.FontRef(FontName);
   if FontIdx <> DefaultFontIdx then
-    AddControl(TRTF.ControlWord(rcFontNum, FontIdx));
+    AddControl(TRTF.ControlWord(TRTFControl.FontNum, FontIdx));
 end;
 
 procedure TRTFBuilder.SetFontSize(const Points: Double);
 begin
-  AddControl(TRTF.ControlWord(rcFontSize, FloatToInt(2 * Points)));
+  AddControl(TRTF.ControlWord(TRTFControl.FontSize, FloatToInt(2 * Points)));
 end;
 
 procedure TRTFBuilder.SetFontStyle(const Style: TFontStyles);
 begin
   if fsBold in Style then
-    AddControl(TRTF.ControlWord(rcBold));
+    AddControl(TRTF.ControlWord(TRTFControl.Bold));
   if fsItalic in Style then
-    AddControl(TRTF.ControlWord(rcItalic));
+    AddControl(TRTF.ControlWord(TRTFControl.Italic));
   if fsUnderline in Style then
-    AddControl(TRTF.ControlWord(rcUnderline));
+    AddControl(TRTF.ControlWord(TRTFControl.Underline));
 end;
 
 procedure TRTFBuilder.SetIndents(const LeftIndent, FirstLineOffset: SmallInt);
 begin
-  AddControl(TRTF.ControlWord(rcLeftIndent, LeftIndent));
-  AddControl(TRTF.ControlWord(rcFirstLineOffset, FirstLineOffset));
+  AddControl(TRTF.ControlWord(TRTFControl.LeftIndent, LeftIndent));
+  AddControl(TRTF.ControlWord(TRTFControl.FirstLineOffset, FirstLineOffset));
 end;
 
 procedure TRTFBuilder.SetParaSpacing(const Spacing: TRTFParaSpacing);
@@ -371,10 +373,14 @@ const
   TwipsPerPoint = 20; // Note: 20 Twips in a point
 begin
   AddControl(
-    TRTF.ControlWord(rcSpaceBefore, FloatToInt(TwipsPerPoint * Spacing.Before))
+    TRTF.ControlWord(
+      TRTFControl.SpaceBefore, FloatToInt(TwipsPerPoint * Spacing.Before)
+    )
   );
   AddControl(
-    TRTF.ControlWord(rcSpaceAfter, FloatToInt(TwipsPerPoint * Spacing.After))
+    TRTF.ControlWord(
+      TRTFControl.SpaceAfter, FloatToInt(TwipsPerPoint * Spacing.After)
+    )
   );
 end;
 
@@ -383,7 +389,7 @@ var
   Tab: SmallInt;
 begin
   for Tab in TabStops do
-    AddControl(TRTF.ControlWord(rcTabStop, Tab));
+    AddControl(TRTF.ControlWord(TRTFControl.TabStop, Tab));
 end;
 
 { TRTFFontTable }
@@ -413,22 +419,27 @@ function TRTFFontTable.AsString: ASCIIString;
 const
   // Map of generic font families to RTF controls
   cGenericFonts: array[TRTFGenericFont] of TRTFControl = (
-    rcFontFamilyNil, rcFontFamilyRoman, rcFontFamilySwiss, rcFontFamilyModern,
-    rcFontFamilyScript, rcFontFamilyDecor, rcFontFamilyTech
+    TRTFControl.FontFamilyNil,      // rgfDontCare
+    TRTFControl.FontFamilyRoman,    // rgfRoman
+    TRTFControl.FontFamilySwiss,    // rgfSwiss
+    TRTFControl.FontFamilyModern,   // rgfModern
+    TRTFControl.FontFamilyScript,   // rgfScript
+    TRTFControl.FontFamilyDecor,    // rgfDecorative
+    TRTFControl.FontFamilyTech      // rgfTechnical
   );
 var
   Idx: Integer;     // loops thru fonts in table
   Font: TRTFFont;   // reference to a font in table
 begin
-  Result := '{' + TRTF.ControlWord(rcFontTable);
+  Result := '{' + TRTF.ControlWord(TRTFControl.FontTable);
   for Idx := 0 to Pred(fFonts.Count) do
   begin
     Font := fFonts[Idx];
     Result := Result + '{'
-      + TRTF.ControlWord(rcFontNum, Idx)
-      + TRTF.ControlWord(rcFontPitch, 1)
+      + TRTF.ControlWord(TRTFControl.FontNum, Idx)
+      + TRTF.ControlWord(TRTFControl.FontPitch, 1)
       + TRTF.ControlWord(cGenericFonts[Font.Generic])
-      + TRTF.ControlWord(rcFontCharset, Font.Charset)
+      + TRTF.ControlWord(TRTFControl.FontCharset, Font.Charset)
       + ' '
       + StringToASCIIString(Font.Name)
       + '}';
@@ -488,7 +499,7 @@ var
 begin
   // Begin table
   Result := '{'
-    + TRTF.ControlWord(rcColorTable)
+    + TRTF.ControlWord(TRTFControl.ColorTable)
     + ' ';
   // Add entry for each colour
   for Colour in fColours do
@@ -497,9 +508,9 @@ begin
     begin
       RGB := ColorToRGB(Colour);
       Result := Result
-        + TRTF.ControlWord(rcRed, GetRValue(RGB))
-        + TRTF.ControlWord(rcGreen, GetGValue(RGB))
-        + TRTF.ControlWord(rcBlue, GetBValue(RGB))
+        + TRTF.ControlWord(TRTFControl.Red, GetRValue(RGB))
+        + TRTF.ControlWord(TRTFControl.Green, GetGValue(RGB))
+        + TRTF.ControlWord(TRTFControl.Blue, GetBValue(RGB))
         + ';'
     end
     else
@@ -540,9 +551,10 @@ begin
     Exit;
   end;
   // Start with \info control word in group
-  Result := '{' + TRTF.ControlWord(rcInfo);
+  Result := '{' + TRTF.ControlWord(TRTFControl.Info);
   if fTitle <> '' then
-    Result := Result + TRTF.UnicodeSafeDestination(rcTitle, fTitle, fCodePage);
+    Result := Result
+      + TRTF.UnicodeSafeDestination(TRTFControl.Title, fTitle, fCodePage);
   // Close \info group
   Result := Result + '}';
 end;
