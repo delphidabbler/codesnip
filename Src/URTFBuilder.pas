@@ -296,7 +296,7 @@ end;
 
 function TRTFBuilder.DocHeader: ASCIIString;
 begin
-  Result := TRTF.ControlWord(rcRTF, cRTFVersion)
+  Result := TRTF.ControlWord(rcRTF, TRTF.Version)
     + TRTF.ControlWord(rcAnsi)
     + TRTF.ControlWord(rcAnsiCodePage, fCodePage)
     + TRTF.ControlWord(rcDefFontNum, DefaultFontIdx)

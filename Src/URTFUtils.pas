@@ -22,11 +22,6 @@ uses
   UEncodings;
 
 
-const
-  ///  <summary>RTF version.</summary>
-  cRTFVersion = 1;
-
-
 type
   ///  <summary>Enumeration containing identifiers for each supported RTF
   ///  control word.</summary>
@@ -102,6 +97,11 @@ type
     ///  <returns><c>ASCIIString</c>. The required hex escape sequence.
     ///  </returns>
     class function HexEscape(const Ch: AnsiChar): ASCIIString; static;
+
+  public
+    const
+      ///  <summary>RTF major version number.</summary>
+      Version = 1;
 
   public
 
