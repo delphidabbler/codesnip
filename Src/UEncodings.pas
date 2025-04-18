@@ -437,7 +437,12 @@ function WideCharToChar(const Source: WideChar; const CodePage: Integer;
 var
   UsedDefChar: BOOL;
   BufSize: Integer;
+  Encoding: TEncoding;
+  TestStr: string;
+  TestBytes: TBytes;
+  Idx: Integer;
 begin
+  // Attempt to convert the Unicode char to ANSI char(s)
   BufSize := WideCharToMultiByte(
     CodePage, 0, @Source, 1, nil, 0, nil, nil
   );
@@ -447,7 +452,17 @@ begin
   ) = 0 then
     RaiseLastOSError;
   SetLength(Dest, Length(Dest) - 1);
-  Result := not UsedDefChar;
+  // Check if the conversion succeeded
+  Encoding := TMBCSEncoding.Create;
+  try
+    SetLength(TestBytes, Length(Dest));
+    for Idx := 0 to Pred(Length(Dest)) do
+      TestBytes[Idx] := Ord(Dest[Idx]);
+    TestStr := Encoding.GetString(TestBytes);
+    Result := (TestStr = Source) and not UsedDefChar;
+  finally
+    Encoding.Free;
+  end;
 end;
 
 { TEncodingHelper }

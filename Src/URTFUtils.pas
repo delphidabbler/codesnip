@@ -65,7 +65,8 @@ type
     Ignore,               // denotes following control can be ignored
     FirstLineOffset,      // first line indent in twips (relative to \li)
     LeftIndent,           // left indent in twips
-    TabStop               // sets a tab stop in twips
+    TabStop,              // sets a tab stop in twips
+    UnicodeCharSize       // number of bytes of a given \uN Unicode character
   );
   {$ScopedEnums off}
 
@@ -81,7 +82,7 @@ type
         'fcharset', 'fnil', 'froman', 'fswiss', 'fmodern', 'fscript', 'fdecor',
         'ftech', 'colortbl', 'red', 'green', 'blue', 'info', 'title', 'pard',
         'par', 'plain', 'f', 'cf', 'b', 'i', 'ul', 'fs', 'sb', 'sa', 'u', 'upr',
-        'ud', '*', 'fi', 'li', 'tx'
+        'ud', '*', 'fi', 'li', 'tx', 'uc'
       );
   strict private
 
@@ -134,13 +135,13 @@ type
     ///  </returns>
     ///  <remarks>Converted characters are escaped if necessary. Any characters
     ///  that are not valid in the required code page are encoded in a Unicode
-    ///  RTF control word with <c>?</c> as the non-Unicode fallback.</remarks>
+    ///  RTF control word with a non-Unicode fallback.</remarks>
     class function MakeSafeText(const AText: string; const ACodePage: Integer):
       ASCIIString; static;
 
     ///  <summary>Creates an RTF destination in a Unicode safe way.</summary>
     ///  <param name="ADestCtrl"><c>TRTFControl</c> [in] Required destination
-    ///   control.</param>
+    ///  control.</param>
     ///  <param name="ADestText"><c>string</c> [in] Unicode text to be included
     ///  in the destination.</param>
     ///  <param name="ACodePage"><c>Integer</c> [in] ANSI Code page to use for
@@ -152,8 +153,7 @@ type
     ///  containing the encoded text, escaped as necessary. Should any
     ///  characters in <c>ADestText</c> be incompatible with the code page then
     ///  two sub-destinations are created, one containing Unicode characters and
-    ///  the other containing ANSI text, with unknown characters flagged with
-    ///  &quot;error&quot; characters such as <c>?</c>.</remarks>
+    ///  the other containing ANSI text.</remarks>
     class function UnicodeSafeDestination(const ADestCtrl: TRTFControl;
       const ADestText: string; const ACodePage: Integer): ASCIIString; static;
   end;
@@ -250,6 +250,20 @@ end;
 
 class function TRTF.MakeSafeText(const AText: string; const ACodePage: Integer):
   ASCIIString;
+
+  function MakeSafeChar(const AChar: AnsiChar): ASCIIString;
+  begin
+    if (AChar < #$20) or ((AChar >= #$7F) and (AChar <= #$FF)) then
+      // Not an ASCII character
+      Result := HexEscape(AChar)
+    else if (AChar = '{') or (AChar = '\') or (AChar = '}') then
+      // Reserved RTF character: must be escaped
+      Result := Escape(AChar)
+    else
+      // Valid character, use as is
+      Result := ASCIIString(AChar);
+  end;
+
 var
   Ch: Char;                     // each Unicode character in TheText
   AnsiChars: TArray<AnsiChar>;  // translation of a Ch into the ANSI code page
@@ -264,23 +278,23 @@ begin
     begin
       // Conversion succeeded: check process each ANSI char
       for AnsiCh in AnsiChars do
-      begin
-        if (AnsiCh < #$20) or ((AnsiCh >= #$7F) and (AnsiCh <= #$FF)) then
-          // Not an ASCII character
-          Result := Result + HexEscape(AnsiCh)
-        else if (Ch = '{') or (Ch = '\') or (Ch = '}') then
-          // Reserved RTF character: must be escaped
-          Result := Result + Escape(AnsiCh)
-        else
-          // Valid character, use as is
-          Result := Result + ASCIIString(AnsiCh);
-      end;
+        Result := Result + MakeSafeChar(AnsiCh)
     end
     else
-      // Conversion failed: we store Unicode char in a Unicode control word
+    begin
+      // Conversion failed: create a Unicode character followed by fallback
+      // ANSI character
       Result := Result
+        + ControlWord(TRTFControl.UnicodeCharSize, 1)
         + ControlWord(TRTFControl.UnicodeChar, SmallInt(Ord(Ch)))
-        + ' ?';   // fallback "unprintable" value
+        + ' ';
+      if Length(AnsiChars) = 1 then
+        // Single alternate character: output it
+        Result := Result + MakeSafeChar(AnsiChars[0])
+      else
+        // Can't get alternate: use '?'
+        Result := Result + '?';
+    end;
   end;
 end;
 
