@@ -21,7 +21,7 @@ uses
 type
   TRichEditHelper = class helper for TRichEdit
   public
-    procedure Load(const ARTF: TRTF);
+    procedure Load(const ARTFMarkup: TRTFMarkup);
   end;
 
 implementation
@@ -33,14 +33,14 @@ uses
 
 { TRichEditHelper }
 
-procedure TRichEditHelper.Load(const ARTF: TRTF);
+procedure TRichEditHelper.Load(const ARTFMarkup: TRTFMarkup);
 var
   Stream: TStream;
 begin
   PlainText := False;
   Stream := TMemoryStream.Create;
   try
-    ARTF.ToStream(Stream);
+    ARTFMarkup.ToStream(Stream);
     Stream.Position := 0;
     // must set MaxLength or long documents may not display
     MaxLength := Stream.Size;

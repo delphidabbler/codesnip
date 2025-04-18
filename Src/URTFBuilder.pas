@@ -189,7 +189,7 @@ type
     ///  according to given RTF style.</summary>
     procedure ApplyStyle(const Style: TRTFStyle);
     ///  <summary>Generates RTF code for whole document.</summary>
-    function Render: TRTF;
+    function Render: TRTFMarkup;
     ///  <summary>Table of colours used in document.</summary>
     property ColourTable: TRTFColourTable
       read fColourTable write fColourTable;
@@ -320,9 +320,9 @@ begin
   fInControls := False;
 end;
 
-function TRTFBuilder.Render: TRTF;
+function TRTFBuilder.Render: TRTFMarkup;
 begin
-  Result := TRTF.Create(AsString);
+  Result := TRTFMarkup.Create(AsString);
 end;
 
 procedure TRTFBuilder.ResetCharStyle;

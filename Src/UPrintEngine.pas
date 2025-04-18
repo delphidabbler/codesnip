@@ -48,7 +48,7 @@ type
     function GetPrintMargins: TPrintMargins;
   public
     ///  <summary>Prints given RTF document.</summary>
-    procedure Print(const Document: TRTF);
+    procedure Print(const Document: TRTFMarkup);
     ///  <summary>Title of document that appears in print spooler.</summary>
     ///  <remarks>A default title is used if Title is not set or is set to
     ///  empty string.</remarks>
@@ -95,7 +95,7 @@ begin
   Result.Bottom := InchesToPixelsY(MMToInches(PrintInfo.PageMargins.Bottom));
 end;
 
-procedure TPrintEngine.Print(const Document: TRTF);
+procedure TPrintEngine.Print(const Document: TRTFMarkup);
 var
   PrintMargins: TPrintMargins;  // page margins
   DocTitle: string;             // document title for print spooler

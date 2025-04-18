@@ -81,7 +81,7 @@ procedure TRTFPreviewFrame.LoadContent(const DocContent: TEncodedData);
     @param DocContent [in] Valid RTF document to be displayed.
   }
 begin
-  reView.Load(TRTF.Create(DocContent));
+  reView.Load(TRTFMarkup.Create(DocContent));
 end;
 
 procedure TRTFPreviewFrame.SetPopupMenu(const Menu: TPopupMenu);

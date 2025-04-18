@@ -160,7 +160,7 @@ type
         @param HiliteAttrs [in] Attributes of highlighter used to render
           preview.
       }
-    function Generate: TRTF;
+    function Generate: TRTFMarkup;
       {Generate RTF code used to render preview.
         @return Required RTF code.
       }
@@ -400,12 +400,14 @@ begin
   fHiliteAttrs := HiliteAttrs;
 end;
 
-function TSourcePrefsPreview.Generate: TRTF;
+function TSourcePrefsPreview.Generate: TRTFMarkup;
   {Generate RTF code used to render preview.
     @return Required RTF code.
   }
 begin
-  Result := TRTF.Create(TRTFDocumentHiliter.Hilite(SourceCode, fHiliteAttrs));
+  Result := TRTFMarkup.Create(
+    TRTFDocumentHiliter.Hilite(SourceCode, fHiliteAttrs)
+  );
 end;
 
 function TSourcePrefsPreview.SourceCode: string;

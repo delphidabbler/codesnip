@@ -75,7 +75,7 @@ type
 type
   ///  <summary>Encapsulate rich text markup code.</summary>
   ///  <remarks>Valid rich text markup contains only ASCII characters.</remarks>
-  TRTF = record
+  TRTFMarkup = record
   strict private
     var
       ///  <summary>Byte array that stores RTF code as bytes</summary>
@@ -127,8 +127,8 @@ type
   end;
 
 type
-  ///  <summary>Class of exception raised by TRTF</summary>
-  ERTF = class(Exception);
+  ///  <summary>Class of exception raised by TRTFMarkup</summary>
+  ERTFMarkup = class(Exception);
 
 ///  <summary>Returns a parameterless RTF control word of given kind.</summary>
 function RTFControl(const Ctrl: TRTFControl): ASCIIString; overload;
@@ -277,9 +277,9 @@ begin
   end;
 end;
 
-{ TRTF }
+{ TRTFMarkup }
 
-constructor TRTF.Create(const AStream: TStream; const ReadAll: Boolean);
+constructor TRTFMarkup.Create(const AStream: TStream; const ReadAll: Boolean);
 var
   ByteCount: Integer;
 begin
@@ -290,12 +290,12 @@ begin
   AStream.ReadBuffer(Pointer(fData)^, ByteCount);
 end;
 
-constructor TRTF.Create(const ABytes: TBytes);
+constructor TRTFMarkup.Create(const ABytes: TBytes);
 begin
   fData := Copy(ABytes);
 end;
 
-constructor TRTF.Create(const AData: TEncodedData);
+constructor TRTFMarkup.Create(const AData: TEncodedData);
 resourcestring
   sErrorMsg = 'Encoded data must contain only valid ASCII characters';
 var
@@ -307,41 +307,41 @@ begin
   begin
     DataStr := AData.ToString;
     if not IsValidRTFCode(DataStr) then
-      raise ERTF.Create(sErrorMsg);
+      raise ERTFMarkup.Create(sErrorMsg);
     fData := TEncoding.ASCII.GetBytes(DataStr);
   end;
 end;
 
-constructor TRTF.Create(const ARTFCode: ASCIIString);
+constructor TRTFMarkup.Create(const ARTFCode: ASCIIString);
 begin
   fData := BytesOf(ARTFCode);
 end;
 
-constructor TRTF.Create(const AStr: UnicodeString);
+constructor TRTFMarkup.Create(const AStr: UnicodeString);
 resourcestring
   sErrorMsg = 'String "%s" must contain only valid ASCII characters';
 begin
   if not IsValidRTFCode(AStr) then
-    raise ERTF.CreateFmt(sErrorMsg, [AStr]);
+    raise ERTFMarkup.CreateFmt(sErrorMsg, [AStr]);
   fData := TEncoding.ASCII.GetBytes(AStr);
 end;
 
-function TRTF.IsValidRTFCode(const AStr: UnicodeString): Boolean;
+function TRTFMarkup.IsValidRTFCode(const AStr: UnicodeString): Boolean;
 begin
   Result := EncodingSupportsString(AStr, TEncoding.ASCII);
 end;
 
-function TRTF.ToBytes: TBytes;
+function TRTFMarkup.ToBytes: TBytes;
 begin
   Result := Copy(fData);
 end;
 
-function TRTF.ToRTFCode: ASCIIString;
+function TRTFMarkup.ToRTFCode: ASCIIString;
 begin
   Result := BytesToASCIIString(fData);
 end;
 
-procedure TRTF.ToStream(const Stream: TStream; const Overwrite: Boolean);
+procedure TRTFMarkup.ToStream(const Stream: TStream; const Overwrite: Boolean);
 begin
   if Overwrite then
   begin
@@ -351,7 +351,7 @@ begin
   Stream.WriteBuffer(Pointer(fData)^, Length(fData));
 end;
 
-function TRTF.ToString: UnicodeString;
+function TRTFMarkup.ToString: UnicodeString;
 begin
   Result := TEncoding.ASCII.GetString(fData);
 end;

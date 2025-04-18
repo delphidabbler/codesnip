@@ -131,7 +131,7 @@ type
     ///  <summary>Generates and returns RTF representation of currently selected
     ///  highlighter element.</summary>
     ///  <remarks>This RTF is used to display elememt in preview pane.</remarks>
-    function GenerateRTF: TRTF;
+    function GenerateRTF: TRTFMarkup;
   public
     ///  <summary>Constructs frame instance and initialises controls.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns the frame.
@@ -479,7 +479,7 @@ begin
   Result := sDisplayName;
 end;
 
-function THiliterPrefsFrame.GenerateRTF: TRTF;
+function THiliterPrefsFrame.GenerateRTF: TRTFMarkup;
 var
   RTFBuilder: TRTFBuilder;  // object used to create and render RTFBuilder
   EgLines: IStringList;     // list of lines in the example
