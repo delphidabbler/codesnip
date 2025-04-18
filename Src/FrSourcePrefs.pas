@@ -112,6 +112,7 @@ uses
   // Delphi
   SysUtils, Math,
   // Project
+  ClassHelpers.RichEdit,
   FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UFileHiliter, Hiliter.UHiliters,
   IntfCommon, UConsts, UCtrlArranger, URTFUtils;
 
@@ -159,7 +160,7 @@ type
         @param HiliteAttrs [in] Attributes of highlighter used to render
           preview.
       }
-    function Generate: TRTF;
+    function Generate: TRTFMarkup;
       {Generate RTF code used to render preview.
         @return Required RTF code.
       }
@@ -358,8 +359,7 @@ begin
   // Generate and display preview with required comment style
   Preview := TSourcePrefsPreview.Create(GetCommentStyle, fHiliteAttrs);
   try
-    // Display preview
-    TRichEditHelper.Load(frmPreview.RichEdit, Preview.Generate);
+    frmPreview.RichEdit.Load(Preview.Generate);
   finally
     Preview.Free;
   end;
@@ -400,12 +400,14 @@ begin
   fHiliteAttrs := HiliteAttrs;
 end;
 
-function TSourcePrefsPreview.Generate: TRTF;
+function TSourcePrefsPreview.Generate: TRTFMarkup;
   {Generate RTF code used to render preview.
     @return Required RTF code.
   }
 begin
-  Result := TRTF.Create(TRTFDocumentHiliter.Hilite(SourceCode, fHiliteAttrs));
+  Result := TRTFMarkup.Create(
+    TRTFDocumentHiliter.Hilite(SourceCode, fHiliteAttrs)
+  );
 end;
 
 function TSourcePrefsPreview.SourceCode: string;

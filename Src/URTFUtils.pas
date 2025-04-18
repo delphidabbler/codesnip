@@ -17,65 +17,151 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes, ComCtrls,
+  SysUtils, Classes,
   // Project
   UEncodings;
 
 
-const
-  ///  <summary>RTF version.</summary>
-  cRTFVersion = 1;
-
-
 type
+  {$ScopedEnums On}
   ///  <summary>Enumeration containing identifiers for each supported RTF
   ///  control word.</summary>
   TRTFControl = (
-    rcRTF,                  // RTF version
-    rcAnsi,                 // use ANSI character set
-    rcAnsiCodePage,         // specifies ANSI code page
-    rcDefFontNum,           // default font number
-    rcDefLanguage,          // default language
-    rcFontTable,            // introduces font table
-    rcFontPitch,            // font pitch
-    rcFontCharset,          // font character set
-    rcFontFamilyNil,        // unknown font family
-    rcFontFamilyRoman,      // serif, proportional fonts
-    rcFontFamilySwiss,      // sans-serif, proportional fonts
-    rcFontFamilyModern,     // fixed pitch serif and sans-serif fonts
-    rcFontFamilyScript,     // script fonts
-    rcFontFamilyDecor,      // decorative fonts
-    rcFontFamilyTech,       // technical, symbol and maths fonts
-    rcColorTable,           // introduces colour table
-    rcRed,                  // defines red colour component
-    rcGreen,                // defines gree colour component
-    rcBlue,                 // defines blue colour component
-    rcInfo,                 // introduces information group
-    rcTitle,                // sets document title
-    rcPard,                 // resets to default paragraph format
-    rcPar,                  // begins new paragraph
-    rcPlain,                // reset font (character) formatting properties
-    rcFontNum,              // font number (index to font table)
-    rcForeColorNum,         // foreground colour number (index to colour table)
-    rcBold,                 // sets or toggles bold style
-    rcItalic,               // sets or toggles italic style
-    rcUnderline,            // sets or toggles underline style
-    rcFontSize,             // font size in 1/2 points
-    rcSpaceBefore,          // space before paragraphs in twips
-    rcSpaceAfter,           // space after paragraph in twips
-    rcUnicodeChar,          // defines a Unicode character as signed 16bit value
-    rcUnicodePair,          // introduces pair of ANSI and Unicode destinations
-    rcUnicodeDest,          // introduces Unicode destination
-    rcIgnore,               // denotes following control can be ignored
-    rcFirstLineOffset,      // first line indent in twips (relative to \li)
-    rcLeftIndent,           // left indent in twips
-    rcTabStop               // sets a tab stop in twips
+    RTF,                  // RTF version
+    Ansi,                 // use ANSI character set
+    AnsiCodePage,         // specifies ANSI code page
+    DefFontNum,           // default font number
+    DefLanguage,          // default language
+    FontTable,            // introduces font table
+    FontPitch,            // font pitch
+    FontCharset,          // font character set
+    FontFamilyNil,        // unknown font family
+    FontFamilyRoman,      // serif, proportional fonts
+    FontFamilySwiss,      // sans-serif, proportional fonts
+    FontFamilyModern,     // fixed pitch serif and sans-serif fonts
+    FontFamilyScript,     // script fonts
+    FontFamilyDecor,      // decorative fonts
+    FontFamilyTech,       // technical, symbol and maths fonts
+    ColorTable,           // introduces colour table
+    Red,                  // defines red colour component
+    Green,                // defines gree colour component
+    Blue,                 // defines blue colour component
+    Info,                 // introduces information group
+    Title,                // sets document title
+    Pard,                 // resets to default paragraph format
+    Par,                  // begins new paragraph
+    Plain,                // reset font (character) formatting properties
+    FontNum,              // font number (index to font table)
+    ForeColorNum,         // foreground colour number (index to colour table)
+    Bold,                 // sets or toggles bold style
+    Italic,               // sets or toggles italic style
+    Underline,            // sets or toggles underline style
+    FontSize,             // font size in 1/2 points
+    SpaceBefore,          // space before paragraphs in twips
+    SpaceAfter,           // space after paragraph in twips
+    UnicodeChar,          // defines a Unicode character as signed 16bit value
+    UnicodePair,          // introduces pair of ANSI and Unicode destinations
+    UnicodeDest,          // introduces Unicode destination
+    Ignore,               // denotes following control can be ignored
+    FirstLineOffset,      // first line indent in twips (relative to \li)
+    LeftIndent,           // left indent in twips
+    TabStop               // sets a tab stop in twips
   );
+  {$ScopedEnums off}
+
+type
+  ///  <summary>Container for related methods for generating valid RTF control
+  ///  words and destinations.</summary>
+  TRTF = record
+  strict private
+    const
+      ///  <summary>Map of RTF control ids to control words.</summary>
+      Controls: array[TRTFControl] of ASCIIString = (
+        'rtf', 'ansi', 'ansicpg', 'deff', 'deflang', 'fonttbl', 'fprq',
+        'fcharset', 'fnil', 'froman', 'fswiss', 'fmodern', 'fscript', 'fdecor',
+        'ftech', 'colortbl', 'red', 'green', 'blue', 'info', 'title', 'pard',
+        'par', 'plain', 'f', 'cf', 'b', 'i', 'ul', 'fs', 'sb', 'sa', 'u', 'upr',
+        'ud', '*', 'fi', 'li', 'tx'
+      );
+  strict private
+
+    ///  <summary>Returns an RTF escape sequence for an ASCII character.
+    ///  </summary>
+    ///  <param name="ACh"><c>AnsiChar</c> [in] Character to be escaped.</param>
+    ///  <returns><c>ASCIIString</c>. The required escape sequence.</returns>
+    ///  <remarks><c>ACh</c> should be a valid ASCII character, but this is not
+    ///  checked.</remarks>
+    class function Escape(const ACh: AnsiChar): ASCIIString; static;
+
+    ///  <summary>Returns an RTF hex escape sequence for a single byte
+    ///  character.</summary>
+    ///  <param name="ACh"><c>AnsiChar</c> [in] Character to be escaped.</param>
+    ///  <returns><c>ASCIIString</c>. The required hex escape sequence.
+    ///  </returns>
+    class function HexEscape(const Ch: AnsiChar): ASCIIString; static;
+
+  public
+    const
+      ///  <summary>RTF major version number.</summary>
+      Version = 1;
+
+  public
+
+    ///  <summary>Returns a parameterless RTF control word.</summary>
+    ///  <param name="ACtrlID"><c>TRTFControl</c> [in] Identifies the required
+    ///  control.</param>
+    ///  <returns><c>ASCIIString</c>. The required control word.</returns>
+    class function ControlWord(const ACtrlID: TRTFControl): ASCIIString;
+      overload; static;
+
+    ///  <summary>Returns a parameterised RTF control word.</summary>
+    ///  <param name="ACtrlID"><c>TRTFControl</c> [in] Identifies the required
+    ///  control.</param>
+    ///  <param name="AParam"><c>Int16</c> [in] The control's parameter value.
+    ///  </param>
+    ///  <returns><c>ASCIIString</c>. The required control word.</returns>
+    ///  control word identified by <c>Ctrl</c> with the parameter specified
+    class function ControlWord(const ACtrlID: TRTFControl; const AParam: Int16):
+      ASCIIString; overload; static;
+
+    ///  <summary>Converts Unicode text into valid RTF when encoded in a given
+    ///  ANSI code page.</summary>
+    ///  <param name="AText"><c>string</c> [in] The Unicode text to be
+    ///  processed.</param>
+    ///  <param name="ACodePage"><c>Integer</c> [in] ANSI code to be used for
+    ///  encoding the Unicode text.</param>
+    ///  <returns><c>ASCIIString</c>. Valid RTF code for the given code page.
+    ///  </returns>
+    ///  <remarks>Converted characters are escaped if necessary. Any characters
+    ///  that are not valid in the required code page are encoded in a Unicode
+    ///  RTF control word with <c>?</c> as the non-Unicode fallback.</remarks>
+    class function MakeSafeText(const AText: string; const ACodePage: Integer):
+      ASCIIString; static;
+
+    ///  <summary>Creates an RTF destination in a Unicode safe way.</summary>
+    ///  <param name="ADestCtrl"><c>TRTFControl</c> [in] Required destination
+    ///   control.</param>
+    ///  <param name="ADestText"><c>string</c> [in] Unicode text to be included
+    ///  in the destination.</param>
+    ///  <param name="ACodePage"><c>Integer</c> [in] ANSI Code page to use for
+    ///  encoding the Unicode text.</param>
+    ///  <returns><c>ASCIIString</c>. Destination RTF, containing ANSI and
+    ///  Unicode sub-destinations if necessary.</returns>
+    ///  <remarks>If <c>ADestText</c> contains only characters supported by
+    ///  <c>ACodePage</c> then a single, normal destination is returned,
+    ///  containing the encoded text, escaped as necessary. Should any
+    ///  characters in <c>ADestText</c> be incompatible with the code page then
+    ///  two sub-destinations are created, one containing Unicode characters and
+    ///  the other containing ANSI text, with unknown characters flagged with
+    ///  &quot;error&quot; characters such as <c>?</c>.</remarks>
+    class function UnicodeSafeDestination(const ADestCtrl: TRTFControl;
+      const ADestText: string; const ACodePage: Integer): ASCIIString; static;
+  end;
 
 type
   ///  <summary>Encapsulate rich text markup code.</summary>
   ///  <remarks>Valid rich text markup contains only ASCII characters.</remarks>
-  TRTF = record
+  TRTFMarkup = record
   strict private
     var
       ///  <summary>Byte array that stores RTF code as bytes</summary>
@@ -127,175 +213,126 @@ type
   end;
 
 type
-  ///  <summary>Class of exception raised by TRTF</summary>
-  ERTF = class(Exception);
-
-type
-  ///  <summary>Static method record that assists in working with rich edit
-  ///  VCL controls.</summary>
-  TRichEditHelper = record
-  public
-    ///  <summary>Loads RTF code into a rich edit control, replacing existing
-    ///  content.</summary>
-    ///  <param name="RE">TRichEdit [in] Rich edit control.</param>
-    ///  <param name="RTF">TRTF [in] Contains rich text code to be loaded.
-    ///  </param>
-    class procedure Load(const RE: TRichEdit; const RTF: TRTF); static;
-  end;
-
-
-///  <summary>Returns a parameterless RTF control word of given kind.</summary>
-function RTFControl(const Ctrl: TRTFControl): ASCIIString; overload;
-
-///  <summary>Returns a parameterised RTF control word of given kind with given
-///  parameter value.</summary>
-function RTFControl(const Ctrl: TRTFControl;
-  const Param: SmallInt): ASCIIString; overload;
-
-///  <summary>Returns an RTF escape sequence for the given ANSI character.
-///  </summary>
-function RTFEscape(const Ch: AnsiChar): ASCIIString;
-
-///  <summary>returns an RTF hexadecimal escape sequence for given ANSI
-///  character.</summary>
-function RTFHexEscape(const Ch: AnsiChar): ASCIIString;
-
-///  <summary>Encodes given text for given code page so that any incompatible
-///  characters are replaced by suitable control words.</summary>
-function RTFMakeSafeText(const TheText: string; const CodePage: Integer):
-  ASCIIString;
-
-///  <summary>Creates an RTF destination in a Unicode safe way.</summary>
-///  <param name="DestCtrl">TRTFControl [in] Destination control.</param>
-///  <param name="DestText">string [in] Text of destination.</param>
-///  <param name="CodePage">Integer [in] Code page to use for encoding.</param>
-///  <returns>ASCIIString. Destination RTF, containing ANSI and Unicode
-///  sub-destinations if necessary.</returns>
-///  <remarks>If DestText contains only characters supported by the given code
-///  page then a normal destination is returned, containing only the given text.
-///  Should any characters in DestText be incompatible with the code page then
-///  two sub-destinations are created, one ANSI only and the other containing
-///  Unicode characters.</remarks>
-function RTFUnicodeSafeDestination(const DestCtrl: TRTFControl;
-  const DestText: string; const CodePage: Integer): ASCIIString;
+  ///  <summary>Class of exception raised by TRTFMarkup</summary>
+  ERTFMarkup = class(Exception);
 
 
 implementation
 
 
 uses
-  // Delphi
-  Windows, RichEdit,
   // Project
   UExceptions;
 
 
-const
-  // Map of RTF control ids to control word
-  cControls: array[TRTFControl] of ASCIIString = (
-    'rtf', 'ansi', 'ansicpg', 'deff', 'deflang', 'fonttbl', 'fprq', 'fcharset',
-    'fnil', 'froman', 'fswiss', 'fmodern', 'fscript', 'fdecor', 'ftech',
-    'colortbl', 'red', 'green', 'blue', 'info', 'title', 'pard', 'par', 'plain',
-    'f', 'cf', 'b', 'i', 'ul', 'fs', 'sb', 'sa', 'u', 'upr', 'ud', '*',
-    'fi', 'li', 'tx'
-  );
+{ TRTF }
 
-function RTFControl(const Ctrl: TRTFControl): ASCIIString;
+class function TRTF.ControlWord(const ACtrlID: TRTFControl): ASCIIString;
 begin
-  Result := '\' + cControls[Ctrl];
+  Result := '\' + Controls[ACtrlID];
 end;
 
-function RTFControl(const Ctrl: TRTFControl;
-  const Param: SmallInt): ASCIIString;
+class function TRTF.ControlWord(const ACtrlID: TRTFControl;
+  const AParam: Int16): ASCIIString;
 begin
-  Result := RTFControl(Ctrl) + StringToASCIIString(IntToStr(Param));
+  Result := ControlWord(ACtrlID) + StringToASCIIString(IntToStr(AParam));
 end;
 
-function RTFEscape(const Ch: AnsiChar): ASCIIString;
+class function TRTF.Escape(const ACh: AnsiChar): ASCIIString;
 begin
-  Result := AnsiChar('\') + Ch;
+  Result := AnsiChar('\') + ACh;
 end;
 
-function RTFHexEscape(const Ch: AnsiChar): ASCIIString;
+class function TRTF.HexEscape(const Ch: AnsiChar): ASCIIString;
 begin
   Result := StringToASCIIString('\''' + IntToHex(Ord(Ch), 2));
 end;
 
-function RTFMakeSafeText(const TheText: string; const CodePage: Integer):
+class function TRTF.MakeSafeText(const AText: string; const ACodePage: Integer):
   ASCIIString;
 var
   Ch: Char;                     // each Unicode character in TheText
-  AnsiChars: TArray<AnsiChar>;  // translation of a Ch into ANSI code page
+  AnsiChars: TArray<AnsiChar>;  // translation of a Ch into the ANSI code page
   AnsiCh: AnsiChar;             // each ANSI char in AnsiChars
 begin
   Result := '';
-  for Ch in TheText do
+  // Process each Unicode character in turn
+  for Ch in AText do
   begin
-    if WideCharToChar(Ch, CodePage, AnsiChars) then
+    // Convert Unicode char into one or more ANSI chars in required code page
+    if WideCharToChar(Ch, ACodePage, AnsiChars) then
     begin
+      // Conversion succeeded: check process each ANSI char
       for AnsiCh in AnsiChars do
       begin
         if (AnsiCh < #$20) or ((AnsiCh >= #$7F) and (AnsiCh <= #$FF)) then
-          Result := Result + RTFHexEscape(AnsiCh)
+          // Not an ASCII character
+          Result := Result + HexEscape(AnsiCh)
         else if (Ch = '{') or (Ch = '\') or (Ch = '}') then
-          Result := Result + RTFEscape(AnsiCh)
+          // Reserved RTF character: must be escaped
+          Result := Result + Escape(AnsiCh)
         else
+          // Valid character, use as is
           Result := Result + ASCIIString(AnsiCh);
       end;
     end
     else
-      Result := Result + RTFControl(rcUnicodeChar, SmallInt(Ord(Ch))) + ' ?';
+      // Conversion failed: we store Unicode char in a Unicode control word
+      Result := Result
+        + ControlWord(TRTFControl.UnicodeChar, SmallInt(Ord(Ch)))
+        + ' ?';   // fallback "unprintable" value
   end;
 end;
 
-function RTFUnicodeSafeDestination(const DestCtrl: TRTFControl;
-  const DestText: string; const CodePage: Integer): ASCIIString;
+class function TRTF.UnicodeSafeDestination(const ADestCtrl: TRTFControl;
+  const ADestText: string; const ACodePage: Integer): ASCIIString;
 
-  ///  Makes a destination for DestCtrl using given text.
+  //  Makes a destination for ADestCtrl using given text.
   function MakeDestination(const S: string): ASCIIString;
   begin
     Result := '{'
-      + RTFControl(DestCtrl) + ' '
-      + RTFMakeSafeText(S, CodePage)
+      + ControlWord(ADestCtrl)
+      + ' '
+      + MakeSafeText(S, ACodePage)
       + '}'
   end;
 
 var
-  Encoding: TEncoding;  // encoding for CodePage
-  AnsiStr: string;      // Unicode string containing only characters of CodePage
+  Encoding: TEncoding;  // encoding for ACodePage
+  AnsiStr: string;      // Unicode string containing only chars from ACodePage
 begin
-  if CodePageSupportsString(DestText, CodePage) then
-    // All chars of DestText supported in code page => RTF text won't have any
+  if CodePageSupportsString(ADestText, ACodePage) then
+    // All chars of ADestText supported in code page => RTF text won't have any
     // \u characters => we can just output destination as normal
-    Result := MakeDestination(DestText)
+    Result := MakeDestination(ADestText)
   else
   begin
-    // DestText contains characters not supported by code page. We create twin
+    // ADestText contains characters not supported by code page. We create twin
     // destinations, one ANSI only and the other that includes Unicode
     // characters.
-    Encoding := TMBCSEncoding.Create(CodePage);
+    Encoding := TMBCSEncoding.Create(ACodePage);
     try
       // Create a Unicode string that contains only characters supported in
       // given code page (+ some "error" characters (e.g. "?")
-      AnsiStr := Encoding.GetString(Encoding.GetBytes(DestText));
+      AnsiStr := Encoding.GetString(Encoding.GetBytes(ADestText));
     finally
       Encoding.Free;
     end;
     Result := '{'
-      + RTFControl(rcUnicodePair)
+      + ControlWord(TRTFControl.UnicodePair)
       + MakeDestination(AnsiStr)    // ANSI only destination
       + '{'
-      + RTFControl(rcIgnore)
-      + RTFControl(rcUnicodeDest)
-      + MakeDestination(DestText)   // Unicode destinatation
+      + ControlWord(TRTFControl.Ignore)
+      + ControlWord(TRTFControl.UnicodeDest)
+      + MakeDestination(ADestText)   // Unicode destinatation
       + '}'
       + '}';
   end;
 end;
 
-{ TRTF }
+{ TRTFMarkup }
 
-constructor TRTF.Create(const AStream: TStream; const ReadAll: Boolean);
+constructor TRTFMarkup.Create(const AStream: TStream; const ReadAll: Boolean);
 var
   ByteCount: Integer;
 begin
@@ -306,12 +343,12 @@ begin
   AStream.ReadBuffer(Pointer(fData)^, ByteCount);
 end;
 
-constructor TRTF.Create(const ABytes: TBytes);
+constructor TRTFMarkup.Create(const ABytes: TBytes);
 begin
   fData := Copy(ABytes);
 end;
 
-constructor TRTF.Create(const AData: TEncodedData);
+constructor TRTFMarkup.Create(const AData: TEncodedData);
 resourcestring
   sErrorMsg = 'Encoded data must contain only valid ASCII characters';
 var
@@ -323,41 +360,41 @@ begin
   begin
     DataStr := AData.ToString;
     if not IsValidRTFCode(DataStr) then
-      raise ERTF.Create(sErrorMsg);
+      raise ERTFMarkup.Create(sErrorMsg);
     fData := TEncoding.ASCII.GetBytes(DataStr);
   end;
 end;
 
-constructor TRTF.Create(const ARTFCode: ASCIIString);
+constructor TRTFMarkup.Create(const ARTFCode: ASCIIString);
 begin
   fData := BytesOf(ARTFCode);
 end;
 
-constructor TRTF.Create(const AStr: UnicodeString);
+constructor TRTFMarkup.Create(const AStr: UnicodeString);
 resourcestring
   sErrorMsg = 'String "%s" must contain only valid ASCII characters';
 begin
   if not IsValidRTFCode(AStr) then
-    raise ERTF.CreateFmt(sErrorMsg, [AStr]);
+    raise ERTFMarkup.CreateFmt(sErrorMsg, [AStr]);
   fData := TEncoding.ASCII.GetBytes(AStr);
 end;
 
-function TRTF.IsValidRTFCode(const AStr: UnicodeString): Boolean;
+function TRTFMarkup.IsValidRTFCode(const AStr: UnicodeString): Boolean;
 begin
   Result := EncodingSupportsString(AStr, TEncoding.ASCII);
 end;
 
-function TRTF.ToBytes: TBytes;
+function TRTFMarkup.ToBytes: TBytes;
 begin
   Result := Copy(fData);
 end;
 
-function TRTF.ToRTFCode: ASCIIString;
+function TRTFMarkup.ToRTFCode: ASCIIString;
 begin
   Result := BytesToASCIIString(fData);
 end;
 
-procedure TRTF.ToStream(const Stream: TStream; const Overwrite: Boolean);
+procedure TRTFMarkup.ToStream(const Stream: TStream; const Overwrite: Boolean);
 begin
   if Overwrite then
   begin
@@ -367,28 +404,9 @@ begin
   Stream.WriteBuffer(Pointer(fData)^, Length(fData));
 end;
 
-function TRTF.ToString: UnicodeString;
+function TRTFMarkup.ToString: UnicodeString;
 begin
   Result := TEncoding.ASCII.GetString(fData);
-end;
-
-{ TRichEditHelper }
-
-class procedure TRichEditHelper.Load(const RE: TRichEdit; const RTF: TRTF);
-var
-  Stream: TStream;
-begin
-  RE.PlainText := False;
-  Stream := TMemoryStream.Create;
-  try
-    RTF.ToStream(Stream);
-    Stream.Position := 0;
-    // must set MaxLength or long documents may not display
-    RE.MaxLength := Stream.Size;
-    RE.Lines.LoadFromStream(Stream, TEncoding.ASCII);
-  finally
-    Stream.Free;
-  end;
 end;
 
 end.

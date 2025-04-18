@@ -85,7 +85,7 @@ end;
 procedure TPrintMgr.DoPrint;
 var
   PrintEngine: TPrintEngine;  // object that prints the print document
-  Document: TRTF;             // generated print document
+  Document: TRTFMarkup;       // generated print document
 begin
   PrintEngine := TPrintEngine.Create;
   try

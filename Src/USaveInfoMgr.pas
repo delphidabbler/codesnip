@@ -73,14 +73,14 @@ end;
 class procedure TSaveInfoMgr.Execute(View: IView);
 var
   FileName: string;
-  RTF: TRTF;
+  RTFMarkup: TRTFMarkup;
 begin
   Assert(Assigned(View), 'TSaveInfoMgr.Execute: View is nil');
   Assert(CanHandleView(View), 'TSaveInfoMgr.Execute: View not supported');
   if not TryGetFileNameFromUser(FileName) then
     Exit;
-  RTF := TRTF.Create(GenerateRichText(View));
-  TFileIO.WriteAllBytes(FileName, RTF.ToBytes);
+  RTFMarkup := TRTFMarkup.Create(GenerateRichText(View));
+  TFileIO.WriteAllBytes(FileName, RTFMarkup.ToBytes);
 end;
 
 class function TSaveInfoMgr.GenerateRichText(View: IView): TEncodedData;

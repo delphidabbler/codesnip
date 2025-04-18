@@ -101,9 +101,10 @@ uses
   // Delphi
   SysUtils, Windows, Graphics, Math, ComCtrls,
   // Project
+  ClassHelpers.RichEdit,
   FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UHiliters, IntfCommon, UColours,
   UConsts, UEncodings, UFontHelper, UKeysHelper, UPrintInfo, URTFBuilder,
-  URTFStyles, URTFUtils, UStrUtils, UUtils;
+  URTFStyles, UStrUtils, UUtils;
 
 
 {$R *.dfm}
@@ -379,7 +380,7 @@ begin
     HiliteSource(UseColor, SyntaxPrint, Builder);
     Builder.EndPara;
     // Load document into rich edit
-    TRichEditHelper.Load(fRe, Builder.Render);
+    fRe.Load(Builder.Render);
   finally
     FreeAndNil(Builder);
   end;

@@ -375,7 +375,8 @@ uses
   FmRegisterCompilersDlg in 'FmRegisterCompilersDlg.pas' {RegisterCompilersDlg},
   ClassHelpers.UGraphics in 'ClassHelpers.UGraphics.pas',
   ClassHelpers.UActions in 'ClassHelpers.UActions.pas',
-  USaveInfoMgr in 'USaveInfoMgr.pas';
+  USaveInfoMgr in 'USaveInfoMgr.pas',
+  ClassHelpers.RichEdit in 'ClassHelpers.RichEdit.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

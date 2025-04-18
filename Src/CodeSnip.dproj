@@ -582,6 +582,7 @@
 			<DCCReference Include="ClassHelpers.UGraphics.pas"/>
 			<DCCReference Include="ClassHelpers.UActions.pas"/>
 			<DCCReference Include="USaveInfoMgr.pas"/>
+			<DCCReference Include="ClassHelpers.RichEdit.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

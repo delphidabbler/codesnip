@@ -31,7 +31,7 @@ type
   IPrintDocument = interface(IInterface)
     ['{56E4CA97-7F04-427A-A95F-03CE55910DC0}']
     ///  <summary>Generates and returns print document.</summary>
-    function Generate: TRTF;
+    function Generate: TRTFMarkup;
   end;
 
 type
@@ -53,7 +53,7 @@ type
     constructor Create(const Snippet: TSnippet);
     ///  <summary>Generates and returns print document.</summary>
     ///  <remarks>Method of IPrintDocument.</remarks>
-    function Generate: TRTF;
+    function Generate: TRTFMarkup;
   end;
 
 type
@@ -72,7 +72,7 @@ type
     constructor Create(const Category: TCategory);
     ///  <summary>Generates and returns print document.</summary>
     ///  <remarks>Method of IPrintDocument.</remarks>
-    function Generate: TRTF;
+    function Generate: TRTFMarkup;
   end;
 
 implementation
@@ -91,7 +91,7 @@ begin
   fSnippet := Snippet;
 end;
 
-function TSnippetPrintDocument.Generate: TRTF;
+function TSnippetPrintDocument.Generate: TRTFMarkup;
 var
   Doc: TRTFSnippetDoc;  // object that renders snippet document in RTF
 begin
@@ -99,7 +99,7 @@ begin
     GetHiliteAttrs, poUseColor in PrintInfo.PrintOptions
   );
   try
-    Result := TRTF.Create(Doc.Generate(fSnippet));
+    Result := TRTFMarkup.Create(Doc.Generate(fSnippet));
   finally
     Doc.Free;
   end;
@@ -127,13 +127,13 @@ begin
   fCategory := Category;
 end;
 
-function TCategoryPrintDocument.Generate: TRTF;
+function TCategoryPrintDocument.Generate: TRTFMarkup;
 var
   Doc: TRTFCategoryDoc; // object that renders category document in RTF
 begin
   Doc := TRTFCategoryDoc.Create(poUseColor in PrintInfo.PrintOptions);
   try
-    Result := TRTF.Create(Doc.Generate(fCategory));
+    Result := TRTFMarkup.Create(Doc.Generate(fCategory));
   finally
     Doc.Free;
   end;
