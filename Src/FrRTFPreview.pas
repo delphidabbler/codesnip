@@ -59,6 +59,7 @@ implementation
 
 uses
   // Project
+  ClassHelpers.RichEdit,
   URTFUtils;
 
 
@@ -80,7 +81,7 @@ procedure TRTFPreviewFrame.LoadContent(const DocContent: TEncodedData);
     @param DocContent [in] Valid RTF document to be displayed.
   }
 begin
-  TRichEditHelper.Load(reView, TRTF.Create(DocContent));
+  reView.Load(TRTF.Create(DocContent));
 end;
 
 procedure TRTFPreviewFrame.SetPopupMenu(const Menu: TPopupMenu);

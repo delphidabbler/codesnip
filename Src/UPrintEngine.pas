@@ -63,6 +63,7 @@ uses
   // Delphi
   Printers,
   // Project
+  ClassHelpers.RichEdit,
   UMeasurement, UPrintInfo;
 
 
@@ -102,7 +103,7 @@ resourcestring
   sDefTitle = 'CodeSnip document';  // default document title
 begin
   // Load document into engine
-  TRichEditHelper.Load(RichEdit, Document);
+  RichEdit.Load(Document);
   // Set up page margins
   PrintMargins := GetPrintMargins;
   RichEdit.PageRect := Rect(

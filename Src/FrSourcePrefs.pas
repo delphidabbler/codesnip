@@ -112,6 +112,7 @@ uses
   // Delphi
   SysUtils, Math,
   // Project
+  ClassHelpers.RichEdit,
   FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UFileHiliter, Hiliter.UHiliters,
   IntfCommon, UConsts, UCtrlArranger, URTFUtils;
 
@@ -358,8 +359,7 @@ begin
   // Generate and display preview with required comment style
   Preview := TSourcePrefsPreview.Create(GetCommentStyle, fHiliteAttrs);
   try
-    // Display preview
-    TRichEditHelper.Load(frmPreview.RichEdit, Preview.Generate);
+    frmPreview.RichEdit.Load(Preview.Generate);
   finally
     Preview.Free;
   end;

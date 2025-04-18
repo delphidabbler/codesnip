@@ -17,7 +17,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes, ComCtrls,
+  SysUtils, Classes,
   // Project
   UEncodings;
 
@@ -130,20 +130,6 @@ type
   ///  <summary>Class of exception raised by TRTF</summary>
   ERTF = class(Exception);
 
-type
-  ///  <summary>Static method record that assists in working with rich edit
-  ///  VCL controls.</summary>
-  TRichEditHelper = record
-  public
-    ///  <summary>Loads RTF code into a rich edit control, replacing existing
-    ///  content.</summary>
-    ///  <param name="RE">TRichEdit [in] Rich edit control.</param>
-    ///  <param name="RTF">TRTF [in] Contains rich text code to be loaded.
-    ///  </param>
-    class procedure Load(const RE: TRichEdit; const RTF: TRTF); static;
-  end;
-
-
 ///  <summary>Returns a parameterless RTF control word of given kind.</summary>
 function RTFControl(const Ctrl: TRTFControl): ASCIIString; overload;
 
@@ -184,8 +170,6 @@ implementation
 
 
 uses
-  // Delphi
-  Windows, RichEdit,
   // Project
   UExceptions;
 
@@ -370,25 +354,6 @@ end;
 function TRTF.ToString: UnicodeString;
 begin
   Result := TEncoding.ASCII.GetString(fData);
-end;
-
-{ TRichEditHelper }
-
-class procedure TRichEditHelper.Load(const RE: TRichEdit; const RTF: TRTF);
-var
-  Stream: TStream;
-begin
-  RE.PlainText := False;
-  Stream := TMemoryStream.Create;
-  try
-    RTF.ToStream(Stream);
-    Stream.Position := 0;
-    // must set MaxLength or long documents may not display
-    RE.MaxLength := Stream.Size;
-    RE.Lines.LoadFromStream(Stream, TEncoding.ASCII);
-  finally
-    Stream.Free;
-  end;
 end;
 
 end.

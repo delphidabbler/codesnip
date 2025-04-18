@@ -178,6 +178,7 @@ uses
   // Delphi
   SysUtils, ExtCtrls, Windows, Graphics, Dialogs,
   // Project
+  ClassHelpers.RichEdit,
   FmPreferencesDlg, FmNewHiliterNameDlg, FmUserHiliterMgrDlg, Hiliter.UAttrs,
   IntfCommon, UCtrlArranger, UFontHelper, UIStringList, UMessageBox,
   URTFBuilder, URTFStyles, UUtils;
@@ -614,7 +615,7 @@ end;
 
 procedure THiliterPrefsFrame.UpdatePreview;
 begin
-  TRichEditHelper.Load(frmExample.RichEdit, GenerateRTF);
+  frmExample.RichEdit.Load(GenerateRTF);
 end;
 
 initialization
