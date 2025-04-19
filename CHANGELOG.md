@@ -6,6 +6,23 @@ Releases are listed in reverse version number order.
 
 > Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some v3 releases have later release dates than early v4 releases.
 
+## Release v4.25.0 of 19 April 2025
+
+* Added new feature to save snippet information to file in RTF format using the new _File | Save Snippet Information_ menu option [issue #140].
+* Added the option to save optionally highlighted annotated source code and units in HTML 5 format [issue #87]. 
+* Fixed malformed bullet character(s) in the list of imported snippets on the last page of the Snippets Import Wizard dialogue box [issue #147].
+* Improved the solution to the crash after hibernation bug, initially fixed in v4.24.1 and v4.24.2, with much improved and more stable code [issue #158]. Implemented by [@SirRufo](https://github.com/SirRufo). 
+* Overhauled rich text format processing:
+  * Fixed bug where Unicode characters that don't exist in the system code page were not being displayed correctly [issue #157].
+  * Fixed potential bug where some reserved ASCII characters may not be escaped properly [issue #159].
+  * Refactored and improved the rich text handling code [issue #100].
+* Corrected the copyright date displayed in the About Box to include 2025 [issue #149].
+* Documentation changes:
+  * Fixed error in the export file formation documentation and related help topic [issue #151].
+  * Corrected erroneous comments for the _TREMLEntities.MapToEntity_ method [issue #84].
+  * Updated file format documentation with details the changes introduced when implementing issues #87 and #140.
+  * Updated the help file with details of the new features added in this release.
+
 ## Release v4.24.2 of 14 April 2025
 
 Hotfix release.
