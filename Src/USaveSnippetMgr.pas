@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a class that manages generation, previewing and saving of a code
  * snippet.
@@ -99,7 +99,8 @@ resourcestring
   sCategory = 'category';
   sSnippet = 'routine';
   // File filter strings
-  sHtmExtDesc = 'HTML file';
+  sHtml5ExtDesc = 'HTML 5 file';
+  sXHtmExtDesc = 'XHTML file';
   sRtfExtDesc = 'Rich text file';
   sIncExtDesc = 'Pascal include file';
   sTxtExtDesc = 'Plain text file';
@@ -170,7 +171,7 @@ function TSaveSnippetMgr.GetFileTypeDesc(
   const FileType: TSourceFileType): string;
 const
   Descriptions: array[TSourceFileType] of string = (
-    sTxtExtDesc, sIncExtDesc, sHtmExtDesc, sRtfExtDesc
+    sTxtExtDesc, sIncExtDesc, sHtml5ExtDesc, sXHtmExtDesc, sRtfExtDesc
   );
 begin
   Result := Descriptions[FileType];

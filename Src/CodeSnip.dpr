@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip application project file.
 }
@@ -378,7 +378,9 @@ uses
   DB.DataFormats in 'DB.DataFormats.pas',
   DB.IO.Vault.Native in 'DB.IO.Vault.Native.pas',
   DB.MetaData in 'DB.MetaData.pas',
-  DB.IO.Common.CS4 in 'DB.IO.Common.CS4.pas';
+  DB.IO.Common.CS4 in 'DB.IO.Common.CS4.pas',
+  USaveInfoMgr in 'USaveInfoMgr.pas',
+  ClassHelpers.RichEdit in 'ClassHelpers.RichEdit.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2025. Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements classes that can import and export snippets from and to XML.
 }
@@ -200,7 +200,7 @@ type
       Watermark = 'B46969D4-D367-4F5F-833E-F165FBA78631';
       // file version numbers
       EarliestVersion = 1;  // earliest file version supported by importer
-      LatestVersion = 7;    // current file version written by exporter
+      LatestVersion = 8;    // current file version written by exporter
       // XML node names
       ExportRootNodeName = 'codesnip-export';
       ProgVersionNodeName = 'prog-version';

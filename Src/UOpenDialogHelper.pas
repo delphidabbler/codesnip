@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Helper routines for use when working with standard windows open and save file
  * dialog boxes.
@@ -44,18 +44,20 @@ function FilterIndexToExt(const Dlg: TOpenDialog): string;
       prepended '.'.
   }
 
-function ExtToFilterIndex(const FilterStr, Ext: string;
-  const DefValue: Integer): Integer;
-  {Calculates index of a file extension in a "|" delimited file filter string as
-  used in standard file dialog boxes.
-    @param FilterStr [in] List of file types and extensions. Has format
-      "file desc 1|ext 1|file desc 2|ext 2 etc...".
-    @param Ext [in] Extension to be found.
-    @param DefValue [in] Default 1 based index to use if Ext is not in
-      FilterStr.
-    @return 1 based index of extension in filter string or -1 if extension not
-      in list.
-  }
+///  <summary>Calculates the index of a file type description in a &quot;|&quot;
+///  delimited string, as used in Windows standard file dialogue boxes.
+///  </summary>
+///  <param name="FilterStr"><c>string</c> [in] List of file types and
+///  extensions. Must have format
+///  <c>file desc 1|(*.ext1)|file desc 2|(*.ext2)</c> etc...</param>
+///  <param name="Desc"><c>string</c> [in] File type description to be found.
+///  </param>
+///  <param name="DefIdx"><c>Integer</c> [in] Default 1 based index to use if
+///  <c>Desc</c> is not in <c>FilterStr</c>.</param>
+///  <returns><c>Integer</c>. 1 based index of the file type description in the
+///  filter string, or <c>DefIdx</c> if the description is not found.</returns>
+function FilterDescToIndex(const FilterStr, Desc: string;
+  const DefIdx: Integer): Integer;
 
 function FileOpenEditedFileNameWithExt(const Dlg: TOpenDialog): string;
   {Gets full path to the file that is currently entered in a file open dialog
@@ -96,47 +98,42 @@ begin
   end;
 end;
 
-function ExtToFilterIndex(const FilterStr, Ext: string;
-  const DefValue: Integer): Integer;
-  {Calculates index of a file extension in a "|" delimited file filter string as
-  used in standard file dialog boxes.
-    @param FilterStr [in] List of file types and extensions. Has format
-      "file desc 1|ext 1|file desc 2|ext 2 etc...".
-    @param Ext [in] Extension to be found.
-    @param DefValue [in] Default 1 based index to use if Ext is not in
-      FilterStr.
-    @return 1 based index of extension in filter string or -1 if extension not
-      in list.
-  }
+function FilterDescToIndex(const FilterStr, Desc: string;
+  const DefIdx: Integer): Integer;
 var
   FilterParts: TStringList; // stores filter split into component parts
-  Extensions: TStringList;  // list of extensions in filter string
-  Idx: Integer;             // loops thru extensions in filter string
+  Descs: TStringList;       // list of file type descriptions in filter string
+  Idx: Integer;             // loops thru Descs in filter string
+  DescStr: string;
+  DescEnd: Integer;
 begin
-  Extensions := nil;
+  Descs := nil;
   FilterParts := TStringList.Create;
   try
     // Split filter string into parts (divided by | chars):
-    // even number indexes are descriptions and odd indexes are extensions
+    // even number indexes are descriptions and odd indexes are Descs
     StrExplode(FilterStr, '|', FilterParts);
-    // Record only extensions (every 2nd entry starting at index 1)
-    Extensions := TStringList.Create;
-    Idx := 1;
+    // Record only Descs (every 2nd entry starting at index 1)
+    Descs := TStringList.Create;
+    Idx := 0;
     while Idx < FilterParts.Count do
     begin
-      Extensions.Add(ExtractFileExt(FilterParts[Idx]));
+      DescStr := FilterParts[Idx];
+      DescEnd := StrPos('(', DescStr) - 2;
+      DescStr := Copy(DescStr, 1, DescEnd);
+      Descs.Add(DescStr);
       Inc(Idx, 2);
     end;
     // Check if required extension in list
-    Result := Extensions.IndexOf(Ext);
+    Result := Descs.IndexOf(Desc);
     if Result >= 0 then
-      // extension in list, increment by 1 since filter indexes are 1 based
+      // description in list, increment by 1 since filter indexes are 1 based
       Inc(Result)
     else
-      Result := DefValue;
+      Result := DefIdx;
   finally
-    FreeAndNil(Extensions);
-    FreeAndNil(FilterParts);
+    Descs.Free;
+    FilterParts.Free;
   end;
 end;
 

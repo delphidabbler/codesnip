@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Static class that generate HTML of parts of tables used to display compiler
  * results in details pane.
@@ -99,8 +99,8 @@ var
   Compiler: ICompiler;  // each supported compiler
 begin
   // Initialise HTML for two rows of table and resulting table HTML
-  Row1 := THTML.OpeningTag('tr');
-  Row2 := THTML.OpeningTag('tr');
+  Row1 := TXHTML.OpeningTag('tr');
+  Row2 := TXHTML.OpeningTag('tr');
   // Add to each table row for each compiler: compiler name in row 1 and LED
   // image representing compile result in row 2
   for Compiler in Compilers do
@@ -111,8 +111,8 @@ begin
     Row2 := Row2 + ResultCell(CompileResults[Compiler.GetID]) + EOL;
   end;
   // Close the two rows
-  Row1 := Row1 + THTML.ClosingTag('tr');
-  Row2 := Row2 + THTML.ClosingTag('tr');
+  Row1 := Row1 + TXHTML.ClosingTag('tr');
+  Row2 := Row2 + TXHTML.ClosingTag('tr');
   // Return HTML of two rows
   Result := Row1 + Row2;
 end;
@@ -123,30 +123,30 @@ resourcestring
   sMessage = 'Results for all compilers have been hidden.';
   sHelpText = 'More information';
 begin
-  Result := THTML.CompoundTag(
+  Result := TXHTML.CompoundTag(
     'tr',
-    THTML.CompoundTag(
+    TXHTML.CompoundTag(
       'th',
-      THTML.CompoundTag(
+      TXHTML.CompoundTag(
         'span',
         THTMLAttributes.Create('class', 'warning'),
-        THTML.Entities(sHeading)
+        TXHTML.Entities(sHeading)
       )
     )
   ) +
-  THTML.CompoundTag(
+  TXHTML.CompoundTag(
     'tr',
-    THTML.CompoundTag(
+    TXHTML.CompoundTag(
       'td',
-      THTML.Entities(sMessage)
+      TXHTML.Entities(sMessage)
       + ' ' +
-      THTML.CompoundTag(
+      TXHTML.CompoundTag(
         'a',
         THTMLAttributes.Create([
           THTMLAttribute.Create('href', 'help:AllCompilersHidden'),
           THTMLAttribute.Create('class', 'help-link')
         ]),
-        THTML.Entities(sHelpText)
+        TXHTML.Entities(sHelpText)
       )
       + '.'
     )
@@ -172,7 +172,7 @@ begin
   );
   Attrs.Add('title', CompResImgInfo[CompRes].Title);
   // Create tag
-  Result := THTML.SimpleTag('img', Attrs);
+  Result := TXHTML.SimpleTag('img', Attrs);
 end;
 
 class function TCompResHTML.NameCell(const Compiler: ICompiler): string;
@@ -181,14 +181,14 @@ var
 begin
   // Any spaces in compiler name replaced by <br /> tags
   CompilerNameHTML := StrReplace(
-    THTML.Entities(Compiler.GetName), ' ', THTML.SimpleTag('br')
+    TXHTML.Entities(Compiler.GetName), ' ', TXHTML.SimpleTag('br')
   );
-  Result := THTML.CompoundTag('th', CompilerNameHTML);
+  Result := TXHTML.CompoundTag('th', CompilerNameHTML);
 end;
 
 class function TCompResHTML.ResultCell(const CompRes: TCompileResult): string;
 begin
-  Result := THTML.CompoundTag('td', ImageTag(CompRes));
+  Result := TXHTML.CompoundTag('td', ImageTag(CompRes));
 end;
 
 class function TCompResHTML.TableRows(const CompileResults: TCompileResults):

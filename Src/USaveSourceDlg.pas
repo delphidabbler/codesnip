@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements customised Save dialog box for source code. Dialog has additional
  * controls to allow user to choose output file format, commenting style and
@@ -38,11 +38,11 @@ type
   ///  <summary>Type of handler for event triggered by TSaveSourceDlg to get
   ///  list of encodings supported for a file type.</summary>
   ///  <param name="Sender">TObject [in] Object triggering event.</param>
-  ///  <param name="Ext">string [in] Extension that defines type of file being
-  ///  queried.</param>
+  ///  <param name="FilterIdx">string [in] Filter index that specifies the type
+  ///  of file being queried.</param>
   ///  <param name="Encodings">TSourceFileEncodings [in/out] Assigned an array
   ///  of records that specify supported encodings.</param>
-  TEncodingQuery = procedure(Sender: TObject; const Ext: string;
+  TEncodingQuery = procedure(Sender: TObject; const FilterIdx: Integer;
     var Encodings: TSourceFileEncodings) of object;
 
 type
@@ -475,7 +475,7 @@ begin
   // handle OnEncodingQuery)
   SetLength(Encodings, 0);
   if Assigned(fOnEncodingQuery) then
-    fOnEncodingQuery(Self, SelectedExt, Encodings);
+    fOnEncodingQuery(Self, FilterIndex, Encodings);
   if Length(Encodings) = 0 then
     Encodings := TSourceFileEncodings.Create(
       TSourceFileEncoding.Create(etSysDefault, sANSIEncoding)

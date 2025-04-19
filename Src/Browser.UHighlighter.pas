@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that highlights text in web browser that match a search criteria.
 }
@@ -194,7 +194,7 @@ begin
     begin
       // Apply highlight to found text by spanning it with highlight style
       SpanAttrs := THTMLAttributes.Create('style', fHighLightStyle);
-      Range.pasteHTML(THTML.CompoundTag('span', SpanAttrs, Range.htmlText));
+      Range.pasteHTML(TXHTML.CompoundTag('span', SpanAttrs, Range.htmlText));
       Inc(Result);
     end
     else

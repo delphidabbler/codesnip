@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that uses a rich edit control to print a rich text format
  * document.
@@ -48,7 +48,7 @@ type
     function GetPrintMargins: TPrintMargins;
   public
     ///  <summary>Prints given RTF document.</summary>
-    procedure Print(const Document: TRTF);
+    procedure Print(const Document: TRTFMarkup);
     ///  <summary>Title of document that appears in print spooler.</summary>
     ///  <remarks>A default title is used if Title is not set or is set to
     ///  empty string.</remarks>
@@ -63,6 +63,7 @@ uses
   // Delphi
   Printers,
   // Project
+  ClassHelpers.RichEdit,
   UMeasurement, UPrintInfo;
 
 
@@ -94,7 +95,7 @@ begin
   Result.Bottom := InchesToPixelsY(MMToInches(PrintInfo.PageMargins.Bottom));
 end;
 
-procedure TPrintEngine.Print(const Document: TRTF);
+procedure TPrintEngine.Print(const Document: TRTFMarkup);
 var
   PrintMargins: TPrintMargins;  // page margins
   DocTitle: string;             // document title for print spooler
@@ -102,7 +103,7 @@ resourcestring
   sDefTitle = 'CodeSnip document';  // default document title
 begin
   // Load document into engine
-  TRichEditHelper.Load(RichEdit, Document);
+  RichEdit.Load(Document);
   // Set up page margins
   PrintMargins := GetPrintMargins;
   RichEdit.PageRect := Rect(

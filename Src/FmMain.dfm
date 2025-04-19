@@ -871,6 +871,16 @@ inherited MainForm: TMainForm
       OnExecute = actDeleteVaultExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
+    object actSaveInfo: TAction
+      Category = 'File'
+      Caption = 'Save Snippet Information...'
+      Hint = 
+        'Save snippet information|Save information about the selected sni' +
+        'ppet to file'
+      ShortCut = 24649
+      OnExecute = actSaveInfoExecute
+      OnUpdate = actSaveInfoUpdate
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -880,6 +890,9 @@ inherited MainForm: TMainForm
       Caption = 'File'
       object miSaveSnippet: TMenuItem
         Action = actSaveSnippet
+      end
+      object miSaveInfo: TMenuItem
+        Action = actSaveInfo
       end
       object miSaveUnit: TMenuItem
         Action = actSaveUnit

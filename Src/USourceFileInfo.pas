@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements class that provides information about types of source code output
  * that are supported.
@@ -28,7 +28,8 @@ type
   TSourceFileType = (
     sfText,     // plain text files
     sfPascal,   // pascal files (either .pas for units or .inc for include files
-    sfHTML,     // HTML files
+    sfHTML5,    // HTML 5 files
+    sfXHTML,    // XHTML files
     sfRTF       // rich text files
   );
 
@@ -105,9 +106,6 @@ type
     ///  <summary>Builds filter string for use in open / save dialog boxes from
     ///  descriptions and file extensions of each supported file type.</summary>
     function FilterString: string;
-    ///  <summary>Finds source file type associated with a file extension.
-    ///  </summary>
-    function FileTypeFromExt(const Ext: string): TSourceFileType;
     ///  <summary>Array of information about each supported file type that is
     ///  of use to save source dialog boxes.</summary>
     property FileTypeInfo[const FileType: TSourceFileType]: TSourceFileTypeInfo
@@ -131,22 +129,6 @@ uses
 
 
 { TSourceFileInfo }
-
-function TSourceFileInfo.FileTypeFromExt(const Ext: string): TSourceFileType;
-var
-  FT: TSourceFileType;  // loops thru all source file types
-begin
-  // Assume text file type if extension not recognised
-  Result := sfText;
-  for FT := Low(TSourceFileType) to High(TSourceFileType) do
-  begin
-    if StrSameText(Ext, fFileTypeInfo[FT].Extension) then
-    begin
-      Result := FT;
-      Break;
-    end;
-  end;
-end;
 
 function TSourceFileInfo.FilterString: string;
 const

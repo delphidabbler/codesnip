@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines classes etc that render different fragments of information about a
  * snippet as HTML for display in the detail pane. Page content is flexible and
@@ -207,10 +207,10 @@ end;
 class function TPrefixedSnippetHTMLFragment.Render(const Prefix, Id,
   Content: string): string;
 begin
-  Result := THTML.CompoundTag(
+  Result := TXHTML.CompoundTag(
     'p',
-    THTML.CompoundTag('strong', Prefix) + ' ' +
-      THTML.CompoundTag('span', THTMLAttributes.Create('id', Id), Content)
+    TXHTML.CompoundTag('strong', Prefix) + ' ' +
+      TXHTML.CompoundTag('span', THTMLAttributes.Create('id', Id), Content)
   );
 end;
 
@@ -218,7 +218,7 @@ end;
 
 function TSnippetDescHTMLFragment.ToString: string;
 begin
-  Result := THTML.CompoundTag(
+  Result := TXHTML.CompoundTag(
     'div', THTMLAttributes.Create('id', 'description'), SnippetHTML.Description
   );
 end;
@@ -227,7 +227,7 @@ end;
 
 function TSnippetSourceCodeHTMLFragment.ToString: string;
 begin
-  Result := THTML.CompoundTag(
+  Result := TXHTML.CompoundTag(
     'div', THTMLAttributes.Create('id', 'sourcecode'), SnippetHTML.SourceCode
   );
 end;
@@ -281,10 +281,10 @@ end;
 
 function TSnippetCompileResultsHTMLFragment.ToString: string;
 begin
-  Result := THTML.CompoundTag(
+  Result := TXHTML.CompoundTag(
     'div',
     THTMLAttributes.Create('id', 'compile-results'),
-    THTML.CompoundTag(
+    TXHTML.CompoundTag(
       'table',
       THTMLAttributes.Create(
         [
@@ -302,7 +302,7 @@ end;
 
 function TSnippetExtraHTMLFragment.ToString: string;
 begin
-  Result := THTML.CompoundTag(
+  Result := TXHTML.CompoundTag(
     'div', THTMLAttributes.Create('id', 'extra'), SnippetHTML.Extra
   );
 end;

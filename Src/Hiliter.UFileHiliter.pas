@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that generates hilighted and formatted source code for a
  * specified file type.
@@ -99,7 +99,8 @@ var
 begin
   case fFileType of
     sfRTF: HilitedDocCls := TRTFDocumentHiliter;
-    sfHTML: HilitedDocCls := TXHTMLDocumentHiliter;
+    sfXHTML: HilitedDocCls := TXHTMLDocumentHiliter;
+    sfHTML5: HilitedDocCls := THTML5DocumentHiliter;
     else HilitedDocCls := TNulDocumentHiliter;
   end;
   if fWantHiliting and IsHilitingSupported(fFileType) then
@@ -116,7 +117,7 @@ class function TFileHiliter.IsHilitingSupported(
     @return True if file type supports highlighting, false if not.
   }
 begin
-  Result := FileType in [sfHTML, sfRTF];
+  Result := FileType in [sfHTML5, sfXHTML, sfRTF];
 end;
 
 end.

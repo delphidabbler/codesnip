@@ -7,6 +7,9 @@
  *
  * Implements a titled frame that displays lists of snippets, arranged in
  * different ways, and manages user interaction with the displayed items.
+ *
+ * ACKNOWLEDGEMENT: fViewStore view list implemented by @SirRufo (GitHub PR
+ * #160 & Issue #158).
 }
 
 
@@ -18,10 +21,11 @@ interface
 
 uses
   // Delphi
-  ComCtrls,
-  Controls,
-  Classes,
-  Windows,
+  Generics.Collections,
+  ComCtrls, 
+  Controls, 
+  Classes, 
+  Windows, 
   ExtCtrls,
   StdCtrls,
   ToolWin,
@@ -40,29 +44,6 @@ uses
 
 
 type
-
-  // !! HACK
-  // Horrible hack to expose CreateWnd for overiding TTreeView.CreateWnd for the
-  // existing TTreeView component of TOverviewFrame. The hack avoids having to
-  // remove the component and replacing it with a descendant class that is
-  // manually constructed at run time.
-  // This is here to enable the tree view to be recreated with correctly
-  // instantiated TViewItemTreeNode nodes after Windows recreates the tree
-  // behind the scenes after resuming from hibernation.
-  // I am deeply ashamed of this hack.
-  TTreeView = class(ComCtrls.TTreeView)
-  strict private
-    var
-      _HACK_fOnAfterCreateNilViews: TNotifyEvent;
-  protected
-    procedure CreateWnd; override;
-  public
-    ///  <summary>!! HACK. Event triggered after the inherited CreateWnd is
-    ///  called. Only called if the tree view has nil references to IView
-    ///  objects.</summary>
-    property _HACK_OnAfterCreateNilViews: TNotifyEvent
-      read _HACK_fOnAfterCreateNilViews write _HACK_fOnAfterCreateNilViews;
-  end;
 
   {
   TOverviewFrame:
@@ -130,6 +111,8 @@ type
       end;
 
     var
+      fViewStore : TList<IView>;    // Stores references to IView instances that
+                                    // have weak references in tree nodes
       fTVDraw: TTVDraw;             // Object that renders tree view nodes
       fNotifier: INotifier;         // Notifies app of user initiated events
       fCanChange: Boolean;          // Whether selected node allowed to change
@@ -256,10 +239,6 @@ type
     procedure RestoreTreeState;
       {Restores last saved treeview expansion state from memory.
       }
-    ///  <summary>!! HACK: Sets an event handler on the tree view to work
-    ///  around a bug that can occur after resuming from hibernation.</summary>
-    ///  <remarks>Method of IOverviewDisplayMgr.</remarks>
-    procedure _HACK_SetHibernateHandler(const AHandler: TNotifyEvent);
     { IPaneInfo }
     function IsInteractive: Boolean;
       {Checks if the pane is currently interactive with user.
@@ -332,6 +311,7 @@ var
   TabIdx: Integer;  // loops through tabs
 begin
   inherited;
+  fViewStore := TList<IView>.Create;
   // Create delegated (contained) command bar manager for toolbar and popup menu
   fCommandBars := TCommandBarMgr.Create(Self);
   fCommandBars.AddCommandBar(
@@ -367,6 +347,7 @@ begin
   fSelectedItem := nil;
   fSnippetList.Free;  // does not free referenced snippets
   fCommandBars.Free;
+  fViewStore.Free;
   inherited;
 end;
 
@@ -568,7 +549,7 @@ begin
       Exit;
     // Build new treeview using grouping determined by selected tab
     Builder := BuilderClasses[tcDisplayStyle.TabIndex].Create(
-      tvSnippets, fSnippetList
+      tvSnippets, fSnippetList, fViewStore
     );
     Builder.Build;
     // Restore state of treeview based on last time it was displayed
@@ -1003,12 +984,6 @@ begin
   end;
 end;
 
-procedure TOverviewFrame._HACK_SetHibernateHandler(
-  const AHandler: TNotifyEvent);
-begin
-  tvSnippets._HACK_OnAfterCreateNilViews := AHandler;
-end;
-
 { TOverviewFrame.TTVDraw }
 
 function TOverviewFrame.TTVDraw.GetVaultID(const Node: TTreeNode): TVaultID;
@@ -1040,25 +1015,6 @@ begin
     Result := ViewItem.IsGrouping
   else
     Result := False;
-end;
-
-{ TTreeView }
-
-procedure TTreeView.CreateWnd;
-var
-  HasNilViews: Boolean;
-  Node: TTreeNode;
-begin
-  inherited;
-  HasNilViews := False;
-  for Node in Items do
-  begin
-    HasNilViews := not Assigned((Node as TViewItemTreeNode).ViewItem);
-    if HasNilViews then
-      Break;
-  end;
-  if HasNilViews and Assigned(_HACK_fOnAfterCreateNilViews) then
-    _HACK_fOnAfterCreateNilViews(Self);
 end;
 
 end.

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Heirachy of classes that render views as HTML. The HTML is used to display
  * the view item in a tab in the detail pane. A factory is provided that can
@@ -398,10 +398,10 @@ end;
 
 function TNewTabPageHTML.GetBodyHTML: string;
 begin
-  Result := THTML.CompoundTag(
+  Result := TXHTML.CompoundTag(
     'div',
     THTMLAttributes.Create('id', 'newtab'),
-    THTML.Entities(View.Description)
+    TXHTML.Entities(View.Description)
   );
 end;
 
@@ -455,9 +455,9 @@ begin
     for Compiler in Compilers do
       if Compiler.IsAvailable then
         CompilerList.AppendLine(
-          THTML.CompoundTag(
+          TXHTML.CompoundTag(
             'li',
-            THTML.Entities(Compiler.GetName)
+            TXHTML.Entities(Compiler.GetName)
           )
         );
     Tplt.ResolvePlaceholderHTML('CompilerList', CompilerList.ToString);
@@ -473,9 +473,9 @@ resourcestring
   sBody = 'The database has been updated successfully.';
 begin
   Result :=
-    THTML.CompoundTag('h1', View.Description)
+    TXHTML.CompoundTag('h1', View.Description)
     +
-    THTML.CompoundTag('p', sBody);
+    TXHTML.CompoundTag('p', sBody);
 end;
 
 { TSnippetInfoPageHTML }
@@ -611,14 +611,14 @@ begin
   DescCellAttrs := THTMLAttributes.Create('class', 'desc');
   SnippetHTML := TSnippetHTML.Create(Snippet);
   try
-    Result := THTML.CompoundTag(
+    Result := TXHTML.CompoundTag(
       'tr',
-      THTML.CompoundTag(
+      TXHTML.CompoundTag(
         'td',
         NameCellAttrs,
         SnippetHTML.SnippetALink
       )
-      + THTML.CompoundTag('td', DescCellAttrs, SnippetHTML.Description)
+      + TXHTML.CompoundTag('td', DescCellAttrs, SnippetHTML.Description)
     );
   finally
     SnippetHTML.Free;

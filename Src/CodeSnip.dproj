@@ -587,6 +587,8 @@
 			<DCCReference Include="DB.IO.Vault.Native.pas"/>
 			<DCCReference Include="DB.MetaData.pas"/>
 			<DCCReference Include="DB.IO.Common.CS4.pas"/>
+			<DCCReference Include="USaveInfoMgr.pas"/>
+			<DCCReference Include="ClassHelpers.RichEdit.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

@@ -4,7 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip help index file.
 -->
@@ -315,6 +315,10 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="rename category dialogue">
     <param name="Local" value="HTML\dlg_renamecategory.htm">
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="save snippet information dialogue">
+    <param name="Local" value="HTML\dlg_saveinfo.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="save annotated source dialogue">

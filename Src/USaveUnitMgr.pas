@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a class that manages generation, previewing and saving of a pascal
  * unit.
@@ -114,7 +114,8 @@ resourcestring
   // Dialog box title
   sSaveDlgTitle = 'Save Unit';
   // File filter strings
-  sHTMLDesc = 'HTML file';
+  sHTML5Desc = 'HTML 5 file';
+  sXHTMLDesc = 'XHTML file';
   sRTFDesc = 'Rich text file';
   sPascalDesc = 'Pascal unit';
   sTextDesc = 'Plain text file';
@@ -257,7 +258,7 @@ end;
 function TSaveUnitMgr.GetFileTypeDesc(const FileType: TSourceFileType): string;
 const
   Descriptions: array[TSourceFileType] of string = (
-    sTextDesc, sPascalDesc, sHTMLDesc, sRTFDesc
+    sTextDesc, sPascalDesc, sHTML5Desc, sXHTMLDesc, sRTFDesc
   );
 begin
   Result := Descriptions[FileType];

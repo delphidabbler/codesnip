@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides highlighter classes used to format and highlight source code in
  * various file formats. Contains a factory object and implementation of various
@@ -132,7 +132,7 @@ type
   ///  <summary>
   ///  Creates a highlighted source code document in XHTML format.
   ///  </summary>
-  TXHTMLDocumentHiliter = class sealed(TDocumentHiliter)
+  THTMLDocumentHiliter = class abstract(TDocumentHiliter)
   strict private
     ///  <summary>Generates the CSS rules to be used in the document.</summary>
     ///  <param name="Attrs">IHiliteAttrs [in] Highlighting styles used in
@@ -140,6 +140,8 @@ type
     ///  <returns>string. CSS rules that apply styles specified in Attrs.
     ///  </returns>
     class function GenerateCSSRules(Attrs: IHiliteAttrs): string;
+  strict protected
+    class function BuilderClass: THTMLBuilderClass; virtual; abstract;
   public
     ///  <summary>Creates XHTML document containing highlighted source code.
     ///  </summary>
@@ -152,6 +154,20 @@ type
     class function Hilite(const RawCode: string;
       Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
       override;
+  end;
+
+  ///  <summary>Creates a highlighted source code document in XHTML format.
+  ///  </summary>
+  TXHTMLDocumentHiliter = class sealed(THTMLDocumentHiliter)
+  strict protected
+    class function BuilderClass: THTMLBuilderClass; override;
+  end;
+
+  ///  <summary>Creates a highlighted source code document in HTML5 format.
+  ///  </summary>
+  THTML5DocumentHiliter = class sealed(THTMLDocumentHiliter)
+  strict protected
+    class function BuilderClass: THTMLBuilderClass; override;
   end;
 
 type
@@ -242,55 +258,56 @@ type
   end;
 
 type
-  ///  <summary>
-  ///  Renders highlighted source code in XHTML format. Generated code is
-  ///  recorded in a given HTML code builder object.
+  ///  <summary>Renders highlighted source code in any supported HTML format.
   ///  </summary>
-  ///  <remarks>
-  ///  Designed for use with TSyntaxHiliter objects.
-  ///  </remarks>
+  ///  <remarks>Designed for use with <c>TSyntaxHiliter</c> objects.</remarks>
   THTMLHiliteRenderer = class(THiliteRenderer, IHiliteRenderer)
   strict private
     var
-      ///  <summary>Object used to record generated XHTML code.</summary>
+      ///  <summary>Object used to build up the generated HTML.</summary>
       fBuilder: THTMLBuilder;
-      ///  <summary>Flag indicating if writing first line of output.</summary>
+      ///  <summary>Flag indicating if writing the first line of output.
+      ///  </summary>
       fIsFirstLine: Boolean;
   public
-    ///  <summary>Object constructor. Sets up object to render documents.
-    ///  </summary>
-    ///  <param name="Builder">THTMLBuilder [in] Object that receives generated
-    ///  XHTML code.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
-    ///  style. If nil document is not highlighted.</param>
+    ///  <summary>Object constructor. Sets up the object to render HTML
+    ///  documents.</summary>
+    ///  <param name="Builder"><c>THTMLBuilder</c> [in] Object used to build the
+    ///  required HTML. <c>Builder</c> must be an instance of a concreate
+    ///  descendant class of <c>THTMLBuilder</c>, which is abstract. The type of
+    ///  <c>Builder</c> determines the type of HTML that is generated.</param>
+    ///  <param name="Attrs"><c>IHiliteAttrs</c> [in] Specifies required
+    ///  highlighting style. If <c>nil</c> the document is not highlighted.
+    ///  </param>
     constructor Create(const Builder: THTMLBuilder;
       const Attrs: IHiliteAttrs = nil);
-    ///  <summary>Initialises XHTML ready to receive highlighted code.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure Initialise;
-    ///  <summary>Tidies up XHTML after all highlighted code processed.
+    ///  <summary>Initialises the HTML ready to receive highlighted code.
     ///  </summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
+    procedure Initialise;
+    ///  <summary>Tidies up the HTML after all highlighted code is processed.
+    ///  </summary>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure Finalise;
-    ///  <summary>Emits new line if necessary.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <summary>Emits a new line if necessary.</summary>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure BeginLine;
     ///  <summary>Does nothing.</summary>
     ///  <remarks>
-    ///  <para>Handling of new lines is all done by BeginLine.</para>
-    ///  <para>Method of IHiliteRenderer.</para>
+    ///  <para>Handling of new lines is all done by <c>BeginLine</c>.</para>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     ///  </remarks>
     procedure EndLine;
-    ///  <summary>Emits any span tag required to style following source code
-    ///  element as specified by Elem.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <summary>Emits any &lt;span&gt; tag required to style the following
+    ///  source code element, specified by <c>Elem</c>.</summary>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure BeforeElem(Elem: THiliteElement);
-    ///  <summary>Writes given source code element text.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <summary>Writes the given source code element text.</summary>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure WriteElemText(const Text: string);
-    ///  <summary>Closes any span tag used to style source code element
-    ///  specified by Elem.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <summary>Closes any &lt;span&gt; tag used to style the source code
+    ///  element specified by <c>Elem</c>.</summary>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure AfterElem(Elem: THiliteElement);
   end;
 
@@ -372,9 +389,9 @@ begin
   Result := TEncodedData.Create(RawCode, etUnicode);
 end;
 
-{ TXHTMLDocumentHiliter }
+{ THTMLDocumentHiliter }
 
-class function TXHTMLDocumentHiliter.GenerateCSSRules(Attrs: IHiliteAttrs):
+class function THTMLDocumentHiliter.GenerateCSSRules(Attrs: IHiliteAttrs):
   string;
 var
   CSSBuilder: TCSSBuilder;  // builds CSS code
@@ -396,7 +413,7 @@ begin
   end;
 end;
 
-class function TXHTMLDocumentHiliter.Hilite(const RawCode: string;
+class function THTMLDocumentHiliter.Hilite(const RawCode: string;
   Attrs: IHiliteAttrs; const Title: string): TEncodedData;
 resourcestring
   // Default document title
@@ -405,7 +422,7 @@ var
   Renderer: IHiliteRenderer;    // XHTML renderer object
   Builder: THTMLBuilder;        // object used to construct XHTML document
 begin
-  Builder := THTMLBuilder.Create;
+  Builder := BuilderClass.Create;
   try
     if Title <> '' then
       Builder.Title := Title
@@ -418,6 +435,20 @@ begin
   finally
     Builder.Free;
   end;
+end;
+
+{ TXHTMLDocumentHiliter }
+
+class function TXHTMLDocumentHiliter.BuilderClass: THTMLBuilderClass;
+begin
+  Result := TXHTMLBuilder;
+end;
+
+{ THTML5DocumentHiliter }
+
+class function THTML5DocumentHiliter.BuilderClass: THTMLBuilderClass;
+begin
+  Result := THTML5Builder;
 end;
 
 { TRTFDocumentHiliter }

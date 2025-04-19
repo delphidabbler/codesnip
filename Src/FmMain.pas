@@ -241,6 +241,8 @@ type
     tbSpacer7: TToolButton;
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
+    miSaveInfo: TMenuItem;
+    actSaveInfo: TAction;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>
@@ -500,6 +502,8 @@ type
     ///  position is permitted and blocks the move if not.</summary>
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
+    procedure actSaveInfoUpdate(Sender: TObject);
+    procedure actSaveInfoExecute(Sender: TObject);
   strict private
     var
       ///  <summary>Object that notifies user-initiated events by triggering
@@ -520,12 +524,6 @@ type
       fCompileMgr: TMainCompileMgr;
       ///  <summary>Object that manages favourites.</summary>
       fFavouritesMgr: TFavouritesManager;
-
-    ///  <summary>Handles the <c>WM_POWERBROADCAST</c> messages to detect and
-    ///  respond to hibernation messages.</summary>
-    ///  <remarks>!! HACK necessary as part of the fix for an obscure bug. See
-    ///  https://github.com/delphidabbler/codesnip/issues/70</remarks>
-    procedure WMPowerBroadcast(var Msg: TMessage); message WM_POWERBROADCAST;
 
     ///  <summary>Displays view item given by TViewItemAction instance
     ///  referenced by Sender and adds to history list.</summary>
@@ -619,6 +617,7 @@ uses
   UNulDropTarget,
   UPrintMgr,
   UQuery,
+  USaveInfoMgr,
   USaveSnippetMgr,
   USaveUnitMgr,
   USelectionIOMgr,
@@ -1047,6 +1046,17 @@ end;
 procedure TMainForm.actSaveDatabaseUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := TUserDBMgr.CanSave;
+end;
+
+procedure TMainForm.actSaveInfoExecute(Sender: TObject);
+begin
+  TSaveInfoMgr.Execute(fMainDisplayMgr.CurrentView);
+end;
+
+procedure TMainForm.actSaveInfoUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled :=
+    TSaveInfoMgr.CanHandleView(fMainDisplayMgr.CurrentView);
 end;
 
 procedure TMainForm.actSaveSelectionExecute(Sender: TObject);
@@ -1601,20 +1611,6 @@ begin
   if (NewSize < TMainWindowSettings.MinLeftPanelWidth)
     or (NewSize > ClientWidth - TMainWindowSettings.MinRightPanelWidth) then
     Accept := False;
-end;
-
-procedure TMainForm.WMPowerBroadcast(var Msg: TMessage);
-begin
-  // !! HACK
-  // Sometimes when the computer is resumed from hibernation the tree view in
-  // the overview frame is destroyed and recreated by Windows. Unfortunately the
-  // IView instances associated with the recreated tree nodes are lost.
-  // Attempting to read those (now nil) IView instances was resulting in an
-  // access violation.
-  case Msg.WParam of
-    PBT_APMSUSPEND:
-      fMainDisplayMgr._HACK_PrepareForHibernate;
-  end;
 end;
 
 end.

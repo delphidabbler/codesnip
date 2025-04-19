@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame used to display previews of RTF documents.
 }
@@ -59,6 +59,7 @@ implementation
 
 uses
   // Project
+  ClassHelpers.RichEdit,
   URTFUtils;
 
 
@@ -80,7 +81,7 @@ procedure TRTFPreviewFrame.LoadContent(const DocContent: TEncodedData);
     @param DocContent [in] Valid RTF document to be displayed.
   }
 begin
-  TRichEditHelper.Load(reView, TRTF.Create(DocContent));
+  reView.Load(TRTFMarkup.Create(DocContent));
 end;
 
 procedure TRTFPreviewFrame.SetPopupMenu(const Menu: TPopupMenu);

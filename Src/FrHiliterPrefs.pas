@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows the user to set syntax highlighter
  * preferences.
@@ -131,7 +131,7 @@ type
     ///  <summary>Generates and returns RTF representation of currently selected
     ///  highlighter element.</summary>
     ///  <remarks>This RTF is used to display elememt in preview pane.</remarks>
-    function GenerateRTF: TRTF;
+    function GenerateRTF: TRTFMarkup;
   public
     ///  <summary>Constructs frame instance and initialises controls.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns the frame.
@@ -178,6 +178,7 @@ uses
   // Delphi
   SysUtils, ExtCtrls, Windows, Graphics, Dialogs,
   // Project
+  ClassHelpers.RichEdit,
   FmPreferencesDlg, FmNewHiliterNameDlg, FmUserHiliterMgrDlg, Hiliter.UAttrs,
   IntfCommon, UCtrlArranger, UFontHelper, UIStringList, UMessageBox,
   URTFBuilder, URTFStyles, UUtils;
@@ -478,7 +479,7 @@ begin
   Result := sDisplayName;
 end;
 
-function THiliterPrefsFrame.GenerateRTF: TRTF;
+function THiliterPrefsFrame.GenerateRTF: TRTFMarkup;
 var
   RTFBuilder: TRTFBuilder;  // object used to create and render RTFBuilder
   EgLines: IStringList;     // list of lines in the example
@@ -614,7 +615,7 @@ end;
 
 procedure THiliterPrefsFrame.UpdatePreview;
 begin
-  TRichEditHelper.Load(frmExample.RichEdit, GenerateRTF);
+  frmExample.RichEdit.Load(GenerateRTF);
 end;
 
 initialization
