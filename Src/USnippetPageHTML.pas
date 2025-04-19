@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines classes etc that render different fragments of information about a
  * snippet as HTML for display in the detail pane. Page content is flexible and
