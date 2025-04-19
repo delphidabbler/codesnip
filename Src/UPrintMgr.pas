@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that manages printing of a document providing information
  * about certain view items.
@@ -85,7 +85,7 @@ end;
 procedure TPrintMgr.DoPrint;
 var
   PrintEngine: TPrintEngine;  // object that prints the print document
-  Document: TRTF;             // generated print document
+  Document: TRTFMarkup;       // generated print document
 begin
   PrintEngine := TPrintEngine.Create;
   try

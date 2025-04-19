@@ -5,7 +5,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2024, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip File Format Documentation: Export
 -->
@@ -56,6 +56,9 @@
   </li>
   <li>
     <a href="#file-format">File Format</a>
+  </li>
+  <li>
+    <a href="#erratum">Erratum</a>
   </li>
   <li>
     <a href="#changelog">Change Log</a>
@@ -114,8 +117,8 @@
 </h2>
 
 <p>
-  There have been seven different versions of the XML export file format &ndash; v1 to
-  v7. Tags used by all versions are explained below, with notes describing
+  There have been eight different versions of the XML export file format &ndash; v1 to
+  v8. Tags used by all versions are explained below, with notes describing
   which versions a tag applies to. Where there is no note the tag is valid in
   all versions.
 </p>
@@ -176,7 +179,7 @@
       </dt>
       <dd>
         Identifies major version of file. Determines which tags are valid and
-        establishes rules concerning content. Valid versions are 1 to 7.
+        establishes rules concerning content. Valid versions are 1 to 8.
       </dd>
     </dl>
   </dd>
@@ -198,7 +201,7 @@
         <span class="highlight">versions 1 to 6:</span> Contains information about user who created the file &nbsp; used for submissions to the online database, omitted for other exports.
       </li>
       <li>
-        <span class="highlight">version 7:</span> Not supported. Ignored if present.
+        <span class="highlight">version 7 and later:</span> Not supported. Ignored if present.
       </li>
     </ul>
   </dd>
@@ -212,7 +215,7 @@
         <span class="highlight">versions 1 to 6:</span> User's name or nickname.
       </li>
       <li>
-        <span class="highlight">version 7:</span> Not supported. Ignored if present.
+        <span class="highlight">version 7 and later:</span> Not supported. Ignored if present.
       </li>
     </ul>
   </dd>
@@ -226,7 +229,7 @@
         <span class="highlight">versions 1 to 6:</span> User's email address.
       </li>
       <li>
-        <span class="highlight">version 7:</span> Not supported. Ignored if present.
+        <span class="highlight">version 7 and later:</span> Not supported. Ignored if present.
       </li>
     </ul>
   </dd>
@@ -240,7 +243,7 @@
         <span class="highlight">versions 1 to 6:</span> Any comments provided by user.
       </li>
       <li>
-        <span class="highlight">version 7:</span> Not supported. Ignored if present.
+        <span class="highlight">version 7 and later:</span> Not supported. Ignored if present.
       </li>
     </ul>
   </dd>
@@ -687,33 +690,21 @@
     </ul>
   </dd>
 
-  <dt>
-    <strong>codesnip-export/routines/routine/xref</strong>
-  </dt>
-  <dd>
-    List of cross-referenced snippets.
-  </dd>
+</section>
 
-  <dt>
-    <strong>codesnip-export/routines/routine/xref/pascal-name</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      Name of a snippet within cross-reference list.
-    </div>
-    <ul class="squashed">
-      <li>
-        <span class="highlight">versions 1 to 4:</span> Name must begin with an
-        English language letter or the underscore.
-      </li>
-      <li>
-        <span class="highlight">version 5 and later:</span> Name can begin with
-        any character that is valid as the first character of a Unicode Pascal
-        identifier.
-      </li>
-    </ul>
-  </dd>
-</dl>
+<section id="erratum">
+
+<h2>
+  Erratum
+</h2>
+
+<p>
+  The <em>codesnip-export/routines/routine/xref</em> and <em>codesnip-export/routines/routine/xref/pascal-name</em> tags were included in versions 1 to 7 of this specification in error. XRefs were never intended to be written to export files by any version of CodeSnip, as source code comments make clear.
+</p>
+
+<p>
+  These tags have been removed from this document entirely of specification version 8.
+</p>
 
 </section>
 
@@ -1008,6 +999,18 @@
       </dd>
     </dl>
   </dd>
+
+  <dt>
+    <strong>Version 8 - 15 April 2025</strong>
+  </dt>
+  <dd>
+    <p>
+      Introduced with CodeSnip v4.24.3.
+    </p>
+    <p>
+      The <em>codesnip-export/routines/routine/xref</em> and <em>codesnip-export/routines/routine/xref/pascal-name</em> tags were removed from the specification. See <a href="#erratum">Erratum</a> above for details.
+    </p>
+  </dd>
 </dl>
 
 </section>
@@ -1056,6 +1059,10 @@
 
 <p>
   Readers of v2 files and later can parse REML as v6, since all versions of REML up to v6 are backwards compatible.
+</p>
+
+<p>
+  Readers of v1 to v7 files must ignore any <em>codesnip-export/routines/routine/xref</em> tags and sub tags in the unlikely event that they are found. For an explanation see <a href="#erratum">Erratum</a> above.
 </p>
 
 </section>

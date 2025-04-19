@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that loads a HTML template from resources and permits
  * replacing of placeholders with values.
@@ -105,7 +105,7 @@ procedure THTMLTemplate.ResolvePlaceholderText(const Placeholder, Text: string);
     @param Text [in] Plain text to replace placeholder.
   }
 begin
-  ResolvePlaceholderHTML(Placeholder, THTML.Entities(Text));
+  ResolvePlaceholderHTML(Placeholder, TXHTML.Entities(Text));
 end;
 
 end.

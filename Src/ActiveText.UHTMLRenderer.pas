@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides a class that renders active text as HTML.
 }
@@ -145,7 +145,7 @@ end;
 function TActiveTextHTML.MakeClosingTag(const Elem: IActiveTextActionElem):
   string;
 begin
-  Result := THTML.ClosingTag(fTagInfoMap[Elem.Kind].Name);
+  Result := TXHTML.ClosingTag(fTagInfoMap[Elem.Kind].Name);
 end;
 
 function TActiveTextHTML.MakeOpeningTag(const Elem: IActiveTextActionElem):
@@ -160,7 +160,7 @@ begin
       Attrs := THTMLAttributes.Create;
     Attrs.Add('class', fCSSStyles.ElemClasses[Elem.Kind])
   end;
-  Result := THTML.OpeningTag(fTagInfoMap[Elem.Kind].Name, Attrs);
+  Result := TXHTML.OpeningTag(fTagInfoMap[Elem.Kind].Name, Attrs);
 end;
 
 function TActiveTextHTML.Render(ActiveText: IActiveText): string;
@@ -242,7 +242,7 @@ begin
   end
   else
     Result := '';
-  Result := Result + THTML.Entities(TextElem.Text);
+  Result := Result + TXHTML.Entities(TextElem.Text);
 end;
 
 { TActiveTextHTML.TCSSStyles }

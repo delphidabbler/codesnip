@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows user to set printing preferences.
  *
@@ -101,9 +101,10 @@ uses
   // Delphi
   SysUtils, Windows, Graphics, Math, ComCtrls,
   // Project
+  ClassHelpers.RichEdit,
   FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UHiliters, IntfCommon, UColours,
   UConsts, UEncodings, UFontHelper, UKeysHelper, UPrintInfo, URTFBuilder,
-  URTFStyles, URTFUtils, UStrUtils, UUtils;
+  URTFStyles, UStrUtils, UUtils;
 
 
 {$R *.dfm}
@@ -379,7 +380,7 @@ begin
     HiliteSource(UseColor, SyntaxPrint, Builder);
     Builder.EndPara;
     // Load document into rich edit
-    TRichEditHelper.Load(fRe, Builder.Render);
+    fRe.Load(Builder.Render);
   finally
     FreeAndNil(Builder);
   end;

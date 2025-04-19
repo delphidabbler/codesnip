@@ -5,7 +5,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip File Format Documentation: Saved Files
 -->
@@ -46,20 +46,27 @@
 </h2>
 
 <p>
-  CodeSnip saves external files in two different ways:
+  CodeSnip saves external files in three different ways:
 </p>
 
 <ol>
   <li>
-    By saving snippets to file from the <em>File | Save Snippet</em> menu.
+    By saving snippet information to file from the <em>File | Save Snippet Information</em> menu option.
   </li>
   <li>
-    By saving units to file from the <em>File | Save Unit</em> menu.
+    By saving snippets to file from the <em>File | Save Snippet</em> menu option.
+  </li>
+  <li>
+    By saving units to file from the <em>File | Save Unit</em> menu option.
   </li>
 </ol>
 
 <p>
-  In each case the following file types can be chosen by the user:
+  In the first case the snippet is always saved in rich text format.
+</p>
+
+<p>
+  In the second two cases the following file types can be chosen by the user:
 </p>
 
 <ul>
@@ -70,6 +77,9 @@
     Pascal source files (either .inc or .pas files).
   </li>
   <li>
+    HTML 5 files.
+  </li>
+  <li>
     XHTML files.
   </li>
   <li>
@@ -78,7 +88,7 @@
 </ul>
 
 <p>
-  There is no specific file format for these files, except that XHTML and RTF
+  There is no specific file format for these files, except that HTML 5, XHTML and RTF
   files conform to published specifications.
 </p>
 
@@ -87,7 +97,11 @@
 </h2>
 
 <p>
-  The encodings used depend on the file type and user choice. Different file
+  In the first case the RTF is always saved in ASCII format.
+</p>
+
+<p>
+  In the 2nd and 3rd cases the encodings used depend on the file type and user choice. Different file
   types have different encoding choices, as follows:
 </p>
 
@@ -125,6 +139,16 @@
     </ul>
   </dd>
   <dt>
+    HTML 5 files
+  </dt>
+  <dd>
+    <ul class="squashed">
+      <li>
+        UTF-8
+      </li>
+    </ul>
+  </dd>
+  <dt>
     XHTML files
   </dt>
   <dd>
@@ -140,7 +164,7 @@
   <dd>
     <ul class="squashed">
       <li>
-        ANSI (system default code page)
+        ANSI (system default code page). ASCII format is actually used.
       </li>
     </ul>
   </dd>

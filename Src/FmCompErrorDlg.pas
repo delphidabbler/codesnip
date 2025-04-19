@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that displays compiler error and warning logs.
 }
@@ -341,7 +341,7 @@ var
 begin
   Result := '';
   for Line in fLog do
-    Result := Result + THTML.CompoundTag('li', THTML.Entities(Line)) + EOL;
+    Result := Result + TXHTML.CompoundTag('li', TXHTML.Entities(Line)) + EOL;
 end;
 
 end.

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows user to set source code preferences.
  *
@@ -112,6 +112,7 @@ uses
   // Delphi
   SysUtils, Math,
   // Project
+  ClassHelpers.RichEdit,
   FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UFileHiliter, Hiliter.UHiliters,
   IntfCommon, UConsts, UCtrlArranger, URTFUtils;
 
@@ -121,7 +122,8 @@ uses
 
 resourcestring
   // File type descriptions
-  sHTMLFileDesc = 'HTML';
+  sHTML5FileDesc = 'HTML 5';
+  sXHTMLFileDesc = 'XHTML';
   sRTFFileDesc = 'Rich text';
   sPascalFileDesc = 'Pascal';
   sTextFileDesc = 'Plain text';
@@ -130,7 +132,7 @@ resourcestring
 const
   // Maps source code file types to descriptions
   cFileDescs: array[TSourceFileType] of string = (
-    sTextFileDesc, sPascalFileDesc, sHTMLFileDesc, sRTFFileDesc
+    sTextFileDesc, sPascalFileDesc, sHTML5FileDesc, sXHTMLFileDesc, sRTFFileDesc
   );
 
 
@@ -158,7 +160,7 @@ type
         @param HiliteAttrs [in] Attributes of highlighter used to render
           preview.
       }
-    function Generate: TRTF;
+    function Generate: TRTFMarkup;
       {Generate RTF code used to render preview.
         @return Required RTF code.
       }
@@ -357,8 +359,7 @@ begin
   // Generate and display preview with required comment style
   Preview := TSourcePrefsPreview.Create(GetCommentStyle, fHiliteAttrs);
   try
-    // Display preview
-    TRichEditHelper.Load(frmPreview.RichEdit, Preview.Generate);
+    frmPreview.RichEdit.Load(Preview.Generate);
   finally
     Preview.Free;
   end;
@@ -399,12 +400,14 @@ begin
   fHiliteAttrs := HiliteAttrs;
 end;
 
-function TSourcePrefsPreview.Generate: TRTF;
+function TSourcePrefsPreview.Generate: TRTFMarkup;
   {Generate RTF code used to render preview.
     @return Required RTF code.
   }
 begin
-  Result := TRTF.Create(TRTFDocumentHiliter.Hilite(SourceCode, fHiliteAttrs));
+  Result := TRTFMarkup.Create(
+    TRTFDocumentHiliter.Hilite(SourceCode, fHiliteAttrs)
+  );
 end;
 
 function TSourcePrefsPreview.SourceCode: string;

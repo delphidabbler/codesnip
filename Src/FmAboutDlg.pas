@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2025, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements the program's About dialogue box.
 }
@@ -312,15 +312,15 @@ begin
   begin
     for Contributor in ContribList do
       Result := Result
-        + THTML.CompoundTag('div', THTML.Entities(Contributor))
+        + TXHTML.CompoundTag('div', TXHTML.Entities(Contributor))
         + EOL;
   end
   else
   begin
     // List couldn't be found: display warning message
     DivAttrs := THTMLAttributes.Create('class', 'warning');
-    Result := THTML.CompoundTag(
-      'div', DivAttrs, THTML.Entities(sNoContributors)
+    Result := TXHTML.CompoundTag(
+      'div', DivAttrs, TXHTML.Entities(sNoContributors)
     );
   end;
 end;
@@ -484,15 +484,15 @@ procedure TAboutDlg.InitHTMLFrames;
           'DBLicense',
           StrIf(
             fMetaData.GetLicenseInfo.URL <> '',
-            THTML.CompoundTag(
+            TXHTML.CompoundTag(
               'a',
               THTMLAttributes.Create([
                 THTMLAttribute.Create('href', fMetaData.GetLicenseInfo.URL),
                 THTMLAttribute.Create('class', 'external-link')
               ]),
-              THTML.Entities(fMetaData.GetLicenseInfo.Name)
+              TXHTML.Entities(fMetaData.GetLicenseInfo.Name)
             ),
-            THTML.Entities(fMetaData.GetLicenseInfo.Name)
+            TXHTML.Entities(fMetaData.GetLicenseInfo.Name)
           )
         );
         Tplt.ResolvePlaceholderHTML(
