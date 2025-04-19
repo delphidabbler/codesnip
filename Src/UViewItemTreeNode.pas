@@ -24,21 +24,33 @@ uses
 
 
 type
-  {
-  TViewItemTreeNode:
-    Custom tree node class that adds ability to store reference to a view item
-    in a tree node.
-  }
+  ///  <summary>Custom tree node class that adds a property to store a weak
+  ///  reference to an <c>IView</c> instance in a tree node.</summary>
   TViewItemTreeNode = class(TTreeNode)
   strict private
-    var fViewItem: IView; // Value of ViewItem property
+    function GetViewItem: IView;
+    procedure SetViewItem(const Value: IView);
   public
-    property ViewItem: IView read fViewItem write fViewItem;
-      {View item associated with tree node}
+    ///  <summary>View item associated with tree node.</summary>
+    ///  <remarks>NOTE: This view item is stored as a weak reference via a
+    ///  pointer so the reference count is not updated.</remarks>
+    property ViewItem: IView read GetViewItem write SetViewItem;
   end;
 
 
 implementation
+
+{ TViewItemTreeNode }
+
+function TViewItemTreeNode.GetViewItem: IView;
+begin
+  Result := IView(Data);
+end;
+
+procedure TViewItemTreeNode.SetViewItem(const Value: IView);
+begin
+  Data := Pointer(Value);
+end;
 
 end.
 

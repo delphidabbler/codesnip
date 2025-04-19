@@ -18,6 +18,7 @@ interface
 
 uses
   // Delphu
+  Generics.Collections,
   ComCtrls,
   // Project
   DB.USnippet, UGroups, UView, UViewItemTreeNode;
@@ -32,13 +33,23 @@ type
   TOverviewTreeBuilder = class abstract(TObject)
   strict private
     var
-      fTreeView: TTreeView;       // Value of TreeView property
-      fSnippetList: TSnippetList; // Value of SnippetList property
+      // Property values
+      fTreeView: TTreeView;
+      fSnippetList: TSnippetList;
+      fViewStore: TList<IView>;
   strict protected
     property TreeView: TTreeView read fTreeView;
       {Reference to treeview populated by class}
     property SnippetList: TSnippetList read fSnippetList;
       {List of snippets to be displayed in treeview}
+    ///  <summary>List of <c>IView</c> instances referenced by treeview nodes.
+    ///  </summary>
+    ///  <remarks>This list is required to maintain reference counting of
+    ///  <c>IView</c>s because the tree nodes only store weak references.
+    ///  </remarks>
+    property ViewStore : TList<IView> read fViewStore;
+      {List of IView instances referenced (weakly) by treeview nodes. This list
+      maintains maintains reference counting}
     function AddViewItemNode(const ParentNode: TViewItemTreeNode;
       ViewItem: IView): TViewItemTreeNode;
       {Adds a new node to the tree view that represents a view item.
@@ -57,12 +68,16 @@ type
         @return Required view item object.
       }
   public
-    constructor Create(const TV: TTreeView; const SnippetList: TSnippetList);
-      {Class constructor. Sets up object to populate a treeview with a list of
-      snippets.
-        @param TV [in] Treeview control to be populated.
-        @param SnippetList [in] List of snippets to be added to TV.
-      }
+    ///  <summary>Constructs an object to populate a tree view with a list of
+    ///  snippets.</summary>
+    ///  <param name="TV"><c>TTreeView</c> [in] Treeview control to be
+    ///  populated.</param>
+    ///  <param name="SnippetList"><c>TSnippetList</c> [in] List of snippets to
+    ///  be added to the treeview.</param>
+    ///  <param name="ViewStore"><c>TList&lt;IView&gt;</c> [in] Receives a list
+    ///  of view items, one per tree node.</param>
+    constructor Create(const TV: TTreeView; const SnippetList: TSnippetList;
+      const ViewStore: TList<IView>);
     procedure Build;
       {Populates the treeview.
       }
@@ -177,7 +192,9 @@ var
   ParentNode: TViewItemTreeNode;  // each section node in tree
   Grouping: TGrouping;            // groups snippets
   Group: TGroupItem;              // each group of snippets
+  View: IView;
 begin
+  ViewStore.Clear;
   // Create required grouping of snippets
   Grouping := CreateGrouping;
   try
@@ -186,11 +203,17 @@ begin
     begin
       if not Group.IsEmpty or Preferences.ShowEmptySections then
       begin
-        ParentNode := AddViewItemNode(nil, CreateViewItemForGroup(Group));
+        View := CreateViewItemForGroup(Group);
+        ParentNode := AddViewItemNode(nil, View);
+        ViewStore.Add(View);
         for Snippet in Group.SnippetList do
+        begin
+          View := TViewFactory.CreateSnippetView(Snippet);
           AddViewItemNode(
-            ParentNode, TViewFactory.CreateSnippetView(Snippet)
+            ParentNode, View
           );
+          ViewStore.Add(View);
+        end;
       end;
     end;
   finally
@@ -199,16 +222,12 @@ begin
 end;
 
 constructor TOverviewTreeBuilder.Create(const TV: TTreeView;
-  const SnippetList: TSnippetList);
-  {Class constructor. Sets up object to populate a treeview with a list of
-  snippets.
-    @param TV [in] Treeview control to be populated.
-    @param SnippetList [in] List of snippets to be added to TV.
-  }
+  const SnippetList: TSnippetList; const ViewStore: TList<IView>);
 begin
   inherited Create;
   fTreeView := TV;
   fSnippetList := SnippetList;
+  fViewStore := ViewStore;
 end;
 
 { TOverviewCategorisedTreeBuilder }
