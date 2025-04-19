@@ -16,7 +16,7 @@ Hotfix release.
 ## Release v4.24.1 of 13 April 2025
 
 * Fixed bug where CodeSnip occasionally crashes after a computer resumes from hibernation [issue #70].
-* Bumped some copyright dates for 2025.
+* Updated license copyright dates for 2025.
 
 ## Release v4.24.0 of 23 October 2024
 
