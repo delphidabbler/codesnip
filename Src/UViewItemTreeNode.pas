@@ -7,6 +7,9 @@
  *
  * Implements class that extends TTreeNode by adding a property that references
  * a view item.
+ *
+ * ACKNOWLEDGEMENT: GetViewItem & SetViewItem property accessors implemented by
+ * @SirRufo (GitHub PR #160 & Issue #158).
 }
 
 

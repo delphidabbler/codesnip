@@ -7,6 +7,9 @@
  *
  * Implements a set of classes that populate the overview treeview with a list
  * of snippets. Each class groups the snippets in different ways.
+ *
+ * ACKNOWLEDGEMENT: ViewStore property and its use implemented by @SirRufo
+ * (GitHub PR #160 & Issue #158).
 }
 
 

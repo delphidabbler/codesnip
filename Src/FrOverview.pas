@@ -7,6 +7,9 @@
  *
  * Implements a titled frame that displays lists of snippets, arranged in
  * different ways, and manages user interaction with the displayed items.
+ *
+ * ACKNOWLEDGEMENT: fViewStore view list implemented by @SirRufo (GitHub PR
+ * #160 & Issue #158).
 }
 
 
