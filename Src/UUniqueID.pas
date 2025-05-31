@@ -24,13 +24,11 @@ type
 
   ///  <summary>Generator of globally unique ids.</summary>
   TUniqueID = record
-  strict private
+  public
 
     ///  <summary>Generates a new GUID and returns it as an array of bytes.
     ///  </summary>
     class function NewUID: TBytes; static;
-
-  public
 
     ///  <summary>Generates a globally unique string of 32 hexadecimal
     ///  characters.</summary>
