@@ -50,6 +50,7 @@ type
       static;
     class function CreateNull: TVaultID; static;
     class function Default: TVaultID; static;
+    class function CreateNew: TVaultID; static;
     function Clone: TVaultID;
     function ToArray: TBytes;
     function ToHexString: string;
@@ -121,6 +122,7 @@ type
     function ContainsName(const AName: string): Boolean;
     function GetVault(const AUID: TVaultID): TVault;
     function Default: TVault;
+    function GetUniqueUID: TVaultID;
     procedure Add(const AVault: TVault);
     procedure Update(const AVault: TVault);
     procedure AddOrUpdate(const AVault: TVault);
@@ -160,6 +162,7 @@ uses
   // Project
   UAppInfo,
   UStrUtils,
+  UUniqueID,
   UUtils;
 
 resourcestring
@@ -323,6 +326,13 @@ begin
   Result := fItems[Idx];
 end;
 
+function TVaults.GetUniqueUID: TVaultID;
+begin
+  repeat
+    Result := TVaultID.CreateNew;
+  until not ContainsID(Result);
+end;
+
 function TVaults.IndexOfID(const AUID: TVaultID): Integer;
 var
   Idx: Integer;
@@ -419,6 +429,11 @@ begin
   if not TryHexStringToBytes(AHexStr, ConvertedBytes) then
     raise EVaultID.Create(SBadHexString);
   Result := TVaultID.Create(ConvertedBytes);
+end;
+
+class function TVaultID.CreateNew: TVaultID;
+begin
+  Result := TVaultID.Create(TUniqueID.NewUID);
 end;
 
 class function TVaultID.CreateNull: TVaultID;
