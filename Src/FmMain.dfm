@@ -856,10 +856,10 @@ inherited MainForm: TMainForm
     end
     object actBlog: TBrowseURL
       Category = 'Help'
-      Caption = 'CodeSnip News Blog'
+      Caption = 'CodeSnip News On DelphiDabbler Blog'
       Hint = 
-        'Display CodeSnip news blog|Display the CodeSnip News Blog in the' +
-        ' default web browser'
+        'Display CodeSnip news|Display the DelphiDabbler blog, containing' +
+        ' CodeSnip news, in the default web browser'
       ImageIndex = 6
     end
     object actDeleteVault: TAction

@@ -65,6 +65,7 @@ type
       fTagInfoMap: TTagInfoMap;
       fIsStartOfTextLine: Boolean;
       fLINestingDepth: Cardinal;
+      fTagGen: THTMLClass;
     const
       IndentMult = 2;
     procedure InitialiseTagInfoMap;
@@ -73,7 +74,7 @@ type
     function MakeOpeningTag(const Elem: IActiveTextActionElem): string;
     function MakeClosingTag(const Elem: IActiveTextActionElem): string;
   public
-    constructor Create;
+    constructor Create(const ATagGenerator: THTMLClass = nil);
     destructor Destroy; override;
     function Render(ActiveText: IActiveText): string;
   end;
@@ -87,13 +88,18 @@ uses
 
 { TActiveTextHTML }
 
-constructor TActiveTextHTML.Create;
+constructor TActiveTextHTML.Create(const ATagGenerator: THTMLClass);
 begin
   inherited Create;
   fCSSStyles := TCSSStyles.Create;
   fBuilder := TStringBuilder.Create;
   fLINestingDepth := 0;
   InitialiseTagInfoMap;
+  if not Assigned(ATagGenerator) then
+    // default behaviour before ATagGenerator parameter was added
+    fTagGen := TXHTML
+  else
+    fTagGen := ATagGenerator;
 end;
 
 destructor TActiveTextHTML.Destroy;
@@ -145,7 +151,7 @@ end;
 function TActiveTextHTML.MakeClosingTag(const Elem: IActiveTextActionElem):
   string;
 begin
-  Result := TXHTML.ClosingTag(fTagInfoMap[Elem.Kind].Name);
+  Result := fTagGen.ClosingTag(fTagInfoMap[Elem.Kind].Name);
 end;
 
 function TActiveTextHTML.MakeOpeningTag(const Elem: IActiveTextActionElem):
@@ -160,7 +166,7 @@ begin
       Attrs := THTMLAttributes.Create;
     Attrs.Add('class', fCSSStyles.ElemClasses[Elem.Kind])
   end;
-  Result := TXHTML.OpeningTag(fTagInfoMap[Elem.Kind].Name, Attrs);
+  Result := fTagGen.OpeningTag(fTagInfoMap[Elem.Kind].Name, Attrs);
 end;
 
 function TActiveTextHTML.Render(ActiveText: IActiveText): string;
@@ -242,7 +248,7 @@ begin
   end
   else
     Result := '';
-  Result := Result + TXHTML.Entities(TextElem.Text);
+  Result := Result + fTagGen.Entities(TextElem.Text);
 end;
 
 { TActiveTextHTML.TCSSStyles }

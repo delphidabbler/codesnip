@@ -51,19 +51,37 @@
 
 <ol>
   <li>
-    By saving snippet information to file from the <em>File | Save Snippet Information</em> menu option.
+    By saving snippet information using the <em>File | Save Snippet Information</em> menu option.
   </li>
   <li>
-    By saving snippets to file from the <em>File | Save Snippet</em> menu option.
+    By saving snippets using the <em>File | Save Snippet</em> menu option.
   </li>
   <li>
-    By saving units to file from the <em>File | Save Unit</em> menu option.
+    By saving units using the <em>File | Save Unit</em> menu option.
   </li>
 </ol>
 
 <p>
-  In the first case the snippet is always saved in rich text format.
+  In the first case the snippet information can be saved as one of the following file types:
 </p>
+
+<ul>
+  <li>
+    Plain text.
+  </li>
+  <li>
+    HTML 5 files.
+  </li>
+  <li>
+    XHTML files.
+  </li>
+  <li>
+    Rich text files.
+  </li>
+  <li>
+    Markdown files.
+  </li>
+</ul>
 
 <p>
   In the second two cases the following file types can be chosen by the user:
@@ -88,7 +106,7 @@
 </ul>
 
 <p>
-  There is no specific file format for these files, except that HTML 5, XHTML and RTF
+  There is no specific file format for these files, except that HTML 5, XHTML, RTF and Markdown
   files conform to published specifications.
 </p>
 
@@ -97,11 +115,7 @@
 </h2>
 
 <p>
-  In the first case the RTF is always saved in ASCII format.
-</p>
-
-<p>
-  In the 2nd and 3rd cases the encodings used depend on the file type and user choice. Different file
+  The available encodings depend on the file type and user choice. Different file
   types have different encoding choices, as follows:
 </p>
 
@@ -118,10 +132,10 @@
         UTF-8
       </li>
       <li>
-        Unicode little endian (UTF16-LE)
+        UTF-16LE
       </li>
       <li>
-        Unicode big endian (UTF16-BE)
+        UTF-16BE
       </li>
     </ul>
   </dd>
@@ -164,7 +178,26 @@
   <dd>
     <ul class="squashed">
       <li>
-        ANSI (system default code page). ASCII format is actually used.
+        ASCII
+      </li>
+    </ul>
+  </dd>
+  <dt>
+    Markdown
+  </dt>
+  <dd>
+    <ul class="squashed">
+      <li>
+        ANSI (system default code page)
+      </li>
+      <li>
+        UTF-8
+      </li>
+      <li>
+        UTF-16LE
+      </li>
+      <li>
+        UTF-16BE
       </li>
     </ul>
   </dd>

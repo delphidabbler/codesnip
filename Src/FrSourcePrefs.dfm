@@ -1,16 +1,16 @@
 inherited SourcePrefsFrame: TSourcePrefsFrame
   Width = 393
-  Height = 327
+  Height = 323
   ExplicitWidth = 393
-  ExplicitHeight = 327
+  ExplicitHeight = 323
   DesignSize = (
     393
-    327)
+    323)
   object gbSourceCode: TGroupBox
     Left = 0
     Top = 0
     Width = 393
-    Height = 201
+    Height = 219
     Anchors = [akLeft, akTop, akRight]
     Caption = ' Source code formatting '
     TabOrder = 0
@@ -56,10 +56,18 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
       Caption = '&Truncate comments to one paragraph'
       TabOrder = 2
     end
+    object chkUnitImplComments: TCheckBox
+      Left = 8
+      Top = 195
+      Width = 345
+      Height = 17
+      Caption = 'Repeat comments in &unit implemenation section'
+      TabOrder = 3
+    end
   end
   object gbFileFormat: TGroupBox
     Left = 0
-    Top = 207
+    Top = 229
     Width = 393
     Height = 81
     Anchors = [akLeft, akTop, akRight]

@@ -77,7 +77,8 @@ type
       // Class that maps CSS selector names to selector objects
       TCSSSelectorMap = TObjectDictionary<string,TCSSSelector>;
     var
-      fSelectors: TCSSSelectorMap;  // Maps selector names to selector objects
+      fSelectors: TCSSSelectorMap;    // Maps selector names to selector objects
+      fSelectorNames: TList<string>;  // Lists selector names in order created
     function GetSelector(const Selector: string): TCSSSelector;
       {Read access method for Selectors property. Returns selector object with
       given name.
@@ -105,10 +106,13 @@ type
     procedure Clear;
       {Clears all selectors from style sheet and frees selector objects.
       }
+
+    ///  <summary>Generates CSS code representing the style sheet.</summary>
+    ///  <returns><c>string</c>. The required CSS.</returns>
+    ///  <remarks>The selectors are returned in the order they were created.
+    ///  </remarks>
     function AsString: string;
-      {Generates CSS code representing the style sheet.
-        @return Required CSS code.
-      }
+
     property Selectors[const Selector: string]: TCSSSelector
       read GetSelector;
       {Array of CSS selectors in style sheet, indexed by selector name}
@@ -189,26 +193,29 @@ function TCSSBuilder.AddSelector(const Selector: string): TCSSSelector;
 begin
   Result := TCSSSelector.Create(Selector);
   fSelectors.Add(Selector, Result);
+  fSelectorNames.Add(Selector);
 end;
 
 function TCSSBuilder.AsString: string;
-  {Generates CSS code representing the style sheet.
-    @return Required CSS code.
-  }
 var
+  SelectorName: string;   // name of each selector
   Selector: TCSSSelector; // reference to each selector in map
 begin
   Result := '';
-  for Selector in fSelectors.Values do
+  for SelectorName in fSelectorNames do
+  begin
+    Selector := fSelectors[SelectorName];
     if not Selector.IsEmpty then
       Result := Result + Selector.AsString;
+  end;
 end;
 
 procedure TCSSBuilder.Clear;
   {Clears all selectors from style sheet and frees selector objects.
   }
 begin
-  fSelectors.Clear; // frees selector objects in .Values[]
+  fSelectorNames.Clear;
+  fSelectors.Clear;       // frees owened selector objects in dictionary
 end;
 
 constructor TCSSBuilder.Create;
@@ -221,13 +228,15 @@ begin
   fSelectors := TCSSSelectorMap.Create(
     [doOwnsValues], TTextEqualityComparer.Create
   );
+  fSelectorNames := TList<string>.Create;
 end;
 
 destructor TCSSBuilder.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  fSelectors.Free;    // frees selector objects in fSelectors.Values[]
+  fSelectorNames.Free;
+  fSelectors.Free;    // frees owened selector objects in dictionary
   inherited;
 end;
 

@@ -83,6 +83,17 @@ type
     property TruncateSourceComments: Boolean
       read GetTruncateSourceComments write SetTruncateSourceComments;
 
+    ///  <summary>Gets flag that determines whether source code comments are
+    ///  repeated in a generated unit's implementation section.</summary>
+    function GetCommentsInUnitImpl: Boolean;
+    ///  <summary>Sets flag that determines whether source code comments are
+    ///  repeated in a generated unit's implementation section.</summary>
+    procedure SetCommentsInUnitImpl(const Value: Boolean);
+    ///  <summary>Flag deteminining whether source code comments are repeated in
+    ///  a generated unit's implementation section.</summary>
+    property CommentsInUnitImpl: Boolean
+      read GetCommentsInUnitImpl write SetCommentsInUnitImpl;
+
     ///  <summary>Gets current default file extension / type used when writing
     ///  code snippets to file.</summary>
     function GetSourceDefaultFileType: TSourceFileType;
@@ -351,6 +362,9 @@ type
       ///  <summary>Flag determining whether multi-paragraph source code is
       ///  truncated to first paragraph in source code comments.</summary>
       fTruncateSourceComments: Boolean;
+      ///  <summary>Flag deteminining whether source code comments are repeated
+      ///  in a generated unit's implementation section.</summary>
+      fCommentsInUnitImpl: Boolean;
       ///  <summary>Indicates whether generated source is highlighted by
       ///  default.</summary>
       fSourceSyntaxHilited: Boolean;
@@ -453,6 +467,16 @@ type
     ///  is truncated to first paragraph in source code comments.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetTruncateSourceComments(const Value: Boolean);
+
+    ///  <summary>Gets flag that determines whether source code comments are
+    ///  repeated in a generated unit's implementation section.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetCommentsInUnitImpl: Boolean;
+
+    ///  <summary>Sets flag that determines whether source code comments are
+    ///  repeated in a generated unit's implementation section.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetCommentsInUnitImpl(const Value: Boolean);
 
     ///  <summary>Gets current default file extension / type used when writing
     ///  code snippets to file.</summary>
@@ -746,6 +770,7 @@ begin
   Self.fSourceDefaultFileType := SrcPref.SourceDefaultFileType;
   Self.fSourceCommentStyle := SrcPref.SourceCommentStyle;
   Self.fTruncateSourceComments := SrcPref.TruncateSourceComments;
+  Self.fCommentsInUnitImpl := SrcPref.CommentsInUnitImpl;
   Self.fSourceSyntaxHilited := SrcPref.SourceSyntaxHilited;
   Self.fMeasurementUnits := SrcPref.MeasurementUnits;
   Self.fOverviewStartState := SrcPref.OverviewStartState;
@@ -800,6 +825,11 @@ begin
   fPageStructures.Free;
   fSnippetHeadingColours.Free;
   inherited;
+end;
+
+function TPreferences.GetCommentsInUnitImpl: Boolean;
+begin
+  Result := fCommentsInUnitImpl;
 end;
 
 function TPreferences.GetCustomHiliteColours: IStringList;
@@ -923,6 +953,11 @@ end;
 function TPreferences.GetWarnings: IWarnings;
 begin
   Result := fWarnings;
+end;
+
+procedure TPreferences.SetCommentsInUnitImpl(const Value: Boolean);
+begin
+  fCommentsInUnitImpl := Value;
 end;
 
 procedure TPreferences.SetCustomHiliteColours(const Colours: IStringList);
@@ -1070,6 +1105,7 @@ begin
   NewPref.SourceDefaultFileType := Self.fSourceDefaultFileType;
   NewPref.SourceCommentStyle := Self.fSourceCommentStyle;
   NewPref.TruncateSourceComments := Self.fTruncateSourceComments;
+  NewPref.CommentsInUnitImpl := Self.fCommentsInUnitImpl;
   NewPref.SourceSyntaxHilited := Self.fSourceSyntaxHilited;
   NewPref.MeasurementUnits := Self.fMeasurementUnits;
   NewPref.OverviewStartState := Self.fOverviewStartState;
@@ -1170,6 +1206,7 @@ begin
     Storage.GetInteger('CommentStyle', Ord(csAfter))
   );
   fTruncateSourceComments := Storage.GetBoolean('TruncateComments', False);
+  fCommentsInUnitImpl := Storage.GetBoolean('UseCommentsInUnitImpl', True);
   fSourceSyntaxHilited := Storage.GetBoolean('UseSyntaxHiliting', False);
 
   // Read printing section
@@ -1265,6 +1302,7 @@ begin
   Storage.SetInteger('FileType', Ord(fSourceDefaultFileType));
   Storage.SetInteger('CommentStyle', Ord(fSourceCommentStyle));
   Storage.SetBoolean('TruncateComments', fTruncateSourceComments);
+  Storage.SetBoolean('UseCommentsInUnitImpl', fCommentsInUnitImpl);
   Storage.SetBoolean('UseSyntaxHiliting', fSourceSyntaxHilited);
   Storage.Save;
 

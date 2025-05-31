@@ -6,6 +6,40 @@ Releases are listed in reverse version number order.
 
 > Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some v3 releases have later release dates than early v4 releases.
 
+## Release v4.26.0 of 02 May 2025
+
+* Updated the dialogue box displayed when saving units and annotated source code [issue #166]:
+  * The _File Encoding_ drop down list control is disabled if there is only one encoding option.
+  * Updated and clarified the naming of encodings in the _File Encoding_ drop down list.
+  * The sole encoding option displayed for the _Rich text file_ file type was changed from the erroneous ANSI to the correct ASCII.
+* Fixed bug where, when ANSI encoding was selected in the _Save Unit_ and _Save Annotated Source_ dialogue boxes, snippets containing characters not supported in the default locale's code page were being rendered diffently in the Preview dialogue box to when saved to file [issue #164]. The previewed code is now the same as that of the saved source code.
+* Updated file formats available when the _File | Save Snippet Information_ menu option is selected:
+  * Syntax highlighting of the existing RTF format output is now optional.
+  * Added the option to save snippet information in the following new formats:
+    * Plain text, in UTF-8, UTF-16LE, UTF-16BE and the system locale's default ANSI code page. [issue #162]
+    * HMTL 5 with optional syntax highlighting, in UTF-8 format [issue #153].
+    * XHTML with optional syntax highlighting, in UTF-8 format [issue #153].
+    * Markdown, in UTF-8, UTF-16LE, UTF-16BE and the system locale's default ANSI code page [issue #155].
+  * Changed the _Save Snippet Information_ dialogue box: 
+    * It is now based on that used for saving unit and annotated source code in that file encoding and snippet highlighting can be customised where relevant, although the _Comment style_ controls are disabled since they are not relevant.
+    * The suggested file name was changed from &quot;SnippetInfo&quot; to the display name of the selected snippet.
+    * The dialogue box caption now contains the display name of the selected snippet.
+* Changed the title of the _Save Annotated Source_ dialogue box when displaying snippets.
+* Added option to prevent descriptive comments from appearing in the implementation section of generated units. A check box for this option has been added to the _Code Formatting_ tab of the _Preferences_ dialogue box [issue #85].
+* The _Help | CodeSnip News Blog_ menu item was changed to link to the [DelphiDabbler Blog](https://delphidabbler.blogspot.com/) instead of the CodeSnip Blog, because the latter is to be closed down. The menu item was renamed to _Help | CodeSnip News On DelphiDabbler Blog_ [issue #161].
+* Improved how the CSS used in generated HTML 5 and XHTML files is generated:
+  * The ordering of CSS selectors can now be pre-determined.
+  * CSS lengths and sizes can now be specified in units, such as `em`, instead of just pixels.
+* Refactored the `USourceGen` unit to remove an unnecessary dependency on user preferences [issue #167].
+* Updated the help file: 
+  * Re changes when saving snippet information [issue #163].
+  * Re changes to the _Save Unit_ and _Save Annotated Source_ dialogue boxes.
+  * Re changes to the blog linked from the _Help_ menu.
+  * Re the new option to inhibit comments in the implementation sections of generated units.
+* Updated documentation: 
+  * File format documentation was changed re the addition of the Markdown file format and the changes to the encodings used in saved files.
+  * Read-me files were updated re the change of news blog.
+
 ## Release v4.25.0 of 19 April 2025
 
 * Added new feature to save snippet information to file in RTF format using the new _File | Save Snippet Information_ menu option [issue #140].
@@ -15,7 +49,7 @@ Releases are listed in reverse version number order.
 * Overhauled rich text format processing:
   * Fixed bug where Unicode characters that don't exist in the system code page were not being displayed correctly [issue #157].
   * Fixed potential bug where some reserved ASCII characters may not be escaped properly [issue #159].
-  * Refactored and improved the rich text handling code [issue #100].
+  * Refactored and improved the rich text handling code [issue #100]. 
 * Corrected the copyright date displayed in the About Box to include 2025 [issue #149].
 * Documentation changes:
   * Fixed error in the export file formation documentation and related help topic [issue #151].

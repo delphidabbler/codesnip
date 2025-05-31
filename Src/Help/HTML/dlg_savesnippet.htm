@@ -104,28 +104,33 @@
     <p>
       The output file encoding can be be specified in the <em>File Encoding</em>
       drop down list. Options vary depending on the file type. Some file types
-      support only a single encoding. The encodings are:
+      support only a single encoding, in which case the drop down list will be
+      disabled. The encodings are:
     </p>
     <ul>
       <li>
-        <em>ANSI (Default)</em> &ndash; the system default ANSI encoding.
-        Available for both plain text and Pascal include files and as the only
-        option for rich text files.
+        <em>ANSI Code Page <code>nnn</code></em> &ndash; ANSI encoding for the system default code page,
+        where <code>nnn</code> is the code page for the user's locale.
+        Available for both plain text and Pascal include files.
       </li>
       <li>
         <em>UTF-8</em> &ndash; UTF-8 encoding, with BOM<sup>&dagger;</sup>.
         Available for both plain text and Pascal include files and as the only
-        option for XHTML files. If used for Pascal include files be warned that
+        option for HTML5 and XHTML files. If used for Pascal include files be warned that
         the files will only compile with compilers that support Unicode source
         files.
       </li>
       <li>
-        <em>Unicode (Little Endian)</em> &ndash; UTF-16 LE encoding, with
+        <em>UTF-16 Little Endian</em> &ndash; UTF-16 LE encoding, with
         BOM<sup>&dagger;</sup>. Available for plain text files only.
       </li>
       <li>
-        <em>Unicode (Big Endian)</em> &ndash; UTF-16 BE encoding, with
+        <em>UTF-18 Big Endian</em> &ndash; UTF-16 BE encoding, with
         BOM<sup>&dagger;</sup>. Available for plain text files only.
+      </li>
+      <li>
+        <em>ASCII</em> &ndash; ASCII encoding. Available as the only option for
+        rich text files.
       </li>
     </ul>
     <p>

@@ -28,20 +28,91 @@
     </h1>
     <p>
         This dialogue box is displayed when the <em>File | Save Snippet
-        Information</em> menu option is clicked. It is used to specify the
-        name of the file into which information about the currently selected
-        snippet is to be saved.
+        Information</em> menu option is clicked. It is used to specify the file
+        name, file type and encoding information for the snippet information 
+        that is to be saved.
     </p>
     <p>
-        The saved snippet information is written in rich text format.
+        The dialogue is a standard Windows save dialogue box with a few added
+        options.
     </p>
     <p>
-        This dialogue is a standard Windows save dialogue box. You specify the
-         name and folder for the file in the usual way.
+        You specify the name and folder for the file where the snippet information
+        is to be written in in the usual way.
     </p>
     <p>
-        Use the <em>Save</em> button to write the file to disk or press
+        Use the <em>Save as type</em> drop down list to specify the type of file
+        to be saved. Options are:
+    </p>
+    <ul>
+        <li>Plain text.</li>
+        <li>HTML</li>
+        <li>XHTML</li>
+        <li>Rich text format</li>
+        <li>Markdown</li>
+    </ul>
+    <p>
+        The HTML 5 and XHTML options are very similar and differ only in the
+        type of HTML that is written. For either type an embedded CSS style
+        sheet is used to style the document.
+    </p>
+    <p>
+        When any of the HTML 5, XHTML or rich text file types are selected source
+        code embedded in the snippet information will be syntax highlighted if
+        the <em>Use syntax highlighting</em> check box is checked.
+    </p>
+    <p>
+        The output file encoding can be be specified in the <em>File Encoding</em>
+        drop down list. Options vary depending on the file type. Some file types
+        support only a single encoding. The encodings are:
+    </p>
+    <ul>
+        <li>
+            <em>ANSI Code Page <code>nnn</code></em> &ndash; ANSI encoding for the system default code page,
+            where <code>nnn</code> is the code page for the user's locale.
+            Available as an option for plain text and Markdown file formats.
+        </li>
+        <li>
+            <em>UTF-8</em> &ndash; UTF-8 encoding, with BOM<sup>&dagger;</sup>.
+            Available as an option for plain text and Markdown file formats and
+            as the only encoding available for HTML 5 and XHTML file formats.
+        </li>
+        <li>
+            <em>UTF-16 Little Endian</em> &ndash; UTF-16 LE encoding, with
+            BOM<sup>&dagger;</sup>. Available as an option for plain text and Markdown file formats.
+        </li>
+        <li>
+            <em>UTF-18 Big Endian</em> &ndash; UTF-16 BE encoding, with
+            BOM<sup>&dagger;</sup>. Available as an option for plain text and Markdown file formats.
+        </li>
+        <li>
+            <em>ASCII</em> &ndash; The only encoding available for the rich text file.
+        </li>
+    </ul>
+    <p>
+        The output can be previewed by clicking the <em>Preview</em> button. This
+        displays the snippet information in a dialogue box, formatted according to your
+        selections. Text in the preview can be selected and copied to the
+        clipboard if required.
+    </p>
+    <p>
+        Use the <em>Save</em> button to write the snippet information to disk or choose
         <em>Cancel</em> to abort.
+    </p>
+    <p>
+        <strong class="warning">Warning:</strong> When plain text or Markdown formatted
+        snippet information is written in ANSI format it is possibe that the information
+        contains characters that can't be represented in the system default ANSI encoding.
+        If this happens a warning
+        dialogue box is displayed whenever the snippet information is written to file
+        or is previewed.
+    </p>
+    <h3>
+        Footnote
+    </h3>
+    <p>
+        &dagger; BOM = Byte Order Mark or Preamble: a sequence of bytes at the
+        start of a text file that identifies its encoding.
     </p>
 </body>
 

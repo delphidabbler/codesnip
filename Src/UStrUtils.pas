@@ -334,6 +334,14 @@ function StrCEscapeStr(const S: string; EscapeChars, EscapableChars: string):
 function StrCUnEscapeStr(const S: string; EscapeChars, EscapableChars: string):
   string;
 
+///  <summary>Returns the length of the longest repeating sequence of a given
+///  character in a given string.</summary>
+///  <param name="Ch"><c>Char</c> [in] Character to search for.</param>
+///  <param name="S"><c>string</c> [in] String to search within.</param>
+///  <returns><c>Cardinal</c>. Length of the longest sequence of <c>Ch</c> in
+///  <c>S</c>, or <c>0</c> if <c>Ch</c> is not in <c>S</c>.</returns>
+function StrMaxSequenceLength(const Ch: Char; const S: UnicodeString): Cardinal;
+
 
 implementation
 
@@ -1106,6 +1114,29 @@ begin
       PRes^ := S[Idx];
     Inc(Idx);
     Inc(PRes);
+  end;
+end;
+
+function StrMaxSequenceLength(const Ch: Char; const S: UnicodeString): Cardinal;
+var
+  StartPos: Integer;
+  Count: Cardinal;
+  Idx: Integer;
+begin
+  Result := 0;
+  StartPos := StrPos(Ch, S);
+  while StartPos > 0 do
+  begin
+    Count := 1;
+    Idx := StartPos + 1;
+    while (Idx <= Length(S)) and (S[Idx] = Ch) do
+    begin
+      Inc(Idx);
+      Inc(Count);
+    end;
+    if Count > Result then
+      Result := Count;
+    StartPos := StrPos(Ch, S, Idx);
   end;
 end;
 

@@ -53,8 +53,9 @@ type
       ///  hosted.</summary>
       SWAGReleases = SWAGRepo + '/releases';
 
-      /// <summary>URL of the the CodeSnip blog.</summary>
-      CodeSnipBlog = 'https://codesnip-app.blogspot.com/';
+      /// <summary>URL of the DelphiDabbler blog containing CodeSnip news.
+      /// </summary>
+      CodeSnipBlog = 'https://delphidabbler.blogspot.com/';
 
   end;
 

@@ -43,6 +43,7 @@ type
     lblCommentStyle: TLabel;
     lblSnippetFileType: TLabel;
     chkTruncateComments: TCheckBox;
+    chkUnitImplComments: TCheckBox;
     procedure cbCommentStyleChange(Sender: TObject);
     procedure cbSnippetFileTypeChange(Sender: TObject);
   strict private
@@ -127,12 +128,14 @@ resourcestring
   sRTFFileDesc = 'Rich text';
   sPascalFileDesc = 'Pascal';
   sTextFileDesc = 'Plain text';
+  sMarkdownFileDesc = 'Markdown';
 
 
 const
   // Maps source code file types to descriptions
   cFileDescs: array[TSourceFileType] of string = (
-    sTextFileDesc, sPascalFileDesc, sHTML5FileDesc, sXHTMLFileDesc, sRTFFileDesc
+    sTextFileDesc, sPascalFileDesc, sHTML5FileDesc, sXHTMLFileDesc,
+    sRTFFileDesc, sMarkdownFileDesc
   );
 
 
@@ -179,6 +182,7 @@ begin
   SelectSourceFileType(Prefs.SourceDefaultFileType);
   SelectCommentStyle(Prefs.SourceCommentStyle);
   chkTruncateComments.Checked := Prefs.TruncateSourceComments;
+  chkUnitImplComments.Checked := Prefs.CommentsInUnitImpl;
   chkSyntaxHighlighting.Checked := Prefs.SourceSyntaxHilited;
   (fHiliteAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
   fHiliteAttrs.ResetDefaultFont;
@@ -196,13 +200,15 @@ begin
   TCtrlArranger.AlignVCentres(20, [lblCommentStyle, cbCommentStyle]);
   TCtrlArranger.MoveBelow([lblCommentStyle, cbCommentStyle], frmPreview, 8);
   TCtrlArranger.MoveBelow(frmPreview, chkTruncateComments, 8);
-  gbSourceCode.ClientHeight := TCtrlArranger.TotalControlHeight(gbSourceCode)
-    + 10;
 
   TCtrlArranger.AlignVCentres(20, [lblSnippetFileType, cbSnippetFileType]);
   TCtrlArranger.MoveBelow(
     [lblSnippetFileType, cbSnippetFileType], chkSyntaxHighlighting, 8
   );
+  TCtrlArranger.MoveBelow(chkTruncateComments, chkUnitImplComments, 8);
+
+  gbSourceCode.ClientHeight := TCtrlArranger.TotalControlHeight(gbSourceCode)
+    + 10;
   gbFileFormat.ClientHeight := TCtrlArranger.TotalControlHeight(gbFileFormat)
     + 10;
 
@@ -216,7 +222,7 @@ begin
   TCtrlArranger.AlignLefts(
     [
       cbCommentStyle, frmPreview, cbSnippetFileType, chkSyntaxHighlighting,
-      chkTruncateComments
+      chkTruncateComments, chkUnitImplComments
     ],
     Col2Left
   );
@@ -269,6 +275,7 @@ procedure TSourcePrefsFrame.Deactivate(const Prefs: IPreferences);
 begin
   Prefs.SourceCommentStyle := GetCommentStyle;
   Prefs.TruncateSourceComments := chkTruncateComments.Checked;
+  Prefs.CommentsInUnitImpl := chkUnitImplComments.Checked;
   Prefs.SourceDefaultFileType := GetSourceFileType;
   Prefs.SourceSyntaxHilited := chkSyntaxHighlighting.Checked;
 end;
@@ -346,6 +353,7 @@ begin
   chkSyntaxHighlighting.Enabled :=
     TFileHiliter.IsHilitingSupported(GetSourceFileType);
   chkTruncateComments.Enabled := GetCommentStyle <> csNone;
+  chkUnitImplComments.Enabled := GetCommentStyle <> csNone;
 end;
 
 procedure TSourcePrefsFrame.UpdatePreview;

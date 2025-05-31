@@ -35,7 +35,7 @@ The following support is available to CodeSnip users:
 * A comprehensive help file.
 * A read-me file that discusses installation, configuration, updating and known issues. There are different versions of this file for each edition of CodeSnip: one for the [standard edition](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe-standard.txt) and another for the [portable edition](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe-portable.txt). [^1]
 * The [Using CodeSnip FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md).
-* The [CodeSnip Blog](https://codesnip-app.blogspot.co.uk/).
+* The [DelphiDabbler Blog](https://delphidabbler.blogspot.co.uk/) that provides CodeSnip news.
 * CodeSnip's own [Web Page](https://delphidabbler.com/software/codesnip).
 
 There's also plenty of info available on how to compile CodeSnip from source - see below.

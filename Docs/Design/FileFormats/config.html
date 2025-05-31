@@ -167,7 +167,7 @@
 </p>
 
 <p>
-  There have been several versions of this file. The current one is version 19. The change to version 19 came with CodeSnip v4.21.0 and the addition of the [Compilers] section and the <code class="key">CanAutoInstall</code> key in the [Cmp:XXX] sections.
+  There have been several versions of this file. The current one is version 20. The change to version 20 came with CodeSnip v4.26.0 and the addition of the <code class="key">UseCommentsInUnitImpl</code> key in the <code>[Prefs:SourceCode]</code> section.
 </p>
 
 <p>
@@ -771,7 +771,7 @@
       The version number of the config file. Incremented whenever the file format changes. If this section or this value is missing then the default value is <code class="value">1</code>.
     </div>
     <div class="half-spaced">
-      The current value is <code class="value">19</code>.
+      The current value is <code class="value">20</code>.
     </div>
   </dd>
   <dt>
@@ -1261,6 +1261,12 @@
   </dt>
   <dd>
     Flag indicating whether multi-paragraph snippet descriptions are to be truncated to the first paragraph only in documentation comments. <code class="value">True</code> &rArr; truncate the description; <code class="value">False</code> &rArr; use the full description.
+  </dd>
+  <dt>
+    <code class="key">UseCommentsInUnitImpl</code> (Boolean)
+  </dt>
+  <dd>
+    Flag indicating whether source code comments are repeated in a generated unit's implementation section. <code class="value">True</code> &rArr; emit comments in both the interface and implementation sections; <code class="value">False</code> &rArr; emit comments in the interface section only.
   </dd>
   <dt>
     <code class="key">UseSyntaxHiliting</code> (Boolean)

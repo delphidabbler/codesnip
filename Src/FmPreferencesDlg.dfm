@@ -10,30 +10,29 @@ inherited PreferencesDlg: TPreferencesDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     Width = 609
-    Height = 329
+    Height = 353
     ExplicitWidth = 609
-    ExplicitHeight = 329
+    ExplicitHeight = 353
     object pcMain: TPageControl
       Left = 163
       Top = 0
       Width = 446
-      Height = 329
+      Height = 353
       Align = alRight
       MultiLine = True
       TabOrder = 1
-      ExplicitLeft = 159
-      ExplicitHeight = 377
+      ExplicitHeight = 329
     end
     object lbPages: TListBox
       Left = 0
       Top = 0
       Width = 153
-      Height = 329
+      Height = 353
       Align = alLeft
       ItemHeight = 13
       TabOrder = 0
       OnClick = lbPagesClick
-      ExplicitHeight = 377
+      ExplicitHeight = 329
     end
   end
   inherited btnOK: TButton

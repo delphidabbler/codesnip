@@ -380,7 +380,11 @@ uses
   DB.MetaData in 'DB.MetaData.pas',
   DB.IO.Common.CS4 in 'DB.IO.Common.CS4.pas',
   USaveInfoMgr in 'USaveInfoMgr.pas',
-  ClassHelpers.RichEdit in 'ClassHelpers.RichEdit.pas';
+  ClassHelpers.RichEdit in 'ClassHelpers.RichEdit.pas',
+  UHTMLSnippetDoc in 'UHTMLSnippetDoc.pas',
+  UMarkdownUtils in 'UMarkdownUtils.pas',
+  ActiveText.UMarkdownRenderer in 'ActiveText.UMarkdownRenderer.pas',
+  UMarkdownSnippetDoc in 'UMarkdownSnippetDoc.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

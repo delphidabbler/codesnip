@@ -70,6 +70,8 @@ type
     procedure TestStrMakeSentence;
     procedure TestStrIf;
     procedure TestStrBackslashEscape;
+    procedure TestStrMaxSequenceLength;
+
   end;
 
 
@@ -670,6 +672,22 @@ begin
     StrMatchText('', []),
     'Test 7'
   );
+end;
+
+procedure TTestStrUtilsRoutines.TestStrMaxSequenceLength;
+begin
+  CheckEquals(0, StrMaxSequenceLength('~', ''), 'Test 1');
+  CheckEquals(0, StrMaxSequenceLength('~', 'freda'), 'Test 2');
+  CheckEquals(1, StrMaxSequenceLength('~', 'fre~da'), 'Test 3');
+  CheckEquals(1, StrMaxSequenceLength('|', '|fre~da'), 'Test 4');
+  CheckEquals(1, StrMaxSequenceLength('|', 'fre~da|'), 'Test 5');
+  CheckEquals(3, StrMaxSequenceLength('|', '|fre||da|||'), 'Test 6');
+  CheckEquals(3, StrMaxSequenceLength('|', '|||fre||da|||'), 'Test 7');
+  CheckEquals(4, StrMaxSequenceLength('|', '|||fre||||da|||'), 'Test 8');
+  CheckEquals(4, StrMaxSequenceLength('|', '|||f||re||||da|||'), 'Test 9');
+  CheckEquals(10, StrMaxSequenceLength('|', '||||||||||'), 'Test 10');
+  CheckEquals(1, StrMaxSequenceLength('|', '|'), 'Test 11');
+  CheckEquals(0, StrMaxSequenceLength('~', 'x'), 'Test 12');
 end;
 
 procedure TTestStrUtilsRoutines.TestStrPos_overload1;

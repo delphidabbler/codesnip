@@ -27,22 +27,17 @@ type
   ///  <summary>Type of handler for events triggered by TSaveSourceDlg to check
   ///  if a file type supports syntax highlighting.</summary>
   ///  <param name="Sender">TObject [in] Object triggering event.</param>
-  ///  <param name="Ext">string [in] Extension that defines type of file being
-  ///  queried.</param>
   ///  <param name="CanHilite">Boolean [in/out] Set to true if file type
   ///  supports syntax highlighting.</param>
-  THiliteQuery = procedure(Sender: TObject; const Ext: string;
-    var CanHilite: Boolean) of object;
+  THiliteQuery = procedure(Sender: TObject; var CanHilite: Boolean) of object;
 
 type
   ///  <summary>Type of handler for event triggered by TSaveSourceDlg to get
   ///  list of encodings supported for a file type.</summary>
   ///  <param name="Sender">TObject [in] Object triggering event.</param>
-  ///  <param name="FilterIdx">string [in] Filter index that specifies the type
-  ///  of file being queried.</param>
   ///  <param name="Encodings">TSourceFileEncodings [in/out] Assigned an array
   ///  of records that specify supported encodings.</param>
-  TEncodingQuery = procedure(Sender: TObject; const FilterIdx: Integer;
+  TEncodingQuery = procedure(Sender: TObject;
     var Encodings: TSourceFileEncodings) of object;
 
 type
@@ -93,6 +88,9 @@ type
       fSelectedFilterIdx: Integer;
       ///  <summary>Stores type of selected encoding.</summary>
       fSelectedEncoding: TEncodingType;
+      ///  <summary>Value of <c>EnableCommentStyles</c> property.</summary>
+      fEnableCommentStyles: Boolean;
+
     ///  <summary>Handles click on Help button.</summary>
     ///  <remarks>Calls help with required keyword.</remarks>
     procedure HelpClickHandler(Sender: TObject);
@@ -201,6 +199,10 @@ type
     ///  encodings supported for the file type.</summary>
     property OnEncodingQuery: TEncodingQuery
       read fOnEncodingQuery write fOnEncodingQuery;
+    ///  <summary>Determines whether the comment styles combo and associated
+    ///  controls are enabled, and so can be changed, or are disabled.</summary>
+    property EnableCommentStyles: Boolean
+      read fEnableCommentStyles write fEnableCommentStyles default True;
     ///  <summary>Re-implementation of inherited property to overcome apparent
     ///  bug where property forgets selected filter when dialog box is closed.
     ///  </summary>
@@ -226,8 +228,6 @@ resourcestring
   sChkTruncateComment = 'Truncate comments to 1st paragraph';
   sBtnPreview = '&Preview...';
   sBtnHelp = '&Help';
-  // Default encoding name
-  sANSIEncoding = 'ANSI (Default)';
 
 
 const
@@ -316,6 +316,9 @@ begin
 
   // set dialog options
   Options := [ofPathMustExist, ofEnableIncludeNotify];
+
+  // enable comment style selection
+  fEnableCommentStyles := True;
 
   // inhibit default help processing: we provide own help button and handling
   WantDefaultHelpSupport := False;
@@ -465,7 +468,7 @@ begin
   // Update enabled state of syntax highlighter checkbox
   CanHilite := False;
   if Assigned(fOnHiliteQuery) then
-    fOnHiliteQuery(Self, SelectedExt, CanHilite);
+    fOnHiliteQuery(Self, CanHilite);
   fChkSyntaxHilite.Enabled := CanHilite;
 
   // Store selected type
@@ -475,10 +478,10 @@ begin
   // handle OnEncodingQuery)
   SetLength(Encodings, 0);
   if Assigned(fOnEncodingQuery) then
-    fOnEncodingQuery(Self, FilterIndex, Encodings);
+    fOnEncodingQuery(Self, Encodings);
   if Length(Encodings) = 0 then
     Encodings := TSourceFileEncodings.Create(
-      TSourceFileEncoding.Create(etSysDefault, sANSIEncoding)
+      TSourceFileEncoding.Create(etSysDefault)
     );
   fCmbEncoding.Clear;
   for Encoding in Encodings do
@@ -490,6 +493,8 @@ begin
   fCmbEncoding.ItemIndex := IndexOfEncodingType(fSelectedEncoding);
   if fCmbEncoding.ItemIndex = -1 then
     fCmbEncoding.ItemIndex := 0;
+  fCmbEncoding.Enabled := fCmbEncoding.Items.Count > 1;
+  fLblEncoding.Enabled := fCmbEncoding.Enabled;
   DoEncodingChange;
 
   inherited;
@@ -579,6 +584,9 @@ begin
     if TCommentStyle(fCmbCommentStyle.Items.Objects[Idx]) = fCommentStyle then
       fCmbCommentStyle.ItemIndex := Idx;
   end;
+  fCmbCommentStyle.Enabled := fEnableCommentStyles;
+  fLblCommentStyle.Enabled := fEnableCommentStyles;
+  fChkTruncateComment.Enabled := fEnableCommentStyles;
 end;
 
 procedure TSaveSourceDlg.UpdateCommentTruncation;

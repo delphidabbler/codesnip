@@ -68,6 +68,7 @@ uses
   DB.SnippetKind,
   UEncodings,
   UIOUtils,
+  UPreferences,
   USourceGen,
   USystemInfo,
   UUnitAnalyser,
@@ -94,7 +95,7 @@ begin
       Generator.IncludeSnippet(fSnippet);
       // Must use Self.UnitName below for Delphis that defined TObject.UnitName
       // otherwise the TObject version is used.
-      Result := Generator.UnitAsString(Self.UnitName);
+      Result := Generator.UnitAsString(Self.UnitName, Preferences.Warnings);
     finally
       Generator.Free;
     end;

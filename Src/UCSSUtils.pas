@@ -200,28 +200,38 @@ type
     ///  <returns>string. Required length unit as text.</returns>
     class function LengthUnit(const LU: TCSSLengthUnit): string; static;
 
-    ///  <summary>Builds a space separated list of lengths using specified
-    ///  units.</summary>
-    ///  <param name="List">array of Integer [in] List of lengths.</param>
-    ///  <param name="LU">TCSSLengthUnit [in] Specifies length unit to apply tp
-    ///  each length.</param>
-    ///  <returns>string. Required spaced separated list.</returns>
-    class function LengthList(const List: array of Integer;
+    ///  <summary>Builds a space separated list of lengths using the specified
+    ///  unit.</summary>
+    ///  <param name="List"><c>array of Single</c> [in] List of lengths.</param>
+    ///  <param name="LU"><c>TCSSLengthUnit</c> [in] Specifies length unit to
+    ///  apply to each length.</param>
+    ///  <returns><c>string</c>. Required spaced separated list.</returns>
+    ///  <remarks>Note that lengths are rounded to a maximum of 2 decimal
+    ///  places.</remarks>
+    class function LengthList(const List: array of Single;
       const LU: TCSSLengthUnit = cluPixels): string; static;
 
     ///  <summary>Creates a CSS "margin" property.</summary>
-    ///  <param name="Margin">array of Integer [in] Array of margin widths. Must
-    ///  contain either 1, 2 or 4 values.</param>
-    ///  <returns>string. Required CSS property.</returns>
-    class function MarginProp(const Margin: array of Integer): string;
-      overload; static;
+    ///  <param name="Margin"><c>array of Single</c> [in] Array of margin
+    ///  widths. Must contain either 1, 2 or 4 values.</param>
+    ///  <param name="LU"><c>TCSSLengthUnit</c> [in] Optional length unit to use
+    ///  for each margin width. Defaults to <c>cluPixels</c>.</param>
+    ///  <returns><c>string</c>. Required CSS property.</returns>
+    ///  <remarks>Note that margin values are rounded to a maximum of 2 decimal
+    ///  places.</remarks>
+    class function MarginProp(const Margin: array of Single;
+      const LU: TCSSLengthUnit = cluPixels): string; overload; static;
 
     ///  <summary>Creates a CSS "padding" property.</summary>
-    ///  <param name="Padding">array of Integer [in] Array of padding widths.
-    ///  Must contain either 1, 2 or 4 values.</param>
-    ///  <returns>string. Required CSS property.</returns>
-    class function PaddingProp(const Padding: array of Integer): string;
-      overload; static;
+    ///  <param name="Padding"><c>array of Single</c> [in] Array of padding
+    ///  widths. Must contain either 1, 2 or 4 values.</param>
+    ///  <param name="LU"><c>TCSSLengthUnit</c> [in] Optional length unit to use
+    ///  for each padding width. Defaults to <c>cluPixels</c>.</param>
+    ///  <returns><c>string</c>. Required CSS property.</returns>
+    ///  <remarks>Note that padding values are rounded to a maximum of 2 decimal
+    ///  places.</remarks>
+    class function PaddingProp(const Padding: array of Single;
+      const LU: TCSSLengthUnit = cluPixels): string; overload; static;
 
   public
     ///  <summary>Creates a CSS "color" property.</summary>
@@ -312,54 +322,77 @@ type
 
     ///  <summary>Creates CSS "margin" property with same width on all edges.
     ///  </summary>
-    ///  <param name="Margin">Integer [in] Margin width in pixels.</param>
-    ///  <returns>string. Required CSS property.</returns>
-    class function MarginProp(const Margin: Integer): string; overload; static;
+    ///  <param name="Margin"><c>Single</c> [in] Margin width.</param>
+    ///  <param name="LU"><c>TCSSLengthUnit</c> [in] Optional length unit to use
+    ///  for the margin width. Defaults to <c>cluPixels</c>.</param>
+    ///  <returns><c>string</c>. Required CSS property.</returns>
+    ///  <remarks>Note that the margin value is rounded to a maximum of 2
+    ///  decimal places.</remarks>
+    class function MarginProp(const Margin: Single;
+      const LU: TCSSLengthUnit = cluPixels): string; overload; static;
 
     ///  <summary>Creates CSS "margin" property with potentially different
     ///  margin widths on each side.</summary>
-    ///  <param name="Top">Integer [in] Top margin in pixels.</param>
-    ///  <param name="Right">Integer [in] Right margin in pixels.</param>
-    ///  <param name="Bottom">Integer [in] Bottom margin in pixels.</param>
-    ///  <param name="Left">Integer [in] Left margin in pixels.</param>
-    ///  <returns>string. Required CSS property.</returns>
-    class function MarginProp(const Top, Right, Bottom, Left: Integer): string;
-      overload; static;
+    ///  <param name="Top"><c>Single</c> [in] Top margin.</param>
+    ///  <param name="Right"><c>Single</c> [in] Right margin.</param>
+    ///  <param name="Bottom"><c>Single</c> [in] Bottom margin.</param>
+    ///  <param name="Left"><c>Single</c> [in] Left margin.</param>
+    ///  <param name="LU"><c>TCSSLengthUnit</c> [in] Optional length unit to use
+    ///  for each margin width. Defaults to <c>cluPixels</c>.</param>
+    ///  <returns><c>string</c>. Required CSS property.</returns>
+    ///  <remarks>Note that margin values are rounded to a maximum of 2 decimal
+    ///  places.</remarks>
+    class function MarginProp(const Top, Right, Bottom, Left: Single;
+      const LU: TCSSLengthUnit = cluPixels): string; overload; static;
 
     ///  <summary>Creates CSS "margin" or "margin-xxx" property (where "xxx" is
     ///  a side).</summary>
-    ///  <param name="Side">TCSSSide [in] Specifies side(s) of element whose
-    ///  margin is to be set.</param>
-    ///  <param name="Margin">Integer [in] Width of margin in pixels.</param>
-    ///  <returns>string. Required CSS property.</returns>
-    class function MarginProp(const Side: TCSSSide; const Margin: Integer):
-      string; overload; static;
+    ///  <param name="Side"><c>TCSSSide</c> [in] Specifies the side(s) of the
+    ///  element whose margin is to be set.</param>
+    ///  <param name="Margin"><c>Single</c> [in] Width of margin in pixels.</param>
+    ///  <returns><c>string</c>. Required CSS property.</returns>
+    ///  <remarks>Note that the margin is rounded to a maximum of 2 decimal
+    ///  places.</remarks>
+    class function MarginProp(const Side: TCSSSide; const Margin: Single;
+      const LU: TCSSLengthUnit = cluPixels): string; overload; static;
 
     ///  <summary>Creates CSS "padding" property with same width on all sides.
     ///  </summary>
-    ///  <param name="Padding">Integer [in] Padding width in pixels.</param>
-    ///  <returns>string. Required CSS property.</returns>
-    class function PaddingProp(const Padding: Integer): string; overload;
-      static;
+    ///  <param name="Padding"><c>Single</c> [in] Padding width.</param>
+    ///  <param name="LU"><c>TCSSLengthUnit</c> [in] Optional length unit to use
+    ///  for the padding width. Defaults to <c>cluPixels</c>.</param>
+    ///  <returns><c>string</c>. Required CSS property.</returns>
+    ///  <remarks>Note that the padding value is rounded to a maximum of 2
+    ///  decimal places.</remarks>
+    class function PaddingProp(const Padding: Single;
+      const LU: TCSSLengthUnit = cluPixels): string; overload; static;
 
     ///  <summary>Creates CSS "padding" property with potentially different
     ///  padding widths on each side.</summary>
-    ///  <param name="Top">Integer [in] Top margin in pixels.</param>
-    ///  <param name="Right">Integer [in] Right margin in pixels.</param>
-    ///  <param name="Bottom">Integer [in] Bottom margin in pixels.</param>
-    ///  <param name="Left">Integer [in] Left margin in pixels.</param>
-    ///  <returns>string. Required CSS property.</returns>
-    class function PaddingProp(const Top, Right, Bottom, Left: Integer):
-      string; overload; static;
+    ///  <param name="Top"><c>Single</c> [in] Top margin.</param>
+    ///  <param name="Right"><c>Single</c> [in] Right margin.</param>
+    ///  <param name="Bottom"><c>Single</c> [in] Bottom margin.</param>
+    ///  <param name="Left"><c>Single</c> [in] Left margin.</param>
+    ///  <param name="LU"><c>TCSSLengthUnit</c> [in] Optional length unit to use
+    ///  for each padding width. Defaults to <c>cluPixels</c>.</param>
+    ///  <returns><c>string</c>. Required CSS property.</returns>
+    ///  <remarks>Note that padding values are rounded to a maximum of 2 decimal
+    ///  places.</remarks>
+    class function PaddingProp(const Top, Right, Bottom, Left: Single;
+      const LU: TCSSLengthUnit = cluPixels): string; overload; static;
 
     ///  <summary>Creates CSS "padding" or "padding-xxx" property (where "xxx"
     ///  is a side).</summary>
-    ///  <param name="Side">TCSSSide [in] Specifies side(s) of element whose
-    ///  padding is to be set.</param>
-    ///  <param name="Padding">Integer [in] Width of padding in pixels.</param>
-    ///  <returns>string. Required CSS property.</returns>
-    class function PaddingProp(const Side: TCSSSide; const Padding: Integer):
-      string; overload; static;
+    ///  <param name="Side"><c>TCSSSide</c> [in] Specifies side(s) of element
+    ///  whose padding is to be set.</param>
+    ///  <param name="Padding"><c>Single</c> [in] Width of padding.</param>
+    ///  <param name="LU"><c>TCSSLengthUnit</c> [in] Optional length unit to use
+    ///  for the padding width. Defaults to <c>cluPixels</c>.</param>
+    ///  <returns><c>string</c>. Required CSS property.</returns>
+    ///  <remarks>Note that the padding value is rounded to a maximum of 2
+    ///  decimal places.</remarks>
+    class function PaddingProp(const Side: TCSSSide; const Padding: Single;
+      const LU: TCSSLengthUnit = cluPixels): string; overload; static;
 
     ///  <summary>Creates a CSS "text-decoration" property.</summary>
     ///  <returns>string. Required CSS property.</returns>
@@ -477,7 +510,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows,
+  SysUtils, Windows, Math,
   // Project
   UIStringList, UStrUtils;
 
@@ -519,7 +552,7 @@ begin
     )
   else
     // Hiding border
-    Result := Format('%s: %s;', [BorderSides[Side], LengthList([Cardinal(0)])]);
+    Result := Format('%s: %s;', [BorderSides[Side], LengthList([0])]);
 end;
 
 class function TCSS.ColorProp(const Color: TColor): string;
@@ -641,11 +674,32 @@ begin
   Result := DisplayProp(BlockDisplayStyles[Show]);
 end;
 
-class function TCSS.LengthList(const List: array of Integer;
+class function TCSS.LengthList(const List: array of Single;
   const LU: TCSSLengthUnit): string;
+
+  function FmtLength(const L: Single): string;
+  var
+    NumX100: Int64;
+    WholePart, DecPart: Int64;
+  begin
+    Assert(not (L < 0), 'TCSS.LengthList: Length < 0'); // avoiding using >=
+    NumX100 := Round(Abs(L) * 100);
+    WholePart := NumX100 div 100;
+    DecPart := NumX100 mod 100;
+    Result := IntToStr(WholePart);
+    if DecPart <> 0 then
+    begin
+      Result := Result + '.'; // TODO: check CSS spec re localisation of '.'
+      if DecPart mod 10 = 0 then
+        Result := Result + IntToStr(DecPart div 10)
+      else
+        Result := Result + IntToStr(DecPart);
+    end;
+  end;
+
 var
   Idx: Integer;     // loops thru list of values
-  ALength: Integer; // a length from list
+  ALength: Single;  // a length from list
 begin
   Assert((LU <> cluAuto) or (Length(List) = 1),
     'TCSS.LengthList: List size may only be 1 when length type is cltAuto');
@@ -659,7 +713,7 @@ begin
       ALength := List[Idx];
       if Result <> '' then
         Result := Result + ' ';
-      Result := Result + IntToStr(ALength);
+      Result := Result + FmtLength(ALength);
       if ALength <> 0 then
         Result := Result + LengthUnit(LU);  // only add unit if length not 0
     end;
@@ -701,32 +755,35 @@ begin
   Result := 'list-style-type: ' + Types[Value] + ';';
 end;
 
-class function TCSS.MarginProp(const Margin: array of Integer): string;
+class function TCSS.MarginProp(const Margin: array of Single;
+  const LU: TCSSLengthUnit): string;
 begin
   Assert(Length(Margin) in [1,2,4],
     'TCSS.MarginProp: Invalid margin parameters');
-  Result := 'margin: ' + LengthList(Margin) + ';';
+  Result := 'margin: ' + LengthList(Margin, LU) + ';';
 end;
 
-class function TCSS.MarginProp(const Top, Right, Bottom, Left: Integer): string;
+class function TCSS.MarginProp(const Top, Right, Bottom, Left: Single;
+  const LU: TCSSLengthUnit): string;
 begin
-  Result := MarginProp([Top, Right, Bottom, Left]);
+  Result := MarginProp([Top, Right, Bottom, Left], LU);
 end;
 
-class function TCSS.MarginProp(const Margin: Integer): string;
-begin
-  Result := MarginProp([Margin]);
-end;
-
-class function TCSS.MarginProp(const Side: TCSSSide; const Margin: Integer):
+class function TCSS.MarginProp(const Margin: Single; const LU: TCSSLengthUnit):
   string;
+begin
+  Result := MarginProp([Margin], LU);
+end;
+
+class function TCSS.MarginProp(const Side: TCSSSide; const Margin: Single;
+  const LU: TCSSLengthUnit): string;
 const
   // Map of element sides to associated margin properties
   MarginSides: array[TCSSSide] of string = (
     'margin', 'margin-top', 'margin-left', 'margin-bottom', 'margin-right'
   );
 begin
-  Result := Format('%s: %s;', [MarginSides[Side], LengthList([Margin])]);
+  Result := Format('%s: %s;', [MarginSides[Side], LengthList([Margin], LU)]);
 end;
 
 class function TCSS.MaxHeightProp(const HeightPx: Integer): string;
@@ -747,33 +804,35 @@ begin
   Result := Format('%0:s: %1:s;', [Props[Direction], Values[Value]]);
 end;
 
-class function TCSS.PaddingProp(const Padding: array of Integer): string;
+class function TCSS.PaddingProp(const Padding: array of Single;
+  const LU: TCSSLengthUnit): string;
 begin
   Assert(Length(Padding) in [1,2,4],
     'TCSS.PaddingProp: Invalid padding parameters');
-  Result := 'padding: ' + LengthList(Padding) + ';';
+  Result := 'padding: ' + LengthList(Padding, LU) + ';';
 end;
 
-class function TCSS.PaddingProp(const Top, Right, Bottom, Left: Integer):
-  string;
+class function TCSS.PaddingProp(const Top, Right, Bottom, Left: Single;
+  const LU: TCSSLengthUnit): string;
 begin
-  Result := PaddingProp([Top, Right, Bottom, Left]);
+  Result := PaddingProp([Top, Right, Bottom, Left], LU);
 end;
 
-class function TCSS.PaddingProp(const Padding: Integer): string;
+class function TCSS.PaddingProp(const Padding: Single;
+  const LU: TCSSLengthUnit): string;
 begin
-  Result := PaddingProp([Padding]);
+  Result := PaddingProp([Padding], LU);
 end;
 
-class function TCSS.PaddingProp(const Side: TCSSSide;
-  const Padding: Integer): string;
+class function TCSS.PaddingProp(const Side: TCSSSide; const Padding: Single;
+  const LU: TCSSLengthUnit): string;
 const
   // Map of element sides to associated padding properties
   PaddingSides: array[TCSSSide] of string = (
     'padding', 'padding-top', 'padding-left', 'padding-bottom', 'padding-right'
   );
 begin
-  Result := Format('%s: %s;', [PaddingSides[Side], LengthList([Padding])]);
+  Result := Format('%s: %s;', [PaddingSides[Side], LengthList([Padding], LU)]);
 end;
 
 class function TCSS.TextAlignProp(const TA: TCSSTextAlign): string;

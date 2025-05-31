@@ -107,6 +107,9 @@ uses
   DB.MetaData,
   UAppInfo,
   UStrUtils,
+  UConsts,
+  UPreferences,
+  UUrl,
   UUtils;
 
 
@@ -231,7 +234,12 @@ function TSaveUnitMgr.GenerateSource(const CommentStyle: TCommentStyle;
   const TruncateComments: Boolean): string;
 begin
   Result := fSourceGen.UnitAsString(
-    UnitName, CommentStyle, TruncateComments, CreateHeaderComments
+    UnitName,
+    Preferences.Warnings,
+    CommentStyle,
+    TruncateComments,
+    Preferences.TruncateSourceComments,
+    CreateHeaderComments
   );
 end;
 
@@ -258,9 +266,12 @@ end;
 function TSaveUnitMgr.GetFileTypeDesc(const FileType: TSourceFileType): string;
 const
   Descriptions: array[TSourceFileType] of string = (
-    sTextDesc, sPascalDesc, sHTML5Desc, sXHTMLDesc, sRTFDesc
+    sTextDesc, sPascalDesc, sHTML5Desc, sXHTMLDesc, sRTFDesc,
+    '' {Markdown not supported}
   );
 begin
+  Assert(FileType <> sfMarkdown,
+    ClassName + '.GetFileTypeDesc: Markdown not supported');
   Result := Descriptions[FileType];
 end;
 

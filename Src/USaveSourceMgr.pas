@@ -40,20 +40,16 @@ type
     ///  extension.</summary>
     ///  <param name="Sender">TObject [in] Reference to object that triggered
     ///  event.</param>
-    ///  <param name="Ext">string [in] Name of extension to check.</param>
     ///  <param name="CanHilite">Boolean [in/out] Set to True if highlighting
     ///  supported for extension or False if not.</param>
-    procedure HiliteQueryHandler(Sender: TObject; const Ext: string;
-      var CanHilite: Boolean);
+    procedure HiliteQueryHandler(Sender: TObject; var CanHilite: Boolean);
     ///  <summary>Handles custom save dialog box's OnEncodingQuery event.
     ///  Provides array of encodings supported for a file extension.</summary>
     ///  <param name="Sender">TObject [in] Reference to object that triggered
     ///  event.</param>
-    ///  <param name="FilterIdx">string [in] Index of file type withing dialog's
-    ///  filter string to check.</param>
     ///  <param name="Encodings">TSourceFileEncodings [in/out] Receives array of
     ///  supported encodings.</param>
-    procedure EncodingQueryHandler(Sender: TObject; const FilterIdx: Integer;
+    procedure EncodingQueryHandler(Sender: TObject;
       var Encodings: TSourceFileEncodings);
     ///  <summary>Handles custom save dialog's OnPreview event. Displays source
     ///  code appropriately formatted in preview dialog box.</summary>
@@ -138,8 +134,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmPreviewDlg, Hiliter.UFileHiliter, UIOUtils, UMessageBox, UOpenDialogHelper,
-  UPreferences;
+  FmPreviewDlg, Hiliter.UFileHiliter, UIOUtils, UMessageBox,
+  UOpenDialogHelper, UPreferences;
 
 
 { TSaveSourceMgr }
@@ -185,11 +181,14 @@ var
 begin
   // Set up dialog box
   fSaveDlg.Filter := fSourceFileInfo.FilterString;
-  fSaveDlg.FilterIndex := FilterDescToIndex(
-    fSaveDlg.Filter,
-    fSourceFileInfo.FileTypeInfo[Preferences.SourceDefaultFileType].DisplayName,
-    1
-  );
+  if fSourceFileInfo.SupportsFileType(Preferences.SourceDefaultFileType) then
+    fSaveDlg.FilterIndex := FilterDescToIndex(
+      fSaveDlg.Filter,
+      fSourceFileInfo.FileTypeInfo[Preferences.SourceDefaultFileType].DisplayName,
+      1
+    )
+  else
+    fSaveDlg.FilterIndex := 1;
   fSaveDlg.FileName := fSourceFileInfo.DefaultFileName;
   // Display dialog box and save file if user OKs
   if fSaveDlg.Execute then
@@ -206,7 +205,7 @@ begin
 end;
 
 procedure TSaveSourceMgr.EncodingQueryHandler(Sender: TObject;
-  const FilterIdx: Integer; var Encodings: TSourceFileEncodings);
+  var Encodings: TSourceFileEncodings);
 var
   FileType: TSourceFileType;  // type of file that has given extension
 begin
@@ -215,16 +214,8 @@ begin
 end;
 
 function TSaveSourceMgr.FileTypeFromFilterIdx: TSourceFileType;
-var
-  FilterIdx: Integer; // dlg FilterIndex adjusted to be 0 based
 begin
-  FilterIdx := fSaveDlg.FilterIndex - 1;
-  Assert(
-    (FilterIdx >= Ord(Low(TSourceFileType)))
-      and (FilterIdx <= Ord(High(TSourceFileType))),
-    ClassName + '.FileTypeFromFilterIdx: FilerIdx out of range'
-  );
-  Result := TSourceFileType(FilterIdx)
+  Result := fSourceFileInfo.FileTypeFromFilterIdx(fSaveDlg.FilterIndex);
 end;
 
 function TSaveSourceMgr.GenerateOutput(const FileType: TSourceFileType):
@@ -246,60 +237,40 @@ begin
   end;
 end;
 
-procedure TSaveSourceMgr.HiliteQueryHandler(Sender: TObject; const Ext: string;
+procedure TSaveSourceMgr.HiliteQueryHandler(Sender: TObject;
   var CanHilite: Boolean);
 begin
   CanHilite := IsHilitingSupported(FileTypeFromFilterIdx);
 end;
 
 constructor TSaveSourceMgr.InternalCreate;
-resourcestring
-  // descriptions of supported encodings
-  sANSIDefaultEncoding = 'ANSI (Default)';
-  sUTF8Encoding = 'UTF-8';
-  sUTF16LEEncoding = 'Unicode (Little Endian)';
-  sUTF16BEEncoding = 'Unicode (Big Endian)';
 begin
   inherited InternalCreate;
   fSourceFileInfo := TSourceFileInfo.Create;
   fSourceFileInfo.FileTypeInfo[sfText] := TSourceFileTypeInfo.Create(
     '.txt',
     GetFileTypeDesc(sfText),
-    [
-      TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
-      TSourceFileEncoding.Create(etUTF8, sUTF8Encoding),
-      TSourceFileEncoding.Create(etUTF16LE, sUTF16LEEncoding),
-      TSourceFileEncoding.Create(etUTF16BE, sUTF16BEEncoding)
-    ]
+    [etSysDefault, etUTF8, etUTF16LE, etUTF16BE]
   );
   fSourceFileInfo.FileTypeInfo[sfPascal] := TSourceFileTypeInfo.Create(
     '.pas',
     GetFileTypeDesc(sfPascal),
-    [
-      TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
-      TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
-    ]
+    [etSysDefault, etUTF8]
   );
   fSourceFileInfo.FileTypeInfo[sfHTML5] := TSourceFileTypeInfo.Create(
     '.html',
     GetFileTypeDesc(sfHTML5),
-    [
-      TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
-    ]
+    [etUTF8]
   );
   fSourceFileInfo.FileTypeInfo[sfXHTML] := TSourceFileTypeInfo.Create(
     '.html',
     GetFileTypeDesc(sfXHTML),
-    [
-      TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
-    ]
+    [etUTF8]
   );
   fSourceFileInfo.FileTypeInfo[sfRTF] := TSourceFileTypeInfo.Create(
     '.rtf',
     GetFileTypeDesc(sfRTF),
-    [
-      TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding)
-    ]
+    [etASCII]
  );
   fSourceFileInfo.DefaultFileName := GetDefaultFileName;
 
@@ -329,7 +300,8 @@ const
     dtPlainText,  // sfPascal
     dtHTML,       // sfHTML5
     dtHTML,       // sfXHTML
-    dtRTF         // sfRTF
+    dtRTF,        // sfRTF
+    dtPlainText   // sfMarkdown
   );
   PreviewFileTypeMap: array[TPreviewDocType] of TSourceFileType = (
     sfText,       // dtPlainText

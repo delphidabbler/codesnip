@@ -24,7 +24,8 @@ uses
   ActiveText.UMain,
   DB.Snippets,
   UBaseObjects,
-  UIStringList;
+  UIStringList,
+  UWarnings;
 
 
 type
@@ -202,18 +203,23 @@ type
     ///  <summary>Generates source code of a Pascal unit containing all the
     ///  specified snippets along with any other snippets that are required to
     ///  compile the code.</summary>
-    ///  <param name="UnitName">string [in] Name of unit.</param>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting used
-    ///  in documenting snippets.</param>
-    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
-    ///  not documentation comments are to be truncated at the end of the first
-    ///  paragraph of multi-paragraph text.</param>
-    ///  <param name="HeaderComments">IStringList [in] List of comments to be
-    ///  included at top of unit.</param>
-    ///  <returns>string. Unit source code.</returns>
-    function UnitAsString(const UnitName: string;
+    ///  <param name="UnitName"><c>string</c> [in] Name of unit.</param>
+    ///  <param name="CommentStyle"><c>TCommentStyle</c> [in] Style of
+    ///  commenting used in documenting snippets.</param>
+    ///  <param name="TruncateComments"><c>Boolean</c> [in] Flag indicating
+    ///  whether or not documentation comments are to be truncated at the end of
+    ///  the first paragraph of multi-paragraph text.</param>
+    ///  <param name="UseCommentsInImplmentation"><c>Boolean</c> [in] Flag
+    ///  indicating whether or not comments are to be included in the
+    ///  implementation section. Has no effect when <c>CommentStyle</c> =
+    ///  <c>csNone</c>.</param>
+    ///  <param name="HeaderComments"><c>IStringList</c> [in] List of comments
+    ///  to be included at top of unit.</param>
+    ///  <returns><c>string</c>. Unit source code.</returns>
+    function UnitAsString(const UnitName: string; const Warnings: IWarnings;
       const CommentStyle: TCommentStyle = csNone;
       const TruncateComments: Boolean = False;
+      const UseCommentsInImplementation: Boolean = False;
       const HeaderComments: IStringList = nil): string;
 
     ///  <summary>Generates source code of a Pascal include file containing all
@@ -261,10 +267,8 @@ uses
   DB.SnippetKind,
   UConsts,
   UExceptions,
-  UPreferences,
   USnippetValidator,
   UStrUtils,
-  UWarnings,
   Hiliter.UPasLexer;
 
 
@@ -595,16 +599,25 @@ begin
 end;
 
 function TSourceGen.UnitAsString(const UnitName: string;
+  const Warnings: IWarnings;
   const CommentStyle: TCommentStyle = csNone;
   const TruncateComments: Boolean = False;
+  const UseCommentsInImplementation: Boolean = False;
   const HeaderComments: IStringList = nil): string;
 var
-  Writer: TStringBuilder;   // used to build source code string
-  Snippet: TSnippet;        // reference to a snippet object
-  Warnings: IWarnings;      // object giving info about any inhibited warnings
+  Writer: TStringBuilder;                    // used to build source code string
+  Snippet: TSnippet;                            // reference to a snippet object
+  ImplCommentStyle: TCommentStyle;        // style of comments in implementation
 begin
+  // Set comment style for implementation section
+  if UseCommentsInImplementation then
+    ImplCommentStyle := CommentStyle
+  else
+    ImplCommentStyle := csNone;
+
   // Generate the unit data
   fSourceAnalyser.Generate;
+
   // Create writer object onto string stream that receives output
   Writer := TStringBuilder.Create;
   try
@@ -618,7 +631,6 @@ begin
     Writer.AppendLine;
 
     // any conditional compilation symbols
-    Warnings := Preferences.Warnings;
     if Warnings.Enabled and not Warnings.IsEmpty then
     begin
       Writer.Append(Warnings.Render);
@@ -693,11 +705,14 @@ begin
     for Snippet in fSourceAnalyser.AllRoutines do
     begin
       Writer.AppendLine(
-        TRoutineFormatter.FormatRoutine(CommentStyle, TruncateComments, Snippet)
+        TRoutineFormatter.FormatRoutine(
+          ImplCommentStyle, TruncateComments, Snippet
+        )
       );
       Writer.AppendLine;
     end;
 
+    // class & records-with-methods implementation source code
     for Snippet in fSourceAnalyser.TypesAndConsts do
     begin
       if Snippet.Kind = skClass then

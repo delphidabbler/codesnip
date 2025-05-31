@@ -142,6 +142,16 @@ type
     ///  breaks.</param>
     class procedure Error(const Parent: TComponent; const Msg: string);
 
+    ///  <summary>Displays a message in a warning dialogue box aligned over the
+    ///  parent control.</summary>
+    ///  <param name="Parent">TComponent [in] Dialogue box's parent control,
+    ///  over which dialogue box is aligned. May be nil, when active form is
+    ///  used for alignment.</param>
+    ///  <param name="Msg">string [in] Message displayed in dialogue box.
+    ///  Separate lines with LF or CRLF. Separate paragraphs with two line
+    ///  breaks.</param>
+    class procedure Warning(const Parent: TComponent; const Msg: string);
+
     ///  <summary>Displays a message in a confirmation dialogue box aligned over
     ///  the parent control.</summary>
     ///  <param name="Parent">TComponent [in] Dialogue box's parent control,
@@ -390,6 +400,21 @@ begin
     Parent,
     Msg,
     mtInformation,
+    [TMessageBoxButton.Create(sBtnOK, mrOK, True, True)],
+    DefaultTitle,
+    DefaultIcon,
+    False
+  );
+end;
+
+class procedure TMessageBox.Warning(const Parent: TComponent;
+  const Msg: string);
+begin
+  MessageBeep(MB_ICONEXCLAMATION);
+  Display(
+    Parent,
+    Msg,
+    mtWarning,
     [TMessageBoxButton.Create(sBtnOK, mrOK, True, True)],
     DefaultTitle,
     DefaultIcon,

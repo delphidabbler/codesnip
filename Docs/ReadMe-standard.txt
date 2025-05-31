@@ -179,8 +179,8 @@ Updating the Program
 Updates are published on GitHub. See
 https://github.com/delphidabbler/codesnip/releases
 
-News of new updates is published on the CodeSnip Blog:
-https://codesnip-app.blogspot.com/.
+News of new updates is published on the DelphiDabbler Blog:
+https://delphidabbler.blogspot.com/.
 
 
 Known Installation and Upgrading Issues
@@ -292,6 +292,9 @@ Thanks to:
 
 + geoffsmith82 and an anonymous contributor for information about getting
   CodeSnip to work with Delphi XE2.
+
++ SirRufo for helping to fix a long standing bug where CodeSnip would crash on
+  resuming from hibernation.
 
 + The authors of the third party source code and images used by the program. See
   the program's about box or License.html for details.

@@ -76,19 +76,19 @@ type
       BodyTagName = 'body';
       PreTagName = 'pre';
       SpanTagName = 'span';
-  strict protected
+  public
     ///  <summary>Returns the class used to generate tags for the appropriate
     ///  type of HTML.</summary>
-    function TagGenerator: THTMLClass; virtual; abstract;
+    class function TagGenerator: THTMLClass; virtual; abstract;
     ///  <summary>Returns any preamble to be written to the HTML before the
     ///  opening &lt;html&gt; tag.</summary>
-    function Preamble: string; virtual; abstract;
+    class function Preamble: string; virtual; abstract;
     ///  <summary>Returns the attributes of the document's &lt;html&gt; tag.
     ///  </summary>
-    function HTMLTagAttrs: IHTMLAttributes; virtual; abstract;
+    class function HTMLTagAttrs: IHTMLAttributes; virtual; abstract;
     ///  <summary>Returns any &lt;meta&gt; tags to be included within the
     ///  document's &lt;head&gt; tag.</summary>
-    function MetaTags: string; virtual; abstract;
+    class function MetaTags: string; virtual; abstract;
   public
     ///  <summary>Object constructor. Initialises object with empty body.
     ///  </summary>
@@ -146,19 +146,19 @@ type
       // XML document type
       XHTMLDocType = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '
         + '"https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-  strict protected
+  public
     ///  <summary>Returns the class used to generate XHTML compliant tags.
     ///  </summary>
-    function TagGenerator: THTMLClass; override;
+    class function TagGenerator: THTMLClass; override;
     ///  <summary>Returns the XML processing instruction followed by the XHTML
     ///  doctype.</summary>
-    function Preamble: string; override;
+    class function Preamble: string; override;
     ///  <summary>Returns the attributes required for an XHTML &lt;html&gt; tag.
     ///  </summary>
-    function HTMLTagAttrs: IHTMLAttributes; override;
+    class function HTMLTagAttrs: IHTMLAttributes; override;
     ///  <summary>Returns a &lt;meta&gt; tag that specifies the text/html
     ///  content type and UTF-8 encodiing.</summary>
-    function MetaTags: string; override;
+    class function MetaTags: string; override;
   end;
 
   ///  <summary>Class used to create the content of a HTML 5 document.</summary>
@@ -167,18 +167,18 @@ type
     const
       // HTML 5 document type
       HTML5DocType = '<!DOCTYPE HTML>';
-  strict protected
+  public
     ///  <summary>Returns the class used to generate HTML 5 compliant tags.
     ///  </summary>
-    function TagGenerator: THTMLClass; override;
+    class function TagGenerator: THTMLClass; override;
     ///  <summary>Returns the HTML 5 doctype.</summary>
-    function Preamble: string; override;
+    class function Preamble: string; override;
     ///  <summary>Returns the attributes required for an HTML 5 &lt;html&gt;
     ///  tag.</summary>
-    function HTMLTagAttrs: IHTMLAttributes; override;
+    class function HTMLTagAttrs: IHTMLAttributes; override;
     ///  <summary>Returns a &lt;meta&gt; tag that specifies that the document
     ///  uses UTF-8 encoding.</summary>
-    function MetaTags: string; override;
+    class function MetaTags: string; override;
   end;
 
 
@@ -312,7 +312,7 @@ end;
 
 { TXHTMLBuilder }
 
-function TXHTMLBuilder.HTMLTagAttrs: IHTMLAttributes;
+class function TXHTMLBuilder.HTMLTagAttrs: IHTMLAttributes;
 begin
   Result := THTMLAttributes.Create(
     [THTMLAttribute.Create('xmlns', 'https://www.w3.org/1999/xhtml'),
@@ -321,7 +321,7 @@ begin
   );
 end;
 
-function TXHTMLBuilder.MetaTags: string;
+class function TXHTMLBuilder.MetaTags: string;
 begin
   Result := TagGenerator.SimpleTag(
     MetaTagName,
@@ -332,24 +332,24 @@ begin
   );
 end;
 
-function TXHTMLBuilder.Preamble: string;
+class function TXHTMLBuilder.Preamble: string;
 begin
   Result := XMLProcInstruction + EOL + XHTMLDocType;
 end;
 
-function TXHTMLBuilder.TagGenerator: THTMLClass;
+class function TXHTMLBuilder.TagGenerator: THTMLClass;
 begin
   Result := TXHTML;
 end;
 
 { THTML5Builder }
 
-function THTML5Builder.HTMLTagAttrs: IHTMLAttributes;
+class function THTML5Builder.HTMLTagAttrs: IHTMLAttributes;
 begin
   Result := THTMLAttributes.Create('lang', 'en');
 end;
 
-function THTML5Builder.MetaTags: string;
+class function THTML5Builder.MetaTags: string;
 begin
   // <meta charset="UTF-8">
   Result := TagGenerator.SimpleTag(
@@ -358,12 +358,12 @@ begin
   );
 end;
 
-function THTML5Builder.Preamble: string;
+class function THTML5Builder.Preamble: string;
 begin
   Result := HTML5DocType;
 end;
 
-function THTML5Builder.TagGenerator: THTMLClass;
+class function THTML5Builder.TagGenerator: THTMLClass;
 begin
   Result := THTML5;
 end;

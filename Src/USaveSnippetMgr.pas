@@ -92,8 +92,8 @@ uses
 
 resourcestring
   // Dialog box title
-  sSaveSnippetDlgTitle = 'Save %0:s Snippet';
-  sSaveCategoryDlgTitle = 'Save %0:s Category';
+  sSaveSnippetDlgTitle = 'Save Annotated Source of %0:s';
+  sSaveCategoryDlgTitle = 'Save Annotated Source of %0:s Category';
   // Output document title for snippets and categories
   sDocTitle = '"%0:s" %1:s';
   sCategory = 'category';
@@ -171,9 +171,12 @@ function TSaveSnippetMgr.GetFileTypeDesc(
   const FileType: TSourceFileType): string;
 const
   Descriptions: array[TSourceFileType] of string = (
-    sTxtExtDesc, sIncExtDesc, sHtml5ExtDesc, sXHtmExtDesc, sRtfExtDesc
+    sTxtExtDesc, sIncExtDesc, sHtml5ExtDesc, sXHtmExtDesc, sRtfExtDesc,
+    '' {Markdown not supported}
   );
 begin
+  Assert(FileType <> sfMarkdown,
+    ClassName + '.GetFileTypeDesc: Markdown not supported');
   Result := Descriptions[FileType];
 end;
 
