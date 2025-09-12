@@ -121,7 +121,7 @@ Hotfix release.
 
 ## Release v4.21.1 of 09 April 2023
 
-* Completed implementation of support for [REML version 5](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/version-4.21.0/Docs/Design/reml.html) (ommitted from v4.20.0 in error) and fixed some bugs in the original implementation [issues #81 and #82], including:
+* Completed implementation of support for [REML version 5](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/version-4.21.0/Docs/Design/reml.html) (omitted from v4.21.0 in error) and fixed some bugs in the original implementation [issues #81 and #82], including:
   * Heavily revised "active text" handling code and document model to fix support for lists introduced in v4.21.0.
   * Added support for rendering lists in plain text reports and generated source code header comments.
   * Added support for rendering lists in Rich Text Format for use in printed information and in reports copied to the clipboard.
