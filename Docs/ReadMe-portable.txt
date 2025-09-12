@@ -14,7 +14,7 @@ online DelphiDabbler Code Snippets database as well as maintain a database of
 user-defined snippets.
 
 It displays details of each snippet in the database and can test-compile them
-with each installed Win32 version of Delphi from Delphi 2 to Delphi 12.x and
+with each installed Win32 version of Delphi from Delphi 2 to Delphi 13.x and
 Free Pascal.
 
 Compilable Pascal units can be created that contain selected snippets.

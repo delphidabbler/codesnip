@@ -682,6 +682,7 @@ begin
   AddMenuItem('Delphi 10.4 Sydney', 34.0);
   AddMenuItem('Delphi 11.x Alexandria', 35.0);
   AddMenuItem('Delphi 12 Athens', 36.0);
+  AddMenuItem('Delphi 13 Florence', 37.0);
 end;
 
 procedure TCodeGenPrefsFrame.PreDefCompilerMenuClick(Sender: TObject);

@@ -154,6 +154,8 @@ begin
       Result := 'D11A';
     ciD12A:
       Result := 'D12Y';
+    ciD13F:
+      Result := 'D13F';
     else
       raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
@@ -179,6 +181,7 @@ resourcestring
   sDelphi104S = 'Delphi 10.4';    // Sydney
   sDelphi11A  = 'Delphi 11.x';    // Alexandria
   sDelphi12A  = 'Delphi 12.x';    // Athens
+  sDelphi13F  = 'Delphi 13.x';    // Florence
 begin
   case GetID of
     ciDXE:
@@ -211,6 +214,8 @@ begin
       Result := sDelphi11A;
     ciD12A:
       Result := sDelphi12A;
+    ciD13F:
+      Result := sDelphi13F;
     else
       Result := Format(sCompilerName, [ProductVersion]);
   end;
@@ -246,6 +251,7 @@ begin
     ciD104S   : Result := '\Software\Embarcadero\BDS\21.0';
     ciD11A    : Result := '\Software\Embarcadero\BDS\22.0';
     ciD12A    : Result := '\Software\Embarcadero\BDS\23.0';
+    ciD13F    : Result := '\Software\Embarcadero\BDS\37.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;
