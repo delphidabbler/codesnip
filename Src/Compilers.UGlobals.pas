@@ -45,6 +45,7 @@ type
     ciD104S,                            // Delphi 10.4 Sydney,
     ciD11A,                             // Delphi 11.x Alexandria
     ciD12A,                             // Delphi 12 Athens
+    ciD13F,                             // Delphi 13 Florence
     ciFPC                               // Free Pascal
   );
 
@@ -58,7 +59,7 @@ const
   cBDSCompilers = [
     ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010, ciDXE, ciDXE2,
     ciDXE3, ciDXE4, ciDXE5, ciDXE6, ciDXE7, ciDXE8, ciD10S, ciD101B, ciD102T,
-    ciD103R, ciD104S, ciD11A, ciD12A
+    ciD103R, ciD104S, ciD11A, ciD12A, ciD13F
   ];
 
 const
