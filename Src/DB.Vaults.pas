@@ -115,6 +115,8 @@ type
     procedure Initialize; override;
     procedure Finalize; override;
   public
+    const
+      DefaultVaultName = 'Default';
     class property Instance: TVaults read GetInstance;
     function GetEnumerator: TEnumerator<TVault>;
     function IndexOfID(const AUID: TVaultID): Integer;
@@ -352,7 +354,7 @@ begin
     Add(
       TVault.Create(
         TVaultID.Default,
-        'Default',
+        DefaultVaultName,
         TDataStorageDetails.Create(
           TDataFormatInfo.DefaultFormat,
           TAppInfo.UserDefaultVaultDir
