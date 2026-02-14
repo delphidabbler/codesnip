@@ -1,5 +1,15 @@
 # CodeSnip Cupola
 
+> ## Branch Abandoned
+>
+> Little progress has been made towards this lite version of CodeSnip. No work was ever done on the GUI. A few units were written and some of those had unit tests, but that's about it.
+>
+> It now seems that the branch with the best chance of making it to release is the [`vault`](https://github.com/delphidabbler/codesnip/tree/vault) branch which is not as ambitious as other CodeSnip v5 attempts. There's no guarantee that `vault` will succeed, but that's the only non-mainstream branch still being worked on. Time will tell.
+>
+> Therefore the `cupola` branch has been abandoned as of 2026-02-14.
+>
+> ⛔ Pull requests for this branch are not being accepted.
+
 ## Contents
 
 1. [Overview](#overview)
