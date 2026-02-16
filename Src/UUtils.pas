@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2026, Peter Johnson (gravatar.com/delphidabbler).
  *
  * General utility routines.
 }
@@ -70,7 +70,45 @@ function LongToShortFilePath(const LongName: string): string;
 ///  </returns>
 function IsDirectory(const DirName: string): Boolean;
 
-///  <summary>Converts a floating point number to an integer, rounding to
+///  <summary>Checks if a directory is a subdirectory of another directory.
+///  </summary>
+///  <param name="AChildDir"><c>string</c> [in] Child directory.</param>
+///  <param name="AParentDir"><c>string</c> [in] Parent directory.</param>
+///  <param name="AStrict"><c>Boolean</c> [in] Indicates whether the test should
+///  be strict or not. A strict test requires that the child directory must be
+///  a true subdirectory of the parent whereas a test that is not strict also
+///  allows for the child to be the same as the parent directory.</param>
+///  <returns><c>Boolean</c>. <c>True</c> if the child directory is a
+///  subdirectory, <c>False</c> otherwise.</returns>
+///  <remarks>The test is case insensitive to comply with Windows file name
+///  rules. Directory names are adjusted to account for embedded . and ..
+///  directories.</remarks>
+function IsSubDirectory(const AChildDir, AParentDir: string;
+  const AStrict: Boolean): Boolean;
+
+///  <summary>Checks if two directories are the same.</summary>
+///  <param name="ALeftDir"><c>string</c> [in] First directory to check.</param>
+///  <param name="ARightDir"><c>string</c> [in] Second directory to check.
+///  </param>
+///  <returns><c>Boolean</c>. <c>True</c> if the directories are the same or
+///  <c>False</c> if they are different.</returns>
+///  <remarks>The test is case insensitive to comply with Windows file name
+///  rules. Directory names are adjusted to account for embedded . and ..
+///  directories.</remarks>
+function IsSameDirectory(const ALeftDir, ARightDir: string): Boolean;
+
+///  <summary>Returns the nearest directory up a given directory's path that
+///  exists.</summary>
+///  <param name="ADir"><c>string</c> [in] Directory to be processed.</param>
+///  <returns><c>string</c>. The nearest existing directory or an empty string
+///  if no such directory exists.</returns>
+///  <remarks>Examples: If <c>ADir</c> = <c>C:\Foo\Bar</c> and both
+///  <c>Foo</c> and <c>Bar</c> exist then <c>C:\Foo\Bar</c> is returned.
+///  If <c>Foo</c> exists and <c>Bar</c> doesn't exist then <c>C:\Foo</c> is
+///  returned.</remarks>
+function NearestExistingDirectory(const ADir: string): string;
+
+    ///  <summary>Converts a floating point number to an integer, rounding to
 ///  nearest integer.</summary>
 ///  <param name="F">Double [in] Floating point number to be rounded off.
 ///  </param>
@@ -223,9 +261,17 @@ implementation
 
 uses
   // Delphi
-  Windows, ShlObj, ActiveX, Messages, Character, Math, DateUtils,
+  Windows,
+  ShlObj,
+  ActiveX,
+  Messages,
+  Character,
+  Math,
+  DateUtils,
+  IOUtils,
   // Project
-  UConsts, UStrUtils;
+  UConsts,
+  UStrUtils;
 
 
 function FileAge(const FileName: string): Integer;
@@ -399,6 +445,48 @@ end;
 function IsBaseFileName(const FileName: string): Boolean;
 begin
   Result := (FileName <> '') and (ExtractFileName(FileName) = FileName);
+end;
+
+function IsSubDirectory(const AChildDir, AParentDir: string;
+  const AStrict: Boolean): Boolean;
+var
+  ChildPath, ParentPath: string;
+begin
+  // Getting full path resolves any . or .. in the directory names
+  // Including the trailing path delimiter avoids partial name matches, (e.g.
+  // C:\Foo is not a subdirectory of C:\FooBar
+  ChildPath := IncludeTrailingPathDelimiter(TPath.GetFullPath(AChildDir));
+  ParentPath := IncludeTrailingPathDelimiter(TPath.GetFullPath(AParentDir));
+  Result := StrStartsText(ChildPath, ParentPath);
+  if Result and AStrict then
+    Result := not StrSameText(ChildPath, ParentPath);
+end;
+
+function IsSameDirectory(const ALeftDir, ARightDir: string): Boolean;
+var
+  ChildPath, ParentPath: string;
+begin
+  // Getting full path resolves any . or .. in the directory names
+  // Including the trailing path delimiter ensures consistent path format
+  ChildPath := IncludeTrailingPathDelimiter(TPath.GetFullPath(ALeftDir));
+  ParentPath := IncludeTrailingPathDelimiter(TPath.GetFullPath(ARightDir));
+  Result := StrSameText(ChildPath, ParentPath);
+end;
+
+function NearestExistingDirectory(const ADir: string): string;
+var
+  Root: string;
+begin
+  Result := StrTrim(ADir);
+  if Result = '' then
+    Exit('');
+  // Getting full path resolves any . or .. in the directory names
+  Result := TPath.GetFullPath(Result);
+  Root := TPath.GetPathRoot(Result);
+  while (Result <> '')
+    and (Result <> Root)
+    and not TDirectory.Exists(Result, False) do
+    Result := TPath.GetDirectoryName(Result);
 end;
 
 procedure Pause(const ADelay: LongWord);
