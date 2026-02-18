@@ -307,6 +307,10 @@ type
     ///  <summary>Saves the database.</summary>
     procedure Save;
 
+    ///  <summary>Save a single vault.</summary>
+    ///  <param name="AVault"><c>TVault</c> [in] The vault to be saved.</param>
+    procedure SaveVault(const AVault: TVault);
+
     property Categories: TCategoryList read GetCategories;
       {List of categories in the database}
     property Snippets: TSnippetList read GetSnippets;
@@ -616,9 +620,14 @@ type
         @return True if database has been updated, False otherwise.
       }
 
-    ///  <summary>Saves snippets from database to their respective vaults.
-    ///  </summary>
+    ///  <summary>Saves snippets from database to their respective vaults and
+    ///  saves categoriee.</summary>
     procedure Save;
+
+    ///  <summary>Save a single vault.</summary>
+    ///  <param name="AVault"><c>TVault</c> [in] The vault to be saved.</param>
+    ///  <remarks>Does not clear the database's 'dirty' flag.</remarks>
+    procedure SaveVault(const AVault: TVault);
 
   end;
 
@@ -1104,8 +1113,6 @@ procedure TDatabase.Save;
   {Saves all snippets and categories to the database.
   }
 var
-  Provider: IDBDataProvider;
-  VaultSaver: IVaultSaver;
   Vault: TVault;
   CatSaver: IGlobalCategorySaver;
 begin
@@ -1114,15 +1121,22 @@ begin
   CatSaver.Save(fCategories);
   // Save all vaults
   for Vault in TVaults.Instance do
-  begin
-    Provider := TVaultDataProvider.Create(
-      Vault.UID, fSnippets, fCategories
-    );
-    VaultSaver := TDatabaseIOFactory.CreateVaultSaver(Vault);
-    if Assigned(VaultSaver) then
-      VaultSaver.Save(fSnippets, fCategories, Provider);
-  end;
+    SaveVault(Vault);
+  // Clear 'dirty' flag
   fUpdated := False;
+end;
+
+procedure TDatabase.SaveVault(const AVault: TVault);
+var
+  Provider: IDBDataProvider;
+  VaultSaver: IVaultSaver;
+begin
+  Provider := TVaultDataProvider.Create(
+    AVault.UID, fSnippets, fCategories
+  );
+  VaultSaver := TDatabaseIOFactory.CreateVaultSaver(AVault);
+  if Assigned(VaultSaver) then
+    VaultSaver.Save(fSnippets, fCategories, Provider);
 end;
 
 procedure TDatabase.TriggerEvent(const Kind: TDatabaseChangeEventKind;
