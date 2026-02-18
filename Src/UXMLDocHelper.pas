@@ -67,6 +67,16 @@ type
         @return Sub tag's text if sub tag exists and is a text node, ''
           otherwise.
       }
+
+    ///  <summary>Checks if an XML document has a valid XML processing
+    ///  instruction.</summary>
+    ///  <param name="XMLDoc"><c>IXMLDocumentEx</c> [in] Document to be checked.
+    ///  </param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the processing instruction is
+    ///  or <c>False</c> if not.</returns>
+    class function HasValidProcessingInstr(const XMLDoc: IXMLDocumentEx):
+      Boolean;
+
     class procedure ValidateProcessingInstr(const XMLDoc: IXMLDocumentEx);
       {Checks that an XML document has a valid xml processing instruction.
         @param XMLDoc [in] Document to be checked.
@@ -152,25 +162,33 @@ begin
     Result := PropNode.Text;
 end;
 
+class function TXMLDocHelper.HasValidProcessingInstr(
+  const XMLDoc: IXMLDocumentEx): Boolean;
+var
+  XMLNode: IXMLNOde;  // xml processing node
+begin
+  XMLNode := FindRootNodeType(XMLDoc, ntProcessingInstr);
+  Result := Assigned(XMLNode)
+    and (XMLNode.NodeName = XMLNodeName)
+    and (XMLNode.NodeType = ntProcessingInstr);
+end;
+
 class procedure TXMLDocHelper.ValidateProcessingInstr(
   const XMLDoc: IXMLDocumentEx);
   {Checks that an XML document has a valid xml processing instruction.
     @param XMLDoc [in] Document to be checked.
     @except ECodeSnipXML raised on error.
   }
-var
-  XMLNode: IXMLNOde;  // xml processing node
 resourcestring
   // Error messages
   sNoXMLProcInst = 'Invalid document: must begin with a valid XML processing '
     + 'instruction';
 begin
   // Must have correct processing instruction (<?xml .... ?>)
-  XMLNode := FindRootNodeType(XMLDoc, ntProcessingInstr);
-  if not Assigned(XMLNode) or (XMLNode.NodeName <> XMLNodeName)
-    or (XMLNode.NodeType <> ntProcessingInstr) then
+  if not HasValidProcessingInstr(XMLDoc) then
     raise ECodeSnipXML.Create(sNoXMLProcInst);
 end;
 
 end.
+
 

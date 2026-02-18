@@ -385,7 +385,8 @@ uses
   UMarkdownUtils in 'UMarkdownUtils.pas',
   ActiveText.UMarkdownRenderer in 'ActiveText.UMarkdownRenderer.pas',
   UMarkdownSnippetDoc in 'UMarkdownSnippetDoc.pas',
-  DB.MetaData.Licenses in 'DB.MetaData.Licenses.pas';
+  DB.MetaData.Licenses in 'DB.MetaData.Licenses.pas',
+  DB.IO.DataFormatSniffer in 'DB.IO.DataFormatSniffer.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

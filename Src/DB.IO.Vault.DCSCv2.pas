@@ -35,9 +35,50 @@ uses
 
 type
 
+  ///  <summary>Base class for classes that read and write vault data in the
+  ///  DCSC v2 data format.</summary>
+  TDCSCV2VaultStorage = class abstract(TInterfacedObject)
+  strict private
+    var
+      fVaultDir: string;
+  strict protected
+    ///  <summary>Returns full path to <c>AFileName</c> rooted at
+    ///  <c>fOutDir</c>.</summary>
+    function MakePath(const AFileName: string): string;
+    ///  <summary>Directory containing the vault.</summary>
+    property VaultDir: string read fVaultDir;
+  public
+    ///  <summary>Object constructor. Sets up object that records the vault's
+    ///  directory.</summary>
+    ///  <param name="AVaultDir"><c>string</c> [in] Directory containing the
+    ///  vault.</param>
+    constructor Create(const AVaultDir: string);
+  end;
+
+  ///  <summary>Class that validates a specified directory as a valid DCSC v2
+  ///  data format vault.</summary>
+  TDCSCV2VaultStorageValidator = class(TDCSCV2VaultStorage,
+    IVaultStorageValidator)
+  strict protected
+    ///  <summary>Reads and returns the vault's version number.</summary>
+    function GetVersion: TVersionNumber;
+  public
+    ///  <summary>Object constructor. Sets up validator for a specific vault
+    ///  directory.</summary>
+    ///  <param name="AVaultDir"><c>string</c> [in] Directory containing the
+    ///  vault.</param>
+    constructor Create(const AVaultDir: string);
+    ///  <summary>Checks if the vault's directory contains a valid vault.
+    ///  </summary>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the vault is valid or
+    ///  <c>False</c> if not.</returns>
+    ///  <remarks>Method of <c>IVaultStorageValidator</c>.</remarks>
+    function IsValidStorage: Boolean;
+  end;
+
   ///  <summary>Reads a vault's data from storage in the DelphiDabbler Code
   ///  Snippets Collection v2 format.</summary>
-  TDCSCV2VaultStorageReader = class sealed(TInterfacedObject,
+  TDCSCV2VaultStorageReader = class sealed(TDCSCV2VaultStorageValidator,
     IVaultStorageReader
   )
   strict private
@@ -104,8 +145,6 @@ type
       ///  <summary>Class that maps snippet names to category ids.</summary>
       TSnippetCatMap = TDictionary<string,Integer>;
     var
-      ///  <summary>Database directory.</summary>
-      fDBDir: string;
       ///  <summary>Reference to master ini file.</summary>
       fMasterIni: TCustomIniFile;
       ///  <summary>List of category ids in database.</summary>
@@ -123,11 +162,9 @@ type
     ///  Returns fully specified name of database master file.
     ///  </summary>
     function MasterFileName: string;
-    ///  <summary>Reads data format version from file.</summary>
-    ///  <remarks>Stores result in <c>fVersion</c>. Detects DCSC versions 1 and
-    ///  later. <c>fVersion</c> is set to null if the version can't be
-    ///  determined.</remarks>
-    procedure ReadVersionNumber;
+    ///  <summary>Checks if the version read from the vault storage is
+    ///  supported.</summary>
+    function IsSupportedVersion: Boolean;
     ///  <summary>
     ///  Returns ID of category associated with a snippet.
     ///  </summary>
@@ -159,10 +196,6 @@ type
     ///  Returns name of directory where the database is stored.
     ///  </summary>
     function DataDir: string;
-    ///  <summary>
-    ///  Returns fully specified path to given file name.
-    ///  </summary>
-    function DataFile(const FileName: string): string;
     ///  <summary>Checks if a given file exists in the vault directory.
     ///  </summary>
     function DataFileExists(const FileName: string): Boolean;
@@ -263,7 +296,7 @@ type
 
   ///  <summary>Writes a vault's data to storage in the DelphiDabbler Code
   ///  Snippets Collection v2 format.</summary>
-  TDCSCV2VaultStorageWriter = class sealed(TInterfacedObject,
+  TDCSCV2VaultStorageWriter = class sealed(TDCSCV2VaultStorage,
     IVaultStorageWriter
   )
   strict private
@@ -322,13 +355,17 @@ type
         ///  <summary>Enumerator for cached ini files.</summary>
         function GetEnumerator:
           TObjectDictionary<string,TUTF8IniFile>.TPairEnumerator;
+
       end;
+    const
+      ///  <summary>Version of the DCSC that is supported when writing.
+      ///  </summary>
+      SupportedVersion = '2.2.0';
+      { TODO -cVault: bump to '2.3.0' when Delphi 13 support is added.}
 
     var
       ///  <summary>Cache of ini files.</summary>
       fCache: TUTF8IniFileCache;
-      ///  <summary>Output directory.</summary>
-      fOutDir: string;
       ///  <summary>Path to master ini file.</summary>
       fMasterIniPath: string;
       ///  <summary>Ini file containing currently processed category.</summary>
@@ -343,10 +380,6 @@ type
     ///  <exceptions>Always raise an exception.</exceptions>
     ///  <remarks>Unexpected exceptions are re-raised as is.</remarks>
     procedure HandleException(const EObj: TObject);
-
-    ///  <summary>Returns full path to <c>AFileName</c> rooted at
-    ///  <c>fOutDir</c>.</summary>
-    function MakePath(const AFileName: string): string;
 
     ///  <summary>Returns the name of the ini file associated with
     ///  <c>ACatID</c>.</summary>
@@ -472,6 +505,8 @@ uses
 
 
 const
+  {TODO -cRefactor: Move these consts into base class as protected consts.}
+
   // Name of master file that defines database
   cMasterFileName = 'categories.ini';
 
@@ -482,7 +517,8 @@ const
   ContributorsFileName = 'CONTRIBUTORS';
   AcknowledgementsFileName = 'TESTERS';
 
-  // Names of v1 meta data files
+  // Names of v1 meta data files: required for sniffing DCSC version number
+  {TODO - cVault: remove these v1 consts, v1 no longer supported}
   ContributorsFileNameV1 = 'contrib.txt';
   AcknowledgementsFileNameV1 = 'testers.txt';
 
@@ -524,11 +560,78 @@ const
     'FPC'
   );
 
+{ TDCSCV2VaultStorage }
+
+constructor TDCSCV2VaultStorage.Create(const AVaultDir: string);
+begin
+  inherited Create;
+  fVaultDir := AVaultDir;
+end;
+
+function TDCSCV2VaultStorage.MakePath(const AFileName: string): string;
+begin
+  Result := TPath.Combine(VaultDir, AFileName);
+end;
+
+{ TDCSCV2VaultStorageValidator }
+
+constructor TDCSCV2VaultStorageValidator.Create(const AVaultDir: string);
+begin
+  inherited Create(AVaultDir);
+end;
+
+function TDCSCV2VaultStorageValidator.GetVersion: TVersionNumber;
+var
+  VersionStr: string;
+  VersionFilePath: string;
+begin
+  VersionFilePath := MakePath(VersionFileName);
+  if not TFile.Exists(VersionFilePath) then
+    Exit(TVersionNumber.Nul);
+  VersionStr := TFileIO.ReadAllText(VersionFilePath, TEncoding.UTF8, True);
+  if not TVersionNumber.TryStrToVersionNumber(VersionStr, Result) then
+    Result := TVersionNumber.Nul;
+end;
+
+function TDCSCV2VaultStorageValidator.IsValidStorage: Boolean;
+var
+  Version: TVersionNumber;
+begin
+  // Assumes DCSC v2 file format: v1 is no longer supported.
+  // Notes:
+  //   1. Although the LICENSE-INFO file is always present in practice the
+  //      DCSC v2 specification doesn't explicitly REQUIRE it, so it's not
+  //      tested for here.
+  //   2. Previous tests checked for categories.ini. However, the DCSC v2
+  //      specification doesn't explicitly required it, and CodeSnip doesn't
+  //      create it when creating a new, empty, vault in the DCSC v2 format.
+  //      So categories.ini is no longer tested for.
+  //   3. The DCSC v2 specification does not indicate how a valid DCSC v2
+  //      collection should be identified. However, the specification does
+  //      require that the VERSION, LICENSE, CONTRIBUTORS & TESTERS files must
+  //      exist, so we test for them.
+  //   4. The DCSC v2 specification does not explicitly state that the
+  //      LICENSE-INFO is required, so this is not tested for.
+
+  // Check all files required by DSCS v2 spec exist
+  if not TFile.Exists(MakePath(VersionFileName))
+    or not TFile.Exists(MakePath(LicenseFileName))
+    or not TFile.Exists(MakePath(ContributorsFileName))
+    or not TFile.Exists(MakePath(AcknowledgementsFileName)) then
+    Exit(False);
+  // Read version number (we know the file exists)
+  Version := GetVersion;
+  if Version.IsNull then
+    Exit(False);
+  // Check for supported version number
+  Result := Version.V1 = 2;
+end;
+
 { TDCSCV2VaultStorageReader }
 
 function TDCSCV2VaultStorageReader.CatToCatIni(const CatID: string): string;
 begin
-  Result := DataFile(fMasterIni.ReadString(CatID, cMasterIniName, ''));
+  Result := MakePath(fMasterIni.ReadString(CatID, cMasterIniName, ''));
 end;
 
 class function TDCSCV2VaultStorageReader.CommaStrToStrings(
@@ -543,18 +646,20 @@ resourcestring
   sVersionNotSpecified = 'Format version number not specified';
   sVersionNotSupported = 'Format version %s is not supported';
 begin
-  inherited Create;
-  fDBDir := DBDir;
+  inherited Create(DBDir);
+  fVersion := GetVersion;
+  if fVersion.IsNull then
+    raise EDataIO.Create(sVersionNotSpecified);
+  if not IsSupportedVersion then
+    raise EDataIO.CreateFmt(sVersionNotSupported, [string(fVersion)]);
   // Create helper objects used to speed up access to ini files
   if DatabaseExists then
   begin
     fIniCache := TIniFileCache.Create;
     try
-      ReadVersionNumber;
-      if fVersion.IsNull then
-        raise EDataIO.Create(sVersionNotSpecified);
-      if fVersion.V1 <> SupportedMajorVersion then
-        raise EDataIO.CreateFmt(sVersionNotSupported, [string(fVersion)]);
+      if not TFile.Exists(MasterFileName) then
+        // missing master file: create as empty text file with UTF8 BOM
+        TFileIO.WriteAllText(MasterFileName, '', TEncoding.UTF8, True);
       fMasterIni := TUTF8IniFileEx.Create(MasterFileName);
       fCatIDs := TStringList.Create;
       fSnippetCatMap := TSnippetCatMap.Create(TTextEqualityComparer.Create);
@@ -568,23 +673,20 @@ end;
 
 function TDCSCV2VaultStorageReader.DatabaseExists: Boolean;
 begin
-  Result := FileExists(MasterFileName);
+  Assert(IsSupportedVersion,
+    ClassName + '.DatabaseExists: unsupported database version');
+  Result := IsValidStorage;
 end;
 
 function TDCSCV2VaultStorageReader.DataDir: string;
 begin
-  Result := ExcludeTrailingPathDelimiter(fDBDir)
-end;
-
-function TDCSCV2VaultStorageReader.DataFile(const FileName: string): string;
-begin
-  Result := IncludeTrailingPathDelimiter(DataDir) + FileName;
+  Result := ExcludeTrailingPathDelimiter(VaultDir);
 end;
 
 function TDCSCV2VaultStorageReader.DataFileExists(const FileName: string):
   Boolean;
 begin
-  Result := TFile.Exists(DataFile(FileName), False);
+  Result := TFile.Exists(MakePath(FileName), False);
 end;
 
 destructor TDCSCV2VaultStorageReader.Destroy;
@@ -644,7 +746,9 @@ function TDCSCV2VaultStorageReader.GetFileEncoding(const FileName: string):
 begin
   // Old v1 database meta files may be in the system default encodings, v1 and
   // all v2 and later use UTF-8 with BOM.
-  if TFileIO.CheckBOM(DataFile(FileName), TEncoding.UTF8) then
+  {TODO -cVault: Remove test for v1 database encoding: this class doesn't
+          support v1}
+  if TFileIO.CheckBOM(MakePath(FileName), TEncoding.UTF8) then
     Result := TEncoding.UTF8
   else
     Result := TEncoding.Default;
@@ -768,7 +872,7 @@ var
     SnipFileName := CatIni.ReadString(SnippetKey, cSnipFileName, '');
     try
       Result := TFileIO.ReadAllText(
-        DataFile(SnipFileName), TEncoding.UTF8, True
+        MakePath(SnipFileName), TEncoding.UTF8, True
       );
     except
       // if error loading file then database is corrupt
@@ -907,6 +1011,11 @@ begin
     raise EObj;
 end;
 
+function TDCSCV2VaultStorageReader.IsSupportedVersion: Boolean;
+begin
+  Result := fVersion.V1 = SupportedMajorVersion;
+end;
+
 procedure TDCSCV2VaultStorageReader.LoadIndices;
 var
   SnippetKey: string;         // key of each snippet in a category
@@ -929,7 +1038,7 @@ end;
 
 function TDCSCV2VaultStorageReader.MasterFileName: string;
 begin
-  Result := DataFile(cMasterFileName);
+  Result := MakePath(cMasterFileName);
 end;
 
 function TDCSCV2VaultStorageReader.ReadFileLines(const FileName: string):
@@ -944,7 +1053,7 @@ begin
   end;
   Encoding := GetFileEncoding(FileName);
   try
-    Result := TFileIO.ReadAllLines(DataFile(FileName), Encoding, True);
+    Result := TFileIO.ReadAllLines(MakePath(FileName), Encoding, True);
   finally
     TEncodingHelper.FreeEncoding(Encoding);
   end;
@@ -955,30 +1064,8 @@ begin
   if not DataFileExists(FileName) then
     Exit('');
   Result := TFileIO.ReadAllText(
-    DataFile(FileName), GetFileEncoding(FileName), True
+    MakePath(FileName), GetFileEncoding(FileName), True
   );
-end;
-
-procedure TDCSCV2VaultStorageReader.ReadVersionNumber;
-var
-  VersionStr: string;
-begin
-  if DataFileExists(VersionFileName) then
-  begin
-    // Version file exists. Read and parse it. Set to null if invalid
-    VersionStr := StrTrim(ReadFileText(VersionFileName));
-    if not TVersionNumber.TryStrToVersionNumber(VersionStr, fVersion) then
-      fVersion := TVersionNumber.Nul;
-  end
-  else
-  begin
-    // No version file. Check if v1 present. Set to null if v1 not detected
-    if DataFileExists(ContributorsFileNameV1)
-      and DataFileExists(AcknowledgementsFileNameV1) then
-      fVersion := TVersionNumber.Create(1, 0, 0, 0)
-    else
-      fVersion := TVersionNumber.Nul;
-  end;
 end;
 
 function TDCSCV2VaultStorageReader.SnippetToCat(const SnippetKey: string):
@@ -1072,8 +1159,7 @@ end;
 
 constructor TDCSCV2VaultStorageWriter.Create(const AOutDir: string);
 begin
-  inherited Create;
-  fOutDir := AOutDir;
+  inherited Create(AOutDir);
   fCache := TUTF8IniFileCache.Create;
 end;
 
@@ -1107,15 +1193,15 @@ procedure TDCSCV2VaultStorageWriter.Initialise;
 begin
   try
     // Make sure database folder exists
-    TDirectory.CreateDirectory(fOutDir);
+    TDirectory.CreateDirectory(VaultDir);
 
     // Delete current ini and data files
     // (don't delete special files: CONTRIBUTORS, LICENSE, LICENSE-INFO,
     // TESTERS, VERSION).
     {TODO -cVault: Is it now safe to delete the special files, since we now
           write these files.}
-    DeleteFiles(fOutDir, '*.dat');
-    DeleteFiles(fOutDir, '*.ini');
+    DeleteFiles(VaultDir, '*.dat');
+    DeleteFiles(VaultDir, '*.ini');
 
     // Initialise file count
     fFileNumber := 0;
@@ -1138,11 +1224,6 @@ begin
   Result := MakePath(MakeCatIniName(ACatID));
 end;
 
-function TDCSCV2VaultStorageWriter.MakePath(const AFileName: string): string;
-begin
-  Result := TPath.Combine(fOutDir, AFileName);
-end;
-
 procedure TDCSCV2VaultStorageWriter.WriteCatProps(const CatID: string;
   const Props: TCategoryData);
 var
@@ -1162,14 +1243,9 @@ end;
 
 procedure TDCSCV2VaultStorageWriter.WriteMetaData(const AMetaData: TMetaData);
 var
-  VersionStr: string;
   KVPairs: TStringList;
   LicenseInfo: IStringList;
 begin
-  VersionStr := Format(
-    '%0:d.%1:d.%2:d',
-    [AMetaData.Version.V1, AMetaData.Version.V2, AMetaData.Version.V3]
-  );
   KVPairs := TStringList.Create;
   try
     KVPairs.Values[LicenseInfoLicenseNameKey] := AMetaData.LicenseInfo.Name;
@@ -1185,7 +1261,9 @@ begin
     KVPairs.Free;
   end;
 
-  WriteTextFile(VersionFileName, VersionStr);
+  // we ignore any version that is part of the meta data: we always write in the
+  // maximum supported version of DCSC.
+  WriteTextFile(VersionFileName, SupportedVersion);
   WriteTextFile(LicenseFileName, AMetaData.LicenseInfo.Text);
   WriteTextFile(LicenseInfoFileName, LicenseInfo);
   WriteTextFile(ContributorsFileName, AMetaData.CopyrightInfo.Contributors);
@@ -1376,7 +1454,7 @@ begin
   inherited;
 end;
 
-function TDCSCV2VaultStorageWriter.TUTF8IniFileCache.GetEnumerator: 
+function TDCSCV2VaultStorageWriter.TUTF8IniFileCache.GetEnumerator:
   TObjectDictionary<string, TUTF8IniFile>.TPairEnumerator;
 begin
   Result := fCache.GetEnumerator;
