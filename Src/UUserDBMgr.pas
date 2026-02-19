@@ -36,6 +36,8 @@ type
   strict private
     ///  <summary>Saves the specified vault to disk.</summary>
     class procedure SaveVault(ParentCtrl: TComponent; const AVault: TVault);
+    ///  <summary>Saves the data decribing all vaults.</summary>
+    class procedure SaveVaults;
   public
     ///  <summary>Enables user to adds a new user defined snippet to the
     ///  database using the snippets editor.</summary>
@@ -482,6 +484,7 @@ begin
   begin
     // remove vault itself
     TVaults.Instance.Delete(VaultToDelete.UID); // frees VaultToDelete
+    SaveVaults;
     // delete the vault directory and all its files / sub directories
     TDirectory.Delete(VaultDir, True);
   end;
@@ -537,6 +540,7 @@ begin
   // This dialogue box not available in portable edition
   {$IFNDEF PORTABLE}
   TMoveVaultDlg.Execute(nil);
+  SaveVaults;
   {$ENDIF}
 end;
 
@@ -581,12 +585,18 @@ end;
 class procedure TUserDBMgr.Save(ParentCtrl: TComponent);
 begin
   TUserDBSaveUI.Execute(ParentCtrl);
+  SaveVaults;
 end;
 
 class procedure TUserDBMgr.SaveVault(ParentCtrl: TComponent;
   const AVault: TVault);
 begin
   TUserDBSaveVaultUI.Execute(ParentCtrl, AVault);
+  SaveVaults;
+end;
+
+class procedure TUserDBMgr.SaveVaults;
+begin
   TVaults.Instance.Save;
 end;
 
