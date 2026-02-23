@@ -267,9 +267,6 @@ resourcestring
   sNonEmptyDir = 'The specified directory is not empty.';
   sConfirmMsg = 'Are you sure you want to move the vault data?';
 begin
-  if TDirectory.Exists(NewDir)
-    and not TDirectory.IsEmpty(NewDir) then
-    raise ECodeSnip.Create(sNonEmptyDir);
   if not TMessageBox.Confirm(Self, sConfirmMsg) then
     Exit;
   try
