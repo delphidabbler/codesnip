@@ -386,7 +386,9 @@ uses
   ActiveText.UMarkdownRenderer in 'ActiveText.UMarkdownRenderer.pas',
   UMarkdownSnippetDoc in 'UMarkdownSnippetDoc.pas',
   DB.MetaData.Licenses in 'DB.MetaData.Licenses.pas',
-  DB.IO.DataFormatSniffer in 'DB.IO.DataFormatSniffer.pas';
+  DB.IO.DataFormatSniffer in 'DB.IO.DataFormatSniffer.pas',
+  UI.Forms.CreateVaultDlg in 'UI.Forms.CreateVaultDlg.pas' {CreateVaultDlg},
+  UI.Forms.ListEditorDlg in 'UI.Forms.ListEditorDlg.pas' {ListEditorDlg};
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

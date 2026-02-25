@@ -881,6 +881,12 @@ inherited MainForm: TMainForm
       OnExecute = actSaveInfoExecute
       OnUpdate = actSaveInfoUpdate
     end
+    object actCreateVault: TAction
+      Category = 'Vaults'
+      Caption = 'Create Vault...'
+      Hint = 'Create a vault|Create a new, empty, vault'
+      OnExecute = actCreateVaultExecute
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -1087,6 +1093,9 @@ inherited MainForm: TMainForm
     end
     object miVaults: TMenuItem
       Caption = 'Vaults'
+      object miCreateVault: TMenuItem
+        Action = actCreateVault
+      end
       object miBackupVault: TMenuItem
         Action = actBackupVault
       end

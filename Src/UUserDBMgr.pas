@@ -23,6 +23,7 @@ uses
   // Project
   DB.Categories,
   DB.SnippetIDs,
+  DB.Vaults,
   UBaseObjects,
   UView;
 
@@ -32,6 +33,9 @@ type
   ///  <summary>Static class that manages user's interaction with user database
   ///  and performs move and backup operations on it.</summary>
   TUserDBMgr = class(TNoConstructObject)
+  strict private
+    ///  <summary>Saves the specified vault to disk.</summary>
+    class procedure SaveVault(ParentCtrl: TComponent; const AVault: TVault);
   public
     ///  <summary>Enables user to adds a new user defined snippet to the
     ///  database using the snippets editor.</summary>
@@ -83,6 +87,14 @@ type
     ///  <returns><c>Boolean</c>. <c>True</c> if the vault's data was deleted,
     ///  <c>False</c> otherwise.</returns>
     class function DeleteVault: Boolean;
+    ///  <summary>Enables the user to create a new, empty, vault using the
+    ///  Create Vault wizard. If the user accepts the new vault then it and
+    ///  added to the list of vaults and <c>True</c> is returned. If the user
+    ///  cancels then no vault is created and <c>False</c> is returned.
+    ///  </summary>
+    ///  <remarks>If the user accepts the new vault then it is saved. Other
+    ///  vaults are not saved.</remarks>
+    class function CreateVault(ParentCtrl: TComponent): Boolean;
   end;
 
 
@@ -98,9 +110,10 @@ uses
   IOUtils,
   // Project
   DB.Main,
+  DB.MetaData,
   DB.Snippets,
-  DB.Vaults,
   FmAddCategoryDlg,
+  UI.Forms.CreateVaultDlg,
   UI.Forms.BackupVaultDlg,
   FmDeleteCategoryDlg,
   UI.Forms.DeleteVaultDlg,
@@ -170,6 +183,31 @@ type
   end;
 
 type
+  TUserDBSaveVaultUI = class sealed (TUserDBWaitUI)
+  strict private
+    type
+      ///  <summary>Thread that saves the vault.</summary>
+      TSaveVaultThread = class(TThread)
+      strict private
+        var
+          fVault: TVault;
+      strict protected
+        ///  <summary>Saves the vault.</summary>
+        procedure Execute; override;
+      public
+        ///  <summary>Constructs a new, suspended, thread instance.</summary>
+        constructor Create(const AVault: TVault);
+      end;
+  public
+    ///  <summary>Performs the save vault operation in a background thread and
+    ///  displays a wait diaogue box if the operation takes more than a given
+    ///  time to execute. Blocks until the thread terminates.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
+    ///  box, over which it is aligned.</param>
+    class procedure Execute(AOwner: TComponent; const AVault: TVault);
+  end;
+
+type
   ///  <summary>Class that restores a backup of the user database in a thread
   ///  while displaying a "wait" dialogue box if necessary.</summary>
   TUserDBRestoreUI = class sealed(TUserDBWaitUI)
@@ -181,7 +219,7 @@ type
         var
           ///  <summary>Name of backup file to be restored.</summary>
           fBakFileName: string;
-      
+
           fVault: TVault;
       strict protected
         ///  <summary>Restores the user database from a backup.</summary>
@@ -303,6 +341,33 @@ begin
   Result := Database.Updated;
 end;
 
+class function TUserDBMgr.CreateVault(ParentCtrl: TComponent): Boolean;
+resourcestring
+  sConfirmSave = 'Can''t create a vault when the database has unsaved changes.'
+    + sLineBreak + sLineBreak
+    + 'Would you like to save the database now?';
+var
+  Vault: TVault;
+begin
+  if Database.Updated then
+  begin
+    if not TMessageBox.Confirm(ParentCtrl, sConfirmSave) then
+      Exit(False);
+    Save(ParentCtrl);
+  end;
+  Vault := nil;
+  Result := TCreateVaultDlg.Execute(ParentCtrl, Vault);
+  if Result then
+  begin
+    Assert(not TVaults.Instance.ContainsID(Vault.UID),
+      Format('%0:s.CreateVault: Vault with ID "%1:s" already exists',
+        [ClassName, Vault.UID.ToHexString]));
+
+    TVaults.Instance.Add(Vault);
+    SaveVault(ParentCtrl, Vault);
+  end;
+end;
+
 class procedure TUserDBMgr.DeleteACategory;
 var
   CatList: TCategoryList; // list of deletable categories
@@ -322,7 +387,7 @@ end;
 
 class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
 
-  {TODO -cVault: rename following inner method to SnippetDisplayNames for
+  {TODO -cClarity: rename following inner method to SnippetDisplayNames for
           clarity}
   // Builds a list of snippet display names from a given snippet ID list.
   function SnippetNames(const IDList: ISnippetIDList): IStringList;
@@ -483,6 +548,13 @@ begin
   TUserDBSaveUI.Execute(ParentCtrl);
 end;
 
+class procedure TUserDBMgr.SaveVault(ParentCtrl: TComponent;
+  const AVault: TVault);
+begin
+  TUserDBSaveVaultUI.Execute(ParentCtrl, AVault);
+  TVaults.Instance.Save;
+end;
+
 { TUserDBWaitUI }
 
 class procedure TUserDBWaitUI.RunThreadWithWaitDlg(const Thread: TThread;
@@ -527,6 +599,37 @@ end;
 procedure TUserDBSaveUI.TSaveThread.Execute;
 begin
   Database.Save;
+end;
+
+{ TUserDBSaveVaultUI }
+
+class procedure TUserDBSaveVaultUI.Execute(AOwner: TComponent;
+  const AVault: TVault);
+resourcestring
+  // Caption for wait dialog
+  sWaitCaption = 'Saving vault...';
+var
+  Thread: TSaveVaultThread;   // thread that performs vault save operation
+begin
+  Thread := TSaveVaultThread.Create(AVault);
+  try
+    RunThreadWithWaitDlg(Thread, AOwner, sWaitCaption);
+  finally
+    Thread.Free;
+  end;
+end;
+
+{ TUserDBSaveVaultUI.TSaveThread }
+
+constructor TUserDBSaveVaultUI.TSaveVaultThread.Create(const AVault: TVault);
+begin
+  inherited Create(True);
+  fVault := AVault;
+end;
+
+procedure TUserDBSaveVaultUI.TSaveVaultThread.Execute;
+begin
+  Database.SaveVault(fVault);
 end;
 
 { TUserDBRestoreUI }

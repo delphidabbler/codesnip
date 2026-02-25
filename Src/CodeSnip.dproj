@@ -595,6 +595,12 @@
 			<DCCReference Include="UMarkdownSnippetDoc.pas"/>
 			<DCCReference Include="DB.MetaData.Licenses.pas"/>
 			<DCCReference Include="DB.IO.DataFormatSniffer.pas"/>
+			<DCCReference Include="UI.Forms.CreateVaultDlg.pas">
+				<Form>CreateVaultDlg</Form>
+			</DCCReference>
+			<DCCReference Include="UI.Forms.ListEditorDlg.pas">
+				<Form>ListEditorDlg</Form>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

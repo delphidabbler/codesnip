@@ -244,6 +244,8 @@ type
     miSaveInfo: TMenuItem;
     actSaveInfo: TAction;
     miVaults: TMenuItem;
+    actCreateVault: TAction;
+    miCreateVault: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>
@@ -505,6 +507,7 @@ type
       var Accept: Boolean);
     procedure actSaveInfoUpdate(Sender: TObject);
     procedure actSaveInfoExecute(Sender: TObject);
+    procedure actCreateVaultExecute(Sender: TObject);
   strict private
     var
       ///  <summary>Object that notifies user-initiated events by triggering
@@ -663,6 +666,10 @@ end;
 
 procedure TMainForm.actBackupVaultExecute(Sender: TObject);
 begin
+  {TODO -cVault: Move check on updated database and database save call into
+          TUserDBMgr where it is a better fit & do the same for other similar
+          methods of FmMain. See the actAddVaultExecute method and
+          TUserDBMgr.AddVault for an example.}
   if Database.Updated then
     TUserDBMgr.Save(Self);
   TUserDBMgr.BackupDatabase(Self);
@@ -744,6 +751,16 @@ end;
 procedure TMainForm.actCopyUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := fMainDisplayMgr.CanCopy;
+end;
+
+procedure TMainForm.actCreateVaultExecute(Sender: TObject);
+begin
+  if TUserDBMgr.CreateVault(Self) then
+  begin
+    // the welcome page and overview pane may need updating
+    fMainDisplayMgr.CompleteRefresh;
+    fStatusBarMgr.Update;
+  end;
 end;
 
 procedure TMainForm.actDeleteCategoryExecute(Sender: TObject);
