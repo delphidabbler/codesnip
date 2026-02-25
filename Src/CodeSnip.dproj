@@ -601,6 +601,9 @@
 			<DCCReference Include="UI.Forms.ListEditorDlg.pas">
 				<Form>ListEditorDlg</Form>
 			</DCCReference>
+			<DCCReference Include="UI.Forms.EditVaultMetadataDlg.pas">
+				<Form>EditVaultMetadataDlg</Form>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

@@ -95,6 +95,12 @@ type
     ///  <remarks>If the user accepts the new vault then it is saved. Other
     ///  vaults are not saved.</remarks>
     class function CreateVault(ParentCtrl: TComponent): Boolean;
+    ///  <summary>Enables the user to edit a vault's metadata. If the user
+    ///  accepts the changes then the selected vault's metadata is updated. If
+    ///  the user cancels then no changes are made.</summary>
+    ///  <remarks>If the user accepts the changes, and at least one vault's
+    ///  metadata was updated, then all vaults are saved.</remarks>
+    class procedure EditVaultMetadata(ParentCtrl: TComponent);
   end;
 
 
@@ -105,6 +111,7 @@ uses
   // Delphi
   Types,
   SysUtils,
+  Generics.Collections,
   Dialogs,
   Windows {for inlining},
   IOUtils,
@@ -117,6 +124,7 @@ uses
   UI.Forms.BackupVaultDlg,
   FmDeleteCategoryDlg,
   UI.Forms.DeleteVaultDlg,
+  UI.Forms.EditVaultMetadataDlg,
   FmDuplicateSnippetDlg,
   FmRenameCategoryDlg,
   FmSnippetsEditorDlg,
@@ -495,6 +503,33 @@ begin
   if not Assigned(Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not found');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);
+end;
+
+class procedure TUserDBMgr.EditVaultMetadata(ParentCtrl: TComponent);
+var
+  EditedMetaData: TArray<TPair<TVaultID,TMetaData>>;
+  Vault: TVault;
+  MetaDataPair: TPair<TVaultID,TMetaData>;
+  Changed: Boolean;
+begin
+  if TEditVaultMetadataDlg.Execute(ParentCtrl, EditedMetaData) then
+  begin
+    Changed := False;
+    for MetaDataPair in EditedMetaData do
+    begin
+      Assert(TVaults.Instance.ContainsID(MetaDataPair.Key),
+        ClassName + '.EditVaultMetadata: Unexpected TVaultID');
+      Vault := TVaults.Instance.GetVault(MetaDataPair.Key);
+      if (Vault.MetaData <> MetaDataPair.Value)
+        and (Vault.MetaData.Capabilities <> []) then
+      begin
+        Vault.MetaData := MetaDataPair.Value;
+        Changed := True;
+      end;
+    end;
+    if Changed then
+      Save(ParentCtrl);
+  end;
 end;
 
 class procedure TUserDBMgr.MoveDatabase;

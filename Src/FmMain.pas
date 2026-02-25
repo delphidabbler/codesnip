@@ -246,6 +246,9 @@ type
     miVaults: TMenuItem;
     actCreateVault: TAction;
     miCreateVault: TMenuItem;
+    actEditVaultMetadata: TAction;
+    miSpacer22: TMenuItem;
+    miEditVaultMetadata: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>
@@ -508,6 +511,7 @@ type
     procedure actSaveInfoUpdate(Sender: TObject);
     procedure actSaveInfoExecute(Sender: TObject);
     procedure actCreateVaultExecute(Sender: TObject);
+    procedure actEditVaultMetadataExecute(Sender: TObject);
   strict private
     var
       ///  <summary>Object that notifies user-initiated events by triggering
@@ -823,6 +827,11 @@ begin
   Snippet := (fMainDisplayMgr.CurrentView as ISnippetView).Snippet;
   fNotifier.EditSnippet(Snippet.Key, Snippet.VaultID);
   // display of updated snippet is handled by snippets change event handler
+end;
+
+procedure TMainForm.actEditVaultMetadataExecute(Sender: TObject);
+begin
+  TUserDBMgr.EditVaultMetadata(Self);
 end;
 
 procedure TMainForm.actExportCodeExecute(Sender: TObject);

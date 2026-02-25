@@ -388,7 +388,8 @@ uses
   DB.MetaData.Licenses in 'DB.MetaData.Licenses.pas',
   DB.IO.DataFormatSniffer in 'DB.IO.DataFormatSniffer.pas',
   UI.Forms.CreateVaultDlg in 'UI.Forms.CreateVaultDlg.pas' {CreateVaultDlg},
-  UI.Forms.ListEditorDlg in 'UI.Forms.ListEditorDlg.pas' {ListEditorDlg};
+  UI.Forms.ListEditorDlg in 'UI.Forms.ListEditorDlg.pas' {ListEditorDlg},
+  UI.Forms.EditVaultMetadataDlg in 'UI.Forms.EditVaultMetadataDlg.pas' {EditVaultMetadataDlg};
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

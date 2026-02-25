@@ -887,6 +887,14 @@ inherited MainForm: TMainForm
       Hint = 'Create a vault|Create a new, empty, vault'
       OnExecute = actCreateVaultExecute
     end
+    object actEditVaultMetadata: TAction
+      Category = 'Vaults'
+      Caption = 'Edit Vault Metadata...'
+      Hint = 
+        'Edit a Vault'#39's Metadata|Update the metadata associated with a se' +
+        'lected vault'
+      OnExecute = actEditVaultMetadataExecute
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -1095,6 +1103,12 @@ inherited MainForm: TMainForm
       Caption = 'Vaults'
       object miCreateVault: TMenuItem
         Action = actCreateVault
+      end
+      object miEditVaultMetadata: TMenuItem
+        Action = actEditVaultMetadata
+      end
+      object miSpacer22: TMenuItem
+        Caption = '-'
       end
       object miBackupVault: TMenuItem
         Action = actBackupVault
