@@ -90,7 +90,7 @@ type
     ///  <c>False</c> otherwise.</returns>
     class function DeleteVault: Boolean;
     ///  <summary>Enables the user to create a new, empty, vault using the
-    ///  Create Vault wizard. If the user accepts the new vault then it and
+    ///  Create Vault wizard. If the user accepts the new vault then it is
     ///  added to the list of vaults and <c>True</c> is returned. If the user
     ///  cancels then no vault is created and <c>False</c> is returned.
     ///  </summary>
@@ -103,6 +103,18 @@ type
     ///  <remarks>If the user accepts the changes, and at least one vault's
     ///  metadata was updated, then all vaults are saved.</remarks>
     class procedure EditVaultMetadata(ParentCtrl: TComponent);
+    ///  <summary>Enables the user to add an existing directory as a new vault
+    ///  using the Add Vault wizard. If the user accepts the new vault then it
+    ///  is added to the list of vaults and <c>True</c> is returned. If the user
+    ///  cancels that no vault is created and <c>False</c> is returned.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>The directory must contain data in a supported vault format.
+    ///  </para>
+    ///  <para>If the user accepts the new vault then details then the vault is
+    ///  registered with CodeSnip.</para>
+    ///  </remarks>
+    class function AddVault(ParentCtrl: TComponent): Boolean;
   end;
 
 
@@ -111,11 +123,9 @@ implementation
 
 uses
   // Delphi
-  Types,
   SysUtils,
   Generics.Collections,
   Dialogs,
-  Windows {for inlining},
   IOUtils,
   // Project
   DB.Main,
@@ -127,6 +137,7 @@ uses
   FmDeleteCategoryDlg,
   UI.Forms.DeleteVaultDlg,
   UI.Forms.EditVaultMetadataDlg,
+  UI.Forms.AddVaultDlg,
   FmDuplicateSnippetDlg,
   FmRenameCategoryDlg,
   FmSnippetsEditorDlg,
@@ -134,7 +145,6 @@ uses
   UI.Forms.MoveVaultDlg,
   {$ENDIF}
   FmWaitDlg,
-  UAppInfo,
   UConsts,
   UExceptions,
   UIStringList,
@@ -299,6 +309,33 @@ class procedure TUserDBMgr.AddSnippet;
 begin
   // Display Add Snippet dialog box which performs update of database.
   TSnippetsEditorDlg.AddNewSnippet(nil);
+end;
+
+class function TUserDBMgr.AddVault(ParentCtrl: TComponent): Boolean;
+resourcestring
+  sConfirmSave = 'Can''t add a vault when the database has unsaved changes.'
+    + sLineBreak + sLineBreak
+    + 'Would you like to save the database now?';
+var
+  Vault: TVault;
+begin
+  if Database.Updated then
+  begin
+    if not TMessageBox.Confirm(ParentCtrl, sConfirmSave) then
+      Exit(False);
+    Save(ParentCtrl);
+  end;
+  Vault := nil;
+  Result := TAddVaultDlg.Execute(ParentCtrl, Vault);
+  if Result then
+  begin
+    Assert(not TVaults.Instance.ContainsID(Vault.UID),
+      Format('%0:s.AddVault: Vault with ID "%1:s" already exists',
+        [ClassName, Vault.UID.ToHexString]));
+
+    TVaults.Instance.Add(Vault);
+    SaveVaults;
+  end;
 end;
 
 class procedure TUserDBMgr.BackupDatabase(ParentCtrl: TComponent);

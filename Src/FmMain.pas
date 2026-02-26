@@ -249,6 +249,8 @@ type
     actEditVaultMetadata: TAction;
     miSpacer22: TMenuItem;
     miEditVaultMetadata: TMenuItem;
+    actAddVault: TAction;
+    miAddVault: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>
@@ -512,6 +514,7 @@ type
     procedure actSaveInfoExecute(Sender: TObject);
     procedure actCreateVaultExecute(Sender: TObject);
     procedure actEditVaultMetadataExecute(Sender: TObject);
+    procedure actAddVaultExecute(Sender: TObject);
   strict private
     var
       ///  <summary>Object that notifies user-initiated events by triggering
@@ -962,6 +965,17 @@ end;
 procedure TMainForm.actImportCodeExecute(Sender: TObject);
 begin
   TCodeShareMgr.ImportCode;
+end;
+
+procedure TMainForm.actAddVaultExecute(Sender: TObject);
+begin
+  if TUserDBMgr.AddVault(Self) then
+  begin
+    // the welcome page and overview pane may need updating
+    ReloadDatabase;
+    fMainDisplayMgr.CompleteRefresh;
+    fStatusBarMgr.Update;
+  end;
 end;
 
 procedure TMainForm.actLicenseExecute(Sender: TObject);
