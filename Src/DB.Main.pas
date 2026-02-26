@@ -149,6 +149,28 @@ type
     procedure Load;
       {Loads data into the database from all vaults.
       }
+
+    ///  <summary>Load a single vault into the database.</summary>
+    ///  <param name="AVault"><c>TVault</c> [in] The vault to be loaded.</param>
+    procedure LoadVault(const AVault: TVault); overload;
+
+    ///  <summary>Load a the snippets and categories associated with a single
+    ///  vault into user-specified snippets and category lists.</summary>
+    ///  <param name="AVault"><c>TVault</c> [in] The vault to be loaded.</param>
+    ///  <param name="ASnippets"><c>TSnippetList</c> [in] Reference to a snippet
+    ///  list that receives the vault's snippets.</param>
+    ///  <param name="ACategories"><c>TCategoryList</c> [in] Reference to a
+    ///  category list that receives the vault's snippets.</param>
+    ///  <remarks>
+    ///  <para>The database is not updated. The snippets and categories that
+    ///  are loaded are independent of those in the database.</para>
+    ///  <para>The user is responsible for freeing any snippets and categories
+    ///  that are added to the lists. These snippet and category objects are
+    ///  distinct from those in the database.</para>
+    ///  </remarks>
+    procedure LoadVault(const AVault: TVault; const ASnippets: TSnippetList;
+      const ACategories: TCategoryList); overload;
+
     procedure Clear;
       {Clears all data.
       }
@@ -478,7 +500,31 @@ type
       }
 
     ///  <summary>Load the database from all available vaults.</summary>
+    ///  <remarks>Method of <c>IDatabase</c>.</remarks>
     procedure Load;
+
+    ///  <summary>Load a single vault.</summary>
+    ///  <param name="AVault"><c>TVault</c> [in] The vault to be loaded.</param>
+    ///  <remarks>Method of <c>IDatabase</c>.</remarks>
+    procedure LoadVault(const AVault: TVault); overload;
+
+    ///  <summary>Load a the snippets and categories associated with a single
+    ///  vault into user-specified snippets and category lists.</summary>
+    ///  <param name="AVault"><c>TVault</c> [in] The vault to be loaded.</param>
+    ///  <param name="ASnippets"><c>TSnippetList</c> [in] Reference to a snippet
+    ///  list that receives the vault's snippets.</param>
+    ///  <param name="ACategories"><c>TCategoryList</c> [in] Reference to a
+    ///  category list that receives the vault's snippets.</param>
+    ///  <remarks>
+    ///  <para>The database is not updated. The snippets and categories that
+    ///  are loaded are independent of those in the database.</para>
+    ///  <para>The user is responsible for freeing any snippets and categories
+    ///  that are added to the lists. These snippet and category objects are
+    ///  distinct from those in the database.</para>
+    ///  <para>Method of <c>IDatabase</c>.</para>
+    ///  </remarks>
+    procedure LoadVault(const AVault: TVault; const ASnippets: TSnippetList;
+      const ACategories: TCategoryList); overload;
 
     procedure Clear;
       {Clears the object's data.
@@ -1068,7 +1114,6 @@ procedure TDatabase.Load;
   }
 var
   DataItemFactory: IDBDataItemFactory;
-  VaultLoader: IVaultLoader;
   Vault: TVault;
   CatLoader: IGlobalCategoryLoader;
 begin
@@ -1081,11 +1126,10 @@ begin
   try
     // Load all vaults
     for Vault in TVaults.Instance do
-    begin
-      VaultLoader := TDatabaseIOFactory.CreateVaultLoader(Vault);
-      if Assigned(VaultLoader) then
-        VaultLoader.Load(fSnippets, fCategories, DataItemFactory);
-    end;
+      LoadVault(Vault);
+    // Create factory that reader calls into to create category objects. This is
+    // done to keep updating of snippet and categories private to this unit.
+    DataItemFactory := TDBDataItemFactory.Create;
     // Read categories from categories file to get any empty categories not
     // created by format loaders
     CatLoader := TDatabaseIOFactory.CreateGlobalCategoryLoader;
@@ -1099,6 +1143,27 @@ begin
     Clear;
     raise;
   end;
+end;
+
+procedure TDatabase.LoadVault(const AVault: TVault;
+  const ASnippets: TSnippetList; const ACategories: TCategoryList);
+var
+  DataItemFactory: IDBDataItemFactory;
+  VaultLoader: IVaultLoader;
+begin
+  VaultLoader := TDatabaseIOFactory.CreateVaultLoader(AVault);
+  if Assigned(VaultLoader) then
+  begin
+    // Create factory that VaultLoader calls into to create category and snippet
+    // objects.
+    DataItemFactory := TDBDataItemFactory.Create;
+    VaultLoader.Load(ASnippets, ACategories, DataItemFactory);
+  end;
+end;
+
+procedure TDatabase.LoadVault(const AVault: TVault);
+begin
+  LoadVault(AVault, fSnippets, fCategories);
 end;
 
 procedure TDatabase.RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
