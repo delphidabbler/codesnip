@@ -70,6 +70,7 @@ type
       fName: string;
       fStorage: TDataStorageDetails;
       fMetaData: TMetaData;
+      procedure SetName(const AName: string);
       procedure SetMetaData(const AValue: TMetaData);
   public
     type
@@ -91,7 +92,7 @@ type
     ///  <summary>Vault identifier. Must be unique.</summary>
     property UID: TVaultID read fUID;
     ///  <summary>Vault name. Must be unique.</summary>
-    property Name: string read fName;
+    property Name: string read fName write SetName;
     ///  <summary>Vault storage information.</summary>
     property Storage: TDataStorageDetails read fStorage;
     ///  <summary>Meta data associated with the vault.</summary>
@@ -206,6 +207,15 @@ end;
 procedure TVault.SetMetaData(const AValue: TMetaData);
 begin
   fMetaData := AValue.Clone;
+end;
+
+procedure TVault.SetName(const AName: string);
+resourcestring
+  sEmptyName = 'A vault can''t have an empty name';
+begin
+  fName := StrTrim(AName);
+  if StrIsEmpty(fName) then
+    raise EArgumentException.Create(sEmptyName);
 end;
 
 { TVaults }
