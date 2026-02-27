@@ -135,10 +135,10 @@ inherited MainForm: TMainForm
       Top = 0
       Action = actDeleteSnippet
     end
-    object tbSaveDatabase: TToolButton
+    object tbSaveAllVaults: TToolButton
       Left = 338
       Top = 0
-      Action = actSaveDatabase
+      Action = actSaveAllVaults
     end
     object tbFavourites: TToolButton
       Left = 361
@@ -628,14 +628,14 @@ inherited MainForm: TMainForm
       ImageIndex = 32
       OnExecute = actRestoreVaultExecute
     end
-    object actSaveDatabase: TAction
-      Category = 'Database'
-      Caption = 'Save Database'
-      Hint = 'Save database|Save all vaults to the database'
+    object actSaveAllVaults: TAction
+      Category = 'Vaults'
+      Caption = 'Save All Vaults'
+      Hint = 'Save all vaults|Save all vault data to storage'
       ImageIndex = 25
       ShortCut = 16467
-      OnExecute = actSaveDatabaseExecute
-      OnUpdate = actSaveDatabaseUpdate
+      OnExecute = actSaveAllVaultsExecute
+      OnUpdate = actSaveAllVaultsUpdate
     end
     object actUpdateDbase: TAction
       Category = 'Database'
@@ -1160,11 +1160,11 @@ inherited MainForm: TMainForm
       object miDeleteVault: TMenuItem
         Action = actDeleteVault
       end
-    end
-    object miDatabase: TMenuItem
-      Caption = 'Database'
-      object miSaveDatabase: TMenuItem
-        Action = actSaveDatabase
+      object miSpacer24: TMenuItem
+        Caption = '-'
+      end
+      object miSaveAllVaults: TMenuItem
+        Action = actSaveAllVaults
       end
     end
     object miCompile: TMenuItem

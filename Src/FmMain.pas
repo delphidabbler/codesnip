@@ -100,7 +100,7 @@ type
     actPrint: TAction;
     actRenameCategory: TAction;
     actRestoreVault: TAction;
-    actSaveDatabase: TAction;
+    actSaveAllVaults: TAction;
     actSaveSelection: TAction;
     actSaveSnippet: TAction;
     actSaveUnit: TAction;
@@ -138,7 +138,6 @@ type
     miCopy: TMenuItem;
     miCopyInfo: TMenuItem;
     miCopySnippet: TMenuItem;
-    miDatabase: TMenuItem;
     miDeleteCategory: TMenuItem;
     miDeleteSnippet: TMenuItem;
     miDeleteVault: TMenuItem;
@@ -173,7 +172,7 @@ type
     miRenameCategory: TMenuItem;
     miReportBug: TMenuItem;
     miRestoreVault: TMenuItem;
-    miSaveDatabase: TMenuItem;
+    miSaveAllVaults: TMenuItem;
     miSaveSelection: TMenuItem;
     miSaveSnippet: TMenuItem;
     miSaveUnit: TMenuItem;
@@ -227,7 +226,7 @@ type
     tbGoForward: TToolButton;
     tbHelpContents: TToolButton;
     tbPrint: TToolButton;
-    tbSaveDatabase: TToolButton;
+    tbSaveAllVaults: TToolButton;
     tbSaveSnippet: TToolButton;
     tbSaveUnit: TToolButton;
     tbSelectSnippets: TToolButton;
@@ -253,6 +252,7 @@ type
     actRenameVault: TAction;
     actDetachVault: TAction;
     miDetachVault: TMenuItem;
+    miSpacer24: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>
@@ -408,12 +408,11 @@ type
     ///  <summary>Displays a dialogue box from which a backup file can be
     ///  selected and used to restore the user defined database.</summary>
     procedure actRestoreVaultExecute(Sender: TObject);
-    ///  <summary>Save any changes in the user defined database to disk.
+    ///  <summary>Save all vault data to storage.</summary>
+    procedure actSaveAllVaultsExecute(Sender: TObject);
+    ///  <summary>Determines whether the SaveAllVaults action can be enabled.
     ///  </summary>
-    procedure actSaveDatabaseExecute(Sender: TObject);
-    ///  <summary>Determines whether the SaveDatabase action can be enabled.
-    ///  </summary>
-    procedure actSaveDatabaseUpdate(Sender: TObject);
+    procedure actSaveAllVaultsUpdate(Sender: TObject);
     ///  <summary>Save the current snippet selection to disk in a user-specified
     ///  file.</summary>
     procedure actSaveSelectionExecute(Sender: TObject);
@@ -1098,13 +1097,13 @@ begin
   end;
 end;
 
-procedure TMainForm.actSaveDatabaseExecute(Sender: TObject);
+procedure TMainForm.actSaveAllVaultsExecute(Sender: TObject);
 begin
   TUserDBMgr.Save(Self);
   fStatusBarMgr.Update;
 end;
 
-procedure TMainForm.actSaveDatabaseUpdate(Sender: TObject);
+procedure TMainForm.actSaveAllVaultsUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := TUserDBMgr.CanSave;
 end;
