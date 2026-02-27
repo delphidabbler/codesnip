@@ -390,7 +390,8 @@ uses
   UI.Forms.CreateVaultDlg in 'UI.Forms.CreateVaultDlg.pas' {CreateVaultDlg},
   UI.Forms.ListEditorDlg in 'UI.Forms.ListEditorDlg.pas' {ListEditorDlg},
   UI.Forms.EditVaultMetadataDlg in 'UI.Forms.EditVaultMetadataDlg.pas' {EditVaultMetadataDlg},
-  UI.Forms.AddVaultDlg in 'UI.Forms.AddVaultDlg.pas' {AddVaultDlg};
+  UI.Forms.AddVaultDlg in 'UI.Forms.AddVaultDlg.pas' {AddVaultDlg},
+  UI.Forms.RenameVaultDlg in 'UI.Forms.RenameVaultDlg.pas' {RenameVaultDlg};
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

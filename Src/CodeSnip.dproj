@@ -607,6 +607,9 @@
 			<DCCReference Include="UI.Forms.AddVaultDlg.pas">
 				<Form>AddVaultDlg</Form>
 			</DCCReference>
+			<DCCReference Include="UI.Forms.RenameVaultDlg.pas">
+				<Form>RenameVaultDlg</Form>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

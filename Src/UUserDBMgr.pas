@@ -115,6 +115,13 @@ type
     ///  registered with CodeSnip.</para>
     ///  </remarks>
     class function AddVault(ParentCtrl: TComponent): Boolean;
+    ///  <summary>Enables the user to rename a selected vault using the Rename
+    ///  Vault dialogue box. If the user accepts then the vault is renamed and
+    ///  <c>True</c> is returned. If the user cancels then no renaming takes
+    ///  place and <c>False</c> is returned.</summary>
+    ///  <remarks>If the user accepts then the selected vault is renamed and the
+    ///  vault's registration with CodeSnip is updated.</remarks>
+    class function RenameVault(ParentCtrl: TComponent): Boolean;
   end;
 
 
@@ -138,6 +145,7 @@ uses
   UI.Forms.DeleteVaultDlg,
   UI.Forms.EditVaultMetadataDlg,
   UI.Forms.AddVaultDlg,
+  UI.Forms.RenameVaultDlg,
   FmDuplicateSnippetDlg,
   FmRenameCategoryDlg,
   FmSnippetsEditorDlg,
@@ -595,6 +603,13 @@ begin
   finally
     CatList.Free;
   end;
+end;
+
+class function TUserDBMgr.RenameVault(ParentCtrl: TComponent): Boolean;
+begin
+  Result := TRenameVaultDlg.Execute(ParentCtrl);
+  if Result then
+    SaveVaults;
 end;
 
 class function TUserDBMgr.RestoreDatabase(ParentCtrl: TComponent): Boolean;
