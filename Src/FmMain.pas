@@ -254,6 +254,8 @@ type
     miSpacer23: TMenuItem;
     miRenameVault: TMenuItem;
     actRenameVault: TAction;
+    actDetachVault: TAction;
+    miDetachVault: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>
@@ -519,6 +521,7 @@ type
     procedure actEditVaultMetadataExecute(Sender: TObject);
     procedure actAddVaultExecute(Sender: TObject);
     procedure actRenameVaultExecute(Sender: TObject);
+    procedure actDetachVaultExecute(Sender: TObject);
   strict private
     var
       ///  <summary>Object that notifies user-initiated events by triggering
@@ -797,6 +800,15 @@ begin
   if Database.Updated then
     TUserDBMgr.Save(Self);
   if TUserDBMgr.DeleteVault then
+  begin
+    ReloadDatabase;
+    fStatusBarMgr.Update;
+  end;
+end;
+
+procedure TMainForm.actDetachVaultExecute(Sender: TObject);
+begin
+  if TUserDBMgr.DetachVault(Self) then
   begin
     ReloadDatabase;
     fStatusBarMgr.Update;

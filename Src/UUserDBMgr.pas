@@ -122,6 +122,11 @@ type
     ///  <remarks>If the user accepts then the selected vault is renamed and the
     ///  vault's registration with CodeSnip is updated.</remarks>
     class function RenameVault(ParentCtrl: TComponent): Boolean;
+    ///  <summary>Enables the user to select a vault that is to be detached from
+    ///  the list of registered vaults. If the user accepts then the selected
+    ///  vault is detached and <c>True</c> is returned. If the user cancels then
+    ///  no action is taken and <c>False</c> is returned.</summary>
+    class function DetachVault(ParentCtrl: TComponent): Boolean;
   end;
 
 
@@ -146,6 +151,7 @@ uses
   UI.Forms.EditVaultMetadataDlg,
   UI.Forms.AddVaultDlg,
   UI.Forms.RenameVaultDlg,
+  UI.Forms.DetachVaultDlg,
   FmDuplicateSnippetDlg,
   FmRenameCategoryDlg,
   FmSnippetsEditorDlg,
@@ -534,6 +540,28 @@ begin
     TDirectory.Delete(VaultDir, True);
   end;
   Result := True;
+end;
+
+class function TUserDBMgr.DetachVault(ParentCtrl: TComponent): Boolean;
+resourcestring
+  sConfirmSave = 'Can''t detach a vault when the database has unsaved changes.'
+    + sLineBreak + sLineBreak
+    + 'Would you like to save the database now?';
+var
+  VaultID: TVaultID;
+begin
+  if Database.Updated then
+  begin
+    if not TMessageBox.Confirm(ParentCtrl, sConfirmSave) then
+      Exit(False);
+    Save(ParentCtrl);
+  end;
+  Result := TDetachVaultDlg.Execute(ParentCtrl, VaultID);
+  if Result then
+  begin
+    TVaults.Instance.Delete(VaultID);
+    SaveVaults;
+  end;
 end;
 
 class procedure TUserDBMgr.DuplicateSnippet(ViewItem: IView);

@@ -391,7 +391,8 @@ uses
   UI.Forms.ListEditorDlg in 'UI.Forms.ListEditorDlg.pas' {ListEditorDlg},
   UI.Forms.EditVaultMetadataDlg in 'UI.Forms.EditVaultMetadataDlg.pas' {EditVaultMetadataDlg},
   UI.Forms.AddVaultDlg in 'UI.Forms.AddVaultDlg.pas' {AddVaultDlg},
-  UI.Forms.RenameVaultDlg in 'UI.Forms.RenameVaultDlg.pas' {RenameVaultDlg};
+  UI.Forms.RenameVaultDlg in 'UI.Forms.RenameVaultDlg.pas' {RenameVaultDlg},
+  UI.Forms.DetachVaultDlg in 'UI.Forms.DetachVaultDlg.pas' {DetachVaultDlg};
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

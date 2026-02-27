@@ -907,6 +907,14 @@ inherited MainForm: TMainForm
       Hint = 'Rename a vault|Rename a specified vault'
       OnExecute = actRenameVaultExecute
     end
+    object actDetachVault: TAction
+      Category = 'Vaults'
+      Caption = 'Detach Vault...'
+      Hint = 
+        'Detach a vault|Detach a vault from CodeSnip'#39's list of vaults, pr' +
+        'eserving content'
+      OnExecute = actDetachVaultExecute
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -1145,6 +1153,9 @@ inherited MainForm: TMainForm
       end
       object miSpacer20: TMenuItem
         Caption = '-'
+      end
+      object miDetachVault: TMenuItem
+        Action = actDetachVault
       end
       object miDeleteVault: TMenuItem
         Action = actDeleteVault
