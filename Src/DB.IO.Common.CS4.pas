@@ -41,7 +41,7 @@ type
         'd2005', 'd2006', 'd2007', 'd2009', 'd2010',
         'dXE', 'dXE2', 'dXE3', 'dDX4' {error, but in use so can't fix},
         'dXE5', 'dXE6', 'dXE7', 'dXE8',
-        'd10s', 'd101b', 'd102t', 'd103r', 'd104s', 'd11a', 'd12y',
+        'd10s', 'd101b', 'd102t', 'd103r', 'd104s', 'd11a', 'd12y', 'd13f',
         'fpc'
       );
       SnippetKindValues: array[TSnippetKind] of string = (

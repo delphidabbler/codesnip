@@ -6,6 +6,14 @@ Releases are listed in reverse version number order.
 
 > Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some v3 releases have later release dates than early v4 releases.
 
+## Release v4.27.0 of 12 September 2025
+
+* Added support for test compiling snippets with Delphi 13 Florence [issue #170].
+* Documentation changes re addition of support for Delphi 13:
+  * File format additions for config file, export files, user database and main database.
+  * `Docs/ReadMe-portable.txt` & `Docs/ReadMe-standard.txt`
+  * Relevant help topics.
+
 ## Release v4.26.0 of 02 May 2025
 
 * Updated the dialogue box displayed when saving units and annotated source code [issue #166]:
