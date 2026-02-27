@@ -1166,15 +1166,6 @@ inherited MainForm: TMainForm
       object miSaveDatabase: TMenuItem
         Action = actSaveDatabase
       end
-      object miSpacer13: TMenuItem
-        Caption = '-'
-      end
-      object miUpdateDbase: TMenuItem
-        Action = actUpdateDbase
-      end
-      object miSpacer21: TMenuItem
-        Caption = '-'
-      end
     end
     object miCompile: TMenuItem
       Caption = 'Compile'

@@ -192,18 +192,15 @@ type
     miSpacer10: TMenuItem;
     miSpacer11: TMenuItem;
     miSpacer12: TMenuItem;
-    miSpacer13: TMenuItem;
     miSpacer14: TMenuItem;
     miSpacer15: TMenuItem;
     miSpacer16: TMenuItem;
     miSpacer17: TMenuItem;
     miSpacer18: TMenuItem;
     miSpacer20: TMenuItem;
-    miSpacer21: TMenuItem;
     miSWAGImport: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
-    miUpdateDbase: TMenuItem;
     miView: TMenuItem;
     miViewCategorised: TMenuItem;
     miViewCompErrs: TMenuItem;
@@ -1235,6 +1232,20 @@ resourcestring
     + 'before updating the database?' + EOL2 + 'Clicking No will cause all '
     + 'recent changes to be lost.';
 begin
+  //! TEMPORARY CODE to prevent the following code from being called since it
+  //! won't work with vaults.
+  //! The menu item that calls this method has been deleted and the action has
+  //! no shortcuts, so this method SHOULD never be called.
+  {TODO -cVault: Remove the following exception ONLY WHEN the future of the code
+          below has been determined.}
+  raise ENotSupportedException.Create(
+    ClassName + '.actUpdateDbaseExecute: '
+      + 'This action is no longer supported and this method should never be '
+      + 'executed.'
+  );
+  {TODO -cVault: Remove this code and all code it calls, either directly or
+          indirectly ONLY WHEN it has been decided that none of the called code
+          has any use in relation to vaults.}
   if fDialogMgr.ExecDBUpdateDlg then
   begin
     // Database was updated: check if user database needs saving
