@@ -91,10 +91,16 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils,
+  SysUtils,
+  IOUtils,
   // Project
+  DB.DataFormats,
+  DB.IO.DataFormatSniffer,
   UAppInfo,
-  UStrUtils;
+  UIOUtils,
+  UStrUtils,
+  UUtils,
+  UVersionInfo;
 
 
 { TVaultMover }
@@ -156,6 +162,8 @@ resourcestring
   sSourceMissing = 'No vault data found';
   sCantMoveToSubDir = 'Can''t move the vault into a sub-directory of its '
     + 'existing data directory';
+  sCantMoveToOtherVaultDir = 'Can''t move the vault into a sub-directory of '
+    + 'another vault directory.';
   sDestMustBeRooted = 'A full path to the new directory must be provided.';
   sDestMustBeEmpty = 'The new data directory must be empty';
 begin
@@ -168,13 +176,14 @@ begin
   if TDirectory.Exists(fDestDir) and not TDirectory.IsEmpty(fDestDir) then
     raise EInOutError.Create(sDestMustBeEmpty);
 
-  if SameFileName(fSourceDir, fDestDir) then
+  if IsSameDirectory(fSourceDir, fDestDir) then
     raise EInOutError.Create(sSameNames);
 
-  if StrStartsText(
-    IncludeTrailingPathDelimiter(fVault.Storage.Directory), fDestDir
-  ) then
+  if IsSubDirectory(fVault.Storage.Directory, fDestDir, True) then
     raise EInOutError.Create(sCantMoveToSubDir);
+
+  if TDataFormatSniffer.PathContainsVault(fDestDir) then
+    raise EInOutError.Create(sCantMoveToOtherVaultDir);
 end;
 
 end.

@@ -348,6 +348,17 @@ class function TDBUpdateDlg.Execute(AOwner: TComponent): Boolean;
 var
   Dlg: TDBUpdateDlg;
 begin
+  {TODO -cVault: Remove the following exception once it has been decided whether
+          to keep a modified version of this wizard or not.}
+  //! TEMPORARY CODE to prevent the wizard from being used since it won't work
+  //! with vaults.
+  raise ENotSupportedException.Create(
+    ClassName + '.Execute: '
+    + 'the "database" update feature is not supported by CodeSnip Vault'
+  );
+
+  {TODO -cVault: Remove or update the following code once it has been decided
+          whether or not this wizard will be modified.}
   Dlg := InternalCreate(AOwner);
   try
     Dlg.ShowModal;

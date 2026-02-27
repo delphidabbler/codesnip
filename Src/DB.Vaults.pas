@@ -50,6 +50,7 @@ type
       static;
     class function CreateNull: TVaultID; static;
     class function Default: TVaultID; static;
+    class function CreateNew: TVaultID; static;
     function Clone: TVaultID;
     function ToArray: TBytes;
     function ToHexString: string;
@@ -69,6 +70,7 @@ type
       fName: string;
       fStorage: TDataStorageDetails;
       fMetaData: TMetaData;
+      procedure SetName(const AName: string);
       procedure SetMetaData(const AValue: TMetaData);
   public
     type
@@ -90,7 +92,7 @@ type
     ///  <summary>Vault identifier. Must be unique.</summary>
     property UID: TVaultID read fUID;
     ///  <summary>Vault name. Must be unique.</summary>
-    property Name: string read fName;
+    property Name: string read fName write SetName;
     ///  <summary>Vault storage information.</summary>
     property Storage: TDataStorageDetails read fStorage;
     ///  <summary>Meta data associated with the vault.</summary>
@@ -114,6 +116,8 @@ type
     procedure Initialize; override;
     procedure Finalize; override;
   public
+    const
+      DefaultVaultName = 'Default';
     class property Instance: TVaults read GetInstance;
     function GetEnumerator: TEnumerator<TVault>;
     function IndexOfID(const AUID: TVaultID): Integer;
@@ -121,6 +125,7 @@ type
     function ContainsName(const AName: string): Boolean;
     function GetVault(const AUID: TVaultID): TVault;
     function Default: TVault;
+    function GetUniqueUID: TVaultID;
     procedure Add(const AVault: TVault);
     procedure Update(const AVault: TVault);
     procedure AddOrUpdate(const AVault: TVault);
@@ -160,6 +165,7 @@ uses
   // Project
   UAppInfo,
   UStrUtils,
+  UUniqueID,
   UUtils;
 
 resourcestring
@@ -201,6 +207,15 @@ end;
 procedure TVault.SetMetaData(const AValue: TMetaData);
 begin
   fMetaData := AValue.Clone;
+end;
+
+procedure TVault.SetName(const AName: string);
+resourcestring
+  sEmptyName = 'A vault can''t have an empty name';
+begin
+  fName := StrTrim(AName);
+  if StrIsEmpty(fName) then
+    raise EArgumentException.Create(sEmptyName);
 end;
 
 { TVaults }
@@ -323,6 +338,13 @@ begin
   Result := fItems[Idx];
 end;
 
+function TVaults.GetUniqueUID: TVaultID;
+begin
+  repeat
+    Result := TVaultID.CreateNew;
+  until not ContainsID(Result);
+end;
+
 function TVaults.IndexOfID(const AUID: TVaultID): Integer;
 var
   Idx: Integer;
@@ -342,7 +364,7 @@ begin
     Add(
       TVault.Create(
         TVaultID.Default,
-        'Default',
+        DefaultVaultName,
         TDataStorageDetails.Create(
           TDataFormatInfo.DefaultFormat,
           TAppInfo.UserDefaultVaultDir
@@ -419,6 +441,11 @@ begin
   if not TryHexStringToBytes(AHexStr, ConvertedBytes) then
     raise EVaultID.Create(SBadHexString);
   Result := TVaultID.Create(ConvertedBytes);
+end;
+
+class function TVaultID.CreateNew: TVaultID;
+begin
+  Result := TVaultID.Create(TUniqueID.NewUID);
 end;
 
 class function TVaultID.CreateNull: TVaultID;

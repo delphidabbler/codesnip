@@ -31,7 +31,6 @@ type
   TCS4FormatHelper = class(TXMLDocHelper)
   strict private
     const
-      RootWatermarkAttr = 'watermark';
       SnippetKindNodeName = 'kind';
       CompilerResultsNodeName = 'compiler-results';
       CompilerResultNodeName = 'compiler-result';
@@ -50,6 +49,7 @@ type
       );
   public
     const
+      RootWatermarkAttr = 'watermark';
       RootVersionAttr = 'version';
       HighlightSourceNodeName = 'highlight-source';
       ExtraNodeName = 'extra';
@@ -92,6 +92,8 @@ type
     ///  </exception>
     class function ValidateRootNode(const AXMLDoc: IXMLDocumentEx;
       const ANodeName, AWatermark: string; const AVersions: TRange): Integer;
+    {TODO -cRefactor: ValidateRootNode should be moved into TCS4SnippetImporter
+            in DB.IO.ImportExport.CS4 since it is only used there. }
 
     ///  <summary>Creates a comment at the top level of an XML document.
     ///  </summary>
@@ -428,3 +430,4 @@ begin
 end;
 
 end.
+

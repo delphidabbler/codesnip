@@ -23,6 +23,7 @@ uses
   // Project
   DB.Categories,
   DB.SnippetIDs,
+  DB.Vaults,
   UBaseObjects,
   UView;
 
@@ -32,6 +33,11 @@ type
   ///  <summary>Static class that manages user's interaction with user database
   ///  and performs move and backup operations on it.</summary>
   TUserDBMgr = class(TNoConstructObject)
+  strict private
+    ///  <summary>Saves the specified vault to disk.</summary>
+    class procedure SaveVault(ParentCtrl: TComponent; const AVault: TVault);
+    ///  <summary>Saves the data decribing all vaults.</summary>
+    class procedure SaveVaults;
   public
     ///  <summary>Enables user to adds a new user defined snippet to the
     ///  database using the snippets editor.</summary>
@@ -82,7 +88,45 @@ type
     ///  </summary>
     ///  <returns><c>Boolean</c>. <c>True</c> if the vault's data was deleted,
     ///  <c>False</c> otherwise.</returns>
-    class function DeleteDatabase: Boolean;
+    class function DeleteVault: Boolean;
+    ///  <summary>Enables the user to create a new, empty, vault using the
+    ///  Create Vault wizard. If the user accepts the new vault then it is
+    ///  added to the list of vaults and <c>True</c> is returned. If the user
+    ///  cancels then no vault is created and <c>False</c> is returned.
+    ///  </summary>
+    ///  <remarks>If the user accepts the new vault then it is saved. Other
+    ///  vaults are not saved.</remarks>
+    class function CreateVault(ParentCtrl: TComponent): Boolean;
+    ///  <summary>Enables the user to edit a vault's metadata. If the user
+    ///  accepts the changes then the selected vault's metadata is updated. If
+    ///  the user cancels then no changes are made.</summary>
+    ///  <remarks>If the user accepts the changes, and at least one vault's
+    ///  metadata was updated, then all vaults are saved.</remarks>
+    class procedure EditVaultMetadata(ParentCtrl: TComponent);
+    ///  <summary>Enables the user to add an existing directory as a new vault
+    ///  using the Add Vault wizard. If the user accepts the new vault then it
+    ///  is added to the list of vaults and <c>True</c> is returned. If the user
+    ///  cancels that no vault is created and <c>False</c> is returned.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>The directory must contain data in a supported vault format.
+    ///  </para>
+    ///  <para>If the user accepts the new vault then details then the vault is
+    ///  registered with CodeSnip.</para>
+    ///  </remarks>
+    class function AddVault(ParentCtrl: TComponent): Boolean;
+    ///  <summary>Enables the user to rename a selected vault using the Rename
+    ///  Vault dialogue box. If the user accepts then the vault is renamed and
+    ///  <c>True</c> is returned. If the user cancels then no renaming takes
+    ///  place and <c>False</c> is returned.</summary>
+    ///  <remarks>If the user accepts then the selected vault is renamed and the
+    ///  vault's registration with CodeSnip is updated.</remarks>
+    class function RenameVault(ParentCtrl: TComponent): Boolean;
+    ///  <summary>Enables the user to select a vault that is to be detached from
+    ///  the list of registered vaults. If the user accepts then the selected
+    ///  vault is detached and <c>True</c> is returned. If the user cancels then
+    ///  no action is taken and <c>False</c> is returned.</summary>
+    class function DetachVault(ParentCtrl: TComponent): Boolean;
   end;
 
 
@@ -92,17 +136,22 @@ implementation
 uses
   // Delphi
   SysUtils,
+  Generics.Collections,
   Dialogs,
-  Windows {for inlining},
   IOUtils,
   // Project
   DB.Main,
+  DB.MetaData,
   DB.Snippets,
-  DB.Vaults,
   FmAddCategoryDlg,
+  UI.Forms.CreateVaultDlg,
   UI.Forms.BackupVaultDlg,
   FmDeleteCategoryDlg,
   UI.Forms.DeleteVaultDlg,
+  UI.Forms.EditVaultMetadataDlg,
+  UI.Forms.AddVaultDlg,
+  UI.Forms.RenameVaultDlg,
+  UI.Forms.DetachVaultDlg,
   FmDuplicateSnippetDlg,
   FmRenameCategoryDlg,
   FmSnippetsEditorDlg,
@@ -110,7 +159,6 @@ uses
   UI.Forms.MoveVaultDlg,
   {$ENDIF}
   FmWaitDlg,
-  UAppInfo,
   UConsts,
   UExceptions,
   UIStringList,
@@ -169,6 +217,31 @@ type
   end;
 
 type
+  TUserDBSaveVaultUI = class sealed (TUserDBWaitUI)
+  strict private
+    type
+      ///  <summary>Thread that saves the vault.</summary>
+      TSaveVaultThread = class(TThread)
+      strict private
+        var
+          fVault: TVault;
+      strict protected
+        ///  <summary>Saves the vault.</summary>
+        procedure Execute; override;
+      public
+        ///  <summary>Constructs a new, suspended, thread instance.</summary>
+        constructor Create(const AVault: TVault);
+      end;
+  public
+    ///  <summary>Performs the save vault operation in a background thread and
+    ///  displays a wait diaogue box if the operation takes more than a given
+    ///  time to execute. Blocks until the thread terminates.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
+    ///  box, over which it is aligned.</param>
+    class procedure Execute(AOwner: TComponent; const AVault: TVault);
+  end;
+
+type
   ///  <summary>Class that restores a backup of the user database in a thread
   ///  while displaying a "wait" dialogue box if necessary.</summary>
   TUserDBRestoreUI = class sealed(TUserDBWaitUI)
@@ -180,7 +253,7 @@ type
         var
           ///  <summary>Name of backup file to be restored.</summary>
           fBakFileName: string;
-      
+
           fVault: TVault;
       strict protected
         ///  <summary>Restores the user database from a backup.</summary>
@@ -252,6 +325,33 @@ begin
   TSnippetsEditorDlg.AddNewSnippet(nil);
 end;
 
+class function TUserDBMgr.AddVault(ParentCtrl: TComponent): Boolean;
+resourcestring
+  sConfirmSave = 'Can''t add a vault when the database has unsaved changes.'
+    + sLineBreak + sLineBreak
+    + 'Would you like to save the database now?';
+var
+  Vault: TVault;
+begin
+  if Database.Updated then
+  begin
+    if not TMessageBox.Confirm(ParentCtrl, sConfirmSave) then
+      Exit(False);
+    Save(ParentCtrl);
+  end;
+  Vault := nil;
+  Result := TAddVaultDlg.Execute(ParentCtrl, Vault);
+  if Result then
+  begin
+    Assert(not TVaults.Instance.ContainsID(Vault.UID),
+      Format('%0:s.AddVault: Vault with ID "%1:s" already exists',
+        [ClassName, Vault.UID.ToHexString]));
+
+    TVaults.Instance.Add(Vault);
+    SaveVaults;
+  end;
+end;
+
 class procedure TUserDBMgr.BackupDatabase(ParentCtrl: TComponent);
 var
   FileName: string;
@@ -302,6 +402,33 @@ begin
   Result := Database.Updated;
 end;
 
+class function TUserDBMgr.CreateVault(ParentCtrl: TComponent): Boolean;
+resourcestring
+  sConfirmSave = 'Can''t create a vault when the database has unsaved changes.'
+    + sLineBreak + sLineBreak
+    + 'Would you like to save the database now?';
+var
+  Vault: TVault;
+begin
+  if Database.Updated then
+  begin
+    if not TMessageBox.Confirm(ParentCtrl, sConfirmSave) then
+      Exit(False);
+    Save(ParentCtrl);
+  end;
+  Vault := nil;
+  Result := TCreateVaultDlg.Execute(ParentCtrl, Vault);
+  if Result then
+  begin
+    Assert(not TVaults.Instance.ContainsID(Vault.UID),
+      Format('%0:s.CreateVault: Vault with ID "%1:s" already exists',
+        [ClassName, Vault.UID.ToHexString]));
+
+    TVaults.Instance.Add(Vault);
+    SaveVault(ParentCtrl, Vault);
+  end;
+end;
+
 class procedure TUserDBMgr.DeleteACategory;
 var
   CatList: TCategoryList; // list of deletable categories
@@ -319,21 +446,9 @@ begin
   end;
 end;
 
-class function TUserDBMgr.DeleteDatabase: Boolean;
-var
-  VaultToDelete: TVault;
-begin
-  if not TDeleteVaultDlg.Execute(nil, VaultToDelete) then
-    Exit(False);
-  if not TDirectory.Exists(VaultToDelete.Storage.Directory) then
-    Exit(False);
-  TDirectory.Delete(VaultToDelete.Storage.Directory, True);
-  Result := True;
-end;
-
 class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
 
-  {TODO -cVault: rename following inner method to SnippetDisplayNames for
+  {TODO -cClarity: rename following inner method to SnippetDisplayNames for
           clarity}
   // Builds a list of snippet display names from a given snippet ID list.
   function SnippetNames(const IDList: ISnippetIDList): IStringList;
@@ -395,6 +510,60 @@ begin
     Database.DeleteSnippet(Snippet);
 end;
 
+class function TUserDBMgr.DeleteVault: Boolean;
+var
+  VaultToDelete: TVault;
+  KeepVault: Boolean;
+  VaultDir: string;
+  FileName, DirName: string;
+begin
+  if not TDeleteVaultDlg.Execute(nil, VaultToDelete, KeepVault) then
+    Exit(False);
+  VaultDir := VaultToDelete.Storage.Directory;
+  if not TDirectory.Exists(VaultDir) then
+    Exit(False);
+  if KeepVault then
+  begin
+    // delete all files and sub directories in vault directory, leaving it in
+    // place
+    for FileName in TDirectory.GetFiles(VaultDir) do
+      TFile.Delete(FileName);
+    for DirName in TDirectory.GetDirectories(VaultDir) do
+      TDirectory.Delete(DirName, True);
+  end
+  else
+  begin
+    // remove vault itself
+    TVaults.Instance.Delete(VaultToDelete.UID); // frees VaultToDelete
+    SaveVaults;
+    // delete the vault directory and all its files / sub directories
+    TDirectory.Delete(VaultDir, True);
+  end;
+  Result := True;
+end;
+
+class function TUserDBMgr.DetachVault(ParentCtrl: TComponent): Boolean;
+resourcestring
+  sConfirmSave = 'Can''t detach a vault when the database has unsaved changes.'
+    + sLineBreak + sLineBreak
+    + 'Would you like to save the database now?';
+var
+  VaultID: TVaultID;
+begin
+  if Database.Updated then
+  begin
+    if not TMessageBox.Confirm(ParentCtrl, sConfirmSave) then
+      Exit(False);
+    Save(ParentCtrl);
+  end;
+  Result := TDetachVaultDlg.Execute(ParentCtrl, VaultID);
+  if Result then
+  begin
+    TVaults.Instance.Delete(VaultID);
+    SaveVaults;
+  end;
+end;
+
 class procedure TUserDBMgr.DuplicateSnippet(ViewItem: IView);
 begin
   Assert(CanDuplicate(ViewItem),
@@ -412,11 +581,39 @@ begin
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);
 end;
 
+class procedure TUserDBMgr.EditVaultMetadata(ParentCtrl: TComponent);
+var
+  EditedMetaData: TArray<TPair<TVaultID,TMetaData>>;
+  Vault: TVault;
+  MetaDataPair: TPair<TVaultID,TMetaData>;
+  Changed: Boolean;
+begin
+  if TEditVaultMetadataDlg.Execute(ParentCtrl, EditedMetaData) then
+  begin
+    Changed := False;
+    for MetaDataPair in EditedMetaData do
+    begin
+      Assert(TVaults.Instance.ContainsID(MetaDataPair.Key),
+        ClassName + '.EditVaultMetadata: Unexpected TVaultID');
+      Vault := TVaults.Instance.GetVault(MetaDataPair.Key);
+      if (Vault.MetaData <> MetaDataPair.Value)
+        and (Vault.MetaData.Capabilities <> []) then
+      begin
+        Vault.MetaData := MetaDataPair.Value;
+        Changed := True;
+      end;
+    end;
+    if Changed then
+      Save(ParentCtrl);
+  end;
+end;
+
 class procedure TUserDBMgr.MoveDatabase;
 begin
   // This dialogue box not available in portable edition
   {$IFNDEF PORTABLE}
   TMoveVaultDlg.Execute(nil);
+  SaveVaults;
   {$ENDIF}
 end;
 
@@ -434,6 +631,13 @@ begin
   finally
     CatList.Free;
   end;
+end;
+
+class function TUserDBMgr.RenameVault(ParentCtrl: TComponent): Boolean;
+begin
+  Result := TRenameVaultDlg.Execute(ParentCtrl);
+  if Result then
+    SaveVaults;
 end;
 
 class function TUserDBMgr.RestoreDatabase(ParentCtrl: TComponent): Boolean;
@@ -461,6 +665,19 @@ end;
 class procedure TUserDBMgr.Save(ParentCtrl: TComponent);
 begin
   TUserDBSaveUI.Execute(ParentCtrl);
+  SaveVaults;
+end;
+
+class procedure TUserDBMgr.SaveVault(ParentCtrl: TComponent;
+  const AVault: TVault);
+begin
+  TUserDBSaveVaultUI.Execute(ParentCtrl, AVault);
+  SaveVaults;
+end;
+
+class procedure TUserDBMgr.SaveVaults;
+begin
+  TVaults.Instance.Save;
 end;
 
 { TUserDBWaitUI }
@@ -507,6 +724,37 @@ end;
 procedure TUserDBSaveUI.TSaveThread.Execute;
 begin
   Database.Save;
+end;
+
+{ TUserDBSaveVaultUI }
+
+class procedure TUserDBSaveVaultUI.Execute(AOwner: TComponent;
+  const AVault: TVault);
+resourcestring
+  // Caption for wait dialog
+  sWaitCaption = 'Saving vault...';
+var
+  Thread: TSaveVaultThread;   // thread that performs vault save operation
+begin
+  Thread := TSaveVaultThread.Create(AVault);
+  try
+    RunThreadWithWaitDlg(Thread, AOwner, sWaitCaption);
+  finally
+    Thread.Free;
+  end;
+end;
+
+{ TUserDBSaveVaultUI.TSaveThread }
+
+constructor TUserDBSaveVaultUI.TSaveVaultThread.Create(const AVault: TVault);
+begin
+  inherited Create(True);
+  fVault := AVault;
+end;
+
+procedure TUserDBSaveVaultUI.TSaveVaultThread.Execute;
+begin
+  Database.SaveVault(fVault);
 end;
 
 { TUserDBRestoreUI }

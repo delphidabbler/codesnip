@@ -100,7 +100,7 @@ type
     actPrint: TAction;
     actRenameCategory: TAction;
     actRestoreVault: TAction;
-    actSaveDatabase: TAction;
+    actSaveAllVaults: TAction;
     actSaveSelection: TAction;
     actSaveSnippet: TAction;
     actSaveUnit: TAction;
@@ -138,7 +138,6 @@ type
     miCopy: TMenuItem;
     miCopyInfo: TMenuItem;
     miCopySnippet: TMenuItem;
-    miDatabase: TMenuItem;
     miDeleteCategory: TMenuItem;
     miDeleteSnippet: TMenuItem;
     miDeleteVault: TMenuItem;
@@ -173,7 +172,7 @@ type
     miRenameCategory: TMenuItem;
     miReportBug: TMenuItem;
     miRestoreVault: TMenuItem;
-    miSaveDatabase: TMenuItem;
+    miSaveAllVaults: TMenuItem;
     miSaveSelection: TMenuItem;
     miSaveSnippet: TMenuItem;
     miSaveUnit: TMenuItem;
@@ -192,18 +191,15 @@ type
     miSpacer10: TMenuItem;
     miSpacer11: TMenuItem;
     miSpacer12: TMenuItem;
-    miSpacer13: TMenuItem;
     miSpacer14: TMenuItem;
     miSpacer15: TMenuItem;
     miSpacer16: TMenuItem;
     miSpacer17: TMenuItem;
     miSpacer18: TMenuItem;
     miSpacer20: TMenuItem;
-    miSpacer21: TMenuItem;
     miSWAGImport: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
-    miUpdateDbase: TMenuItem;
     miView: TMenuItem;
     miViewCategorised: TMenuItem;
     miViewCompErrs: TMenuItem;
@@ -230,7 +226,7 @@ type
     tbGoForward: TToolButton;
     tbHelpContents: TToolButton;
     tbPrint: TToolButton;
-    tbSaveDatabase: TToolButton;
+    tbSaveAllVaults: TToolButton;
     tbSaveSnippet: TToolButton;
     tbSaveUnit: TToolButton;
     tbSelectSnippets: TToolButton;
@@ -243,6 +239,20 @@ type
     tbTestCompile: TToolButton;
     miSaveInfo: TMenuItem;
     actSaveInfo: TAction;
+    miVaults: TMenuItem;
+    actCreateVault: TAction;
+    miCreateVault: TMenuItem;
+    actEditVaultMetadata: TAction;
+    miSpacer22: TMenuItem;
+    miEditVaultMetadata: TMenuItem;
+    actAddVault: TAction;
+    miAddVault: TMenuItem;
+    miSpacer23: TMenuItem;
+    miRenameVault: TMenuItem;
+    actRenameVault: TAction;
+    actDetachVault: TAction;
+    miDetachVault: TMenuItem;
+    miSpacer24: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>
@@ -398,12 +408,11 @@ type
     ///  <summary>Displays a dialogue box from which a backup file can be
     ///  selected and used to restore the user defined database.</summary>
     procedure actRestoreVaultExecute(Sender: TObject);
-    ///  <summary>Save any changes in the user defined database to disk.
+    ///  <summary>Save all vault data to storage.</summary>
+    procedure actSaveAllVaultsExecute(Sender: TObject);
+    ///  <summary>Determines whether the SaveAllVaults action can be enabled.
     ///  </summary>
-    procedure actSaveDatabaseExecute(Sender: TObject);
-    ///  <summary>Determines whether the SaveDatabase action can be enabled.
-    ///  </summary>
-    procedure actSaveDatabaseUpdate(Sender: TObject);
+    procedure actSaveAllVaultsUpdate(Sender: TObject);
     ///  <summary>Save the current snippet selection to disk in a user-specified
     ///  file.</summary>
     procedure actSaveSelectionExecute(Sender: TObject);
@@ -504,6 +513,11 @@ type
       var Accept: Boolean);
     procedure actSaveInfoUpdate(Sender: TObject);
     procedure actSaveInfoExecute(Sender: TObject);
+    procedure actCreateVaultExecute(Sender: TObject);
+    procedure actEditVaultMetadataExecute(Sender: TObject);
+    procedure actAddVaultExecute(Sender: TObject);
+    procedure actRenameVaultExecute(Sender: TObject);
+    procedure actDetachVaultExecute(Sender: TObject);
   strict private
     var
       ///  <summary>Object that notifies user-initiated events by triggering
@@ -662,6 +676,10 @@ end;
 
 procedure TMainForm.actBackupVaultExecute(Sender: TObject);
 begin
+  {TODO -cVault: Move check on updated database and database save call into
+          TUserDBMgr where it is a better fit & do the same for other similar
+          methods of FmMain. See the actAddVaultExecute method and
+          TUserDBMgr.AddVault for an example.}
   if Database.Updated then
     TUserDBMgr.Save(Self);
   TUserDBMgr.BackupDatabase(Self);
@@ -745,6 +763,16 @@ begin
   (Sender as TAction).Enabled := fMainDisplayMgr.CanCopy;
 end;
 
+procedure TMainForm.actCreateVaultExecute(Sender: TObject);
+begin
+  if TUserDBMgr.CreateVault(Self) then
+  begin
+    // the welcome page and overview pane may need updating
+    fMainDisplayMgr.CompleteRefresh;
+    fStatusBarMgr.Update;
+  end;
+end;
+
 procedure TMainForm.actDeleteCategoryExecute(Sender: TObject);
 begin
   TUserDBMgr.DeleteACategory;
@@ -767,7 +795,16 @@ procedure TMainForm.actDeleteVaultExecute(Sender: TObject);
 begin
   if Database.Updated then
     TUserDBMgr.Save(Self);
-  if TUserDBMgr.DeleteDatabase then
+  if TUserDBMgr.DeleteVault then
+  begin
+    ReloadDatabase;
+    fStatusBarMgr.Update;
+  end;
+end;
+
+procedure TMainForm.actDetachVaultExecute(Sender: TObject);
+begin
+  if TUserDBMgr.DetachVault(Self) then
   begin
     ReloadDatabase;
     fStatusBarMgr.Update;
@@ -805,6 +842,11 @@ begin
   Snippet := (fMainDisplayMgr.CurrentView as ISnippetView).Snippet;
   fNotifier.EditSnippet(Snippet.Key, Snippet.VaultID);
   // display of updated snippet is handled by snippets change event handler
+end;
+
+procedure TMainForm.actEditVaultMetadataExecute(Sender: TObject);
+begin
+  TUserDBMgr.EditVaultMetadata(Self);
 end;
 
 procedure TMainForm.actExportCodeExecute(Sender: TObject);
@@ -937,6 +979,17 @@ begin
   TCodeShareMgr.ImportCode;
 end;
 
+procedure TMainForm.actAddVaultExecute(Sender: TObject);
+begin
+  if TUserDBMgr.AddVault(Self) then
+  begin
+    // the welcome page and overview pane may need updating
+    ReloadDatabase;
+    fMainDisplayMgr.CompleteRefresh;
+    fStatusBarMgr.Update;
+  end;
+end;
+
 procedure TMainForm.actLicenseExecute(Sender: TObject);
 begin
   DisplayHelp('License');
@@ -1028,6 +1081,13 @@ begin
   (Sender as TAction).Enabled := TUserDBMgr.CanRenameACategory;
 end;
 
+procedure TMainForm.actRenameVaultExecute(Sender: TObject);
+begin
+  if TUserDBMgr.RenameVault(Self) then
+    // the welcome page and overview pane may need updating
+    fMainDisplayMgr.CompleteRefresh;
+end;
+
 procedure TMainForm.actRestoreVaultExecute(Sender: TObject);
 begin
   if TUserDBMgr.RestoreDatabase(Self) then
@@ -1037,13 +1097,13 @@ begin
   end;
 end;
 
-procedure TMainForm.actSaveDatabaseExecute(Sender: TObject);
+procedure TMainForm.actSaveAllVaultsExecute(Sender: TObject);
 begin
   TUserDBMgr.Save(Self);
   fStatusBarMgr.Update;
 end;
 
-procedure TMainForm.actSaveDatabaseUpdate(Sender: TObject);
+procedure TMainForm.actSaveAllVaultsUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := TUserDBMgr.CanSave;
 end;
@@ -1171,6 +1231,20 @@ resourcestring
     + 'before updating the database?' + EOL2 + 'Clicking No will cause all '
     + 'recent changes to be lost.';
 begin
+  //! TEMPORARY CODE to prevent the following code from being called since it
+  //! won't work with vaults.
+  //! The menu item that calls this method has been deleted and the action has
+  //! no shortcuts, so this method SHOULD never be called.
+  {TODO -cVault: Remove the following exception ONLY WHEN the future of the code
+          below has been determined.}
+  raise ENotSupportedException.Create(
+    ClassName + '.actUpdateDbaseExecute: '
+      + 'This action is no longer supported and this method should never be '
+      + 'executed.'
+  );
+  {TODO -cVault: Remove this code and all code it calls, either directly or
+          indirectly ONLY WHEN it has been decided that none of the called code
+          has any use in relation to vaults.}
   if fDialogMgr.ExecDBUpdateDlg then
   begin
     // Database was updated: check if user database needs saving

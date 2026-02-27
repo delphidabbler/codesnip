@@ -90,6 +90,9 @@ type
     ///  <remarks>If no URL is available then only the license name is returned.
     ///  </remarks>
     function NameWithURL: string;
+
+    class operator Equal(const ALeft, ARight: TLicenseInfo): Boolean;
+    class operator NotEqual(const ALeft, ARight: TLicenseInfo): Boolean;
   end;
 
   ///  <summary>Record providing informaton about a vault's copyright.
@@ -143,6 +146,9 @@ type
     ///  <summary>Creates and returns a string representation of all the
     ///  non-empty fields of the record.</summary>
     function ToString: string;
+
+    class operator Equal(const ALeft, ARight: TCopyrightInfo): Boolean;
+    class operator NotEqual(const ALeft, ARight: TCopyrightInfo): Boolean;
   end;
 
   ///  <summary>Encapsulates meta data associated with a vault.</summary>
@@ -172,7 +178,7 @@ type
     ///  <summary>Returns a deep copy of this record.</summary>
     function Clone: TMetaData;
 
-   ///  <summary>The meta data capabilities.</summary>
+    ///  <summary>The meta data capabilities.</summary>
     property Capabilities: TMetaDataCaps
       read fCapabilities;
 
@@ -191,6 +197,9 @@ type
     ///  <summary>List of acknowledgements associated with a vault.</summary>
     property Acknowledgements: IStringList
       read GetAcknowledgements write fAcknowledgements;
+
+    class operator Equal(const ALeft, ARight: TMetaData): Boolean;
+    class operator NotEqual(const ALeft, ARight: TMetaData): Boolean;
   end;
 
 implementation
@@ -238,6 +247,14 @@ begin
   Result := TLicenseInfo.Create('', '', '', '');
 end;
 
+class operator TLicenseInfo.Equal(const ALeft, ARight: TLicenseInfo): Boolean;
+begin
+  Result := StrSameStr(ALeft.Name, ARight.Name)
+    and StrSameStr(ALeft.SPDX, ARight.SPDX)
+    and StrSameStr(ALeft.URL, ARight.URL)
+    and StrSameStr(ALeft.Text, ARight.Text);
+end;
+
 function TLicenseInfo.IsNull: Boolean;
 begin
   Result := StrIsEmpty(fName) and StrIsEmpty(fSPDX) and StrIsEmpty(fURL)
@@ -249,6 +266,12 @@ begin
   Result := fName;
   if fURL <> '' then
     Result := Result + ' (' + fURL + ')';
+end;
+
+class operator TLicenseInfo.NotEqual(const ALeft, ARight: TLicenseInfo):
+  Boolean;
+begin
+  Result := not (ALeft = ARight);
 end;
 
 { TCopyrightInfo }
@@ -275,6 +298,15 @@ begin
   Result := TCopyrightInfo.Create('', '', '', nil);
 end;
 
+class operator TCopyrightInfo.Equal(const ALeft, ARight: TCopyrightInfo):
+  Boolean;
+begin
+  Result := StrSameStr(ALeft.Date, ARight.Date)
+    and StrSameStr(ALeft.Holder, ARight.Holder)
+    and StrSameStr(ALeft.HolderURL, ARight.HolderURL)
+    and ALeft.Contributors.IsEqualTo(ARight.Contributors, True);
+end;
+
 function TCopyrightInfo.GetContributors: IStringList;
 begin
   Result := TIStringList.Create(fContributors);
@@ -284,6 +316,12 @@ function TCopyrightInfo.IsNull: Boolean;
 begin
   Result := StrIsEmpty(fDate) and StrIsEmpty(fHolder) and StrIsEmpty(fHolderURL)
     and (fContributors.Count = 0);
+end;
+
+class operator TCopyrightInfo.NotEqual(const ALeft, ARight: TCopyrightInfo):
+  Boolean;
+begin
+  Result := not (ALeft = ARight);
 end;
 
 function TCopyrightInfo.ToString: string;
@@ -334,6 +372,15 @@ begin
   Result := TMetaData.Create([]);
 end;
 
+class operator TMetaData.Equal(const ALeft, ARight: TMetaData): Boolean;
+begin
+  Result := (ALeft.Capabilities = ARight.Capabilities)
+    and (ALeft.Version = ARight.Version)
+    and (ALeft.LicenseInfo = ARight.LicenseInfo)
+    and (ALeft.CopyrightInfo = ARight.CopyrightInfo)
+    and ALeft.Acknowledgements.IsEqualTo(ARight.Acknowledgements, True);
+end;
+
 function TMetaData.GetAcknowledgements: IStringList;
 begin
   if TMetaDataCap.Acknowledgements in fCapabilities then
@@ -364,6 +411,11 @@ begin
     Result := fVersion
   else
     Result := TVersionNumber.Nul;
+end;
+
+class operator TMetaData.NotEqual(const ALeft, ARight: TMetaData): Boolean;
+begin
+  Result := not (ALeft = ARight);
 end;
 
 end.

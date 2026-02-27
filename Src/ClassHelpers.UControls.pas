@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2024, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2026, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class helper for TControl.
  *
@@ -33,11 +33,22 @@ type
     ///  <summary>Refreshes all owned controls to reflect any changes in their
     ///  associated actions.</summary>
     procedure RefreshActions;
+    ///  <summary>Returns the text assigned to the control's protected
+    ///  <c>Text</c> property.</summary>
+    function GetCtrlText: TCaption;
+    ///  <summary>Sets the control's protected <c>Text</c> to <c>AText</c>.
+    ///  </summary>
+    procedure SetCtrlText(const AText: TCaption);
   end;
 
 implementation
 
 { TControlHelper }
+
+function TControlHelper.GetCtrlText: TCaption;
+begin
+  Result := Text;
+end;
 
 function TControlHelper.GetPopupMenu: TPopupMenu;
 begin
@@ -62,6 +73,11 @@ begin
   for Idx := 0 to Pred(ComponentCount) do
     if Components[Idx] is TControl then
       (Components[Idx] as TControl).RefreshAction;
+end;
+
+procedure TControlHelper.SetCtrlText(const AText: TCaption);
+begin
+  Text := AText;
 end;
 
 end.

@@ -135,10 +135,10 @@ inherited MainForm: TMainForm
       Top = 0
       Action = actDeleteSnippet
     end
-    object tbSaveDatabase: TToolButton
+    object tbSaveAllVaults: TToolButton
       Left = 338
       Top = 0
-      Action = actSaveDatabase
+      Action = actSaveAllVaults
     end
     object tbFavourites: TToolButton
       Left = 361
@@ -614,7 +614,7 @@ inherited MainForm: TMainForm
       OnUpdate = actPrintUpdate
     end
     object actBackupVault: TAction
-      Category = 'Database'
+      Category = 'Vaults'
       Caption = 'Backup Vault...'
       Hint = 'Backup a vault|Backup a vault'#39's data files'
       ImageIndex = 33
@@ -622,20 +622,20 @@ inherited MainForm: TMainForm
       OnUpdate = ActNonEmptyDBUpdate
     end
     object actRestoreVault: TAction
-      Category = 'Database'
+      Category = 'Vaults'
       Caption = 'Restore Vault...'
       Hint = 'Restore a vault|Restore a vaults'#39's data files from a backup'
       ImageIndex = 32
       OnExecute = actRestoreVaultExecute
     end
-    object actSaveDatabase: TAction
-      Category = 'Database'
-      Caption = 'Save Database'
-      Hint = 'Save database|Save all vaults to the database'
+    object actSaveAllVaults: TAction
+      Category = 'Vaults'
+      Caption = 'Save All Vaults'
+      Hint = 'Save all vaults|Save all vault data to storage'
       ImageIndex = 25
       ShortCut = 16467
-      OnExecute = actSaveDatabaseExecute
-      OnUpdate = actSaveDatabaseUpdate
+      OnExecute = actSaveAllVaultsExecute
+      OnUpdate = actSaveAllVaultsUpdate
     end
     object actUpdateDbase: TAction
       Category = 'Database'
@@ -840,8 +840,8 @@ inherited MainForm: TMainForm
       OnUpdate = actAddFavouriteUpdate
     end
     object actMoveVault: TAction
-      Category = 'Database'
-      Caption = 'Move Vault Data Files...'
+      Category = 'Vaults'
+      Caption = 'Move Vault...'
       Hint = 'Move a vault|Move a vault'#39's data files to a new directory'
       OnExecute = actMoveVaultExecute
       OnUpdate = ActNonEmptyDBUpdate
@@ -863,11 +863,11 @@ inherited MainForm: TMainForm
       ImageIndex = 6
     end
     object actDeleteVault: TAction
-      Category = 'Database'
-      Caption = 'Delete All Snippets From Vault'
+      Category = 'Vaults'
+      Caption = 'Clear or Delete Vault...'
       Hint = 
-        'Delete All Snippets From A Vault|Deletes all the snippets from a' +
-        ' chosen vault - USE WITH CAUTION'
+        'Clear snippets and and optionally delete a vault|Delete all snip' +
+        'pets from a specified vault and optionally delete the vault'
       OnExecute = actDeleteVaultExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
@@ -880,6 +880,40 @@ inherited MainForm: TMainForm
       ShortCut = 24649
       OnExecute = actSaveInfoExecute
       OnUpdate = actSaveInfoUpdate
+    end
+    object actCreateVault: TAction
+      Category = 'Vaults'
+      Caption = 'Create Vault...'
+      Hint = 'Create a vault|Create a new, empty, vault'
+      OnExecute = actCreateVaultExecute
+    end
+    object actEditVaultMetadata: TAction
+      Category = 'Vaults'
+      Caption = 'Edit Vault Metadata...'
+      Hint = 
+        'Edit a Vault'#39's Metadata|Update the metadata associated with a se' +
+        'lected vault'
+      OnExecute = actEditVaultMetadataExecute
+    end
+    object actAddVault: TAction
+      Category = 'Vaults'
+      Caption = 'Add Vault...'
+      Hint = 'Add a vault|Add existing vault data into a new vault'
+      OnExecute = actAddVaultExecute
+    end
+    object actRenameVault: TAction
+      Category = 'Vaults'
+      Caption = 'Rename Vault...'
+      Hint = 'Rename a vault|Rename a specified vault'
+      OnExecute = actRenameVaultExecute
+    end
+    object actDetachVault: TAction
+      Category = 'Vaults'
+      Caption = 'Detach Vault...'
+      Hint = 
+        'Detach a vault|Detach a vault from CodeSnip'#39's list of vaults, pr' +
+        'eserving content'
+      OnExecute = actDetachVaultExecute
     end
   end
   object mnuMain: TMainMenu
@@ -1085,12 +1119,24 @@ inherited MainForm: TMainForm
         Action = actDeleteCategory
       end
     end
-    object miDatabase: TMenuItem
-      Caption = 'Database'
-      object miSaveDatabase: TMenuItem
-        Action = actSaveDatabase
+    object miVaults: TMenuItem
+      Caption = 'Vaults'
+      object miCreateVault: TMenuItem
+        Action = actCreateVault
       end
-      object miSpacer11: TMenuItem
+      object miAddVault: TMenuItem
+        Action = actAddVault
+      end
+      object miSpacer23: TMenuItem
+        Caption = '-'
+      end
+      object miRenameVault: TMenuItem
+        Action = actRenameVault
+      end
+      object miEditVaultMetadata: TMenuItem
+        Action = actEditVaultMetadata
+      end
+      object miSpacer22: TMenuItem
         Caption = '-'
       end
       object miBackupVault: TMenuItem
@@ -1099,23 +1145,26 @@ inherited MainForm: TMainForm
       object miRestoreVault: TMenuItem
         Action = actRestoreVault
       end
-      object miSpacer13: TMenuItem
-        Caption = '-'
-      end
-      object miUpdateDbase: TMenuItem
-        Action = actUpdateDbase
-      end
-      object miSpacer20: TMenuItem
+      object miSpacer11: TMenuItem
         Caption = '-'
       end
       object miMoveVault: TMenuItem
         Action = actMoveVault
       end
-      object miSpacer21: TMenuItem
+      object miSpacer20: TMenuItem
         Caption = '-'
+      end
+      object miDetachVault: TMenuItem
+        Action = actDetachVault
       end
       object miDeleteVault: TMenuItem
         Action = actDeleteVault
+      end
+      object miSpacer24: TMenuItem
+        Caption = '-'
+      end
+      object miSaveAllVaults: TMenuItem
+        Action = actSaveAllVaults
       end
     end
     object miCompile: TMenuItem

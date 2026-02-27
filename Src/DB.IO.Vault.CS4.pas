@@ -74,19 +74,48 @@ type
       }
   end;
 
+  ///  <summary>Class that validates a specified directory as a valid CodeSnip 4
+  ///  user data format vault.</summary>
+  TCS4VaultStorageValidator = class(TCS4VaultStorage,
+    IVaultStorageValidator)
+  strict protected
+    ///  <summary>Checks if the vault's directory contains a valid vault and
+    ///  returns an error message for the first error that was found.</summary>
+    ///  <param name="AErrMsg"><c>string</c> [out] Receives any error message.
+    ///  Undefined if no error is found.</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the vault is valid,
+    ///  <c>False</c> if invalid.</returns>
+    function CheckValidity(out AErrMsg: string): Boolean;
+  public
+    ///  <summary>Checks if the vault exists.</summary>
+    ///  <returns><c>Boolean</c>. Returns <c>True</c> if the vault exists or
+    ///  <c>False</c> if not.</returns>
+    ///  <remarks>
+    ///  <para>Method of <c>IDataReader</c>.</para>
+    ///  <para>This method is always called before any other <c>IDataReader</c>
+    ///  methods. If it returns <c>False</c> then no other <c>IDataReader</c>
+    ///  methods are called. Therefore other methods can safely assume that the
+    ///  vault exists.</para>
+    ///  <para>Note that this method only checks for the existence of the
+    ///  vault's master file. It does not validate the contents.</para>
+    ///  </remarks>
+    function DatabaseExists: Boolean;
+    ///  <summary>Checks if the vault's directory contains a valid vault.
+    ///  </summary>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the vault is valid or
+    ///  <c>False</c> if not.</returns>
+    ///  <remarks>Method of <c>IVaultStorageValidator</c>.</remarks>
+    function IsValidStorage: Boolean;
+  end;
+
   ///  <summary>Reads a vault's data from storage in the CodeSnip 4 user data
   ///  format.</summary>
-  TCS4VaultStorageReader = class(TCS4VaultStorage,
+  TCS4VaultStorageReader = class(TCS4VaultStorageValidator,
     IVaultStorageReader
   )
   strict private
     fVersion: Integer;
       {XML document version number}
-    function ValidateDoc: Integer;
-      {Validates XML document and gets file version.
-        @return XML file version number.
-        @except EDataIO raised if XML is not valid.
-      }
     procedure HandleCorruptDatabase(const EObj: TObject);
       {Called when a corrupt database is encountered. Deletes all files and
       raises exception.
@@ -106,12 +135,6 @@ type
       {Class constructor. Sets up object and loads XML from file if database
       master file exists, otherwise creates a minimal empty document.
         @param DBDir [in] Directory where database is stored.
-      }
-    { IDataReader methods }
-    function DatabaseExists: Boolean;
-      {Check if the database exists. This method is always called first. No
-      other methods are called if this method returns false.
-        @return True if database exists, False if not.
       }
     function GetAllCatIDs: IStringList;
       {Get ids of all categories in database.
@@ -262,6 +285,7 @@ uses
   Classes,
   ActiveX,
   XMLDom,
+  IOUtils,
   // Project
   ActiveText.UMain,
   DB.SnippetKind,
@@ -429,6 +453,106 @@ begin
   Result := DataFile(TCS4VaultFormatHelper.DatabaseFileName);
 end;
 
+{ TCS4VaultStorageValidator }
+
+function TCS4VaultStorageValidator.CheckValidity(out AErrMsg: string): Boolean;
+resourcestring
+  // Error messages
+  sNoRootNode = 'Invalid document: no root element present';
+  sBadRootName = 'Invalid document: root element must be named <%s>';
+  sBadWatermark = 'Invalid document: watermark is incorrect';
+  sBadVersionFmt = 'Invalid document: missing or invalid document version';
+  sBadVersion = 'Invalid document: unsupported document version %d';
+  sNoXMLProcInst = 'Invalid document: no XML processing instruction found';
+var
+  RootNode: IXMLNode; // reference to document's root node
+  VersionStr: string;
+  Version: Integer;
+begin
+  Result := True;
+
+  // Check for XML processing instruction
+  if not TXMLDocHelper.HasValidProcessingInstr(fXMLDoc) then
+  begin
+    AErrMsg := sNoXMLProcInst;
+    Exit(False);
+  end;
+
+  // Check a root node exists & has correct name
+  RootNode := fXMLDoc.DocumentElement;
+  if not Assigned(RootNode) then
+  begin
+    AErrMsg := sNoRootNode;
+    Exit(False);
+  end;
+  if RootNode.NodeName <> TCS4VaultFormatHelper.UserDataRootNodeName then
+  begin
+    AErrMsg := Format(
+      sBadRootName, [TCS4VaultFormatHelper.UserDataRootNodeName]
+    );
+    Exit(False);
+  end;
+
+  // Check watermark attribute exists & has correct value
+  if RootNode.Attributes[TCS4VaultFormatHelper.RootWatermarkAttr]
+    <> TCS4VaultFormatHelper.Watermark then
+  begin
+    AErrMsg := sBadWatermark;
+    Exit(False);
+  end;
+
+  // Check version atrribute exist & version number is supported
+  VersionStr := RootNode.Attributes[TCS4VaultFormatHelper.RootVersionAttr];
+  if not TryStrToInt(VersionStr, Version) then
+  begin
+    AErrMsg := sBadVersionFmt;
+    Exit(False);
+  end;
+  if not (
+    Version in [
+      TCS4VaultFormatHelper.EarliestVersion..TCS4VaultFormatHelper.LatestVersion
+    ]
+  ) then
+  begin
+    AErrMsg := Format(sBadVersion, [Version]);
+    Exit(False);
+  end;
+
+  // Check that required child nodes of root node exist
+  if fXMLDoc.FindNode(
+    TCS4VaultFormatHelper.UserDataRootNodename
+      + '\'
+      + TCS4VaultFormatHelper.CategoriesNodeName
+  ) = nil then
+  begin
+    AErrMsg := Format(sMissingNode, [TCS4VaultFormatHelper.CategoriesNodeName]);
+    Exit(False);
+  end;
+  if fXMLDoc.FindNode(
+    TCS4VaultFormatHelper.UserDataRootNodeName
+      + '\'
+      + TCS4VaultFormatHelper.SnippetsNodeName
+  ) = nil then
+    AErrMsg := Format(sMissingNode, [TCS4VaultFormatHelper.SnippetsNodeName]);
+end;
+
+function TCS4VaultStorageValidator.DatabaseExists: Boolean;
+begin
+  Result := TFile.Exists(PathToXMLFile);
+end;
+
+function TCS4VaultStorageValidator.IsValidStorage: Boolean;
+var
+  UnusedErrMsg: string;
+begin
+  if not DatabaseExists then
+    Exit(False);
+    // Database exists: load it
+  fXMLDoc.LoadFromFile(PathToXMLFile);
+  fXMLDoc.Active := True;
+  Result := CheckValidity(UnusedErrMsg);
+end;
+
 { TCS4VaultStorageReader }
 
 resourcestring
@@ -446,6 +570,7 @@ constructor TCS4VaultStorageReader.Create(const DBDir: string);
   }
 var
   RootNode: IXMLNode; // reference to document's root node
+  ErrorMsg: string;
 begin
   inherited Create(DBDir);
   if DatabaseExists then
@@ -454,7 +579,10 @@ begin
     fXMLDoc.LoadFromFile(PathToXMLFile);
     fXMLDoc.Active := True;
     try
-      fVersion := ValidateDoc;
+      if not CheckValidity(ErrorMsg) then
+        Error(ErrorMsg);
+      RootNode := fXMLDoc.DocumentElement;
+      fVersion := RootNode.Attributes[TCS4VaultFormatHelper.RootVersionAttr];
     except
       HandleCorruptDatabase(ExceptObject);
     end;
@@ -463,25 +591,17 @@ begin
   begin
     // Database doesn't exist: create sufficient nodes for main code to find
     fXMLDoc.Active := True;
+    fVersion := TCS4VaultFormatHelper.LatestVersion;
     TCS4VaultFormatHelper.CreateXMLProcInst(fXMLDoc);
     RootNode := TCS4VaultFormatHelper.CreateRootNode(
       fXMLDoc,
       TCS4VaultFormatHelper.UserDataRootNodeName,
       TCS4VaultFormatHelper.Watermark,
-      TCS4VaultFormatHelper.LatestVersion
+      fVersion
     );
     fXMLDoc.CreateElement(RootNode, TCS4VaultFormatHelper.CategoriesNodeName);
     fXMLDoc.CreateElement(RootNode, TCS4VaultFormatHelper.SnippetsNodeName);
   end;
-end;
-
-function TCS4VaultStorageReader.DatabaseExists: Boolean;
-  {Check if the database exists. This method is always called first. No
-  other methods are called if this method returns false.
-    @return True if database exists, False if not.
-  }
-begin
-  Result := FileExists(PathToXMLFile);
 end;
 
 function TCS4VaultStorageReader.GetAllCatIDs: IStringList;
@@ -799,36 +919,6 @@ begin
   else
     // not an expected error: just re-raise
     raise EObj;
-end;
-
-function TCS4VaultStorageReader.ValidateDoc: Integer;
-  {Validates XML document and gets file version.
-    @return XML file version number.
-    @except EDataIO raised if XML is not valid.
-  }
-begin
-  TCS4VaultFormatHelper.ValidateProcessingInstr(fXMLDoc);
-  Result := TCS4VaultFormatHelper.ValidateRootNode(
-    fXMLDoc,
-    TCS4VaultFormatHelper.UserDataRootNodeName,
-    TCS4VaultFormatHelper.Watermark,
-    TRange.Create(
-      TCS4VaultFormatHelper.EarliestVersion, TCS4VaultFormatHelper.LatestVersion
-    )
-  );
-  // Both a categories and a snippets node must exist
-  if fXMLDoc.FindNode(
-    TCS4VaultFormatHelper.UserDataRootNodename
-      + '\'
-      + TCS4VaultFormatHelper.CategoriesNodeName
-  ) = nil then
-    Error(sMissingNode, [TCS4VaultFormatHelper.CategoriesNodeName]);
-  if fXMLDoc.FindNode(
-    TCS4VaultFormatHelper.UserDataRootNodeName
-      + '\'
-      + TCS4VaultFormatHelper.SnippetsNodeName
-  ) = nil then
-    Error(sMissingNode, [TCS4VaultFormatHelper.SnippetsNodeName]);
 end;
 
 { TCS4VaultStorageWriter }

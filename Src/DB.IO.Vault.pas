@@ -140,6 +140,17 @@ type
       }
   end;
 
+  ///  <summary>Interface that defines a method that validates a vault's data
+  ///  format.</summary>
+  IVaultStorageValidator = interface(IInterface)
+    ['{AB991FFD-210A-43E2-BB75-CBD7BBDED4C9}']
+    ///  <summary>Checks if the vault's directory contains a valid vault.
+    ///  </summary>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the vault is valid or
+    ///  <c>False</c> if not.</returns>
+    function IsValidStorage: Boolean;
+  end;
+
   {
   EDataIO:
     Class of exception raised by IDataReader and IDataWriter objects.

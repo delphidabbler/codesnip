@@ -593,6 +593,26 @@
 			<DCCReference Include="UMarkdownUtils.pas"/>
 			<DCCReference Include="ActiveText.UMarkdownRenderer.pas"/>
 			<DCCReference Include="UMarkdownSnippetDoc.pas"/>
+			<DCCReference Include="DB.MetaData.Licenses.pas"/>
+			<DCCReference Include="DB.IO.DataFormatSniffer.pas"/>
+			<DCCReference Include="UI.Forms.CreateVaultDlg.pas">
+				<Form>CreateVaultDlg</Form>
+			</DCCReference>
+			<DCCReference Include="UI.Forms.ListEditorDlg.pas">
+				<Form>ListEditorDlg</Form>
+			</DCCReference>
+			<DCCReference Include="UI.Forms.EditVaultMetadataDlg.pas">
+				<Form>EditVaultMetadataDlg</Form>
+			</DCCReference>
+			<DCCReference Include="UI.Forms.AddVaultDlg.pas">
+				<Form>AddVaultDlg</Form>
+			</DCCReference>
+			<DCCReference Include="UI.Forms.RenameVaultDlg.pas">
+				<Form>RenameVaultDlg</Form>
+			</DCCReference>
+			<DCCReference Include="UI.Forms.DetachVaultDlg.pas">
+				<Form>DetachVaultDlg</Form>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

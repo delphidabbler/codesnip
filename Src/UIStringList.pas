@@ -152,6 +152,18 @@ type
     procedure Sort;
       {Sorts the string list alphabetically.
       }
+
+    ///  <summary>Checks if this string list is the same as another.</summary>
+    ///  <param name="AOther"><c>IStringList</c> [in] The other string list to
+    ///  compare with.</param>
+    ///  <param name="ACaseSensitive"><c>Boolean</c> Flag indicating whether the
+    ///  comparison is to be case sensitive (<c>True</c>) or case insensitive
+    ///  (<c>False</c>).</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if both string lists are equal or
+    ///  <c>False</c> if not.</returns>
+    function IsEqualTo(AOther: IStringList; const ACaseSensitive: Boolean):
+      Boolean;
+
   end;
 
   {
@@ -208,7 +220,9 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
+
     { IStringList methods }
+
     function Add(const Str: string): Integer; overload;
       {Adds a string to end of list.
         @param Str [in] String to be added to list.
@@ -331,13 +345,28 @@ type
     procedure Sort;
       {Sorts the string list alphabetically.
       }
+
+    ///  <summary>Checks if this string list is the same as another.</summary>
+    ///  <param name="AOther"><c>IStringList</c> [in] The other string list to
+    ///  compare with.</param>
+    ///  <param name="ACaseSensitive"><c>Boolean</c> Flag indicating whether the
+    ///  comparison is to be case sensitive (<c>True</c>) or case insensitive
+    ///  (<c>False</c>).</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if both string lists are equal or
+    ///  <c>False</c> if not.</returns>
+    function IsEqualTo(AOther: IStringList; const ACaseSensitive: Boolean):
+      Boolean;
+
     { IAssignable methods }
+
     procedure Assign(const Src: IInterface);
       {Sets list to a copy of another IStringList instance.
         @param Src [in] String list to be copied. Must support IStringList.
         @except EBug raised if Src does not support IStringList.
       }
+
     { IClonable methods }
+
     function Clone: IInterface;
       {Creates a new instance of the object that is an extact copy of this
       instance.
@@ -441,6 +470,7 @@ function TIStringList.Clone: IInterface;
 begin
   Result := TIStringList.Create(Self);
 end;
+
 
 function TIStringList.Contains(const Str: string): Boolean;
   {Checks whether list contains a string.
@@ -605,6 +635,28 @@ function TIStringList.IndexOf(const Str: string): Integer;
   }
 begin
   Result := fStrings.IndexOf(Str);
+end;
+
+function TIStringList.IsEqualTo(AOther: IStringList;
+  const ACaseSensitive: Boolean): Boolean;
+type
+  TEqFn = reference to function (const Left, Right: string): Boolean;
+var
+  Idx: Integer;
+  EqFn: TEqFn;
+begin
+  if Self.Count <> AOther.Count then
+    Exit(False);
+  if ACaseSensitive then
+    EqFn := StrSameText
+  else
+    EqFn := StrSameStr;
+  Result := True;
+  for Idx := 0 to Pred(Self.Count) do
+  begin
+    if not EqFn(Self.GetItem(Idx), AOther.GetItem(Idx)) then
+      Exit(False);
+  end;
 end;
 
 function TIStringList.IsValidIndex(const Idx: Integer): Boolean;

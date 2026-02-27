@@ -178,9 +178,43 @@ type
 
   end;
 
+  ///  <summary>Class that validates a specified directory as a valid native
+  ///  data format vault.</summary>
+  TNativeVaultStorageValidator = class(TNativeVaultStorage,
+    IVaultStorageValidator)
+  strict protected
+    ///  <summary>Checks if the vault's directory contains a valid vault and
+    ///  returns an error message for the first error that was found.</summary>
+    ///  <param name="AErrMsg"><c>string</c> [out] Receives any error message.
+    ///  Undefined if no error is found.</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the vault is valid,
+    ///  <c>False</c> if invalid.</returns>
+    function CheckValidity(out AErrMsg: string): Boolean;
+  public
+    ///  <summary>Checks if the vault exists.</summary>
+    ///  <returns><c>Boolean</c>. Returns <c>True</c> if the vault exists or
+    ///  <c>False</c> if not.</returns>
+    ///  <remarks>
+    ///  <para>Method of <c>IDataReader</c>.</para>
+    ///  <para>This method is always called before any other <c>IDataReader</c>
+    ///  methods. If it returns <c>False</c> then no other <c>IDataReader</c>
+    ///  methods are called. Therefore other methods can safely assume that the
+    ///  vault exists.</para>
+    ///  <para>Note that this method only checks for the existence of the
+    ///  vault's master file. It does not validate the contents.</para>
+    ///  </remarks>
+    function DatabaseExists: Boolean;
+    {TODO -cRefactor: Rename DatabaseExists to VaultExists.}
+    ///  <summary>Checks if the vault's directory contains a valid vault.
+    ///  </summary>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the vault is valid or
+    ///  <c>False</c> if not.</returns>
+    function IsValidStorage: Boolean;
+  end;
+
   ///  <summary>Reads a vault's data from storage in the CodeSnip Vault native
   ///  format.</summary>
-  TNativeVaultStorageReader = class sealed(TNativeVaultStorage,
+  TNativeVaultStorageReader = class sealed(TNativeVaultStorageValidator,
     IVaultStorageReader
   )
   strict private
@@ -188,12 +222,6 @@ type
       ///  <summary>Flag that indicates if unit & depends-upon lists are
       ///  permitted.</summary>
       fCanReadRequiredLists: Boolean;
-
-    ///  <summary>Validates an XML document loaded from storage. Returns
-    ///  normally on success or raises exception on error.</summary>
-    ///  <exception><c>EDataIO</c> raised if there is no valid root node with
-    ///  the expected watermark and a valid version number.</exception>
-    procedure ValidateDoc;
 
     ///  <summary>Reads a list of text nodes that each have the same tag name,
     ///  within an enclosing node.</summary>
@@ -235,19 +263,6 @@ type
     ///  <param name="ADataDirectory"><c>string</c> [in] Full path to the
     ///  directory that contains the vault's data files.</param>
     constructor Create(const ADirectory: string);
-
-    ///  <summary>Checks if the vault exists.</summary>
-    ///  <returns><c>Boolean</c>. Returns <c>True</c> if the vault exists or
-    ///  <c>False</c> if not.</returns>
-    ///  <remarks>
-    ///  <para>This method is always called before any other <c>IDataReader</c>
-    ///  methods. If it returns <c>False</c> then no other <c>IDataReader</c>
-    ///  methods are called. Therefore other methods can safely assume that the
-    ///  vault exists.</para>
-    ///  <para>Method of <c>IDataReader</c>.</para>
-    ///  </remarks>
-    function DatabaseExists: Boolean;
-    {TODO -cRefactor: Rename DatabaseExists to VaultExists.}
 
     ///  <summary>Gets the unique IDs of all categories referenced in the
     ///  vault.</summary>
@@ -475,11 +490,13 @@ resourcestring
   // TNativeDataRW error message
   sMissingNode = 'Document has no %s node.';
   // TNativeVaultStorageReader error messages
+  sNoXMLProcInst = 'Invalid document: no XML processing instruction found';
   sParseError = 'Error parsing XML file';
   sBadDataFormat = 'Invalid native vault data format: %s';
   sNoRootNode = 'Invalid document: no root element present';
   sBadRootName = 'Invalid document: root element must be named <%s>';
   sBadWatermark = 'Invalid document: watermark is incorrect';
+  sBadVersionFmt = 'Invalid document: missing or invalid document version';
   sBadVersion = 'Invalid document: unsupported document version %d.%d';
   sNoCategoriesNode = 'No categories node in XML file';
   sCatNotFound = 'Can''t find reference to category "%s" in XML file';
@@ -555,11 +572,95 @@ begin
   Result := FilePath(XMLFileName);
 end;
 
+{ TNativeVaultStorageValidator }
+
+function TNativeVaultStorageValidator.CheckValidity(
+  out AErrMsg: string): Boolean;
+var
+  RootNode: IXMLNode; // reference to document's root node
+  Version: TVersionNumber;
+  VerMajor, VerMinor: Word;
+begin
+  Result := True;
+
+  // Check for XML processing instruction
+  if not TXMLDocHelper.HasValidProcessingInstr(XMLDoc) then
+  begin
+    AErrMsg := sNoXMLProcInst;
+    Exit(False);
+  end;
+
+  // Check a root node exists & has correct name
+  RootNode := XMLDoc.DocumentElement;
+  if not Assigned(RootNode) then
+  begin
+    AErrMsg := sNoRootNode;
+    Exit(False);
+  end;
+  if RootNode.NodeName <> RootNodeName then
+  begin
+    AErrMsg := Format(sBadRootName, [RootNodeName]);
+    Exit(False);
+  end;
+
+  // Check watermark attribute exists & has correct value
+  if RootNode.Attributes[RootNodeWatermarkAttr] <> Watermark then
+  begin
+    AErrMsg := sBadWatermark;
+    Exit(False);
+  end;
+
+  // Check version atrributes exists & version number is supported
+  if not TryStrToWord(RootNode.Attributes[RootNodeVersionMajorAttr], VerMajor)
+    or not TryStrToWord(RootNode.Attributes[RootNodeVersionMinorAttr], VerMinor)
+    then
+  begin
+    AErrMsg := sBadVersionFmt;
+    Exit(False);
+  end;
+  Version := TVersionNumber.Create(VerMajor, VerMinor, 0, 0);
+  if (Version < EarliestFileVersion) or (Version > CurrentFileVersion) then
+  begin
+    AErrMsg := Format(sBadVersion, [Version.V1, Version.V2]);
+    Exit(False);
+  end;
+
+  // Check that required child nodes of root node exist
+  if not Assigned(XMLDoc.FindNode(RootNodeName + '\' + CategoriesNodeName)) then
+  begin
+    AErrMsg := Format(sMissingNode, [CategoriesNodeName]);
+    Exit(False);
+  end;
+  if not Assigned(XMLDoc.FindNode(RootNodeName + '\' + SnippetsNodeName)) then
+  begin
+    AErrMsg := Format(sMissingNode, [SnippetsNodeName]);
+    Exit(False);
+  end;
+end;
+
+function TNativeVaultStorageValidator.DatabaseExists: Boolean;
+begin
+  Result := TFile.Exists(PathToXMLFile);
+end;
+
+function TNativeVaultStorageValidator.IsValidStorage: Boolean;
+var
+  UnusedErrMsg: string;
+begin
+  if not DatabaseExists then
+    Exit(False);
+    // Database exists: load it
+  XMLDoc.LoadFromFile(PathToXMLFile);
+  XMLDoc.Active := True;
+  Result := CheckValidity(UnusedErrMsg);
+end;
+
 { TNativeVaultStorageReader }
 
 constructor TNativeVaultStorageReader.Create(const ADirectory: string);
 var
   RootNode: IXMLNode; // reference to document's root node
+  ErrMsg: string;
 begin
   inherited Create(ADirectory);
   if DatabaseExists then
@@ -568,7 +669,8 @@ begin
     XMLDoc.LoadFromFile(PathToXMLFile);
     XMLDoc.Active := True;
     try
-      ValidateDoc;
+      if not CheckValidity(ErrMsg) then
+        raise EDataIO.Create(ErrMsg);
     except
       HandleException(ExceptObject);
     end;
@@ -580,11 +682,6 @@ begin
     XMLDoc.CreateElement(RootNode, CategoriesNodeName);
     XMLDoc.CreateElement(RootNode, SnippetsNodeName);
   end;
-end;
-
-function TNativeVaultStorageReader.DatabaseExists: Boolean;
-begin
-  Result := TFile.Exists(PathToXMLFile);
 end;
 
 function TNativeVaultStorageReader.GetAllCatIDs: IStringList;
@@ -994,7 +1091,6 @@ procedure TNativeVaultStorageReader.HandleException(const EObj: TObject);
 begin
   {TODO -cVault: Query whether database files should be deleted on error.
           This is not being done while debugging}
-//  DeleteFiles(DataDir, '*.*');
   if EObj is EDOMParseError then
     // Expected DOM parsing error
     raise EDataIO.CreateFmt(sBadDataFormat, [sParseError]);
@@ -1009,29 +1105,6 @@ begin
   else
     // Mot an expected error: just re-raise
     raise EObj;
-end;
-
-procedure TNativeVaultStorageReader.ValidateDoc;
-var
-  RootNode: IXMLNode;
-  Version: TVersionNumber;
-begin
-  RootNode := XMLDoc.DocumentElement;
-
-  if not Assigned(RootNode) then
-    raise EDataIO.Create(sNoRootNode);
-
-  if RootNode.NodeName <> RootNodeName then
-    raise EDataIO.CreateFmt(sBadRootName, [RootNodeName]);
-
-  if RootNode.Attributes[RootNodeWatermarkAttr] <> Watermark then
-    raise EDataIO.Create(sBadWatermark);
-
-  Version := TVersionNumber.Nul;
-  Version.V1 := RootNode.Attributes[RootNodeVersionMajorAttr];
-  Version.V2 := RootNode.Attributes[RootNodeVersionMinorAttr];
-  if (Version < EarliestFileVersion) or (Version > CurrentFileVersion) then
-    raise EDataIO.CreateFmt(sBadVersion, [Version.V1, Version.V2]);
 end;
 
 { TNativeVaultStorageWriter }
@@ -1065,8 +1138,6 @@ begin
 end;
 
 procedure TNativeVaultStorageWriter.Initialise;
-//var
-//  RootNode: IXMLNode;   // document root node
 begin
   try
     // Make sure database folder exists, empty of source code files
@@ -1339,3 +1410,4 @@ begin
 end;
 
 end.
+

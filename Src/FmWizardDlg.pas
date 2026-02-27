@@ -182,8 +182,15 @@ procedure TWizardDlg.btnNextClick(Sender: TObject);
 begin
   if CurrentPage <> LastPage then
     GoForward
-  else
+  else if btnNext.ModalResult = mrNone then
+    //! Fix for bug per issue #174.
+    //!   fixed in `vault` before being fixed in `develop`
+    //!   when merging in from `develop` or `master` ensure that this fix
+    //!   remains.
     Close;
+  // else
+  //   the simple act of having previously set btnNext.ModalResult <> mrNone
+  //   causes the form to close automatically.
 end;
 
 procedure TWizardDlg.ConfigForm;
