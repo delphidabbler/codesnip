@@ -35,7 +35,8 @@ type
     sppDepends,
     sppXRefs,
     sppCompileResults,
-    sppExtra
+    sppExtra,
+    sppVault
   );
 
 type
@@ -359,6 +360,7 @@ resourcestring
   sXRefs = 'Cross Reference List';
   sCompileResults = 'Compile Results Table';
   sExtra = 'Extra Information';
+  sVault = 'Vault';
 
 class constructor TAllSnippetPageParts.Create;
 var
@@ -390,6 +392,9 @@ begin
   );
   fParts[sppExtra] := TSnippetPagePart.Create(
     sppExtra, 'ExtraInfo', sExtra
+  );
+  fParts[sppVault] := TSnippetPagePart.Create(
+    sppVault, 'Vault', sVault
   );
   for Part in fParts do
     Assert(Part.DisplayName <> '',

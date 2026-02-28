@@ -125,6 +125,15 @@ type
   end;
 
 type
+  ///  <summary>Class that renders "Vault" HTML fragment for a snippet.
+  ///  </summary>
+  TSnippetVaultHTMLFragment = class(TPrefixedSnippetHTMLFragment)
+  public
+    ///  <summary>Renders "Vault" fragment as HTML.</summary>
+    function ToString: string; override;
+  end;
+
+type
   ///  <summary>Class that renders "Type" HTML fragment for a snippet.
   ///  </summary>
   TSnippetKindHTMLFragment = class(TPrefixedSnippetHTMLFragment)
@@ -232,6 +241,15 @@ begin
   );
 end;
 
+{ TSnippetVaultHTMLFragment }
+
+function TSnippetVaultHTMLFragment.ToString: string;
+resourcestring
+  sPrefix = 'Vault:';
+begin
+  Result := Render(sPrefix, 'vault', SnippetHTML.Vault);
+end;
+
 { TSnippetKindHTMLFragment }
 
 function TSnippetKindHTMLFragment.ToString: string;
@@ -321,7 +339,8 @@ const
     TSnippetDependsHTMLFragment,        // sppDepends,
     TSnippetXRefsHTMLFragment,          // sppXRefs,
     TSnippetCompileResultsHTMLFragment, // sppCompileResults,
-    TSnippetExtraHTMLFragment           // sppExtra
+    TSnippetExtraHTMLFragment,          // sppExtra
+    TSnippetVaultHTMLFragment           // sppVault
   );
 begin
   Result := Map[FragKind].Create(Snippet);

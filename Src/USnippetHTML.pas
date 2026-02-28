@@ -19,7 +19,8 @@ uses
   // Project
   ActiveText.UMain,
   DB.Categories,
-  DB.Snippets;
+  DB.Snippets,
+  DB.Vaults;
 
 
 type
@@ -60,6 +61,8 @@ type
     function SnippetName: string;
     ///  <summary>Returns snippet description as HTML.</summary>
     function Description: string;
+    ///  <summary>Returns the name of the snippet's vault as HTML.</summary>
+    function Vault: string;
     ///  <summary>Returns description of snippet's kind as HTML.</summary>
     function SnippetKind: string;
     ///  <summary>Returns HTML of a link to category containing snippet.
@@ -296,6 +299,14 @@ begin
     Result := EmptyListSentence
   else
     Result := TXHTML.Entities(StrJoin(fSnippet.Units, ', ', False) + '.');
+end;
+
+function TSnippetHTML.Vault: string;
+var
+  Vault: TVault;
+begin
+  Vault := TVaults.Instance.GetVault(fSnippet.VaultID);
+  Result := TXHTML.Entities(StrMakeSentence(Vault.Name));
 end;
 
 function TSnippetHTML.XRefs: string;
