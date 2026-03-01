@@ -164,6 +164,7 @@ type
       function GetLicenseInfo: TLicenseInfo;
       function GetCopyrightInfo: TCopyrightInfo;
       function GetAcknowledgements: IStringList;
+      procedure SetAcknowledgements(AValue: IStringList);
   public
     ///  <summary>Creates a meta data record with specified capabilities.
     ///  </summary>
@@ -196,7 +197,7 @@ type
 
     ///  <summary>List of acknowledgements associated with a vault.</summary>
     property Acknowledgements: IStringList
-      read GetAcknowledgements write fAcknowledgements;
+      read GetAcknowledgements write SetAcknowledgements;
 
     class operator Equal(const ALeft, ARight: TMetaData): Boolean;
     class operator NotEqual(const ALeft, ARight: TMetaData): Boolean;
@@ -210,18 +211,52 @@ uses
   // Project
   UStrUtils;
 
+
+///  <summary>Returns a given string converted to the standard format used for
+///  various string values within metadata.</summary>
+///  <remarks>A standard format string is one string with all control characters
+///  converted to spaces, multiple consecutive white space characters collapsed
+///  into a single space and any leading or trailing white space removed.
+///  </remarks>
 function StandardiseStr(const AStr: string): string;
 begin
-  Result := StrCompressWhiteSpace(
-    StrReplaceChar(
-      AStr,
-      function(Ch: Char): Boolean
-        begin
-          Result := TCharacter.IsControl(Ch);
-        end,
-      ' '
+  Result := StrTrim(
+    StrCompressWhiteSpace(
+      StrReplaceChar(
+        AStr,
+        function(Ch: Char): Boolean
+          begin
+            Result := TCharacter.IsControl(Ch);
+          end,
+        ' '
+      )
     )
   );
+end;
+
+///  <summary>Returns the given string list converted to the standard format
+///  used for string lists within metadata.</summary>
+///  <param name="AStrs"><c>IStringList</c> [in] String list to be converted.
+///  if <c>AStrs</c> is <c>nil</c> then an empty string list is returned.
+///  </param>
+///  <returns><c>IStringList</c>. String list in standardised format.</returns>
+///  <remarks>A standard format string list is one where each string is in
+///  standard format per the <c>StandardiseStr</c> function and where no list
+///  elements contain empty standard strings.</remarks>
+function StandardiseStrs(AStrs: IStringList): IStringList;
+var
+  Str, StandardStr: string;
+begin
+  Result := TIStringList.Create;
+  if Assigned(AStrs) then
+  begin
+    for Str in AStrs do
+    begin
+      StandardStr := StandardiseStr(Str);
+      if not StrIsEmpty(StandardStr) then
+        Result.Add(StandardStr);
+    end;
+  end;
 end;
 
 { TLicenseInfo }
@@ -264,8 +299,8 @@ end;
 function TLicenseInfo.NameWithURL: string;
 begin
   Result := fName;
-  if fURL <> '' then
-    Result := Result + ' (' + fURL + ')';
+  if not StrIsEmpty(URL) then
+    Result := Result + ' (' + URL + ')';
 end;
 
 class operator TLicenseInfo.NotEqual(const ALeft, ARight: TLicenseInfo):
@@ -290,7 +325,7 @@ begin
   fDate := StandardiseStr(ADate);
   fHolder := StandardiseStr(AHolder);
   fHolderURL := StandardiseStr(AHolderURL);
-  fContributors := TIStringList.Create(AContributors);
+  fContributors := StandardiseStrs(AContributors);
 end;
 
 class function TCopyrightInfo.CreateNull: TCopyrightInfo;
@@ -329,21 +364,23 @@ resourcestring
   sCopyright = 'Copyright';
 begin
   Result := '';
-  if Date <> '' then
+  if IsNull then
+    Exit;
+  if not StrIsEmpty(Date) then
     Result := Result + '(C) ' + Date;
-  if Holder <> '' then
+  if not StrIsEmpty(Holder) then
   begin
-    if Result <> '' then
+    if not StrIsEmpty(Result) then
       Result := Result + ', ';
     Result := Result + Holder;
   end;
-  if HolderURL <> '' then
+  if not StrIsEmpty(HolderURL) then
   begin
-    if Result <> '' then
+    if not StrIsEmpty(Result) then
       Result := Result + ', ';
     Result := Result + HolderURL;
   end;
-  if Result <> '' then
+  if not StrIsEmpty(Result) then
     Result := sCopyright + ' ' + Result;
 end;
 
@@ -416,6 +453,11 @@ end;
 class operator TMetaData.NotEqual(const ALeft, ARight: TMetaData): Boolean;
 begin
   Result := not (ALeft = ARight);
+end;
+
+procedure TMetaData.SetAcknowledgements(AValue: IStringList);
+begin
+  fAcknowledgements := StandardiseStrs(AValue);
 end;
 
 end.
