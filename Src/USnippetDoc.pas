@@ -57,8 +57,8 @@ type
     ///  <summary>Creates and returns an array of compiler compatibility
     ///  information for given snippet.</summary>
     function CompilerInfo(const Snippet: TSnippet): TCompileDocInfoArray;
-    ///  <summary>Generates and returns a string containing information about
-    ///  the given vault.</summary>
+    ///  <summary>Generates and returns a string containing information
+    ///  extracted from the given vault's metadata.</summary>
     ///  <remarks>Information includes license and copyright information if
     ///  the vault's data format supports it.</remarks>
     function VaultInfo(const AVaultID: TVaultID): string;
@@ -173,6 +173,7 @@ end;
 function TSnippetDoc.Generate(const Snippet: TSnippet): TEncodedData;
 resourcestring
   // Literal string required in output
+  sVaultTitle = 'Vault:';
   sKindTitle = 'Snippet Type:';
   sCategoryTitle = 'Category:';
   sUnitListTitle = 'Required units:';
@@ -189,6 +190,9 @@ begin
   RenderHeading(Snippet.DisplayName, Snippet.VaultID);
   RenderDescription(Snippet.Description);
   RenderSourceCode(Snippet.SourceCode);
+  RenderTitledText(
+    sVaultTitle, TVaults.Instance.GetVault(Snippet.VaultID).Name
+  );
   RenderTitledText(
     sKindTitle, TSnippetKindInfoList.Items[Snippet.Kind].DisplayName
   );
@@ -228,9 +232,6 @@ begin
 end;
 
 function TSnippetDoc.VaultInfo(const AVaultID: TVaultID): string;
-resourcestring
-  {TODO -cBug: the following information is not included in output}
-  sVaultInfo = 'A snippet from the "%s" vault.';
 var
   MetaData: TMetaData;
   Vault: TVault;
